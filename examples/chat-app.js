@@ -56,7 +56,7 @@ io.sockets.on('connection', function(socket) {
     socket.handshake.session.data = {
         id: shortid.generate() //generate a random id for each connected user
     };
-    io.emit('message_receive', socket.handsdhake.session.data['id'] + ' has connected');
+    io.emit('message_receive', socket.handshake.session.data['id'] + ' has connected');
     socket.on('disconnect', function(){
         console.log('user disconnected');
         io.emit('message_receive', socket.handshake.session.data['id'] +' has disconnected');
