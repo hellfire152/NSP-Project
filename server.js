@@ -13,7 +13,6 @@ var fs = require('fs');
 var helmet = require('helmet');
 var key = fs.readFileSync('./cert/key.key');
 var cert = fs.readFileSync('./cert/cert.cert');
-var shortid = require('shortid');
 //Gives me a way to store/get session unique data
 var Session = require('express-session'),
     SessionStore = require('session-file-store')(Session),

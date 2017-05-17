@@ -9,7 +9,6 @@ module.exports = function (io) {
         id: shortid.generate() //generate a random id for each connected user
     };
     socket.on('answer_submit', function(answer) {
-      console.log(answer);
     })
   });
 };
