@@ -12,7 +12,7 @@ var https = require('https');
 var fs = require('fs');
 var helmet = require('helmet');
 var key = fs.readFileSync('./cert/key.key');
-var cert = fs.readFileSync('./cert/cert.cert');
+var cert = fs.readFileSync('./cert/cert.crt');
 //Gives me a way to store/get session unique data
 var Session = require('express-session'),
     SessionStore = require('session-file-store')(Session),
@@ -42,6 +42,7 @@ app.get('/', function(req, res){
 
 //I have no idea how this works, but it does
 app.use("/client", express.static(__dirname + '/client'));
+app.use("/resources", express.static(__dirname + '/resources'));
 app.use(helmet()); //adds a bunch of security features
 app.use(session);
 

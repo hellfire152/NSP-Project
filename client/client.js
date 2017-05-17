@@ -11,5 +11,9 @@ function answer(answer) {
 }
 
 socket.on('test_answer_confirm', function(result){
+  if(result) {
+    
+  } else {
 
+  }
 });
