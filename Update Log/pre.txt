@@ -23,3 +23,10 @@ easier in the long run.
 Nigel's handling all database nonsense, do I got that going for me.
 Bryan's already done the login thing, it's a small part, but something > nothing.
 Chloe and Qing Ning are doing the powerpoint slides/reports. I'd better finish before they start work.
+
+18/5/2017 - Ang Jin Kuan
+HTTPS is now fully working!!
+I've also managed to get PIXI to work, at least, just the 'display a static image' part.
+I was actually trying to get it to disappear and reappear on click but I didn't manage that part.
+It's 11.47pm already too, so I gotta go sleep now.
+The first presentation is tomorrow, and I've not prepared at all. Ah well.
