@@ -1,0 +1,25 @@
+17/5/2017 - Ang Jin Kuan
+First entry of the update log!
+
+I've actually been working on the project for about a week now.
+I've managed to get the website up and running, accessible from over the internet.
+The security cert still gives me warning with some AltName or something.
+I'll solve that by tomorrow.
+
+All the dependencies and stuff has already been decided.
+We're using node with socket.io. I decided on this after looking at C# code for the
+server, and NOT UNDERSTANDING A SINGLE THING. I could slowly learn it, but frankly
+ain't nobody got time for that shit. Javascript's nice in it's own way anyway.
+For the client side, we're using Pixi.js for the graphics. Right now it seems like
+I have to make all the art/graphics by myself, since my other group members won't do art.
+I'll do pixel art so it doesn't overwhelm me. Last thing I want is to deal with 3D models.
+For sound I'll use howler.js. The sound is lower priority, but I hope I'll have enough tim eto do that.
+
+As for progress I'm now only laying all the groundwork for the whole project,
+including the API that I (and Qing Ning) will be using. Frankly that's the most difficult part,
+but that means once I manage to finish that, that layer of abstraction will make things much
+easier in the long run.
+
+Nigel's handling all database nonsense, do I got that going for me.
+Bryan's already done the login thing, it's a small part, but something > nothing.
+Chloe and Qing Ning are doing the powerpoint slides/reports. I'd better finish before they start work.
