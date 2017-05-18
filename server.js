@@ -11,8 +11,8 @@ var app = express();
 var https = require('https');
 var fs = require('fs');
 var helmet = require('helmet');
-var key = fs.readFileSync('./cert/key.key');
-var cert = fs.readFileSync('./cert/cert.crt');
+var key = fs.readFileSync('./cert/server.key');
+var cert = fs.readFileSync('./cert/server.crt');
 //Gives me a way to store/get session unique data
 var Session = require('express-session'),
     SessionStore = require('session-file-store')(Session),
