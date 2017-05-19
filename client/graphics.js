@@ -1,5 +1,5 @@
 function setup() {
-
+  
   //Create the `cat` sprite from the texture
   var img = new PIXI.Sprite(
     PIXI.loader.resources["resources/images/my-desktop.jpg"].texture
