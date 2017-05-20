@@ -3,7 +3,7 @@
   individual {
     user_id : {
       limit: boolean,
-      rooms : []
+      roomm : room-id
     }
   }
   room {
@@ -13,47 +13,41 @@
 */
 var userSessions = {
   individual : {},
-  room : {}
+  rooms : {}
 };
 
 function addUser(socket) {
-  let user = userSessions.individual[socket.userId];
+  let user = userSessions.individual[socket.userId] = {};
   user.limit = false;
-  user.rooms = {};
+  user.room = null;
 }
 
 function addUserToRoom(socket, room) {
   let user = userSessions.individual[socket.userId];
-  user.rooms.push(room);
-  userSessions.room[room].push(socket.userId);
+  user.room = room;
+  userSessions.rooms[room].push(socket.userId);
 }
 
 function removeUser(socket) {
-  let userRooms = userSessions.individual[socket.userId].rooms;
-  for(let i = 0; i < userRooms.length; i++) {
-    removeUserFromRoom(socket, userRooms[i]);
-  }
-
-  //remove user themselves
   delete userSessions.individual[socket.userId];
 }
 
 function removeUserFromRoom(socket, room) {
-  let room = userSessions.room[room];
-  let index = room.indexOf(socket.userId);
-  if (index >= 0) arr.splice(index, 1);
-}
-
-function removeFromAllRooms(socket) {
-  userSessions.individual[socket.userId].rooms = [];
+  userSessions.individual[socket.userId].room = null;
 }
 
 function removeRoom(room) {
+  //TODO::search through the list of users in the room and remove the room from
+  //their individual object
+
+
     delete userSessions.room[room];
 }
 
-function limit(socket) {
+function limit(socket, time) {
   userSessions.individual[socket.userId].limit = true;
+
+  //TODO::Add timer
 }
 
 function enable(socket) {
