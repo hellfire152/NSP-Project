@@ -18,6 +18,6 @@ socket.on('test_answer_confirm', function(result){
   }
 });
 
-function joinRoomWithId(userId, password, roomId) {
+joinRoomWithId(userId, password, roomId) {
   
 }
