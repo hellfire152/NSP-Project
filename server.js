@@ -38,30 +38,14 @@ var server = https.createServer(https_options, app);
 server.listen(8080);
 var io = require('socket.io').listen(server);
 
-//sends index.html when someone sends a https request
-app.get('/', function(req, res){
-  res.sendFile(__dirname + "/site/index.html");
-});
-//handling all other requests
-app.get('/*', function(req, res){
-  console.log('%s %s %s', req.method, req.url, req.path);
-  res.sendFile(__dirname + "/site" + req.path);
-});
-
-//Various middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(expressValidator());
-app.use("/", express.static(__dirname));
-app.use(helmet()); //adds a bunch of security features
-app.use(session);
-
 // shared session handler
 var sessionHandler = require('./custom-API/game-handler.js');
-//handling form submits
-app.post('/join-room', require('./server/validate-join-room.js')(sessionHandler));
 
-require('./server/game.js')(io);
+require(./server/server-setup.js)({
+  "app": app,
+  "io": io,
+  "sessionHandler": sessionHandler
+});
 
 //confimation message
 console.log("Listening on port 8080...");
