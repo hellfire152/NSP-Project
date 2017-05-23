@@ -16,7 +16,7 @@ module.exports = function(data) {
     res.sendFile(__dirname + "/site" + req.path);
   });
   //handling form submits
-  app.post('/join-room', require('./server/validate-join-room.js')(sessionHandler));
+  app.post('/join-room', require('./validate-join-room.js')(sessionHandler));
 
   //Various middleware
   app.use(bodyParser.json());
@@ -26,5 +26,6 @@ module.exports = function(data) {
   app.use(helmet()); //adds a bunch of security features
   app.use(session);
 
+  //for the game stuff
   require('./game.js')(io);
 }

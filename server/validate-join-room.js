@@ -19,7 +19,7 @@ module.exports = function(sessionHandler) {
       //TODO::Handle errors
     } else {
       var iv = uuid();
-      var cipher = crypto.createCipheriv('aes192', 'tHisIsthEkEyFORaesEnCryPtion', iv);
+      var cipher = crypto.createCipher('aes192', 'tHisIsthEkEyFORaesEnCryPtion');
       let encrypted = '';
       cipher.on('readable', () => {
         const data = cipher.read();
