@@ -1,5 +1,5 @@
 /*
-  Handles first connection, up till selecting gamemodes
+  Handles the code for the game, that are not gamemode-specific
 */
 /*
   keeps track of all progress
@@ -15,6 +15,6 @@ var shortid = require('shortid');
 module.exports = function (io) {
   io.sockets.on('connection', function(socket) {
     console.log("Request received");
-    
+
   });
 };

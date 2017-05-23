@@ -1,4 +1,4 @@
-var uuid = require('uuid/v4');
+var uuid = require('uuid');
 var crypto = require('crypto');
 module.exports = function(sessionHandler) {
   return function(req, res) {

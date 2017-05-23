@@ -37,9 +37,15 @@ var https_options = {
 var server = https.createServer(https_options, app);
 server.listen(8080);
 var io = require('socket.io').listen(server);
-//sends main.html when someone sends a https request
+
+//sends index.html when someone sends a https request
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + "/site/index.html");
+});
+//handling all other requests
+app.get('/*', function(req, res){
+  console.log('%s %s %s', req.method, req.url, req.path);
+  res.sendFile(__dirname + "/site" + req.path);
 });
 
 //Various middleware
@@ -47,9 +53,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(expressValidator());
 app.use("/", express.static(__dirname));
-// app.use("./", express.static(__dirname + '/client'));
-// app.use("/resources", express.static(__dirname + '/resources'));
-// app.use("/resources/images", express.static(__dirname + '/resources/images'));
 app.use(helmet()); //adds a bunch of security features
 app.use(session);
 
@@ -57,10 +60,7 @@ app.use(session);
 var sessionHandler = require('./custom-API/game-handler.js');
 //handling form submits
 app.post('/join-room', require('./server/validate-join-room.js')(sessionHandler));
-//enables my use of socket.handshake.session
-io.use(function(socket, next) {
-  session(socket.handshake, {}, next);
-});
+
 require('./server/game.js')(io);
 
 //confimation message

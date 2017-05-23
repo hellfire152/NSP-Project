@@ -9,3 +9,4 @@ call npm install sql
 call npm install crypto
 call npm install express-validator
 call npm install body-parser
+call npm install uuid

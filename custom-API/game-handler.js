@@ -76,7 +76,6 @@ module.exports = {
   'addUserToRoom' : addUserToRoom,
   'removeUser' : removeUser,
   'removeUserFromRoom' : removeUserFromRoom,
-  'removeFromAllRooms' : removeFromAllRooms,
   'removeRoom' : removeRoom,
   'limit' : limit,
   'enable' : enable,
