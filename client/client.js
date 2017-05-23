@@ -4,20 +4,22 @@
  */
 //initializes a socket.io connection
 var socket = io();
+io.emit('temp');
+function joinRoomWithLogin() {
+  var username = document.getElementById('id');
+  var password = document.getElementById('pass');
+  var room = document.getElementById('room');
 
-function answer(answer) {
-  socket.emit('answer_submit', answer);
-  console.log(answer);
+  io.emit('join_room_with_login', {
+    user: username,
+    pass: pass,
+    room: room
+  });
 }
+io.on('room_join_fail', function(){
 
-socket.on('test_answer_confirm', function(result){
-  if(result) {
-
-  } else {
-
-  }
 });
 
-function joinRoomWithId(userId, password, roomId) {
-  
-}
+io.on('redirect_to_room', function(room){
+  window.location.replace("https://116.86.186.103:8080/play?room=" +room);
+});

@@ -16,6 +16,8 @@ var userSessions = {
   rooms : {}
 };
 
+var ivStore = {};
+
 function addUser(socket) {
   let user = userSessions.individual[socket.userId] = {};
   user.limit = false;
@@ -60,6 +62,15 @@ function generateId(socket) {
   return id++;
 }
 
+//functions for storing temporary IVs
+var iv = {
+  store: function(user, iv) {
+    ivStore[user] = iv;
+  },
+  remove: function(user) {
+    delete ivStore[user];
+  }
+}
 module.exports = {
   'addUser' : addUser,
   'addUserToRoom' : addUserToRoom,
@@ -69,5 +80,6 @@ module.exports = {
   'removeRoom' : removeRoom,
   'limit' : limit,
   'enable' : enable,
-  'generateId' : generateId
+  'generateId' : generateId,
+  'iv' : iv
 }

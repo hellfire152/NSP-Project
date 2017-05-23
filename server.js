@@ -11,6 +11,8 @@ var app = express();
 var https = require('https');
 var fs = require('fs');
 var helmet = require('helmet');
+var bodyParser = require('body-parser');
+var expressValidator = require('express-validator');
 var key = fs.readFileSync('./cert/server.key');
 var cert = fs.readFileSync('./cert/server.crt');
 //Gives me a way to store/get session unique data
@@ -40,14 +42,21 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html');
 });
 
-//I have no idea how this works, but it does
+//Various middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(expressValidator());
 app.use("/", express.static(__dirname));
 // app.use("./", express.static(__dirname + '/client'));
 // app.use("/resources", express.static(__dirname + '/resources'));
 // app.use("/resources/images", express.static(__dirname + '/resources/images'));
-// app.use(helmet()); //adds a bunch of security features
-// app.use(session);
+app.use(helmet()); //adds a bunch of security features
+app.use(session);
 
+// shared session handler
+var sessionHandler = require('./custom-API/game-handler.js');
+//handling form submits
+app.post('/join-room', require('./server/validate-join-room.js')(sessionHandler));
 //enables my use of socket.handshake.session
 io.use(function(socket, next) {
   session(socket.handshake, {}, next);

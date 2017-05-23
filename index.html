@@ -4,7 +4,17 @@
     <script src='resources/pixi.js'></script>
   </head>
   <body>
-    <div id='game'></div>
+    <div id='form'>
+      <form onsubmit='joinRoomWithLogin()'>
+        User_Id:<br>
+        <input type='text' id='id' name='id'/><br><br>
+        Password:<br>
+        <input type='text' id='pass' name='pass'/><br><br>
+        Room_Id:<br>
+        <input type='text' id='room' name='room'/><br><br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
     <script src="client/client.js"></script>
     <script src='client/graphics.js'></script>
   </body>
