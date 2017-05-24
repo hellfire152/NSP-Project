@@ -41,7 +41,7 @@ var io = require('socket.io').listen(server);
 // shared session handler
 var sessionHandler = require('./custom-API/game-handler.js');
 
-require(./server/server-setup.js)({
+require("./server-setup.js")({
   "app": app,
   "io": io,
   "sessionHandler": sessionHandler

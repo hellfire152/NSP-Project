@@ -51,11 +51,6 @@ function encryptIv(plain) {
 function decryptIv(cipher) {
 }
 
-//takes in any number of arguments
-function hash() {
-
-}
-
 module.exports = function(options) {
   if(!(options === undefined)) {
     if (!(options.password === undefined)) password = options.password;
@@ -67,7 +62,6 @@ module.exports = function(options) {
     "decrypt": decrypt,
     "encryptIv": encryptIv,
     "decryptIv": decryptIv,
-    "hash": hash,
     "iv": iv
   }
 }

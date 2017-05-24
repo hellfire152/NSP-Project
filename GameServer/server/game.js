@@ -9,7 +9,7 @@
   }
 */
 var allProgress = {};
-
+var cipher = require('../custom-API/cipher.js');
 //var sessionHandler = require('./custom-API/session-handler.js');
 var shortid = require('shortid');
 module.exports = function (io) {
