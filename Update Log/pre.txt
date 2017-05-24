@@ -48,3 +48,14 @@ That'll make Qing Ning's job easier later.
 
 Next up, I'm going to do up room joining! (By thursday I hope)
 If I'm doing that I'll need to figure out the form data processing too......
+
+24/5/2017 - Ang Jin Kuan
+The Great Refactoring begins!
+I heard the 3 part system the teacher described during one of our practicals
+And as such, I'm changing things up to accomodate for that!
+Basically, there's the Web Server, Game Logic Server, and the Database server.
+As far as I'm concerned, that means that I have to separate the web server
+and the game logic, and have some way to connect the two together.
+Most likely socket.io again though.
+That also complicates my job by quite a bit.
+sighhhhhhhhhhhhhhhhhhhhhhhh..............
