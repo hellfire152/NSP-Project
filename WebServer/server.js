@@ -4,6 +4,8 @@
  * Project start date: 27/4/2017 (Week 2 Thursday)
  * Current Version: pre02052017
  */
+//getting the password
+var pass = process.argv[2];
 
 //various imports
 var express = require('express');
@@ -15,18 +17,7 @@ var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var key = fs.readFileSync('./cert/server.key');
 var cert = fs.readFileSync('./cert/server.crt');
-//Gives me a way to store/get session unique data
-var Session = require('express-session'),
-    SessionStore = require('session-file-store')(Session),
-    session = Session({
-      store: new SessionStore({ path: './tmp/sessions' }),
-      secret: 'a very long pass phrase or something I dunno',
-      resave: true,
-      saveUninitialized: true,
-      cookie : {
-        secure : true
-      }
-    });
+
 //https nonsense, have yet to set it up properly
 var https_options = {
     key: key,
@@ -44,7 +35,8 @@ var sessionHandler = require('./custom-API/game-handler.js');
 require("./server-setup.js")({
   "app": app,
   "io": io,
-  "sessionHandler": sessionHandler
+  "sessionHandler": sessionHandler,
+  "pass": pass
 });
 
 //confimation message

@@ -1,3 +1,5 @@
-/**
-  temporary test file for any testing stuff I have to do
-*/
+var io = require('socket.io-client');
+var socket = io.connect('https://localhost:8080');
+
+socket.emit('logic', 'password');
+console.log("Logic Server running");
