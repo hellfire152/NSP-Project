@@ -17,6 +17,7 @@ var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var key = fs.readFileSync('./cert/server.key');
 var cert = fs.readFileSync('./cert/server.crt');
+const net = require('net');
 
 //https nonsense, have yet to set it up properly
 var https_options = {
@@ -29,6 +30,9 @@ var server = https.createServer(https_options, app);
 server.listen(8080);
 var io = require('socket.io').listen(server);
 
+//setting up another server, for connection with the logic server
+var logicServer;
+
 // shared session handler
 var sessionHandler = require('./custom-API/game-handler.js');
 
@@ -36,7 +40,8 @@ require("./server-setup.js")({
   "app": app,
   "io": io,
   "sessionHandler": sessionHandler,
-  "pass": pass
+  "pass": pass,
+  "logicServer": logicServer
 });
 
 //confimation message

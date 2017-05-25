@@ -2,12 +2,14 @@ var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var helmet = require('helmet');
 var express = require('express');
+const net = require('net');
 
 module.exports = function(data) {
   var app = data.app;
   var io = data.io;
   var sessionHandler = data.sessionHandler;
   var pass = data.pass;
+  var logicServer = data.logicServer;
 
   //express-session stuff
   var Session = require('express-session'),
@@ -61,5 +63,42 @@ module.exports = function(data) {
         socket.disconnect(); //if password is wrong
       }
     });
+  });
+
+  //setting up of the logic server
+  var server = net.createServer(function (conn) {
+    console.log("Server: Logic connected");
+
+    // If connection is closed
+    conn.on("end", function() {
+        console.log('Server: Logic disconnected');
+        // Close the server
+        server.close();
+        // End the process
+        process.exit(0);
+    });
+
+    // Handle data from client
+    conn.on("logic", function(password) {
+      if(password === pass) {
+        conn.id = 'LOGIC SERVER';
+        console.log('Logic: Connected');
+      } else {
+        console.log('Stop trying to hack into my shit');
+        conn.destroy();
+      }
+    });
+
+    // Let's response with a hello message
+    conn.write(
+        JSON.stringify(
+            { response: "Hey there client!" }
+        )
+      );
+    });
+
+  // Listen for connections
+  server.listen(80808, "localhost", function () {
+      console.log("Server: Listening");
   });
 }
