@@ -4,6 +4,11 @@
  * Project start date: 27/4/2017 (Week 2 Thursday)
  * Current Version: pre02052017
  */
+ //do not shut down on error
+ process.on('uncaughtException', function (err) {
+     console.log(err);
+ });
+
 //getting the password
 var pass = process.argv[2];
 
