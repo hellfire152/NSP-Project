@@ -4,27 +4,20 @@
  * Project start date: 27/4/2017 (Week 2 Thursday)
  * Current Version: pre02052017
  */
- //do not shut down on error
- process.on('uncaughtException', function (err) {
-     console.log(err);
- });
-
 //getting the password
 var pass = process.argv[2];
-//error on no password
-if(pass === undefined || pass == "") {
-  throw new Error("Usage: ./run-server.bat <password>");
-}
+
 //various imports
 var express = require('express');
 var app = express();
 var https = require('https');
 var fs = require('fs');
 var helmet = require('helmet');
+var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
+var net = require('net');
 var key = fs.readFileSync('./cert/server.key');
 var cert = fs.readFileSync('./cert/server.crt');
-const net = require('net');
 
 //https nonsense, have yet to set it up properly
 var https_options = {
@@ -37,17 +30,18 @@ var server = https.createServer(https_options, app);
 server.listen(8080);
 var io = require('socket.io').listen(server);
 
-//setting up another server, for connection with the logic server
-var client = net.connect(9090);
+//connection with app server
+var appConn = net.connect(9090);
+
 // shared session handler
 var sessionHandler = require('./custom-API/game-handler.js');
 
-require("./server/server-setup.js")({
+require("./server-setup.js")({
   "app": app,
   "io": io,
   "sessionHandler": sessionHandler,
   "pass": pass,
-  "client": client
+  "appConn": appConn
 });
 
 //confimation message

@@ -1,6 +1,6 @@
 set pass=%1
 
-cd ./LogicClient
+cd ./AppServer
 start node ./server.js %pass%
 timeout 3
 cd ../WebServer
