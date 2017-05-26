@@ -10,6 +10,7 @@ module.exports = function(data) {
   var sessionHandler = data.sessionHandler;
   var pass = data.pass;
   var logicServer = data.logicServer;
+  var client = data.client;
 
   //express-session stuff
   var Session = require('express-session'),
@@ -33,16 +34,12 @@ module.exports = function(data) {
   app.get('/play', function(req, res) {
 
   });
-  app.get('/client', function(req, res) {
-    console.log("shit");
-    res.sendFile(__dirname + '/client' + req.path);
-  });
   //handling all other requests
   app.get('/*', function(req, res){
     res.sendFile(__dirname + "/site" + req.path);
   });
   //handling form submits
-  app.post('/join-room', require('./server/validate-join-room.js')(sessionHandler));
+  app.post('/join-room', require('./validate-join-room.js')(sessionHandler));
 
   //Various middleware
   app.use(bodyParser.json());
@@ -52,7 +49,6 @@ module.exports = function(data) {
   app.use(helmet()); //adds a bunch of security features
   app.use(session);
 
-  //setting up the io
   io.on('connection', function(socket){
     console.log("Request received");
     socket.on('logic', function(password){
@@ -65,40 +61,25 @@ module.exports = function(data) {
     });
   });
 
-  //setting up of the logic server
-  var server = net.createServer(function (conn) {
-    console.log("Server: Logic connected");
-
-    // If connection is closed
-    conn.on("end", function() {
-        console.log('Server: Logic disconnected');
-        // Close the server
-        server.close();
-        // End the process
-        process.exit(0);
+  //setting up forwarding of data between user and game server
+  //for authentication
+  client.write(JSON.stringify({"password": pass}));
+  //send stuff from user to game server
+  io.on('connection', function(socket){
+    console.log("Request received");
+    socket.on('send', function(data){ //from user
+      data.socketId = socket.id; //add socketId to identify accounts etc...
+      client.write(data); //to game server
     });
+  });
+  //from game server to user
+  client.on('receive', function(data) {
+    if(data.sendTo === "TO ONE USER") {
+      io.to(data.socketId).emit('receive', data);
+    } else if(data.sendTo === "TO ROOM") {
+      io.of()
+    } else if(data.sendTo === "TO HOST AND USER") {
 
-    // Handle data from client
-    conn.on("logic", function(password) {
-      if(password === pass) {
-        conn.id = 'LOGIC SERVER';
-        console.log('Logic: Connected');
-      } else {
-        console.log('Stop trying to hack into my shit');
-        conn.destroy();
-      }
-    });
-
-    // Let's response with a hello message
-    conn.write(
-        JSON.stringify(
-            { response: "Hey there client!" }
-        )
-      );
-    });
-
-  // Listen for connections
-  server.listen(80808, "localhost", function () {
-      console.log("Server: Listening");
+    }
   });
 }
