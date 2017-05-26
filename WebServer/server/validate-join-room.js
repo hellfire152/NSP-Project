@@ -18,29 +18,7 @@ module.exports = function(sessionHandler) {
     if(errors) {
       //TODO::Handle errors
     } else {
-      var iv = uuid();
-      var cipher = crypto.createCipher('aes192', 'tHisIsthEkEyFORaesEnCryPtion');
-      let encrypted = '';
-      cipher.on('readable', () => {
-        const data = cipher.read();
-        if(data) {
-          encrypted += data.toString('hex');
-        }
-      });
-
-      cipher.on('end', () => {
-        res.cookie('login', encrypted);
-        res.redirect('/play');
-      });
-
-      var data = {
-        'user': id,
-        'pass': pass
-      };
-
-      cipher.write(JSON.stringify(data));
-
-      sessionHandler.iv.store(id, iv);
+      
     }
   }
 }
