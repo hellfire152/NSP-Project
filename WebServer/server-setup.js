@@ -62,7 +62,8 @@ module.exports = function(data) {
         data.socketId = socket.id; //add socketId to identify accounts etc...
         appConn.write(JSON.stringify(data)); //to game server
       } catch (err) {
-        console.log('User to WebServer input not a JSON Object!');
+        console.log('User to WebServer input not a stringified JSON Object!');
+        socket.emit('err', 'Not a stringified JSON Object!');
       }
     });
   });
@@ -76,7 +77,7 @@ module.exports = function(data) {
           break;
         }
         case 1: { //USER
-          socketObj[data.socketId].emit('receive', JSON.stringify(data));
+          socketObj[data.targetId].emit('receive', JSON.stringify(data));
           break;
         }
         case 2: { //ROOM_ALL

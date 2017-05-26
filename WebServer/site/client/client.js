@@ -3,7 +3,11 @@
  * Version: pre02052017
  */
 //initializes a socket.io connection
+var socket = io();
 socket.on('receive', function(input) {
   var data = JSON.parse(input);
   console.log(data);
+});
+socket.on('err', function(err) {
+  console.log(err);
 });

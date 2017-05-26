@@ -34,6 +34,7 @@ var server = net.createServer(function (conn) {
   conn.on("data", function(input) {
     try {
       var data = JSON.parse(input);
+      console.log(data);
     } catch (err) {
       console.log('WebServer to AppServer input not a JSON Object!');
     }
@@ -45,14 +46,15 @@ var server = net.createServer(function (conn) {
       //Processing proper input
       //returns the same object with an extra property
       data.fromAppServer = true;
-      //TEST VALUE
-      data.sendTo = ALL;
+      if(data.sendTo === undefined) {
+        data.sendTo = ALL;
+      }
       conn.write(JSON.stringify(data));
     } else if(data.password === pass) { //valid password
       console.log("Validated");
       conn.auth = true;
     } else { //data sent without authorization
-      conn.destroy(); //destroy connection
+      //conn.destroy(); //destroy connection
     }
   });
 });
