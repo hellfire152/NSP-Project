@@ -71,19 +71,19 @@ module.exports = function(data) {
     try {
       let data = JSON.parse(input);
       switch(data.sendTo) {
-        case 0: { //TO_ALL
+        case 0: { //ALL
           io.of('/').emit('receive', JSON.stringify(data));
           break;
         }
-        case 1: { //TO_ONE_USER
+        case 1: { //USER
           socketObj[data.socketId].emit('receive', JSON.stringify(data));
           break;
         }
-        case 2: { //TO_ROOM_ALL
+        case 2: { //ROOM_ALL
           io.in(data.targetRoom).emit('receive', JSON.stringify(data));
           break;
         }
-        case 3: { //TO_ROOM_EXCEPT_SENDER
+        case 3: { //ROOM_EXCEPT_SENDER
           socketObj[data.socketId].to(data.targetRoom).emit('receive', JSON.stringify(data))
           break;
         }
