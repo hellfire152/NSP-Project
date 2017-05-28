@@ -11,7 +11,7 @@ goto end
 :start
 cd ./AppServer
 start node ./server.js %pass%
-timeout 3
+timeout 2
 cd ../WebServer
 start node ./server.js %pass%
 

@@ -33,28 +33,35 @@ var server = net.createServer(function (conn) {
   // Handle data from client
   conn.on("data", function(input) {
     try {
-      var data = JSON.parse(input);
-      console.log(data);
-    } catch (err) {
-      console.log('WebServer to AppServer input not a JSON Object!');
-    }
-    if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
-      throw new Error("Missing password");
-    }
-
-    if(conn.auth) { //if already authenticaed
-      //Processing proper input
-      //returns the same object with an extra property
-      data.fromAppServer = true;
-      if(data.sendTo === undefined) {
-        data.sendTo = ALL;
+      let data = JSON.parse(input);
+      let response = {};
+      if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
+        throw new Error("Missing password");
       }
-      conn.write(JSON.stringify(data));
-    } else if(data.password === pass) { //valid password
-      console.log("Validated");
-      conn.auth = true;
-    } else { //data sent without authorization
-      //conn.destroy(); //destroy connection
+      if(conn.auth) { //if already authenticaed
+        if(!(data.type === undefined)) { //data type defined
+          switch(data.type) {
+            case 'JOIN_ROOM': {
+              response.type = 'JOIN_ROOM_RESPONSE';
+              response.validLogin = true; //TODO::Proper login checks
+              response.room = data.room;
+              response.resNo = data.resNo;
+              break;
+            }
+          }
+        } else { //no data type -> socket.io stuff
+
+        }
+        conn.write(JSON.stringify(response));
+      } else if(data.password === pass) { //valid password
+        console.log("WebServer Validated");
+        conn.auth = true;
+      } else { //data sent without authorization
+        conn.destroy(); //destroy connection
+      }
+    } catch (err) {
+      console.log(err);
+      console.log('WebServer to AppServer input Error!');
     }
   });
 });

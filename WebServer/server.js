@@ -17,11 +17,9 @@ var express = require('express');
 var app = express();
 var https = require('https');
 var fs = require('fs');
-var helmet = require('helmet');
-var bodyParser = require('body-parser');
-var expressValidator = require('express-validator');
 var net = require('net');
-var cookieReader = require('./custom-API/cookie-reader.js');
+var cookieParser = require('cookie-parser');
+var cipher = require('./custom-API/cipher.js')();
 var key = fs.readFileSync('./cert/server.key');
 var cert = fs.readFileSync('./cert/server.crt');
 
@@ -40,15 +38,21 @@ var io = require('socket.io').listen(server);
 var appConn = net.connect(9090);
 
 // shared session handler
-var sessionHandler = require('./custom-API/game-handler.js');
+var sessionHandler = require('./custom-API/session-handler.js');
 
+//key for cookie
+const COOKIE_KEY = "cookieSECREEET";
 require("./server-setup.js")({
   "app": app,
   "io": io,
   "sessionHandler": sessionHandler,
   "pass": pass,
   "appConn": appConn,
-  "cookieReader": cookieReader
+  "express": express,
+  "net": net,
+  "cookieParser": cookieParser,
+  "cipher": cipher,
+  "COOKIE_KEY": COOKIE_KEY
 });
 
 //confimation message

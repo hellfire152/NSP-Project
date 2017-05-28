@@ -45,6 +45,14 @@ function decrypt(cipher) {
   return dec;
 }
 
+function encryptJSON(plain) {
+  return encrypt(JSON.stringify(plain));
+}
+
+function decryptJSON(cipher) {
+  return JSON.parse(decrypt(cipher));
+}
+
 function encryptIv(plain) {
 }
 
@@ -60,6 +68,8 @@ module.exports = function(options) {
   return {
     "encrypt": encrypt,
     "decrypt": decrypt,
+    "encryptJSON": encryptJSON,
+    "decryptJSON": decryptJSON,
     "encryptIv": encryptIv,
     "decryptIv": decryptIv,
     "iv": iv

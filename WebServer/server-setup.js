@@ -1,16 +1,22 @@
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var helmet = require('helmet');
-var express = require('express');
-const net = require('net');
+var uuid = require('uuid');
+var pending_responses = {};
 
 module.exports = function(data) {
+  //extracting data
   var app = data.app;
   var io = data.io;
   var sessionHandler = data.sessionHandler;
   var pass = data.pass;
   var appConn = data.appConn;
-  var cookieReader = data.cookieReader;
+  var cipher = data.cipher;
+  var express = data.express
+  var net = data.net;
+  var cookieParser = data.cookieParser;
+  const COOKIE_KEY = data.COOKIE_KEY;
+
   //express-session stuff
   var Session = require('express-session'),
       sessionFile = require('session-file-store')(Session);
@@ -18,14 +24,22 @@ module.exports = function(data) {
         store: new sessionFile({
           path: './tmp/sessions'
         }),
-        secret: 'a very long pass phrase or something I dunno',
+        secret: COOKIE_KEY,
         resave: true,
         saveUninitialized: true,
         cookie : {
-          secure : true,
-          httpOnly : true
+          secure : true
         }
       });
+
+    //Various middleware
+    app.use(session);
+    app.use(cookieParser(COOKIE_KEY));
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: false}));
+    app.use(expressValidator());
+    app.use("/", express.static(__dirname));
+    app.use(helmet()); //adds a bunch of security features
 
   //routing
   //sends index.html when someone sends a https request
@@ -37,8 +51,18 @@ module.exports = function(data) {
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
       console.log("Well someone's trying to cause an error...");
     } else {
-      let cookieData = JSON.parse(req.signedCookies.login_and_room);
-
+      let roomNo = req.query.room;
+      let cookieData = cipher.decryptJSON(req.cookies.login_and_room);
+      let resNo = uuid();
+      pending_responses[resNo] = res;
+      appConn.write(JSON.stringify({ //AppServer does verification
+        'type': 'JOIN_ROOM',
+        'id': cookieData.id,
+        'pass': cookieData.pass,
+        'resNo': resNo,
+        'room': roomNo
+      }));
+      //TODO::Send quiz data and stuff
     }
   });
   //handling all other requests
@@ -46,16 +70,8 @@ module.exports = function(data) {
     res.sendFile(__dirname + "/site" + req.path);
   });
 
-  //Various middleware
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({extended: false}));
-  app.use(expressValidator());
-  app.use("/", express.static(__dirname));
-  app.use(helmet()); //adds a bunch of security features
-  app.use(session);
-
   //handling form submit
-  app.post('/join-room', require('./server/validate-join-room.js')(cookieReader));
+  app.post('/join-room', require('./server/validate-join-room.js')(cipher, appConn));
   //setting up forwarding of data between user and game server
   //short hand
   var socketObj = io.sockets.sockets;
@@ -78,29 +94,46 @@ module.exports = function(data) {
   appConn.on('data', function(input) { //from app server
     try {
       let data = JSON.parse(input);
-      switch(data.sendTo) {
-        case 0: { //ALL
-          io.of('/').emit('receive', JSON.stringify(data));
-          break;
+      if(!(data.type === undefined)) {
+        switch(data.type) {
+          case 'JOIN_ROOM_RESPONSE': {
+            if(data.validLogin == true) {
+              let res = pending_responses[data.resNo]
+              res.clearCookie('login_and_room');
+              res.sendFile(__dirname + '/site/play.html')
+              delete pending_responses[data.resNo];
+              //Let socket.io take the game stuff from here
+            }
+            break;
+          }
         }
-        case 1: { //USER
-          socketObj[data.targetId].emit('receive', JSON.stringify(data));
-          break;
-        }
-        case 2: { //ROOM_ALL
-          io.in(data.targetRoom).emit('receive', JSON.stringify(data));
-          break;
-        }
-        case 3: { //ROOM_EXCEPT_SENDER
-          socketObj[data.socketId].to(data.targetRoom).emit('receive', JSON.stringify(data))
-          break;
-        }
-        default: {
-          console.log('AppServer to WebServer sendTo value is ' +data.sendTo +', not a preset case');
+      } else { //no type -> socket.io stuff
+         switch(data.sendTo) {
+          case 0: { //ALL
+            io.of('/').emit('receive', JSON.stringify(data));
+            break;
+          }
+          case 1: { //USER
+            socketObj[data.targetId].emit('receive', JSON.stringify(data));
+            break;
+          }
+          case 2: { //ROOM_ALL
+            io.in(data.targetRoom).emit('receive', JSON.stringify(data));
+            break;
+          }
+          case 3: { //ROOM_EXCEPT_SENDER
+            socketObj[data.socketId].to(data.targetRoom).emit('receive', JSON.stringify(data))
+            break;
+          }
+          default: {
+            console.log('AppServer to WebServer sendTo value is ' +data.sendTo +', not a preset case');
+          }
         }
       }
+      if(!(data.callback === undefined)) data.callback();
     } catch (err) {
-      console.log('AppServer to WebServer input not a JSON Object!');
+      console.log(err);
+      console.log('Error Processing AppServer to WebServer input!');
     }
   });
 }
