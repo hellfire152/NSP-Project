@@ -11,3 +11,6 @@ socket.on('receive', function(input) {
 socket.on('err', function(err) {
   console.log(err);
 });
+socket.emit('send', JSON.stringify({
+  hi : 'hi';
+}));

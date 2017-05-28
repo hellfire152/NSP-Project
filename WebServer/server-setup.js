@@ -10,17 +10,20 @@ module.exports = function(data) {
   var sessionHandler = data.sessionHandler;
   var pass = data.pass;
   var appConn = data.appConn;
-
+  var cookieReader = data.cookieReader;
   //express-session stuff
   var Session = require('express-session'),
-      SessionStore = require('session-file-store')(Session),
+      sessionFile = require('session-file-store')(Session);
       session = Session({
-        store: new SessionStore({ path: './tmp/sessions' }),
+        store: new sessionFile({
+          path: './tmp/sessions'
+        }),
         secret: 'a very long pass phrase or something I dunno',
         resave: true,
         saveUninitialized: true,
         cookie : {
-          secure : true
+          secure : true,
+          httpOnly : true
         }
       });
 
@@ -31,14 +34,17 @@ module.exports = function(data) {
   });
   //handling play path
   app.get('/play', function(req, res) {
+    if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
+      console.log("Well someone's trying to cause an error...");
+    } else {
+      let cookieData = JSON.parse(req.signedCookies.login_and_room);
 
+    }
   });
   //handling all other requests
   app.get('/*', function(req, res){
     res.sendFile(__dirname + "/site" + req.path);
   });
-  //handling form submits
-  app.post('/join-room', require('./server/validate-join-room.js')(sessionHandler));
 
   //Various middleware
   app.use(bodyParser.json());
@@ -48,6 +54,8 @@ module.exports = function(data) {
   app.use(helmet()); //adds a bunch of security features
   app.use(session);
 
+  //handling form submit
+  app.post('/join-room', require('./server/validate-join-room.js')(cookieReader));
   //setting up forwarding of data between user and game server
   //short hand
   var socketObj = io.sockets.sockets;
@@ -62,7 +70,6 @@ module.exports = function(data) {
         data.socketId = socket.id; //add socketId to identify accounts etc...
         appConn.write(JSON.stringify(data)); //to game server
       } catch (err) {
-        console.log('User to WebServer input not a stringified JSON Object!');
         socket.emit('err', 'Not a stringified JSON Object!');
       }
     });

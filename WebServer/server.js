@@ -21,6 +21,7 @@ var helmet = require('helmet');
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var net = require('net');
+var cookieReader = require('./custom-API/cookie-reader.js');
 var key = fs.readFileSync('./cert/server.key');
 var cert = fs.readFileSync('./cert/server.crt');
 
@@ -46,7 +47,8 @@ require("./server-setup.js")({
   "io": io,
   "sessionHandler": sessionHandler,
   "pass": pass,
-  "appConn": appConn
+  "appConn": appConn,
+  "cookieReader": cookieReader
 });
 
 //confimation message
