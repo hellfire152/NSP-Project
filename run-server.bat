@@ -1,4 +1,7 @@
 @ECHO OFF
+rem Run this to start the WebServer and AppServer together.
+rem Author: Jin Kuan
+
 set pass=%1
 
 if %1.==. goto error
@@ -16,3 +19,4 @@ cd ../WebServer
 start node ./server.js %pass%
 
 :end
+echo Servers started!

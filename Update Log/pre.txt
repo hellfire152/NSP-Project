@@ -59,3 +59,34 @@ and the game logic, and have some way to connect the two together.
 Most likely socket.io again though.
 That also complicates my job by quite a bit.
 sighhhhhhhhhhhhhhhhhhhhhhhh..............
+
+28/5/2017 - Ang Jin Kuan
+Finished the Great Refactoring!
+Actually, I did that 2 days ago.
+Whatever!
+The WebServer and AppServer as I'm going to call them both from now on,
+are completely separate! The WebServer and AppServer will authenticate using
+a password set using the run-server.bat file too, so that's an extra security feature!
+Still, I had to learn batch scripting, which is yet another thing I can do now I guess.
+The main thing I managed to do these past 4 days was get those two servers
+working together, which was A LOT MORE PAINFUL THAN I THOUGHT IT WOULD BE.
+The hardest part isn't actually coding up what I need now, it's
+making sure that I can always extend from all the infrastructure I'm building
+up throughout all this time. Javascript's extra loose typing does help in that regard,
+but I can't rely on that too much else it becomes too confusing.
+For now I put a bunch of switch cases, I hope that's enough to carry the whole project.
+Those switches will check for a number or a string as an option, so that's infinitely
+extensible, which is just fine and dandy.
+
+I've also finished figuring out another thing: Cookies!
+The express-session thing and its documentation gave me so much confusion.
+Express-session says I don't need to use cookie-parser, but I couldn't figure out
+how to read the cookie without cookie-parser.
+I've set their keys to be the same, so it shouldn't be too much of a problem.
+
+Both of these things culminated in me successfully processing the inputs of a form,
+then redirecting the user to a page with just one <h1>Hello!</h1> in it.
+It's really not much at all, but I'm taking any victory I'm gonna get.
+
+Now that that's all working, next week, I can finally focus on coding the
+classic game mode!

@@ -1,3 +1,9 @@
+/**
+  Test file for validating the test version of the room joining form.
+
+  Author: Jin Kuan
+*/
+
 var uuid = require('uuid');
 var crypto = require('crypto');
 module.exports = function(cipher, appConn) {

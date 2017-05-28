@@ -1,3 +1,16 @@
+/**
+  Application Server for the Project.
+  This server handles all processing of data, this data is sent from
+  the WebServer, and may or may not be from socket.io
+  Socket.io requests have data.type undefined.
+
+  This should be the only server that accesses the database.
+  That means the WebServer will not make any direct database queries.
+
+  Author: Jin Kuan
+  Version: pre28052017
+*/
+
 //do not shut down on error
 process.on('uncaughtException', function (err) {
     console.log(err);

@@ -2,9 +2,12 @@
   Cipher module for the project
   Usage: require(<path to this module>)({
     password: <password> (default: aVaTyAzkOqweA)
-    algorithm: <any algorithm> (default: aes-192)
+    algorithm: <any algorithm> (default: aes256)
     iv: <iv (if applicable)> (default: no iv)
   })
+  All of the above options are optional
+  
+  Author: Jin Kuan
 */
 var crypto = require('crypto');
 
@@ -45,18 +48,15 @@ function decrypt(cipher) {
   return dec;
 }
 
-function encryptJSON(plain) {
-  return encrypt(JSON.stringify(plain));
-}
-
-function decryptJSON(cipher) {
-  return JSON.parse(decrypt(cipher));
-}
-
 function encryptIv(plain) {
 }
 
 function decryptIv(cipher) {
+}
+
+//takes in any number of arguments
+function hash() {
+
 }
 
 module.exports = function(options) {
@@ -68,10 +68,9 @@ module.exports = function(options) {
   return {
     "encrypt": encrypt,
     "decrypt": decrypt,
-    "encryptJSON": encryptJSON,
-    "decryptJSON": decryptJSON,
     "encryptIv": encryptIv,
     "decryptIv": decryptIv,
+    "hash": hash,
     "iv": iv
   }
 }

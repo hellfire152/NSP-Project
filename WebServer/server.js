@@ -2,7 +2,9 @@
  * Network Security and Project - Group PANDA
  * Members: Ang Jin Kuan, Nigel Chen Chin Hao, Low Qing Ning, Bryan Tan Shao Xuan, Chloe Ang
  * Project start date: 27/4/2017 (Week 2 Thursday)
- * Current Version: pre02052017
+ * Current Version: pre28052017
+
+  Author: Jin Kuan
  */
  //do not shut down on error
  process.on('uncaughtException', function (err) {
@@ -19,7 +21,7 @@ var https = require('https');
 var fs = require('fs');
 var net = require('net');
 var cookieParser = require('cookie-parser');
-var cipher = require('./custom-API/cipher.js')();
+var cipher = require('../custom-API/cipher.js')();
 var key = fs.readFileSync('./cert/server.key');
 var cert = fs.readFileSync('./cert/server.crt');
 
@@ -38,7 +40,7 @@ var io = require('socket.io').listen(server);
 var appConn = net.connect(9090);
 
 // shared session handler
-var sessionHandler = require('./custom-API/session-handler.js');
+var sessionHandler = require('../custom-API/session-handler.js');
 
 //key for cookie
 const COOKIE_KEY = "cookieSECREEET";

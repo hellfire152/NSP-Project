@@ -1,3 +1,6 @@
+@echo off
+rem This file installs all the modules our project depends on.
+rem Author: Jin Kuan
 call npm install socket.io
 call npm install express
 call npm install express-session
@@ -10,3 +13,5 @@ call npm install crypto
 call npm install express-validator
 call npm install body-parser
 call npm install uuid
+cls
+echo All required modules installed!

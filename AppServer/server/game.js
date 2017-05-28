@@ -1,20 +1,5 @@
-/*
-  Handles the code for the game, that are not gamemode-specific
-*/
-/*
-  keeps track of all progress
+/**
+  Handles any function that is shared between gamemodes.
 
-  {
-    room_id : auiz _object
-  }
+  Author: Jin Kuan
 */
-var allProgress = {};
-var cipher = require('../custom-API/cipher.js');
-//var sessionHandler = require('./custom-API/session-handler.js');
-var shortid = require('shortid');
-module.exports = function (io) {
-  io.sockets.on('connection', function(socket) {
-    console.log("Request received");
-
-  });
-};

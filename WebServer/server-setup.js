@@ -1,3 +1,13 @@
+/**
+  Various set up funcitons that are required for the whole project to work.
+  This includes communication using socket.io, GET and POST HTML requests,
+  and all the stuff with the AppServer.
+
+  Any middleware that is used is also set here.
+
+  Author: Jin Kuan
+*/
+
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var helmet = require('helmet');
@@ -53,6 +63,7 @@ module.exports = function(data) {
     } else {
       let roomNo = req.query.room;
       let cookieData = cipher.decryptJSON(req.cookies.login_and_room);
+      //indirect reference as I can't directly srtingify it for some reason
       let resNo = uuid();
       pending_responses[resNo] = res;
       appConn.write(JSON.stringify({ //AppServer does verification
@@ -72,6 +83,8 @@ module.exports = function(data) {
 
   //handling form submit
   app.post('/join-room', require('./server/validate-join-room.js')(cipher, appConn));
+
+
   //setting up forwarding of data between user and game server
   //short hand
   var socketObj = io.sockets.sockets;
@@ -83,29 +96,31 @@ module.exports = function(data) {
     socket.on('send', function(input){ //from user
       try {
         var data = JSON.parse(input);
-        data.socketId = socket.id; //add socketId to identify accounts etc...
+        data.socketId = socket.id; //add socketId to identify connection later
         appConn.write(JSON.stringify(data)); //to game server
       } catch (err) {
         socket.emit('err', 'Not a stringified JSON Object!');
       }
     });
   });
+
   //from game server to user
   appConn.on('data', function(input) { //from app server
     try {
       let data = JSON.parse(input);
-      if(!(data.type === undefined)) {
+      if(!(data.type === undefined)) { //custom type defined
         switch(data.type) {
           case 'JOIN_ROOM_RESPONSE': {
             if(data.validLogin == true) {
-              let res = pending_responses[data.resNo]
+              let res = pending_responses[data.resNo]; //get pending response
               res.clearCookie('login_and_room');
               res.sendFile(__dirname + '/site/play.html')
-              delete pending_responses[data.resNo];
+              delete pending_responses[data.resNo]; //remove the pending request
               //Let socket.io take the game stuff from here
             }
             break;
           }
+          //ADD MORE CASES HERE
         }
       } else { //no type -> socket.io stuff
          switch(data.sendTo) {

@@ -10,6 +10,8 @@
     room_id : [array of user_ids]
   }
   To check if a user is blocked,
+
+  Author: Jin Kuan (Supposed to be Qing Ning's part tho)
 */
 var userSessions = {
   individual : {},
