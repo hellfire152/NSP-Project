@@ -22,6 +22,7 @@ const RES_TYPE = {
 }
 module.exports = {
   "MCQ": MCQ,
+  "EVENT": EVENT,
   "SEND_TO": SEND_TO,
   "REQ_TYPE": REQ_TYPE,
   "RES_TYPE": RES_TYPE
