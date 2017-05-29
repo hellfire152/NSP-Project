@@ -13,5 +13,6 @@ call npm install crypto
 call npm install express-validator
 call npm install body-parser
 call npm install uuid
+call npm install promise
 cls
 echo All required modules installed!

@@ -62,18 +62,19 @@ module.exports = function(data) {
       console.log("Well someone's trying to cause an error...");
     } else {
       let roomNo = req.query.room;
-      let cookieData = cipher.decryptJSON(req.cookies.login_and_room);
-      //indirect reference as I can't directly srtingify it for some reason
-      let resNo = uuid();
-      pending_responses[resNo] = res;
-      appConn.write(JSON.stringify({ //AppServer does verification
-        'type': 'JOIN_ROOM',
-        'id': cookieData.id,
-        'pass': cookieData.pass,
-        'resNo': resNo,
-        'room': roomNo
-      }));
-      //TODO::Send quiz data and stuff
+      cipher.decryptJSON(req.cookies.login_and_room)
+        .then(function(cookieData) {
+          //indirect reference as I can't directly srtingify it for some reason
+          let resNo = uuid();
+          pending_responses[resNo] = res;
+          appConn.write(JSON.stringify({ //AppServer does verification
+            'type': 'JOIN_ROOM',
+            'id': cookieData.id,
+            'pass': cookieData.pass,
+            'resNo': resNo,
+            'room': roomNo
+          }));
+        });
     }
   });
   //handling all other requests
@@ -88,7 +89,7 @@ module.exports = function(data) {
   //setting up forwarding of data between user and game server
   //short hand
   var socketObj = io.sockets.sockets;
-  //for authentication
+  //for authentication with AppServer
   appConn.write(JSON.stringify({"password": pass}));
   //send stuff from user to game server
   io.on('connection', function(socket){

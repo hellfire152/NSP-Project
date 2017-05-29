@@ -6,7 +6,12 @@
     iv: <iv (if applicable)> (default: no iv)
   })
   All of the above options are optional
-  
+
+  All methods return a Promise Object, so, to use it, write
+  var encrypted = cipher.encrypt('test');
+  encrypted.then(<any function>) //the encrypted value is the first argument
+  in the function
+
   Author: Jin Kuan
 */
 var crypto = require('crypto');
@@ -34,18 +39,26 @@ function stringToBuffer(s) {
   return Buffer.from(charArr);
 }
 
-function encrypt(plain) {
+async function encrypt(plain) {
   var cipher = crypto.createCipher(algorithm,password);
   var encrypted = cipher.update(plain,'utf8','binary')
   encrypted += cipher.final('binary');
   return encrypted;
 }
 
-function decrypt(cipher) {
+async function decrypt(cipher) {
   var decipher = crypto.createDecipher(algorithm,password);
   var dec = decipher.update(cipher, 'binary', 'utf8');
   dec += decipher.final('utf8');
   return dec;
+}
+
+async function encryptJSON(plain) {
+  return await encrypt(JSON.stringify(plain));
+}
+
+async function decryptJSON(cipher) {
+  return JSON.parse(await decrypt(cipher));
 }
 
 function encryptIv(plain) {
@@ -68,6 +81,8 @@ module.exports = function(options) {
   return {
     "encrypt": encrypt,
     "decrypt": decrypt,
+    "encryptJSON": encryptJSON,
+    "decryptJSON": decryptJSON,
     "encryptIv": encryptIv,
     "decryptIv": decryptIv,
     "hash": hash,
