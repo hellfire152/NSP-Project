@@ -41,11 +41,12 @@ app.get('/', function(req, res){
 });
 
 //I have no idea how this works, but it does
-app.use("/client", express.static(__dirname + '/client'));
-app.use("/resources", express.static(__dirname + '/resources'));
-app.use("/resources/images", express.static(__dirname + '/resources/images'));
-app.use(helmet()); //adds a bunch of security features
-app.use(session);
+app.use("/", express.static(__dirname));
+// app.use("./", express.static(__dirname + '/client'));
+// app.use("/resources", express.static(__dirname + '/resources'));
+// app.use("/resources/images", express.static(__dirname + '/resources/images'));
+// app.use(helmet()); //adds a bunch of security features
+// app.use(session);
 
 //enables my use of socket.handshake.session
 io.use(function(socket, next) {

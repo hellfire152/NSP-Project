@@ -1,10 +1,21 @@
-
-var userSessions = {
-  "individual" : {},
-  "rooms" : {
-    "users": [],
-    "quiz": {}
+/*
+  stores all connected sessions
+  individual {
+    user_id : {
+      limit: boolean,
+      roomm : room-id
+    }
   }
+  room {
+    room_id : [array of user_ids]
+  }
+  To check if a user is blocked,
+
+  Author: Jin Kuan (Supposed to be Qing Ning's part tho)
+*/
+var userSessions = {
+  individual : {},
+  rooms : {}
 };
 
 var ivStore = {};
@@ -19,13 +30,6 @@ function addUserToRoom(socket, room) {
   let user = userSessions.individual[socket.userId];
   user.room = room;
   userSessions.rooms[room].push(socket.userId);
-}
-
-function setRoomQuiz(room, quiz) {
-    if(userSessions.rooms[room] === undefined) {
-      throw new Error('Room doesn\'t exist!');
-    }
-    userSessions.rooms[room].quiz = quiz;
 }
 
 function removeUser(socket) {
