@@ -29,7 +29,11 @@ module.exports = function(cipher, appConn) {
         "id": req.body.id,
         "pass": req.body.pass,
         "room": req.body.room
-      }).then(function(cookieData) {
+      })
+        .catch(function (err) {
+          throw new Error('Error parsing JSON!');
+        })
+        .then(function(cookieData) {
         res.cookie('login_and_room', cookieData, {"maxAge": 1000*60*5});
         res.redirect('/play?room=' +req.body.room);
       });
