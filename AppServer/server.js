@@ -16,11 +16,7 @@ process.on('uncaughtException', function (err) {
     console.log(err);
 });
 
-//constants
-const ALL = 0;
-const USER = 1;
-const ROOM_ALL = 2;
-const ROOM_EXCEPT_SENDER = 3;
+const C = require('../custom-API/constants.js');
 
 //password
 var pass = process.argv[2];
@@ -54,16 +50,28 @@ var server = net.createServer(function (conn) {
       if(conn.auth) { //if already authenticaed
         if(!(data.type === undefined)) { //data type defined
           switch(data.type) {
-            case 'JOIN_ROOM': {
-              response.type = 'JOIN_ROOM_RESPONSE';
-              response.validLogin = true; //TODO::Proper login checks
-              response.room = data.room;
-              response.resNo = data.resNo;
-              break;
+            case C.REQ_TYPE.JOIN_ROOM: {
+              if(/*TODO::VALID LOGIN*/true) {
+                response.type = C.RES_TYPE.JOIN_ROOM_RES;
+                response.validLogin = true;
+                response.room = data.room;
+                response.resNo = data.resNo;
+                response.WebServer = {
+                  "joinRoom": data.room
+                };
+                break;
+              } else {
+                //INVALID LOGIN
+              }
             }
           }
         } else { //no data type -> socket.io stuff
+          switch(data.event) {
+            case C.EVENT.INIT_ROOM: {
 
+              break;
+            }
+          }
         }
         conn.write(JSON.stringify(response));
       } else if(data.password === pass) { //valid password

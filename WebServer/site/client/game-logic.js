@@ -3,10 +3,15 @@
  * Version: pre28052017
  */
 //constants for the MCQ choice
-const MCQ_A = 0b1000;
-const MCQ_B = 0b0100;
-const MCQ_C = 0b0010;
-const MCQ_D = 0b0001;
+const MCQ = {
+  'A' : 0b1000;
+  'B' : 0b0100;
+  'C' : 0b0010;
+  'D' : 0b0001;
+}
+const EVENT = {
+  'INIT_ROOM': 0
+}
 
 //initializes a socket.io connection
 var socket = io();
@@ -17,6 +22,6 @@ socket.on('receive', function(input) {
 socket.on('err', function(err) {
   console.log(err);
 });
-socket.emit('send', JSON.stringify({
-  hi : 'hi';
-}));
+socket.emit('send', JSON.stringify{
+  "event": EVENT.INIT_ROOM
+});
