@@ -10,6 +10,9 @@ const a = async () => {
 }
 
 a().then(console.log); //calling outside an async function
+
+console.log(c);
+
 (async () => { //calling inside async function
   console.log(await a());
 })();

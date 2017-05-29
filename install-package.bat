@@ -14,6 +14,5 @@ call npm install express-validator
 call npm install body-parser
 call npm install uuid
 call npm install promise
-call npm install cookie
 cls
 echo All required modules installed!

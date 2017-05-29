@@ -13,8 +13,6 @@ var expressValidator = require('express-validator');
 var helmet = require('helmet');
 var uuid = require('uuid');
 var pending_responses = {};
-var cookie = require('cookie');
-const C = require('../custom-API/constants.js');
 
 module.exports = function(data) {
   //extracting data
@@ -70,7 +68,7 @@ module.exports = function(data) {
           let resNo = uuid();
           pending_responses[resNo] = res;
           appConn.write(JSON.stringify({ //AppServer does verification
-            'type': C.REQ_TYPE.JOIN_ROOM, //JOIN_ROOM
+            'type': 'JOIN_ROOM',
             'id': cookieData.id,
             'pass': cookieData.pass,
             'resNo': resNo,
@@ -95,14 +93,6 @@ module.exports = function(data) {
   appConn.write(JSON.stringify({"password": pass}));
   //send stuff from user to game server
   io.on('connection', function(socket){
-    //get login ID
-    cipher.decryptJSON(cookie.parse(socket.handshake.headers.cookie))
-      .then(function(cookieData) {
-        socket.userId = cookieData.id;
-        sessionHandler.addUserToRoom(socket, cookieData.room);
-      });
-
-    //adding listeners
     console.log("Request received: " +socket.id);
     socket.on('send', function(input){ //from user
       try {
@@ -121,9 +111,10 @@ module.exports = function(data) {
       let data = JSON.parse(input);
       if(!(data.type === undefined)) { //custom type defined
         switch(data.type) {
-          case 0: { //JOIN_ROOM_RES
+          case 'JOIN_ROOM_RESPONSE': {
             if(data.validLogin == true) {
               let res = pending_responses[data.resNo]; //get pending response
+              res.clearCookie('login_and_room');
               res.sendFile(__dirname + '/site/play.html')
               delete pending_responses[data.resNo]; //remove the pending request
               //Let socket.io take the game stuff from here
@@ -134,24 +125,20 @@ module.exports = function(data) {
         }
       } else { //no type -> socket.io stuff
          switch(data.sendTo) {
-          case C.SEND_TO.ALL: { //ALL
+          case 0: { //ALL
             io.of('/').emit('receive', JSON.stringify(data));
             break;
           }
-          case C.SEND_TO.USER: {
+          case 1: { //USER
             socketObj[data.targetId].emit('receive', JSON.stringify(data));
             break;
           }
-          case C.SEND_TO.ROOM_ALL: {
+          case 2: { //ROOM_ALL
             io.in(data.targetRoom).emit('receive', JSON.stringify(data));
             break;
           }
-          case C.SEND_TO.ROOM_EXCEPT_SENDER: {
+          case 3: { //ROOM_EXCEPT_SENDER
             socketObj[data.socketId].to(data.targetRoom).emit('receive', JSON.stringify(data))
-            break;
-          }
-          case C.SEND_TO.NULL: {
-
             break;
           }
           default: {
