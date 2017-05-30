@@ -16,12 +16,13 @@ process.on('uncaughtException', function (err) {
     console.log(err);
 });
 
-const C = require('../custom-API/constants.js');
+const C = require('../custom-API/constants.json');
 
 //password
 var pass = process.argv[2];
 if(pass === undefined) {
   throw new Error("Usage: ./run-server.bat <password>");
+  process.exit(1);
 }
 
 var net = require('net');
@@ -43,12 +44,15 @@ var server = net.createServer(function (conn) {
   conn.on("data", function(input) {
     try {
       let data = JSON.parse(input);
+      console.log("FROM WEBSERVER");
+      console.log(data);
       let response = {};
       if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
         throw new Error("Missing password");
       }
       if(conn.auth) { //if already authenticaed
         if(!(data.type === undefined)) { //data type defined
+          console.log("REQ TYPE: " +data.type);
           switch(data.type) {
             case C.REQ_TYPE.JOIN_ROOM: {
               if(/*TODO::VALID LOGIN*/true) {
@@ -56,13 +60,23 @@ var server = net.createServer(function (conn) {
                 response.validLogin = true;
                 response.room = data.room;
                 response.resNo = data.resNo;
-                response.WebServer = {
-                  "joinRoom": data.room
-                };
+                response.id = data.id;
                 break;
               } else {
                 //INVALID LOGIN
               }
+            }
+            case C.REQ_TYPE.HOST_ROOM: {
+              console.log("HOST_ROOM_REQ");
+              response = {
+                'type': C.RES_TYPE.HOST_ROOM_RES,
+                'validLogin': true,//TODO::Proper login check
+                'room': data.room,
+                'resNo': data.resNo,
+                'hostId': data.id,
+                'quiz': (data.quiz == 'TEST')? require('../test-quiz.json'): null
+              };
+              break;
             }
           }
         } else { //no data type -> socket.io stuff
@@ -71,8 +85,18 @@ var server = net.createServer(function (conn) {
 
               break;
             }
+            case C.EVENT.INIT_HOST_ROOM: {
+
+              break;
+            }
+            case C.EVENT.ASSURE_HOST: {
+
+              break;
+            }
           }
         }
+        console.log("AppServer Response: ");
+        console.log(response);
         conn.write(JSON.stringify(response));
       } else if(data.password === pass) { //valid password
         console.log("WebServer Validated");

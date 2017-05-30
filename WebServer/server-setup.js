@@ -14,6 +14,7 @@ var helmet = require('helmet');
 var uuid = require('uuid');
 var pendingResponses = {};
 var cookie = require('cookie');
+var ios = require('socket.io-express-session');
 const C = require('../custom-API/constants.json');
 
 module.exports = function(data) {
@@ -44,6 +45,8 @@ module.exports = function(data) {
         }
       });
 
+  //enables my use of socket.handshake.session
+  io.use(ios(session));
     //Various middleware
   app.use(session);
   app.use(cookieParser(COOKIE_KEY));
@@ -54,8 +57,8 @@ module.exports = function(data) {
   app.use(helmet()); //adds a bunch of security features
 
   //setting routes
-  require('./server/setup/routes.js')(C, app, __dirname, cipher, appConn, uuid);
+  require('./server/setup/routes.js')(C, app, __dirname, pendingResponses, cipher, appConn, uuid);
 
   //setting up the communication between the WebServer and AppServer
-  require('./server/setup/io-forward.js')(C, __dirname, io, sessionHandler, pendingResponses, cipher, appConn);
+  require('./server/setup/io-forward.js')(C, __dirname, pass, io, sessionHandler, pendingResponses, cipher, appConn);
 }

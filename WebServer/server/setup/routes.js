@@ -1,4 +1,4 @@
-module.exports = function(C, app, dirname, cipher, appConn, uuid) {
+module.exports = function(C, app, dirname, pendingResponses, cipher, appConn, uuid) {
   //routing
   //sends index.html when someone sends a https request
   app.get('/', function(req, res){
@@ -11,10 +11,13 @@ module.exports = function(C, app, dirname, cipher, appConn, uuid) {
     } else {
       let roomNo = req.query.room;
       cipher.decryptJSON(req.cookies.login_and_room)
+        .catch(reason => {
+          console.log(reason);
+        })
         .then(function(cookieData) {
           //indirect reference as I can't directly srtingify it for some reason
           let resNo = uuid();
-          pending_responses[resNo] = res;
+          pendingResponses[resNo] = res;
           appConn.write(JSON.stringify({ //AppServer does verification
             'type': C.REQ_TYPE.JOIN_ROOM, //JOIN_ROOM
             'id': cookieData.id,
@@ -26,7 +29,28 @@ module.exports = function(C, app, dirname, cipher, appConn, uuid) {
     }
   });
   app.get('/host', function(req, res) {
-
+    if(req.query.room.constructor === Array) {
+      console.log("Please don't mess with my webpage");
+    } else {
+      let roomNo = req.query.room;
+      cipher.decryptJSON(req.cookies.hosting_room)
+        .catch(reason => {
+          console.log(reason);
+        })
+        .then(cookieData => {
+          let resNo = uuid();
+          pendingResponses[resNo] = res;
+          console.log("COOKIE DATA GOTTEN");
+          appConn.write(JSON.stringify({
+            'type': C.RES_TYPE.HOST_ROOM_RES,
+            'id': cookieData.id,
+            'pass': cookieData.pass,
+            'resNo': resNo,
+            'room': roomNo,
+            'quiz': cookieData.quiz
+          }));
+        });
+    }
   });
   //handling all other requests
   app.get('/*', function(req, res){

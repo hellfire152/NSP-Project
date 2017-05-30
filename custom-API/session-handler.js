@@ -1,10 +1,7 @@
 
 var userSessions = {
   "individual" : {},
-  "rooms" : {
-    "users": [],
-    "quiz": {}
-  }
+  "rooms" : {}
 };
 
 var ivStore = {};
@@ -16,16 +13,18 @@ function addUser(socket) {
 }
 
 function addUserToRoom(socket, room) {
+  if(userSessions.individual[socket.userId] === undefined) addUser(socket);
   let user = userSessions.individual[socket.userId];
   user.room = room;
-  userSessions.rooms[room].push(socket.userId);
+  userSessions.rooms[room].users.push(socket.userId);
 }
 
-function setRoomQuiz(room, quiz) {
-    if(userSessions.rooms[room] === undefined) {
-      throw new Error('Room doesn\'t exist!');
-    }
-    userSessions.rooms[room].quiz = quiz;
+function addRoomWithQuiz(room, quiz, hostSocket) {
+  let userRoom = userSessions.rooms[room];
+  userRoom = {};
+  userRoom.users = [];
+  userRoom.quiz = quiz;
+  userRoom.hostId;
 }
 
 function removeUser(socket) {

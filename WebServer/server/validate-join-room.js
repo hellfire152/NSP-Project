@@ -7,7 +7,6 @@
 const uuid = require('uuid');
 module.exports = function(cipher, appConn) {
   return function(req, res) {
-    console.log(cipher);
     req.checkBody('id', 'Username must be specified').notEmpty();
     req.checkBody('pass', 'Password must be specified').notEmpty();
     req.checkBody('room', 'Room ID must be specified').notEmpty();
@@ -24,7 +23,6 @@ module.exports = function(cipher, appConn) {
     if(errors) {
       //TODO::Handle errors
     } else {
-      console.log(req.body);
       cipher.encryptJSON({
         "id": req.body.id,
         "pass": req.body.pass,

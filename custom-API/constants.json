@@ -6,7 +6,9 @@
     "D" : 1
   },
   "EVENT" : {
-    "INIT_ROOM": 0
+    "INIT_ROOM": 0,
+    "INIT_HOST_ROOM": 1,
+    "ASSURE_HOST": 2
   },
   "SEND_TO" : {
     "ALL": 0,
@@ -16,9 +18,11 @@
     "NULL": -1
   },
   "REQ_TYPE" : {
-    "JOIN_ROOM": 0
+    "JOIN_ROOM": 0,
+    "HOST_ROOM": 1
   },
    "RES_TYPE" : {
-    "JOIN_ROOM_RES": 0
+    "JOIN_ROOM_RES": 0,
+    "HOST_ROOM_RES": 1
   }
 }

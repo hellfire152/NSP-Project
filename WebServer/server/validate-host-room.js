@@ -28,14 +28,15 @@ module.exports = function(cipher, appConn) {
       cipher.encryptJSON({
         "id": req.body.id,
         "pass": req.body.pass,
-        "room": req.body.room
+        "room": req.body.room,
+        "quiz": "TEST"
       })
         .catch(function (err) {
           throw new Error('Error parsing JSON!');
         })
         .then(function(cookieData) {
         res.cookie('hosting_room', cookieData, {"maxAge": 1000*60*5});
-        res.redirect('/play?room=' +req.body.room);
+        res.redirect('/host?room=' +req.body.room);
       });
     }
   }
