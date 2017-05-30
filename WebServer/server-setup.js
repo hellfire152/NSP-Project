@@ -54,7 +54,7 @@ module.exports = function(data) {
   app.use(helmet()); //adds a bunch of security features
 
   //setting routes
-  require('./server/setup/routes.js')(C, app, dirname, cipher, appConn, uuid);
+  require('./server/setup/routes.js')(C, app, __dirname, cipher, appConn, uuid);
 
   //setting up the communication between the WebServer and AppServer
   require('./server/setup/io-forward.js')(C, __dirname, io, sessionHandler, pendingResponses, cipher, appConn);
