@@ -14,6 +14,10 @@
 //getting the password
 var pass = process.argv[2];
 
+//Shared SessionHandler
+var SessionHandler = require('../custom-API/session-handler.js');
+var SessionHandler = new SessionHandler();
+
 //various imports
 var express = require('express');
 var app = express();
@@ -39,14 +43,14 @@ var io = require('socket.io').listen(server);
 var appConn = net.connect(9090);
 
 // shared session handler
-var sessionHandler = require('../custom-API/session-handler.js');
+var SessionHandler = require('../custom-API/session-handler.js');
+var sessionHandler = new SessionHandler();
 
 //key for cookie
 const COOKIE_KEY = "cookieSECREEET";
 require("./server-setup.js")({
   "app": app,
   "io": io,
-  "sessionHandler": sessionHandler,
   "pass": pass,
   "appConn": appConn,
   "express": express,
@@ -54,6 +58,7 @@ require("./server-setup.js")({
   "cookieParser": cookieParser,
   "cipher": cipher,
   "COOKIE_KEY": COOKIE_KEY
+  "sessionHandler" : sessionHandler
 });
 
 //confimation message

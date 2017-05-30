@@ -1,4 +1,11 @@
-module.exports = function(C, app, dirname, pendingResponses, cipher, appConn, uuid) {
+module.exports = function(data) {
+  const C = data.C;
+  let app = data.app,
+    dirname = data.dirname,
+    pendingResponses = data.pendingResponses,
+    cipher = data.cipher,
+    appConn = data.appConn,
+    uuid = data.uuid;
   //routing
   //sends index.html when someone sends a https request
   app.get('/', function(req, res){

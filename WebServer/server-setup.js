@@ -21,7 +21,6 @@ module.exports = function(data) {
   //extracting data
   var app = data.app;
   var io = data.io;
-  var sessionHandler = data.sessionHandler;
   var pass = data.pass;
   var appConn = data.appConn;
   var cipher = data.cipher;
@@ -57,8 +56,22 @@ module.exports = function(data) {
   app.use(helmet()); //adds a bunch of security features
 
   //setting routes
-  require('./server/setup/routes.js')(C, app, __dirname, pendingResponses, cipher, appConn, uuid);
+  require('./server/setup/routes.js')({
+    'C' : C,
+    'app' : app,
+    'dirname' : dirname,
+    'pendingResponses' : pendingResponses,
+    'cipher' : cipher,
+    'appConn' : appConn,
+    'uuid' : uuid
+  });
 
   //setting up the communication between the WebServer and AppServer
-  require('./server/setup/io-forward.js')(C, __dirname, pass, io, sessionHandler, pendingResponses, cipher, appConn);
-}
+  require('./server/setup/io-forward.js')({
+    'C' : C,
+    'dirname' : __dirname,
+    'pass' : pass,
+    'pendingResponses' : pendingResponses,
+    'cipher' : cipher,
+    'appConn' : appConn
+  });

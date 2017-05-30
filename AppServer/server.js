@@ -10,7 +10,6 @@
   Author: Jin Kuan
   Version: pre28052017
 */
-
 //do not shut down on error
 process.on('uncaughtException', function (err) {
     console.log(err);
@@ -78,18 +77,25 @@ var server = net.createServer(function (conn) {
               };
               break;
             }
+            //ADD MORE CASES HERE
           }
         } else { //no data type -> socket.io stuff
           switch(data.event) {
             case C.EVENT.INIT_ROOM: {
+              console.log(data.cookieData);
+              let room = data.cookieData.login_and_room.room;
+              let user = data.cookieData.login_and_room.id;
+              if(dataOfRoom[room].players === undefined) {
+                dataOfRoom[room].players = [];
+              }
+              dataOfRoom[room].players.push(data.socketId);
 
+              response = {
+
+              }
               break;
             }
             case C.EVENT.INIT_HOST_ROOM: {
-
-              break;
-            }
-            case C.EVENT.ASSURE_HOST: {
 
               break;
             }
