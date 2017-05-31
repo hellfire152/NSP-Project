@@ -42,7 +42,7 @@ module.exports = function(C, app, dirname, pendingResponses, cipher, appConn, uu
           pendingResponses[resNo] = res;
           console.log("COOKIE DATA GOTTEN");
           appConn.write(JSON.stringify({
-            'type': C.RES_TYPE.HOST_ROOM_RES,
+            'type': C.REQ_TYPE.HOST_ROOM,
             'id': cookieData.id,
             'pass': cookieData.pass,
             'resNo': resNo,

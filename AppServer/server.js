@@ -56,11 +56,13 @@ var server = net.createServer(function (conn) {
           switch(data.type) {
             case C.REQ_TYPE.JOIN_ROOM: {
               if(/*TODO::VALID LOGIN*/true) {
-                response.type = C.RES_TYPE.JOIN_ROOM_RES;
-                response.validLogin = true;
-                response.room = data.room;
-                response.resNo = data.resNo;
-                response.id = data.id;
+                response = {
+                  'type': C.RES_TYPE.JOIN_ROOM_RES,
+                  'validLogin': true,
+                  'room': data.room,
+                  'resNo': data.resNo,
+                  'id': data.id
+                };
                 break;
               } else {
                 //INVALID LOGIN
