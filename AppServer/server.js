@@ -9,7 +9,7 @@
 
   Author: Jin Kuan
   Version: pre28052017
-*/ 
+*/
 //do not shut down on error
 process.on('uncaughtException', function (err) {
     console.log(err);
@@ -26,6 +26,8 @@ if(pass === undefined) {
 
 var net = require('net');
 
+var allRooms = {};
+
 //setting up of the logic server
 var server = net.createServer(function (conn) {
   console.log("Logic: Server Start");
@@ -40,77 +42,41 @@ var server = net.createServer(function (conn) {
   });
 
   // Handle data from client
-  conn.on("data", function(input) {
+  conn.on("data", async function(input) {
     try {
       let data = JSON.parse(input);
       console.log("FROM WEBSERVER");
       console.log(data);
-      let response = {};
-      if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
-        throw new Error("Missing password");
-      }
-      if(conn.auth) { //if already authenticaed
-        if(!(data.type === undefined)) { //data type defined
-          console.log("REQ TYPE: " +data.type);
-          switch(data.type) {
-            case C.REQ_TYPE.JOIN_ROOM: {
-              if(/*TODO::VALID LOGIN*/true) {
-                response = {
-                  'type': C.RES_TYPE.JOIN_ROOM_RES,
-                  'validLogin': true,
-                  'room': data.room,
-                  'resNo': data.resNo,
-                  'id': data.id
-                };
-                break;
-              } else {
-                //INVALID LOGIN
-              }
-            }
-            case C.REQ_TYPE.HOST_ROOM: {
-              console.log("HOST_ROOM_REQ");
-              response = {
-                'type': C.RES_TYPE.HOST_ROOM_RES,
-                'validLogin': true,//TODO::Proper login check
-                'room': data.room,
-                'resNo': data.resNo,
-                'hostId': data.id,
-                'quiz': (data.quiz == 'TEST')? require('../test-quiz.json'): null
-              };
-              break;
-            }
-            //ADD MORE CASES HERE
-          }
-        } else { //no data type -> socket.io stuff
-          switch(data.event) {
-            case C.EVENT.INIT_ROOM: {
-              console.log(data.cookieData);
-              let room = data.cookieData.login_and_room.room;
-              let user = data.cookieData.login_and_room.id;
-              if(dataOfRoom[room].players === undefined) {
-                dataOfRoom[room].players = [];
-              }
-              dataOfRoom[room].players.push(data.socketId);
 
-              response = {
-
-              }
-              break;
-            }
-            case C.EVENT.INIT_HOST_ROOM: {
-
-              break;
-            }
-          }
+      //if there's an Error
+      if (data.err) {
+        console.log("ERROR RECEIVED, CODE: " + data.err);
+        //handle errors
+        switch(data.err) {
+          //handle errors
         }
-        console.log("AppServer Response: ");
-        console.log(response);
-        conn.write(JSON.stringify(response));
-      } else if(data.password === pass) { //valid password
-        console.log("WebServer Validated");
-        conn.auth = true;
-      } else { //data sent without authorization
-        conn.destroy(); //destroy connection
+      } else {
+        let response = {};
+        if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
+          throw new Error("Missing password");
+        }
+        if(conn.auth) { //if already authenticaed
+          if(!(data.type === undefined)) { //data type defined
+            response = await handleReq(data, C)
+          } else { //no data type -> socket.io stuff
+            response = await handleIo(data, C, allRooms);
+          }
+
+          //logging and response
+          console.log("AppServer Response: ");
+          console.log(response);
+          sendToServer(conn, response);
+        } else if(data.password === pass) { //valid password
+          console.log("WebServer Validated");
+          conn.auth = true;
+        } else { //data sent without authorization
+          conn.destroy(); //destroy connection
+        }
       }
     } catch (err) {
       console.log(err);
@@ -120,3 +86,10 @@ var server = net.createServer(function (conn) {
 });
   console.log("Listening on port 9090...");
   server.listen(9090);
+
+async function sendToServer(conn, json) {
+  conn.write(JSON.stringify(json));
+}
+
+var handleIo = require('./server/app-handle-io.js');
+var handleReq = require('./server/app-handle-req');

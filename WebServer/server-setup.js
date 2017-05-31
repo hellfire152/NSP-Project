@@ -59,7 +59,7 @@ module.exports = function(data) {
   require('./server/setup/routes.js')({
     'C' : C,
     'app' : app,
-    'dirname' : dirname,
+    'dirname' : __dirname,
     'pendingResponses' : pendingResponses,
     'cipher' : cipher,
     'appConn' : appConn,

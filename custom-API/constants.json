@@ -10,6 +10,9 @@
     "INIT_HOST_ROOM": 1,
     "ASSURE_HOST": 2
   },
+  "EVENT_RES" : {
+    "INIT_HOST_ROOM_RES" : 1
+  },
   "ROOM_EVENT" : {
     "JOIN" : 0,
     "DELETE_ROOM" : 1
@@ -28,5 +31,9 @@
    "RES_TYPE" : {
     "JOIN_ROOM_RES": 0,
     "HOST_ROOM_RES": 1
+  },
+  "ERR" : {
+    "DIFFERENT_DEVICE_LOGIN" : 1000,
+    "NO_SPARE_ROOMS" : 1001
   }
 }

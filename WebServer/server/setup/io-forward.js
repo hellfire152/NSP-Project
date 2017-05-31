@@ -46,7 +46,7 @@ module.exports = function(data) {
   appConn.on('data', function(input) { //from app server
     try {
       let data = JSON.parse(input);
-      if(!(data.type === undefined)) { //custom type defined
+      if(!(data.type === undefined)) { //custom type -> general website stuff
         console.log("RES TYPE: " +data.type);
         switch(data.type) {
           case C.RES_TYPE.JOIN_ROOM_RES: {
@@ -70,45 +70,11 @@ module.exports = function(data) {
           //ADD MORE CASES HERE
         }
       } else { //no type -> socket.io stuff
-        let socket = socketObj[data.socketId];
-        if(!(data.roomEvent === undefined)) { //if AppServer wants any operations with rooms
-          switch(data.roomEvent.type) {
-            case C.ROOM_EVENT.JOIN : {
-              socket.join(data.room);
-              break;
-            }
-            case C.ROOM_EVENT.DELETE_ROOM : {
-              io.sockets.clients(data.room).forEach(function(s){
-                s.leave(data.room);
-              });
-            }
-          }
-        }
-         switch(data.sendTo) {
-          case C.SEND_TO.ALL: { //ALL
-            io.of('/').emit('receive', JSON.stringify(data));
-            break;
-          }
-          case C.SEND_TO.USER: {
-            socketObj[data.targetId].emit('receive', JSON.stringify(data));
-            break;
-          }
-          case C.SEND_TO.ROOM_ALL: {
-            io.in(data.targetRoom).emit('receive', JSON.stringify(data));
-            break;
-          }
-          case C.SEND_TO.ROOM_EXCEPT_SENDER: {
-            socketObj[data.socketId].to(data.targetRoom).emit('receive', JSON.stringify(data))
-            break;
-          }
-          case C.SEND_TO.NULL: {
-
-            break;
-          }
-          default: {
-            console.log('AppServer to WebServer sendTo value is ' +data.sendTo +', not a preset case');
-          }
-        }
+        handleIoResponse({
+          'data' : data,
+          'io' : io,
+          'C' : C
+        });
       }
       if(!(data.callback === undefined)) data.callback();
     } catch (err) {
@@ -117,3 +83,5 @@ module.exports = function(data) {
     }
   });
 }
+
+var handleIoResponse = require('./io-response.js');

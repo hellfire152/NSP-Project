@@ -1,13 +1,27 @@
+const C = require('./constants.json');
 class SessionHandler {
   constructor() {
     this.dataOfRoom = {};
-
+    this.loggedInUsers = {};
   }
 
-  addRoom(room, quiz, hostSocket) {
+  userLogin(username, ip, port) {
+    let user = this.loggedInUsers[username];
+    if(user === undefined) user = {
+      'conn' : {
+        'ip': ip,
+        'port' : port
+      }
+    } else {
+      if(user.conn.ip !== ip || port !== user.conn.port) {
+        return C.ERR.DIFFERENT_DEVICE_LOGIN;
+    }
+  }
+
+  addRoom(room, quizId, hostSocket) {
     var rm = this.dataOfRoom[room];
     rm = {
-      "quiz": quiz,
+      "quiz": quizId,
       "host": hostSocket
     }
   }
