@@ -10,6 +10,10 @@
     "INIT_HOST_ROOM": 1,
     "ASSURE_HOST": 2
   },
+  "ROOM_EVENT" : {
+    "JOIN" : 0,
+    "DELETE_ROOM" : 1
+  },
   "SEND_TO" : {
     "ALL": 0,
     "USER": 1,
