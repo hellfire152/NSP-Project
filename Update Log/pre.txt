@@ -90,3 +90,31 @@ It's really not much at all, but I'm taking any victory I'm gonna get.
 
 Now that that's all working, next week, I can finally focus on coding the
 classic game mode!
+
+1/6/2017 - Ang Jin Kuan
+Finally managed to make some progress on the game itself.
+I'm currently still working on getting quiz hosting to work, once that's done
+I can finally start work on classic mode (which according to the schedule I
+drew up should have been done LAST WEEK). The User -> Web -> App communication
+is REALLY A HUGE PAIN IN THE ASS, but that's what I got myself into.
+
+Main progress this day was another round of refactoring, this time I moved out
+a lot of the AppServer and WebServer portions to their own files. Like socket.io
+stuff gets their own file, and the other types get their respective one. I'm
+hoping that this makes maintenance and extension a lot easier in the long run.
+
+I've also defined a constants file, /custom-API/constants.json. This was made so
+that I can not use strings for event/response/whatever flags, and yet still have
+the message be very clear. This should increase performance of the server.
+
+Next, I've went ahead and learned Promises and async/await. This immediately
+came into play as I made all my cipher.js API asynchronous, and had a lot of the
+communication stuff inside async functions as well. Still not sure about the
+event loop thing, but running multiple things at the same time is always good,
+right?
+
+I think I'm the only person in this whole damn class that's already coding up
+the project. I know for sure at least one other group hasn't even wrote a single
+line. Yet I am here working on this nonsense almost every day already.
+
+Am I trying too hard? (please don't let this end in disaster)
