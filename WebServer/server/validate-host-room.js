@@ -10,33 +10,33 @@ module.exports = function(cipher, appConn) {
     console.log(cipher);
     req.checkBody('id', 'Username must be specified').notEmpty();
     req.checkBody('pass', 'Password must be specified').notEmpty();
-    req.checkBody('room', 'Room ID must be specified').notEmpty();
+    req.checkBody('quizId', 'Room ID must be specified').notEmpty();
 
     req.sanitize('id').escape();
     req.sanitize('pass').escape();
-    req.sanitize('room').escape();
+    req.sanitize('quizId').escape();
     req.sanitize('id').trim();
     req.sanitize('pass').trim();
-    req.sanitize('room').trim();
+    req.sanitize('quizId').trim();
 
     var errors = req.validationErrors();
 
     if(errors) {
       //TODO::Handle errors
     } else {
+      console.log("HOST FORM DATA: ");
       console.log(req.body);
       cipher.encryptJSON({
         "id": req.body.id,
         "pass": req.body.pass,
-        "room": req.body.room,
-        "quiz": "TEST"
+        "quizId": req.body.quizId
       })
         .catch(function (err) {
           throw new Error('Error parsing JSON!');
         })
         .then(function(cookieData) {
         res.cookie('hosting_room', cookieData, {"maxAge": 1000*60}); //one minute
-        res.redirect('/host?room=' +req.body.room);
+        res.redirect('/host?quizId=' +req.body.quizId);
       });
     }
   }

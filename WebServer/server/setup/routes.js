@@ -36,10 +36,10 @@ module.exports = function(data) {
     }
   });
   app.get('/host', function(req, res) {
-    if(req.query.room.constructor === Array) {
+    if(req.query.quizId.constructor === Array) {
       console.log("Please don't mess with my webpage");
     } else {
-      let roomNo = req.query.room;
+      let quizId = req.query.quizId;
       cipher.decryptJSON(req.cookies.hosting_room)
         .catch(reason => {
           console.log(reason);
@@ -53,8 +53,7 @@ module.exports = function(data) {
             'id': cookieData.id,
             'pass': cookieData.pass,
             'resNo': resNo,
-            'room': roomNo,
-            'quiz': cookieData.quiz
+            'quizId': cookieData.quizId
           }));
         });
     }

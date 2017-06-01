@@ -18,5 +18,6 @@ timeout 2
 cd ../WebServer
 start node ./server.js %pass%
 
-:end
 echo Servers started!
+
+:end

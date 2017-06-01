@@ -3,7 +3,10 @@ socket.on('receive', function(input) {
   try {
     var data = JSON.parse(input);
     switch(data.event) {
-      case:
+      case: C.EVENT_RES.ROOM_READY {
+
+        break;
+      }
     }
   } catch {
     console.log("Input not a JSON!");

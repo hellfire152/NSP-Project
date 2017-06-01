@@ -57,7 +57,7 @@ require("./server-setup.js")({
   "net": net,
   "cookieParser": cookieParser,
   "cipher": cipher,
-  "COOKIE_KEY": COOKIE_KEY
+  "COOKIE_KEY": COOKIE_KEY,
   "sessionHandler" : sessionHandler
 });
 

@@ -7,14 +7,17 @@ class SessionHandler {
 
   userLogin(username, ip, port) {
     let user = this.loggedInUsers[username];
-    if(user === undefined) user = {
-      'conn' : {
-        'ip': ip,
-        'port' : port
+    if(user === undefined) {
+      user = {
+        'conn' : {
+          'ip': ip,
+          'port' : port
+        }
       }
     } else {
       if(user.conn.ip !== ip || port !== user.conn.port) {
         return C.ERR.DIFFERENT_DEVICE_LOGIN;
+      }
     }
   }
 

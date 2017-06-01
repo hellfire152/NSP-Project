@@ -8,7 +8,9 @@ const C = {
   "EVENT" : {
     "INIT_ROOM": 0,
     "INIT_HOST_ROOM": 1,
-    "ASSURE_HOST": 2
+  },
+  "EVENT_RES" : {
+    "ROOM_READY" : 1
   },
   "SEND_TO" : {
     "ALL": 0,

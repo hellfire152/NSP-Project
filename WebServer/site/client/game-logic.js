@@ -15,9 +15,16 @@ const EVENT = {
 
 //initializes a socket.io connection
 var socket = io();
-socket.on('receive', function(input) {
-  var data = JSON.parse(input);
-  console.log(data);
+socket.on('receive', function(data) {
+  var response = JSON.parse(data);
+  console.log(response);
+
+  switch(response.event) {
+    case C.EVENT_RES.ROOM_READY : {
+      console.log('ROOM_READY: ' + data.);
+      break;
+    }
+  }
 });
 socket.on('err', function(err) {
   console.log(err);

@@ -3,9 +3,9 @@ module.exports = function(input) {
   const C = input.C;
   let socketObj = io.sockets.sockets;
   let socket =socketObj[input.socketId];
-  let data = input.data;
+  let response = input.data;
 
-  if(!(data.roomEvent === undefined)) { //if AppServer wants any operations with rooms
+  if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
     switch(data.roomEvent.type) {
       case C.ROOM_EVENT.JOIN : {
         socket.join(data.room);
@@ -18,28 +18,20 @@ module.exports = function(input) {
       }
     }
   }
-  switch(data.sendTo) {
-    case C.SEND_TO.ALL: { //ALL
-      io.of('/').emit('receive', JSON.stringify(data));
-      break;
-    }
-    case C.SEND_TO.USER: {
-      socketObj[data.targetId].emit('receive', JSON.stringify(data));
-      break;
-    }
-    case C.SEND_TO.ROOM_ALL: {
-      io.in(data.targetRoom).emit('receive', JSON.stringify(data));
-      break;
-    }
-    case C.SEND_TO.ROOM_EXCEPT_SENDER: {
-      socket.to(data.targetRoom).emit('receive', JSON.stringify(data))
-      break;
-    }
-    case C.SEND_TO.NULL: {
+  switch(response.event) {
+    case C.EVENT_RES.ROOM_READY : {
+      if(validLogin == true) {
+        clientResponse = {
+          'event' : response.event,
+          'roomNo': response.roomNo,
+          'quizId': response.quizId
+        }
+        socketObj[response.socketId].emit('receive', JSON.stringify(clientResponse));
+      }
       break;
     }
     default: {
-      console.log('AppServer to WebServer sendTo value is ' +data.sendTo +', not a preset case');
+      console.log('AppServer to WebServer EVENT_RES value is ' +data.event +', not a preset case');
     }
   }
 }

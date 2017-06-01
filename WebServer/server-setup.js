@@ -30,9 +30,9 @@ module.exports = function(data) {
   const COOKIE_KEY = data.COOKIE_KEY;
 
   //express-session stuff
-  var Session = require('express-session'),
-      sessionFile = require('session-file-store')(Session);
-      session = Session({
+  var Session = require('express-session');
+  var sessionFile = require('session-file-store')(Session);
+  var session = Session({
         store: new sessionFile({
           path: './tmp/sessions'
         }),
@@ -73,5 +73,7 @@ module.exports = function(data) {
     'pass' : pass,
     'pendingResponses' : pendingResponses,
     'cipher' : cipher,
-    'appConn' : appConn
+    'appConn' : appConn,
+    'io' : io
   });
+}
