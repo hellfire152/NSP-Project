@@ -1,3 +1,8 @@
+/*
+  Includes functions that handles all GET or POST requests.
+
+  Author: Jin Kuan
+*/
 module.exports = function(data) {
   const C = data.C;
   let app = data.app,
@@ -12,7 +17,7 @@ module.exports = function(data) {
     res.sendFile(dirname + "/site/index.html");
   });
   //handling play path
-  app.get('/play', function(req, res) {
+  app.get('/play', function(req, res) { //submitted a form for playing in a room
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
       console.log("Well someone's trying to cause an error...");
     } else {
@@ -35,7 +40,7 @@ module.exports = function(data) {
         });
     }
   });
-  app.get('/host', function(req, res) {
+  app.get('/host', function(req, res) { //submit the form for hosting a room
     if(req.query.quizId.constructor === Array) {
       console.log("Please don't mess with my webpage");
     } else {
@@ -63,7 +68,7 @@ module.exports = function(data) {
     res.sendFile(dirname + "/site" + req.path);
   });
 
-  //handling form submit
+  //handling form submits
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
 }

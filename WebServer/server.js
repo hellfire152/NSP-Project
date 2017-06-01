@@ -4,6 +4,12 @@
  * Project start date: 27/4/2017 (Week 2 Thursday)
  * Current Version: pre28052017
 
+ File info:
+ This file starts the WebServer, responsible for hosting the site.
+ The server will delegate most processing and Database Access to the AppServer.
+
+ The default port is 8080.
+ 
   Author: Jin Kuan
  */
  //do not shut down on error

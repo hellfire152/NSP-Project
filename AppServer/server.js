@@ -17,7 +17,7 @@ process.on('uncaughtException', function (err) {
 
 const C = require('../custom-API/constants.json');
 
-//password
+//Check for password's existence
 var pass = process.argv[2];
 if(pass === undefined) {
   throw new Error("Usage: ./run-server.bat <password>");
@@ -45,21 +45,21 @@ var server = net.createServer(function (conn) {
   conn.on("data", async function(input) {
     try {
       let data = JSON.parse(input);
-      console.log("FROM WEBSERVER");
+      console.log("FROM WEBSERVER"); //Log all data received from the WebServer
       console.log(data);
 
       //if there's an Error
       if (data.err) {
         console.log("ERROR RECEIVED, CODE: " + data.err);
-        //handle errors
         switch(data.err) {
           //handle errors
         }
       } else {
-        let response = {};
         if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
-          throw new Error("Missing password");
+          throw new Error("WebServer unauthenticated, missing password");
         }
+
+        let response = {};
         if(conn.auth) { //if already authenticaed
           if(!(data.type === undefined)) { //data type defined
             response = await handleReq(data, C)
@@ -87,6 +87,11 @@ var server = net.createServer(function (conn) {
   console.log("Listening on port 9090...");
   server.listen(9090);
 
+/*
+  Function that encodes the data in a proper format and sends it to the WebServer
+  This is a convenience function, so that future implementations of encryption/whatever
+  will be easy to add in
+*/
 async function sendToServer(conn, json) {
   conn.write(JSON.stringify(json));
 }

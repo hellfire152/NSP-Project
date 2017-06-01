@@ -34,6 +34,7 @@
   },
   "ERR" : {
     "DIFFERENT_DEVICE_LOGIN" : 1000,
-    "NO_SPARE_ROOMS" : 1001
+    "NO_SPARE_ROOMS" : 1001,
+    "INVALID_LOGIN" : 1002
   }
 }

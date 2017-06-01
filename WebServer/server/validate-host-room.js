@@ -1,5 +1,5 @@
 /**
-  Test file for validating the test version of the room joining form.
+  Test file for validating the test version of the room hosting form.
 
   Author: Jin Kuan
 */

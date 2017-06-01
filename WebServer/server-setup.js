@@ -1,9 +1,9 @@
 /**
-  Various set up funcitons that are required for the whole project to work.
-  This includes communication using socket.io, GET and POST HTML requests,
-  and all the stuff with the AppServer.
+  File that does most of the setup work.
+  Most of the actual setting of stuff is delegated to smaller, easier to parse
+  modules.
 
-  Any middleware that is used is also set here.
+  This file does set most of the middleware used
 
   Author: Jin Kuan
 */

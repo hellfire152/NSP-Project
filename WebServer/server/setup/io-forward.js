@@ -47,31 +47,15 @@ module.exports = function(data) {
     try {
       let data = JSON.parse(input);
       if(!(data.type === undefined)) { //custom type -> general website stuff
-        console.log("RES TYPE: " +data.type);
-        switch(data.type) {
-          case C.RES_TYPE.JOIN_ROOM_RES: {
-            if(data.validLogin == true) {
-              let res = pendingResponses[data.resNo]; //get pending response
-              res.sendFile(dirname + '/site/play.html');
-              delete pendingResponses[data.resNo]; //remove the pending request
-              //Let socket.io take the game stuff from here
-            }
-            break;
-          }
-          case C.RES_TYPE.HOST_ROOM_RES: {
-            if(data.validLogin == true) {
-              let res = pendingResponses[data.resNo];
-              res.sendFile(dirname + '/site/host2.html');
-              delete pendingResponses[data.resNo];
-              //socket.io will handle the rest
-            }
-            break;
-          }
-          //ADD MORE CASES HERE
-        }
+         await handleOtherResponse({
+          'response': data,
+          'C' : C,
+          'pendingResponses': pendingResponses,
+          'dirname' : dirname
+        });
       } else { //no type -> socket.io stuff
-        handleIoResponse({
-          'data' : data,
+        await handleIoResponse({
+          'response' : data,
           'io' : io,
           'C' : C
         });
