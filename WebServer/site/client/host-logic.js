@@ -11,14 +11,17 @@ var socket = io();
 socket.on('receive', function(input) {
   try {
     var data = JSON.parse(input);
+    console.log(data);
     switch(data.event) {
-      case: C.EVENT_RES.ROOM_READY {
-
+      case C.EVENT_RES.ROOM_READY : {
+        document.getElementById('game').innerHTML =
+          "<h1>Room Number: " + data.room;
         break;
       }
     }
-  } catch {
+  } catch (err) {
     console.log("Input not a JSON!");
+    console.log(err);
   }
   var data = JSON.parse(input);
   console.log(data);
@@ -26,8 +29,8 @@ socket.on('receive', function(input) {
 socket.on('err', function(err) {
   console.log(err);
 });
-socket.emit('send', JSON.stringify{
+socket.emit('send', JSON.stringify({
   "event": C.EVENT.INIT_HOST_ROOM,
   "sendCookie": true,
   "quiz": 'TEST'
-});
+}));

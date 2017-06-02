@@ -11,7 +11,7 @@ module.exports = async function(data, C, allRooms) {
       break;
     }
     case C.EVENT.INIT_HOST_ROOM: {
-      return (await init_host_room(data, C));
+      return (await init_host_room(data, C, allRooms));
       break;
     }
   }
@@ -39,11 +39,11 @@ async function init_room(data) {
 
   Will throw ERR.NO_SPARE_ROOMS after 100 times of failing to find a free roomNo
 */
-async function init_host_room(data, C) {
+async function init_host_room(data, C, allRooms) {
   let response = {};
   validLogin = true /*TODO::VALID LOGIN*/
-  if(data.quiz == 'TEST') quiz = require('../test-quiz.json'); //TODO::Get quiz from database
 
+  //room number stuff
   roomNo = Math.floor(Math.random() * 10000000 + 1); //generate a number between 1 and 10 million for the room id
   let count = 0;
   while(!(allRooms[roomNo] === undefined)){ //keeps searching for an available number
@@ -52,6 +52,13 @@ async function init_host_room(data, C) {
       response.err = C.ERR.NO_SPARE_ROOMS;
       return response;
     }
+  }
+
+  //get test quiz
+  if(data.quiz == 'TEST') quiz = require('../../test-quiz.json'); //TODO::Get quiz from database
+  else {
+    response.err = C.ERR.QUIZ_DOES_NOT_EXIST;
+    return response;
   }
   if(allRooms[roomNo] === undefined) {  //if number available, add quiz data
     allRooms[roomNo] = {
@@ -64,7 +71,6 @@ async function init_host_room(data, C) {
 
   response.event = C.EVENT_RES.ROOM_READY;
   response.validLogin = validLogin;
-  response.roomNo = roomNo;
   response.quizId = quiz.id;
   response.socketId = data.socketId;
   return response;

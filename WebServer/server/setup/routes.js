@@ -30,6 +30,7 @@ module.exports = function(data) {
           //indirect reference as I can't directly srtingify it for some reason
           let resNo = uuid();
           pendingResponses[resNo] = res;
+          console.log('Response pending, no: ' +resNo);
           appConn.write(JSON.stringify({ //AppServer does verification
             'type': C.REQ_TYPE.JOIN_ROOM, //JOIN_ROOM
             'id': cookieData.id,
@@ -52,7 +53,8 @@ module.exports = function(data) {
         .then(cookieData => {
           let resNo = uuid();
           pendingResponses[resNo] = res;
-          console.log("COOKIE DATA GOTTEN");
+          console.log("COOKIE DATA: ");
+          console.log(cookieData);
           appConn.write(JSON.stringify({
             'type': C.REQ_TYPE.HOST_ROOM,
             'id': cookieData.id,

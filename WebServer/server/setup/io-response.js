@@ -1,10 +1,12 @@
-
+/*
+*/
+var socketObj;
 module.exports = function(input) {
   let io = input.io;
   const C = input.C;
-  let socketObj = io.sockets.sockets;
-  let socket =socketObj[input.socketId];
   let response = input.response;
+
+  socketObj = io.sockets.sockets;
 
   if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
     switch(response.roomEvent.type) {
@@ -21,10 +23,10 @@ module.exports = function(input) {
   }
   switch(response.event) {
     case C.EVENT_RES.ROOM_READY : {
-      if(validLogin == true) {
+      if(response.validLogin == true) {
         clientResponse = {
           'event' : response.event,
-          'roomNo': response.roomNo,
+          'room': response.room,
           'quizId': response.quizId
         }
         sendToUser(clientResponse, response.socketId);

@@ -1,3 +1,9 @@
+/*
+  I'm not sure whether a class like this is needed or not (for the game at least)
+  I'll just keep it here for now
+
+  Author: Jin Kuan
+*/
 const C = require('./constants.json');
 class SessionHandler {
   constructor() {

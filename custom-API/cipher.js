@@ -52,8 +52,8 @@ function stringToBuffer(s) {
 */
 async function encrypt(plain) {
   var cipher = crypto.createCipher(algorithm,password);
-  var encrypted = cipher.update(plain,'utf8','binary')
-  encrypted += cipher.final('binary');
+  var encrypted = cipher.update(plain,'utf8','hex')
+  encrypted += cipher.final('hex');
   return encrypted;
 }
 
@@ -62,7 +62,7 @@ async function encrypt(plain) {
 */
 async function decrypt(cipher) {
   var decipher = crypto.createDecipher(algorithm,password);
-  var dec = decipher.update(cipher, 'binary', 'utf8');
+  var dec = decipher.update(cipher, 'hex', 'utf8');
   dec += decipher.final('utf8');
   return dec;
 }

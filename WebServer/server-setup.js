@@ -74,6 +74,7 @@ module.exports = function(data) {
     'pendingResponses' : pendingResponses,
     'cipher' : cipher,
     'appConn' : appConn,
-    'io' : io
+    'io' : io,
+    'cookie' : cookie
   });
 }

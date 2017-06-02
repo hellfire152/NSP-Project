@@ -1,11 +1,24 @@
+/*
+  This module is responsible for the most of the communication between the
+  AppServer and the WebServer.
+
+  This breaks down into 3 things:
+    1. forwarding of user socket.io requests to the AppServer
+    2. Handling all data from the AppServer, including
+      2.a Socket.io requests (via io-response.js)
+      2.b Other responses (via other-response.js)
+*/
 module.exports = function(data) {
+  //extracting data...
   const C = data.C;
-  let dirname = data.dirname,
+  var dirname = data.dirname,
     pass = data.pass,
     io = data.io,
     pendingResponses = data.pendingResponses,
     cipher = data.cipher,
-    appConn = data.appConn;
+    appConn = data.appConn,
+    cookie = data.cookie
+
   //setting up forwarding of data between user and game server
   //short hand
   var socketObj = io.sockets.sockets;
@@ -18,14 +31,17 @@ module.exports = function(data) {
     socket.on('send', function(input){ //from user
       try {
         var data = JSON.parse(input);
+        console.log("User to WebServer: ");
+        console.log(data);
         if (data.sendCookie) {  //Sends the cookie data as well.
-          cipher.decryptJSON(cookie.parse(socket.handshake.headers.cookie))
+          cipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).hosting_room))
             .catch(reason => {
               throw new Error(reason);
             })
             .then(function(cookieData) {
+              console.log(cookieData);
               data.cookieData = cookieData;
-              data.socketId = socketId;
+              data.socketId = socket.id;
               console.log("WebServer to AppServer Data (COOKIE):");
               console.log(data);
               appConn.write(JSON.stringify(data));
@@ -37,7 +53,9 @@ module.exports = function(data) {
           appConn.write(JSON.stringify(data)); //to game server
         }
       } catch (err) {
-        socket.emit('err', 'Not a stringified JSON Object!');
+        console.log(err);
+        socket.emit('err', 'User to WebServer input Not a stringified JSON Object!\n Error Data:\n');
+        socket.emit('err', input);
       }
     });
   });
@@ -46,18 +64,21 @@ module.exports = function(data) {
   appConn.on('data', function(input) { //from app server
     try {
       let data = JSON.parse(input);
+      console.log("AppServer Response: ");
+      console.log(data);
       if(!(data.type === undefined)) { //custom type -> general website stuff
-         await handleOtherResponse({
+         handleOtherResponse({
           'response': data,
           'C' : C,
           'pendingResponses': pendingResponses,
           'dirname' : dirname
         });
       } else { //no type -> socket.io stuff
-        await handleIoResponse({
+        handleIoResponse({
           'response' : data,
           'io' : io,
-          'C' : C
+          'C' : C,
+          'socketObj' : io.sockets.sockets
         });
       }
       if(!(data.callback === undefined)) data.callback();
@@ -69,3 +90,4 @@ module.exports = function(data) {
 }
 
 var handleIoResponse = require('./io-response.js');
+var handleOtherResponse = require('./other-response.js');
