@@ -18,7 +18,6 @@ var ios = require('socket.io-express-session');
 const C = require('../custom-API/constants.json');
 
 var socketOfUser = {};
-var queryOfUser = {};
 module.exports = function(data) {
   //extracting data
   var app = data.app;

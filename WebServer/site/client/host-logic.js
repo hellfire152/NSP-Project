@@ -42,7 +42,8 @@ function gameRoom(gamemode) {
   send({
     "event" : C.EVENT.GAMEMODE_SET,
     "sendLoginCookie" : true,
-    "gamemode" : gamemode
+    "gamemode" : gamemode,
+    'room' : room
   });
 }
 

@@ -50,9 +50,11 @@ async function gamemode_set() {
   validLogin = true /*TODO::VALID LOGIN*/
 
   //set the data in allRooms
+  allRooms[data.room].gamemode = data.gamemode;
+
   //build response
   response.roomEvent = C.ROOM_EVENT.JOIN; //Join the created room immediately
-  response.room = roomNo;
+  response.room = data.room;
 
   response.event = C.EVENT_RES.GAMEMODE_CONFIRM;
   response.gamemode = data.gamemode;
