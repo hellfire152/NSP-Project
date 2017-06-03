@@ -22,7 +22,7 @@ module.exports = function(data) {
       console.log("Well someone's trying to cause an error...");
     } else {
       let roomNo = req.query.room;
-      cipher.decryptJSON(req.cookies.login_and_room)
+      cipher.decryptJSON(req.cookies.login)
         .catch(reason => {
           console.log(reason);
         })
@@ -46,7 +46,7 @@ module.exports = function(data) {
       console.log("Please don't mess with my webpage");
     } else {
       let quizId = req.query.quizId;
-      cipher.decryptJSON(req.cookies.hosting_room)
+      cipher.decryptJSON(req.cookies.login)
         .catch(reason => {
           console.log(reason);
         })

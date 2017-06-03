@@ -14,6 +14,9 @@ module.exports = async function(data, C, allRooms) {
       return (await init_host_room(data, C, allRooms));
       break;
     }
+    default: {
+      console.log("App-handle-io.js: WebServer to AppServer EVENT is " + data.event +" not a preset case!");
+    }
   }
 }
 
@@ -22,8 +25,8 @@ module.exports = async function(data, C, allRooms) {
 */
 async function init_room(data) {
   console.log(data.cookieData);
-  let room = data.cookieData.login_and_room.room;
-  let user = data.cookieData.login_and_room.id;
+  let room = data.cookieData.login.room;
+  let user = data.cookieData.login.id;
 
   response = {
 
@@ -48,6 +51,7 @@ async function init_host_room(data, C, allRooms) {
   let count = 0;
   while(!(allRooms[roomNo] === undefined)){ //keeps searching for an available number
     roomNo = Math.floor(Math.random() * 10000000 + 1);
+    console.log("app-handle-io.js: GENERATED ROOM, NUMBER: " +roomNo);
     if (count > 100) {
       response.err = C.ERR.NO_SPARE_ROOMS;
       return response;
@@ -73,5 +77,6 @@ async function init_host_room(data, C, allRooms) {
   response.validLogin = validLogin;
   response.quizId = quiz.id;
   response.socketId = data.socketId;
+  response.id = data.cookieData.id;
   return response;
 }

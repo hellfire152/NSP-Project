@@ -35,7 +35,7 @@ module.exports = function(cipher, appConn) {
           throw new Error('Error parsing JSON!');
         })
         .then(function(cookieData) {
-        res.cookie('hosting_room', cookieData, {"maxAge": 1000*60}); //one minute
+        res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
         res.redirect('/host?quizId=' +req.body.quizId);
       });
     }

@@ -33,8 +33,8 @@ module.exports = function(data) {
         var data = JSON.parse(input);
         console.log("User to WebServer: ");
         console.log(data);
-        if (data.sendCookie) {  //Sends the cookie data as well.
-          cipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).hosting_room))
+        if (data.sendLoginCookie) {  //Sends the cookie data as well.
+          cipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).login))
             .catch(reason => {
               throw new Error(reason);
             })
@@ -47,9 +47,9 @@ module.exports = function(data) {
               appConn.write(JSON.stringify(data));
             });
         } else {  //Not sending cookie
+          data.socketId = socket.id; //add socketId to identify connection later
           console.log("WebServer to AppServer Data:");
           console.log(data);
-          data.socketId = socket.id; //add socketId to identify connection later
           appConn.write(JSON.stringify(data)); //to game server
         }
       } catch (err) {
@@ -63,25 +63,25 @@ module.exports = function(data) {
   //from game server to user
   appConn.on('data', function(input) { //from app server
     try {
-      let data = JSON.parse(input);
+      let response = JSON.parse(input);
       console.log("AppServer Response: ");
-      console.log(data);
-      if(!(data.type === undefined)) { //custom type -> general website stuff
+      console.log(response);
+      if(!(response.type === undefined)) { //custom type -> general website stuff
          handleOtherResponse({
-          'response': data,
+          'response': response,
           'C' : C,
           'pendingResponses': pendingResponses,
           'dirname' : dirname
         });
       } else { //no type -> socket.io stuff
         handleIoResponse({
-          'response' : data,
+          'response' : response,
           'io' : io,
           'C' : C,
           'socketObj' : io.sockets.sockets
         });
       }
-      if(!(data.callback === undefined)) data.callback();
+      if(!(response.callback === undefined)) response.callback();
     } catch (err) {
       console.log(err);
       console.log('Error Processing AppServer to WebServer input!');
