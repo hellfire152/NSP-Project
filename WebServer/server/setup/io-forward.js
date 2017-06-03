@@ -11,14 +11,15 @@
 module.exports = function(data) {
   //extracting data...
   const C = data.C;
-  var dirname = data.dirname,
+  let dirname = data.dirname,
     pass = data.pass,
     io = data.io,
     pendingResponses = data.pendingResponses,
     cipher = data.cipher,
     appConn = data.appConn,
-    cookie = data.cookie
-
+    cookie = data.cookie,
+    socketOfUser = data.socketOfUser,
+    roomOfUser = data.roomOfUser;
   //setting up forwarding of data between user and game server
   //short hand
   var socketObj = io.sockets.sockets;
@@ -26,38 +27,44 @@ module.exports = function(data) {
   appConn.write(JSON.stringify({"password": pass}));
   //send stuff from user to game server
   io.on('connection', async function(socket){
+    //get login cookie first
+    try {
+      let loginCookie =  await getLoginCookieS(socket, cipher, cookie);
+      socketOfUser[loginCookie.id] = socket;
+      socket.userId = loginCookie.id;
+    } catch (err) {
+      console.log(err);
+      console.log("Invalid login cookie detected");
+      socket.disconnect(); //invalid login cookie
+    }
+
     //adding listeners
     console.log("Request received: " +socket.id);
-    socket.on('send', function(input){ //from user
+    socket.on('send', async function(input){ //from user
       try {
         var data = JSON.parse(input);
         console.log("User to WebServer: ");
         console.log(data);
         if (data.sendLoginCookie) {  //Sends the cookie data as well.
-          cipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).login))
-            .catch(reason => {
-              throw new Error(reason);
-            })
-            .then(function(cookieData) {
-              console.log(cookieData);
-              data.cookieData = cookieData;
-              data.socketId = socket.id;
-              console.log("WebServer to AppServer Data (COOKIE):");
-              console.log(data);
-              appConn.write(JSON.stringify(data));
-            });
-        } else {  //Not sending cookie
-          data.socketId = socket.id; //add socketId to identify connection later
-          console.log("WebServer to AppServer Data:");
-          console.log(data);
-          appConn.write(JSON.stringify(data)); //to game server
+          let cookieData = await getLoginCookieS(socket, cipher, cookie);
+          data.cookieData = cookieData;
         }
+
+        data.socketId = socket.id; //add socketId to identify connection later
+        console.log("WebServer to AppServer Data:");
+        console.log(data);
+        appConn.write(JSON.stringify(data)); //to game server
+
       } catch (err) {
         console.log(err);
         socket.emit('err', 'User to WebServer input Not a stringified JSON Object!\n Error Data:\n');
         socket.emit('err', input);
       }
     });
+    socket.on('disconnect', () => {
+      console.log("Socket with id" +socket.id + " " +"and user " +socket.userId +" has disconnected.");
+      delete socketOfUser[socket.userId];
+    })
   });
 
   //from game server to user
@@ -71,14 +78,16 @@ module.exports = function(data) {
           'response': response,
           'C' : C,
           'pendingResponses': pendingResponses,
-          'dirname' : dirname
+          'dirname' : dirname,
+          'roomOfUser': roomOfUser
         });
       } else { //no type -> socket.io stuff
         handleIoResponse({
           'response' : response,
           'io' : io,
           'C' : C,
-          'socketObj' : io.sockets.sockets
+          'socketObj' : io.sockets.sockets,
+          'socketOfUser' : socketOfUser
         });
       }
       if(!(response.callback === undefined)) response.callback();
@@ -91,3 +100,11 @@ module.exports = function(data) {
 
 var handleIoResponse = require('./io-response.js');
 var handleOtherResponse = require('./other-response.js');
+
+//get login cookie (for socket.io)
+async function getLoginCookieS(socket, cipher, cookie) {
+  let cookieData = await cipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).login));
+  console.log("decryptedLoginCookie");
+  console.log(cookieData);
+  return cookieData;
+}

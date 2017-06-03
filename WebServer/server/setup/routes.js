@@ -10,7 +10,8 @@ module.exports = function(data) {
     pendingResponses = data.pendingResponses,
     cipher = data.cipher,
     appConn = data.appConn,
-    uuid = data.uuid;
+    uuid = data.uuid,
+    queryOfUser = data.queryOfUser;
   //routing
   //sends index.html when someone sends a https request
   app.get('/', function(req, res){
@@ -55,12 +56,13 @@ module.exports = function(data) {
           pendingResponses[resNo] = res;
           console.log("COOKIE DATA: ");
           console.log(cookieData);
+
           appConn.write(JSON.stringify({
             'type': C.REQ_TYPE.HOST_ROOM,
             'id': cookieData.id,
             'pass': cookieData.pass,
             'resNo': resNo,
-            'quizId': cookieData.quizId
+            'quizId': quizId
           }));
         });
     }

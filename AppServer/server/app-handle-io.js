@@ -4,14 +4,16 @@
 
   Author: Jin Kuan
 */
-module.exports = async function(data, C, allRooms) {
+var data, C, allRooms, loadedQuizzes;
+module.exports = async function(input) {
+  data = input.data,
+  C = input.C,
+  allRooms = input.allRooms,
+  loadedQuizzes = input.loadedQuizzes;
+
   switch(data.event) {
-    case C.EVENT.INIT_ROOM: {
-      return (await init_room(data));
-      break;
-    }
-    case C.EVENT.INIT_HOST_ROOM: {
-      return (await init_host_room(data, C, allRooms));
+    case C.EVENT.GAMEMODE_SET: {
+      return (await gamemode_set(data));
       break;
     }
     default: {
@@ -23,12 +25,13 @@ module.exports = async function(data, C, allRooms) {
 /*
   TODO::FINISH THIS SHIT
 */
-async function init_room(data) {
-  console.log(data.cookieData);
+async function join_room(data) {
   let room = data.cookieData.login.room;
   let user = data.cookieData.login.id;
 
   response = {
+    'event' : C.GAMEMODE.CLASSIC,
+    'user' : user,
 
   }
 }
@@ -42,41 +45,21 @@ async function init_room(data) {
 
   Will throw ERR.NO_SPARE_ROOMS after 100 times of failing to find a free roomNo
 */
-async function init_host_room(data, C, allRooms) {
+async function gamemode_set() {
   let response = {};
   validLogin = true /*TODO::VALID LOGIN*/
 
-  //room number stuff
-  roomNo = Math.floor(Math.random() * 10000000 + 1); //generate a number between 1 and 10 million for the room id
-  let count = 0;
-  while(!(allRooms[roomNo] === undefined)){ //keeps searching for an available number
-    roomNo = Math.floor(Math.random() * 10000000 + 1);
-    console.log("app-handle-io.js: GENERATED ROOM, NUMBER: " +roomNo);
-    if (count > 100) {
-      response.err = C.ERR.NO_SPARE_ROOMS;
-      return response;
-    }
-  }
-
-  //get test quiz
-  if(data.quiz == 'TEST') quiz = require('../../test-quiz.json'); //TODO::Get quiz from database
-  else {
-    response.err = C.ERR.QUIZ_DOES_NOT_EXIST;
-    return response;
-  }
-  if(allRooms[roomNo] === undefined) {  //if number available, add quiz data
-    allRooms[roomNo] = {
-      'quiz' : quiz
-    }
-  }
+  //set the data in allRooms
   //build response
   response.roomEvent = C.ROOM_EVENT.JOIN; //Join the created room immediately
   response.room = roomNo;
 
-  response.event = C.EVENT_RES.ROOM_READY;
+  response.event = C.EVENT_RES.GAMEMODE_CONFIRM;
+  response.gamemode = data.gamemode;
   response.validLogin = validLogin;
-  response.quizId = quiz.id;
+  response.quizId = data.quizId;
   response.socketId = data.socketId;
+  response.setId = true;
   response.id = data.cookieData.id;
   return response;
 }

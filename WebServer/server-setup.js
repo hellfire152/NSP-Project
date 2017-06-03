@@ -17,6 +17,8 @@ var cookie = require('cookie');
 var ios = require('socket.io-express-session');
 const C = require('../custom-API/constants.json');
 
+var socketOfUser = {};
+var queryOfUser = {};
 module.exports = function(data) {
   //extracting data
   var app = data.app;
@@ -46,7 +48,13 @@ module.exports = function(data) {
 
   //enables my use of socket.handshake.session
   io.use(ios(session));
-    //Various middleware
+
+  //template engine used
+  app.set('view engine', 'pug');
+  //where the templates are located
+  app.set('views', './site');
+
+  //Various middleware
   app.use(session);
   app.use(cookieParser(COOKIE_KEY));
   app.use(bodyParser.json());
@@ -63,7 +71,8 @@ module.exports = function(data) {
     'pendingResponses' : pendingResponses,
     'cipher' : cipher,
     'appConn' : appConn,
-    'uuid' : uuid
+    'uuid' : uuid,
+    'queryOfUser': queryOfUser
   });
 
   //setting up the communication between the WebServer and AppServer
@@ -75,6 +84,8 @@ module.exports = function(data) {
     'cipher' : cipher,
     'appConn' : appConn,
     'io' : io,
-    'cookie' : cookie
+    'cookie' : cookie,
+    'socketOfUser': socketOfUser,
+    'queryOfUser' : queryOfUser
   });
 }

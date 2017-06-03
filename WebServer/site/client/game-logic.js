@@ -29,14 +29,11 @@ socket.on('receive', function(data) {
 
   switch(response.event) {
     case C.EVENT_RES.ROOM_JOIN : {  //successful room join
-      console.log('ROOM_READY: ' + data.);
+      //console.log('ROOM_READY: ' + data.);
       break;
     }
   }
 });
 socket.on('err', function(err) {
   console.log(err);
-});
-socket.emit('send', JSON.stringify{
-  "event": EVENT.INIT_ROOM
 });

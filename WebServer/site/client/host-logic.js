@@ -12,38 +12,49 @@ socket.on('receive', function(input) {
   try {
     var data = JSON.parse(input);
     console.log(data);
+
+    //if setId for speed later
+    if(data.setId) id = data.id;
+
     switch(data.event) {
-      case C.EVENT_RES.ROOM_READY : {
-        document.getElementById('game').innerHTML =
-          "<h1>Room Number: " + data.room;
-        break;
+      case C.EVENT_RES.GAMEMODE_CONFIRM : {
+        let gameNode = document.getElementById('game');
+        gameNode.innerHTML = "";
+        let gamemode = document.createElement('h3');
+        gamemode.appendChild(document.createTextNode(C.GAMEMODE[data.gamemode] + ": Waiting..."));
+        gameNode.appendChild(gamemode)
+      }
+      //ADD MORE CASES HERE
+      default: {
+        console.log("Event response value is " +data.event +"not a preset case!");
       }
     }
   } catch (err) {
     console.log("Input not a JSON!");
     console.log(err);
   }
-  var data = JSON.parse(input);
-  console.log(data);
 });
 socket.on('err', function(err) {
   console.log(err);
 });
-socket.emit('send', encode({
-  "event": C.EVENT.INIT_HOST_ROOM,
-  "sendCookie": true,
-  "quiz": 'TEST'
-}));
 
 function gameRoom(gamemode) {
-  socket.emit('send', encode({
-    "event" : C.EVENT.INIT_HOST_ROOM,
-    "sendCookie" : true,
+  send({
+    "event" : C.EVENT.GAMEMODE_SET,
+    "sendLoginCookie" : true,
     "gamemode" : gamemode
-  }));
+  });
 }
 
 //convenience function for encoding the json for sending
 async function encode(json) {
   return JSON.stringify(json);
+}
+
+function send(data) {
+  if (data.event === undefined) throw new Error("Event not defined!");
+  encode(data)
+    .then(encodedData => {
+      socket.emit('send', encodedData);
+    });
 }

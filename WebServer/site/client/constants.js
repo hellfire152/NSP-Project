@@ -7,16 +7,15 @@ const C = {
   },
   "EVENT" : {
     "INIT_ROOM": 0,
-    "INIT_HOST_ROOM": 1,
+    "GAMEMODE_SET": 1,
   },
   "EVENT_RES" : {
-    "ROOM_READY" : 1
+    "GAMEMODE_CONFIRM" : 1
   },
-  "SEND_TO" : {
-    "ALL": 0,
-    "USER": 1,
-    "ROOM_ALL": 2,
-    "ROOM_EXCEPT_SENDER": 3,
-    "NULL": -1
+  "GAMEMODE" : {
+    0 : "Classic",
+    1 : "Race",
+    2 : "Team Battle",
+    3 : "Tug Of War",
   }
 };

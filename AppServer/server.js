@@ -26,6 +26,7 @@ if(pass === undefined) {
 
 var net = require('net');
 
+var loadedQuizzes = {};
 var allRooms = {};
 
 //setting up of the logic server
@@ -62,9 +63,19 @@ var server = net.createServer(function (conn) {
         let response = {};
         if(conn.auth) { //if already authenticaed
           if(!(data.type === undefined)) { //data type defined
-            response = await handleReq(data, C)
+            response = await handleReq({
+              'data' : data,
+              'C' : C,
+              'allRooms' : allRooms,
+              'loadedQuizzes' : loadedQuizzes
+            });
           } else { //no data type -> socket.io stuff
-            response = await handleIo(data, C, allRooms);
+            response = await handleIo({
+              'data' : data,
+              'C' : C,
+              'allRooms' : allRooms,
+              'loadedQuizzes' : loadedQuizzes
+            });
           }
 
           //logging and response

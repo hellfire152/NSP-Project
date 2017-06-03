@@ -1,21 +1,22 @@
 /*
 */
-var socketObj;
-//temp until I do session handler
-var socketOfUser = {};
-module.exports = function(input) {
+var socketObj;  //object mapping socketIds to socketS
+var socketOfUser; //object mapping userIds to sockets
+module.exports = async function(input) {
   let io = input.io;
   const C = input.C;
   let response = input.response;
 
   socketObj = io.sockets.sockets;
+  socketOfUser = input.socketOfUser;
+
+console.log(socketOfUser);
 
   if(response.validLogin) {
     if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
       switch(response.roomEvent.type) {
         case C.ROOM_EVENT.JOIN : {
-          socket.join(response.room); //socket joins room
-          socketOfUser[response.id] = socket; //assign socket to userId
+          socketOfUser[response.id].join(response.room); //socket joins room
           break;
         }
         case C.ROOM_EVENT.DELETE_ROOM : {
@@ -26,13 +27,14 @@ module.exports = function(input) {
       }
     }
     switch(response.event) {
-      case C.EVENT_RES.ROOM_READY : {
+      case C.EVENT_RES.GAMEMODE_CONFIRM : {
         clientResponse = {
-          'event' : response.event,
-          'room': response.room,
-          'quizId': response.quizId
+          'event': response.event,
+          'gamemode': response.gamemode,
+          'id': response.id,
+          'setId': response.setId
         };
-        sendToUser(clientResponse, response.socketId);
+        sendToUser(clientResponse, response.id);
         break;
       }
       default: {
@@ -43,7 +45,7 @@ module.exports = function(input) {
     clientResponse = {
       'err' : C.ERR.INVALID_LOGIN
     }
-    sendToUser(clientResponse, response.socketId);
+    sendToUser(clientResponse, response.id);
   }
 }
 
@@ -51,14 +53,14 @@ module.exports = function(input) {
 function sendToAll(data) {
   io.of('/').emit('receive', encode(data));
 }
-function sendToUser(data, socketId) {
-  socketObj[socketId].emit('receive', encode(data));
+function sendToUser(data, user) {
+  socketOfUser[user].emit('receive', encode(data));
 }
 function sendToRoom(data, room) {
   io.in(room).emit('receive', encode(data));
 }
 function sendToRoomExceptSender(data, senderId, room) {
-  socketObj[senderId].to(room).emit('receive', encode(data))
+  socketOfUser[senderId].to(room).emit('receive', encode(data))
 }
 
 /*

@@ -10,7 +10,7 @@ module.exports = async function(data) {
   let C = data.C;
   let pendingResponses = data.pendingResponses;
   let dirname = data.dirname;
-
+  let queryOfUser = data.queryOfUser;
   console.log("OTHER RES TYPE: " +response.type);
 
   switch(response.type) {
@@ -44,7 +44,9 @@ async function host_room_res(response, pendingResponses, dirname) {
   console.log("DIRECTORY NAME: " + dirname);
   if(response.validLogin == true) {
     let res = pendingResponses[response.resNo];
-    res.sendFile(dirname + '/site/host.html');  //sending the html file
+    res.render('host', {
+      'roomNo': response.roomNo
+    });  //sending the html file
     delete pendingResponses[response.resNo];
     //socket.io will handle the rest
   }
