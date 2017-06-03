@@ -29,8 +29,21 @@ socket.on('receive', function(input) {
 socket.on('err', function(err) {
   console.log(err);
 });
-socket.emit('send', JSON.stringify({
+socket.emit('send', encode({
   "event": C.EVENT.INIT_HOST_ROOM,
   "sendCookie": true,
   "quiz": 'TEST'
 }));
+
+function gameRoom(gamemode) {
+  socket.emit('send', encode({
+    "event" : C.EVENT.INIT_HOST_ROOM,
+    "sendCookie" : true,
+    "gamemode" : gamemode
+  }));
+}
+
+//convenience function for encoding the json for sending
+async function encode(json) {
+  return JSON.stringify(json);
+}
