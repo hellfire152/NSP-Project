@@ -6,12 +6,17 @@
 
   Author: Jin Kuan
 */
-var C, allRooms, loadedQuizzes;
+var C, allRooms;
 module.exports = async function(input) {
   data = input.data;
   C = input.C;
   allRooms = input.allRooms;
-  loadedQuizzes = input.loadedQuizzes;
+
+  if (data.type >= 500) { //type code greater than 500 are special
+    return await handleSpecial({
+
+    });
+  }
 
   console.log("REQ TYPE: " +data.type);
   switch(data.type) {
@@ -33,16 +38,41 @@ module.exports = async function(input) {
   Or it might be, I dunno.
 */
 async function join_room(data) {
-  if(/*TODO::VALID LOGIN*/true) {
-    response = { //build response
-      'type': C.RES_TYPE.JOIN_ROOM_RES,
-      'validLogin': true, /*TODO::PROPER LOGIN*/
-      'room': data.room,
+  if(!(allRooms[data.roomNo] === undefined)) { //if room exists
+    if(allRooms[data.roomNo].joinable) {
+      //if player is not in the room
+      if(allRooms[data.roomNo].players.indexOf(data.id) < 0) {
+        response = { //build response
+          'type': C.RES_TYPE.JOIN_ROOM_RES,
+          'validLogin': true, /*TODO::PROPER LOGIN*/
+          'roomNo': data.roomNo,
+          'resNo': data.resNo,
+          'id': data.id
+        };
+        return response;
+      } else {  //player already in room
+        return {
+          'err': C.ERR.DUPLICATE_ID,
+          'resNo': data.resNo,
+          'id': data.id,
+          'socketId': data.socketId
+        }
+      }
+    } else {  //room not joinable
+      return {
+        'err': C.ERR.ROOM_NOT_JOINABLE,
+        'id': data.id,
+        'roomNo': data.roomNo,
+        'resNo': data.resNo
+      }
+    }
+  } else { //room does not exist
+    return {
+      'err' : C.ERR.ROOM_DOES_NOT_EXIST,
       'resNo': data.resNo,
-      'id': data.id
+      'id': data.id,
+      'roomNo' : data.roomNo
     };
-    return response;
-  } else {
     //INVALID LOGIN
   }
 }
@@ -72,13 +102,14 @@ async function host_room(data) {
   //setting the data in allRooms
   allRooms[roomNo] = {
     'host': data.id,
-    'joinable' : true,
-    'players' : []
+    'joinable' : false,
+    'players' : [],
+    'quiz' : null
   }
 
   //load quiz
   if(data.quizId == 'TEST') {
-    loadedQuizzes[roomNo] = require('../../test-quiz.json');
+    allRooms[roomNo].quiz = require('../../test-quiz.json');
   } //TODO::Get quiz from database
   else {
     response.err = C.ERR.QUIZ_DOES_NOT_EXIST;
@@ -96,3 +127,5 @@ async function host_room(data) {
   };
   return response;
 }
+
+var handleSpecial = require('./app-handle-special.js');

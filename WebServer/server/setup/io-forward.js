@@ -2,6 +2,8 @@
   This module is responsible for the most of the communication between the
   AppServer and the WebServer.
 
+  This module will have all the code for error handling too
+
   This breaks down into 3 things:
     1. forwarding of user socket.io requests to the AppServer
     2. Handling all data from the AppServer, including
@@ -35,7 +37,7 @@ module.exports = function(data) {
     } catch (err) {
       console.log(err);
       console.log("Invalid login cookie detected");
-      socket.disconnect(); //invalid login cookie
+      socket.disconnect();
     }
 
     //adding listeners
@@ -50,6 +52,7 @@ module.exports = function(data) {
           data.cookieData = cookieData;
         }
 
+        data.id = socket.userId;  //add userId to the sent data
         data.socketId = socket.id; //add socketId to identify connection later
         console.log("WebServer to AppServer Data:");
         console.log(data);
@@ -62,27 +65,73 @@ module.exports = function(data) {
       }
     });
     socket.on('disconnect', () => {
-      console.log("Socket with id" +socket.id + " " +"and user " +socket.userId +" has disconnected.");
+      console.log(socket.rooms);
+      console.log("Socket with id " +socket.id + " " +"and user " +socket.userId +" has disconnected.");
       delete socketOfUser[socket.userId];
-    })
+      appConn.write(JSON.stringify({
+        'special': C.SPECIAL.SOCKET_DISCONNECT,
+        'id': socket.userId,
+        'roomNo' : socket.roomNo
+      }));
+    });
   });
 
   //from game server to user
-  appConn.on('data', function(input) { //from app server
+  appConn.on('data', async function(input) { //from app server
     try {
       let response = JSON.parse(input);
       console.log("AppServer Response: ");
       console.log(response);
+      if(response.err) {  //if there's an error
+        switch(response.err) {
+          case C.ERR.ROOM_DOES_NOT_EXIST: {
+            sendErrorPage({
+              'response': response,
+              'errormsg': "Room " +response.roomNo +" does not exist!",
+              'pendingResponses': pendingResponses
+            });
+            break;
+          }
+          case C.ERR.ROOM_NOT_JOINABLE: {
+            sendErrorPage({
+              'response': response,
+              'errormsg': "Room " +response.roomNo +" is not joinable!",
+              'pendingResponses': pendingResponses
+            });
+            break;
+          }
+          case C.ERR.DUPLICATE_ID: {
+            sendErrorPage({
+              'response': response,
+              'errormsg': "ID " +response.id +" is already in the room!",
+              'pendingResponses': pendingResponses
+            });
+            break;
+          }
+          //ADD MORE CASES HERE
+          default: {
+            console.log("AppServer to WebServer ERR value is " +response.err +" not a preset case!");
+          }
+        }
+      }
       if(!(response.type === undefined)) { //custom type -> general website stuff
-         handleOtherResponse({
+         await handleOtherResponse({
           'response': response,
           'C' : C,
           'pendingResponses': pendingResponses,
           'dirname' : dirname,
           'roomOfUser': roomOfUser
         });
-      } else { //no type -> socket.io stuff
-        handleIoResponse({
+      } else if(response.special === undefined){ //no type -> socket.io stuff
+        await handleIoResponse({
+          'response' : response,
+          'io' : io,
+          'C' : C,
+          'socketObj' : io.sockets.sockets,
+          'socketOfUser' : socketOfUser
+        });
+      } else {  //handleSpecial
+        await handleSpecialResponse({
           'response' : response,
           'io' : io,
           'C' : C,
@@ -100,6 +149,7 @@ module.exports = function(data) {
 
 var handleIoResponse = require('./io-response.js');
 var handleOtherResponse = require('./other-response.js');
+var handleSpecialResponse = require('./special-response.js');
 
 //get login cookie (for socket.io)
 async function getLoginCookieS(socket, cipher, cookie) {
@@ -107,4 +157,15 @@ async function getLoginCookieS(socket, cipher, cookie) {
   console.log("decryptedLoginCookie");
   console.log(cookieData);
   return cookieData;
+}
+
+function sendErrorPage(data) {
+  try { //res/req errors
+    data.pendingResponses[data.response.resNo].render('error', {
+      'error': data.errormsg
+    });
+    delete data.pendingResponses[data.response.resNo];
+  } catch (err) { //socket.io
+    data.socketObj[data.response.socketId].emit('err', ""+response.id + " is already in the room!");
+  }
 }

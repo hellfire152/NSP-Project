@@ -25,8 +25,7 @@ module.exports = function(cipher, appConn) {
     } else {
       cipher.encryptJSON({
         "id": req.body.id,
-        "pass": req.body.pass,
-        "room": req.body.room
+        "pass": req.body.pass
       })
         .catch(function (err) {
           throw new Error('Error parsing JSON!');

@@ -37,7 +37,7 @@ module.exports = function(data) {
             'id': cookieData.id,
             'pass': cookieData.pass,
             'resNo': resNo,
-            'room': roomNo
+            'roomNo': roomNo
           }));
         });
     }

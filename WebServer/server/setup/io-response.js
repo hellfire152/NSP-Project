@@ -10,13 +10,12 @@ module.exports = async function(input) {
   socketObj = io.sockets.sockets;
   socketOfUser = input.socketOfUser;
 
-console.log(socketOfUser);
-
   if(response.validLogin) {
     if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
-      switch(response.roomEvent.type) {
+      switch(response.roomEvent) {
         case C.ROOM_EVENT.JOIN : {
-          socketOfUser[response.id].join(response.room); //socket joins room
+          socketOfUser[response.id].join(response.roomNo); //socket joins room
+          socketOfUser[response.id].roomNo = response.roomNo;
           break;
         }
         case C.ROOM_EVENT.DELETE_ROOM : {
@@ -37,6 +36,24 @@ console.log(socketOfUser);
         sendToUser(clientResponse, response.id);
         break;
       }
+      case C.EVENT_RES.PLAYER_JOIN: {
+        //Handle JOIN_ROOM
+        clientResponse = {
+          'event': C.EVENT_RES.PLAYER_LIST,
+          'playerList': response.playerList,
+          'id': response.id
+        }
+        sendToUser(clientResponse, response.id);
+
+        //Sending PLAYER_JOIN to all other players
+        clientResponse = {
+          'event': C.EVENT_RES.PLAYER_JOIN,
+          'id': response.id
+        }
+        sendToRoomExceptSender(clientResponse, response.id, response.roomNo);
+        break;
+      }
+      //ADD MORE CASES HERE
       default: {
         console.log('AppServer to WebServer EVENT_RES value is ' +response.event +', not a preset case');
       }

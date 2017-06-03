@@ -4,17 +4,18 @@
 
   Author: Jin Kuan
 */
-var data, C, allRooms, loadedQuizzes;
+var data, C, allRooms;
 module.exports = async function(input) {
   data = input.data,
   C = input.C,
-  allRooms = input.allRooms,
-  loadedQuizzes = input.loadedQuizzes;
+  allRooms = input.allRooms;
 
   switch(data.event) {
+    case C.EVENT.JOIN_ROOM : {
+      return await join_room(data);
+    }
     case C.EVENT.GAMEMODE_SET: {
       return (await gamemode_set(data));
-      break;
     }
     default: {
       console.log("App-handle-io.js: WebServer to AppServer EVENT is " + data.event +" not a preset case!");
@@ -26,13 +27,39 @@ module.exports = async function(input) {
   TODO::FINISH THIS SHIT
 */
 async function join_room(data) {
-  let room = data.cookieData.login.room;
-  let user = data.cookieData.login.id;
-
-  response = {
-    'event' : C.GAMEMODE.CLASSIC,
-    'user' : user,
-
+  let r = allRooms[data.roomNo];
+  if(!(r === undefined)) {  //if room exists
+    if(r.joinable) {
+      if(r.players.indexOf(data.id) < 0) {
+        allRooms[data.roomNo].players.push(data.id); //add use to player list
+      } else {
+        return {
+          'err': C.ERR.DUPLICATE_ID,
+          'id': data.id,
+        }
+      }
+      response = {
+        'event' : C.EVENT_RES.PLAYER_JOIN,
+        'validLogin' : true,
+        'roomEvent' : C.ROOM_EVENT.JOIN,
+        'roomNo': data.roomNo,
+        'id': data.id,
+        'playerList' : allRooms[data.roomNo].players
+      }
+      return response;
+    } else {
+      return {
+        'err': C.ERR.ROOM_NOT_JOINABLE,
+        'id': data.id,
+        'roomNo': data.roomNo
+      }
+    }
+  } else {
+    return {
+      'err': C.ERR.ROOM_DOES_NOT_EXIST,
+      'id' : data.id,
+      'roomNo': data.roomNo
+    }
   }
 }
 
@@ -50,18 +77,19 @@ async function gamemode_set() {
   validLogin = true /*TODO::VALID LOGIN*/
 
   //set the data in allRooms
-  allRooms[data.room].gamemode = data.gamemode;
+  allRooms[data.roomNo].gamemode = data.gamemode;
+  allRooms[data.roomNo].host = data.cookieData.id;
+  allRooms[data.roomNo].joinable = true;
 
   //build response
   response.roomEvent = C.ROOM_EVENT.JOIN; //Join the created room immediately
-  response.room = data.room;
+  response.roomNo = data.roomNo;
 
   response.event = C.EVENT_RES.GAMEMODE_CONFIRM;
   response.gamemode = data.gamemode;
   response.validLogin = validLogin;
-  response.quizId = data.quizId;
   response.socketId = data.socketId;
   response.setId = true;
-  response.id = data.cookieData.id;
+  response.id = data.id;
   return response;
 }

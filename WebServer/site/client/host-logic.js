@@ -7,6 +7,9 @@
     4. WebServer assigns the server-side socket a room, sends the room no here
     5. Room number is displayed!
 */
+//disable start button
+document.getElementById('start').disabled = true;
+
 var socket = io();
 socket.on('receive', function(input) {
   try {
@@ -16,17 +19,34 @@ socket.on('receive', function(input) {
     //if setId for speed later
     if(data.setId) id = data.id;
 
-    switch(data.event) {
-      case C.EVENT_RES.GAMEMODE_CONFIRM : {
-        let gameNode = document.getElementById('game');
-        gameNode.innerHTML = "";
-        let gamemode = document.createElement('h3');
-        gamemode.appendChild(document.createTextNode(C.GAMEMODE[data.gamemode] + ": Waiting..."));
-        gameNode.appendChild(gamemode)
+    if(data.special === undefined) {  //regualr stuff
+      switch(data.event) {
+        case C.EVENT_RES.GAMEMODE_CONFIRM : {
+          //replaces buttons with "<gamemode>: Waiting..."
+          let gameNode = document.getElementById('game');
+          gameNode.innerHTML = "";
+          let gamemode = document.createElement('h3');
+          gamemode.appendChild(document.createTextNode(C.GAMEMODE[data.gamemode] + ": Waiting..."));
+          gameNode.appendChild(gamemode);
+          break;
+        }
+        case C.EVENT_RES.PLAYER_JOIN: {
+          console.log("Player " +data.id +" has joined!");
+          appendToWaitingList(data.id);
+          break;
+        }
+        //ADD MORE CASES HERE
+        default: {
+          console.log("Event response value is " +data.event +"not a preset case!");
+        }
       }
-      //ADD MORE CASES HERE
-      default: {
-        console.log("Event response value is " +data.event +"not a preset case!");
+    } else {  //special events
+      switch(data.special) {
+        case C.SPECIAL.SOCKET_DISCONNECT: {
+          let player = document.getElementById(response.id);
+          player.parentNode.removeChild(player); //remove the player from waiting-list
+          break;
+        }
       }
     }
   } catch (err) {
@@ -43,10 +63,15 @@ function gameRoom(gamemode) {
     "event" : C.EVENT.GAMEMODE_SET,
     "sendLoginCookie" : true,
     "gamemode" : gamemode,
-    'room' : room
+    'roomNo' : room
   });
 }
 
+function start(){
+  send({
+    'event': C.GAME.START
+  });
+}
 //convenience function for encoding the json for sending
 async function encode(json) {
   return JSON.stringify(json);
@@ -58,4 +83,21 @@ function send(data) {
     .then(encodedData => {
       socket.emit('send', encodedData);
     });
+}
+
+function appendToWaitingList(playerId) {
+  //append to ul
+  let waitingList = document.getElementById('waiting-list');
+  console.log(playerId +" joined");
+  let li = document.createElement('li');
+  li.id = playerId;
+  li.appendChild(document.createTextNode(playerId));
+  waitingList.appendChild(li);
+
+  //enable start button if at least one player is in the room, else disable
+  if(waitingList.childNodes.length > 0) {
+    document.getElementById('start').disabled = false;
+  } else {
+    document.getElementById('start').disabled = true;
+  }
 }

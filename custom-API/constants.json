@@ -5,12 +5,20 @@
     "C" : 2,
     "D" : 1
   },
+  "SPECIAL" : {
+    "SOCKET_DISCONNECT" : 500,
+    "HOST_DISCONNECT": 501
+  },
   "EVENT" : {
-    "JOIN_ROOM": 0,
-    "GAMEMODE_SET": 1,
+    "JOIN_ROOM": 1,
+    "GAMEMODE_SET": 2,
+    "PLAYER_JOIN" : 3,
+    "START": 10
   },
   "EVENT_RES" : {
-    "GAMEMODE_CONFIRM" : 1
+    "GAMEMODE_CONFIRM" : 1,
+    "PLAYER_JOIN" : 2,
+    "PLAYER_LIST" : 3
   },
   "GAMEMODE" : {
     "CLASSIC": 0,
@@ -35,6 +43,9 @@
     "NO_SPARE_ROOMS" : 1001,
     "INVALID_LOGIN" : 1002,
     "QUIZ_DOES_NOT_EXIST" : 1003,
-    "GAME_ALREADY_STARTED" : 1004
+    "GAME_ALREADY_STARTED" : 1004,
+    "ROOM_DOES_NOT_EXIST" : 1005,
+    "ROOM_NOT_JOINABLE" : 1006,
+    "DUPLICATE_ID": 1007
   }
 }

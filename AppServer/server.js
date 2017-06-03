@@ -26,7 +26,6 @@ if(pass === undefined) {
 
 var net = require('net');
 
-var loadedQuizzes = {};
 var allRooms = {};
 
 //setting up of the logic server
@@ -66,15 +65,19 @@ var server = net.createServer(function (conn) {
             response = await handleReq({
               'data' : data,
               'C' : C,
-              'allRooms' : allRooms,
-              'loadedQuizzes' : loadedQuizzes
+              'allRooms' : allRooms
             });
-          } else { //no data type -> socket.io stuff
+          } else if (data.special === undefined){ //no data type or special -> socket.io stuff
             response = await handleIo({
               'data' : data,
               'C' : C,
-              'allRooms' : allRooms,
-              'loadedQuizzes' : loadedQuizzes
+              'allRooms' : allRooms
+            });
+          } else {  //special
+            response = await handleSpecial({
+              'data' : data,
+              'C' : C,
+              'allRooms' : allRooms
             });
           }
 
@@ -108,4 +111,5 @@ async function sendToServer(conn, json) {
 }
 
 var handleIo = require('./server/app-handle-io.js');
-var handleReq = require('./server/app-handle-req');
+var handleReq = require('./server/app-handle-req.js');
+var handleSpecial = require('./server/app-handle-special.js');

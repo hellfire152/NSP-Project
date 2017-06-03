@@ -1,0 +1,13 @@
+html
+  head
+    script.
+      var room = #{roomNo}
+    script(src='/socket.io/socket.io.js')
+    script(src='/client/constants.js')
+    script(src='/client/play-logic.js')
+    title exQuizit! - Play
+  body
+    #game
+    h1 In room: #{roomNo}
+    ul(id='waiting-list')
+      li Waiting List...

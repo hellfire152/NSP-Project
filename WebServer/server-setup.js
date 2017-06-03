@@ -71,7 +71,6 @@ module.exports = function(data) {
     'cipher' : cipher,
     'appConn' : appConn,
     'uuid' : uuid,
-    'queryOfUser': queryOfUser
   });
 
   //setting up the communication between the WebServer and AppServer
@@ -85,6 +84,5 @@ module.exports = function(data) {
     'io' : io,
     'cookie' : cookie,
     'socketOfUser': socketOfUser,
-    'queryOfUser' : queryOfUser
   });
 }
