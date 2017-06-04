@@ -14,8 +14,12 @@ module.exports = async function(input) {
     if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
       switch(response.roomEvent) {
         case C.ROOM_EVENT.JOIN : {
-          socketOfUser[response.id].join(response.roomNo); //socket joins room
-          socketOfUser[response.id].roomNo = response.roomNo;
+          if(socketOfUser[response.id].roomNo === undefined) {  //no not already in room
+            socketOfUser[response.id].join(response.roomNo); //socket joins room
+            socketOfUser[response.id].roomNo = response.roomNo; //include roomNo in the socketObj
+          } else {  //socket already in room, not supposed to happen
+            socketOfUser[response.id].emit('err', "Already in a room!");
+          }
           break;
         }
         case C.ROOM_EVENT.DELETE_ROOM : {
@@ -52,6 +56,13 @@ module.exports = async function(input) {
         }
         sendToRoomExceptSender(clientResponse, response.id, response.roomNo);
         break;
+      }
+      case C.EVENT_RES.GAME_START: {
+        clientResponse = {
+          'event': C.EVENT_RES.GAME_START,
+          'question': response.question
+        };
+        sendToRoom(clientResponse, response.roomNo);
       }
       //ADD MORE CASES HERE
       default: {

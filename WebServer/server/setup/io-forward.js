@@ -53,7 +53,8 @@ module.exports = function(data) {
         }
 
         data.id = socket.userId;  //add userId to the sent data
-        data.socketId = socket.id; //add socketId to identify connection later
+        data.roomNo = socket.roomNo; //add roomNo (if applicable)
+
         console.log("WebServer to AppServer Data:");
         console.log(data);
         appConn.write(JSON.stringify(data)); //to game server
@@ -84,6 +85,29 @@ module.exports = function(data) {
       console.log(response);
       if(response.err) {  //if there's an error
         switch(response.err) {
+          case C.ERR.NO_SPARE_ROOMS: {
+            sendErrorPage({
+              'response': response,
+              'errormsg': "Unable to generate unique room ID!",
+              'pendingResponses': pendingResponses
+            });
+            break;
+          }
+          case C.ERR.QUIZ_DOES_NOT_EXIST: {
+            sendErrorPage({
+              'response': response,
+              'errormsg': 'Quiz ' +data.quizId +' does not exist!'
+              'pendingResponses': pendingResponses
+            });
+            break;
+          }
+          case C.ERR.INACCESSIBLE_PRIVATE_QUIZ: {
+            sendErrorPage({
+              'response': response,
+              'errormsg': 'Quiz is a private quiz by someone else!'
+              'pendingResponses': pendingResponses
+            });
+          }
           case C.ERR.ROOM_DOES_NOT_EXIST: {
             sendErrorPage({
               'response': response,

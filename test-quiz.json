@@ -35,8 +35,15 @@
       "choices": ["Window", "11", "2", "Some lame ass joke"],
       "solution": 2,
       "time": 20
+    },
+    {
+      "prompt": "What is zero in Roman Numerals?",
+      "type": 1,
+      "solution": " ",
+      "time": 20
     }
   ],
   "author": "Kuan",
-  "creationDate": "29/05/2017"
+  "creationDate": "29/05/2017",
+  "public": true
 }

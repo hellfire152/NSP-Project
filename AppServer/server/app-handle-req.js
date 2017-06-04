@@ -12,12 +12,6 @@ module.exports = async function(input) {
   C = input.C;
   allRooms = input.allRooms;
 
-  if (data.type >= 500) { //type code greater than 500 are special
-    return await handleSpecial({
-
-    });
-  }
-
   console.log("REQ TYPE: " +data.type);
   switch(data.type) {
     case C.REQ_TYPE.JOIN_ROOM: {
@@ -87,33 +81,63 @@ async function host_room(data) {
   response =  {};
   validLogin = true /*TODO::Proper login check*/
 
-  //generate a room number
-  roomNo = Math.floor(Math.random() * 10000000 + 1); //generate a number between 1 and 10 million for the room id
-  let count = 0;
-  while(!(allRooms[roomNo] === undefined)){ //keeps searching for an available number
-    roomNo = Math.floor(Math.random() * 10000000 + 1);
-    console.log("app-handle-io.js: REGENERATED ROOM, NUMBER: " +roomNo);
-    if (count > 100) {
-      response.err = C.ERR.NO_SPARE_ROOMS;
-      return response;
+  let generateRoomNo = async function() {
+    //generate a room number
+    roomNo = Math.floor(Math.random() * 10000000 + 1); //generate a number between 1 and 10 million for the room id
+    let count = 0;
+    while(!(allRooms[roomNo] === undefined)){ //keeps searching for an available number
+      roomNo = Math.floor(Math.random() * 10000000 + 1);
+      console.log("app-handle-io.js: REGENERATED ROOM, NUMBER: " +roomNo);
+      if (count > 100) {
+        throw new Error(C.ERR.NO_SPARE_ROOMS);
+      }
+    }
+    return roomNo;
+  }
+
+  let loadQuiz = async function(){
+    //load quiz
+    if(data.quizId == 'TEST') {
+      let quiz = require('../../test-quiz.json');
+      if(quiz.public == false && data.id !== quiz.author) {
+        throw new Error(C.ERR.INACCESSIBLE_PRIVATE_QUIZ);
+      }
+      return quiz;
+    } //TODO::Get quiz from database
+    else {
+      throw new Error(C.ERR.QUIZ_DOES_NOT_EXIST);
     }
   }
 
+  Promise.all([generateRoomNo, loadQuiz])
+    .catch(reason => {
+      if(reason.prototype.message == C.ERR.NO_SPARE_ROOMS) {
+        return {
+          'err': C.ERR.NO_SPARE_ROOMS,
+          'id': data.id
+        }
+      } else if (reason.prototype.message == C.ERR.QUIZ_DOES_NOT_EXIST) {
+        return {
+          'err': C.ERR.QUIZ_DOES_NOT_EXIST,
+          'id': data.id,
+          'quizId': data.quizId
+        }
+      } else if (reason.prototype.message == C.ERR.INACCESSIBLE_PRIVATE_QUIZ) {
+        return {
+          'err': C.ERR.INACCESSIBLE_PRIVATE_QUIZ,
+          'quizId': data.quizId
+        }
+      }
+    })
+    .then(results => {
+      a
+    });
   //setting the data in allRooms
   allRooms[roomNo] = {
     'host': data.id,
     'joinable' : false,
     'players' : [],
     'quiz' : null
-  }
-
-  //load quiz
-  if(data.quizId == 'TEST') {
-    allRooms[roomNo].quiz = require('../../test-quiz.json');
-  } //TODO::Get quiz from database
-  else {
-    response.err = C.ERR.QUIZ_DOES_NOT_EXIST;
-    return response;
   }
 
   //bulid response

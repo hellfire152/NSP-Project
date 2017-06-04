@@ -12,10 +12,13 @@ module.exports = async function(input) {
 
   switch(data.event) {
     case C.EVENT.JOIN_ROOM : {
-      return await join_room(data);
+      return await join_room();
     }
     case C.EVENT.GAMEMODE_SET: {
-      return (await gamemode_set(data));
+      return (await gamemode_set());
+    }
+    case C.EVENT.START: {
+      return await start();
     }
     default: {
       console.log("App-handle-io.js: WebServer to AppServer EVENT is " + data.event +" not a preset case!");
@@ -26,7 +29,7 @@ module.exports = async function(input) {
 /*
   TODO::FINISH THIS SHIT
 */
-async function join_room(data) {
+async function join_room() {
   let r = allRooms[data.roomNo];
   if(!(r === undefined)) {  //if room exists
     if(r.joinable) {
@@ -92,4 +95,23 @@ async function gamemode_set() {
   response.setId = true;
   response.id = data.id;
   return response;
+}
+
+async function start() {
+  //shorthand
+  let r = allRooms[data.roomNo];
+  r.joinable = false; //room no longer can be joined
+
+  //set a question counter
+  r.questionCounter = 0;
+
+  //get first question
+  let question = r.quiz.questions[r.questionCounter];
+  //build response
+  return {
+    'event': C.EVENT_RES.GAME_START,
+    'roomNo': data.roomNo,
+    'question': question,
+    'gamemode': r.gamemode
+  }
 }

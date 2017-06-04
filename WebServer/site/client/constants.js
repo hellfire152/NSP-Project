@@ -14,7 +14,8 @@ const C = {
   "EVENT_RES" : {
     "GAMEMODE_CONFIRM" : 1,
     "PLAYER_JOIN": 2,
-    "PLAYER_LIST": 3
+    "PLAYER_LIST": 3,
+    "GAME_START" : 10
   },
   "GAMEMODE" : {
     0 : "Classic",

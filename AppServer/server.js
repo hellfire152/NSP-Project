@@ -67,14 +67,20 @@ var server = net.createServer(function (conn) {
               'C' : C,
               'allRooms' : allRooms
             });
-          } else if (data.special === undefined){ //no data type or special -> socket.io stuff
+          } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
             response = await handleIo({
               'data' : data,
               'C' : C,
               'allRooms' : allRooms
             });
-          } else {  //special
-            response = await handleSpecial({
+          } else if (!(data.game === undefined)){  //special
+            response = await handleGame({
+              'data' : data,
+              'C' : C,
+              'allRooms' : allRooms
+            });
+          } else {
+            response = await handleSpecial({  //special
               'data' : data,
               'C' : C,
               'allRooms' : allRooms
@@ -112,4 +118,5 @@ async function sendToServer(conn, json) {
 
 var handleIo = require('./server/app-handle-io.js');
 var handleReq = require('./server/app-handle-req.js');
+var handleGame = require('./server/app-handle-game.js')
 var handleSpecial = require('./server/app-handle-special.js');

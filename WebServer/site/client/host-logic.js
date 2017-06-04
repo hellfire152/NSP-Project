@@ -69,7 +69,7 @@ function gameRoom(gamemode) {
 
 function start(){
   send({
-    'event': C.GAME.START
+    'event': C.EVENT.START
   });
 }
 //convenience function for encoding the json for sending
