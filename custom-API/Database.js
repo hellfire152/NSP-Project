@@ -18,6 +18,17 @@ connection.connect(function(error){
   }
 });
 
+module.exports = async function(data, C) {
+  console.log("DB TYPE: " +data.type);
+  switch(data.type) {
+    case C.DB.INSERT.USER_ACCOUNT: {
+
+    }
+    //ADD MORE CASES HERE
+  }
+}
+
+
 /**
 Create new user account
 @param accountType: defines the type of account (host/ student)
@@ -26,12 +37,13 @@ Create new user account
 @param name: full name of the user
 @param accountDetails: object of account details regardless of accountType
 */
-function createAccount(accountType, email, password, name, accountDetails){
+function createAccount(accountType, email, username, password, name, accountDetails){
   console.log(emailAvailable(email));
-  if(false){
+  if(true){
     var account =
     {
       email : email,
+      username : username,
       password_hash : crypto.createHash('SHA256').update(password).digest('base64'), //hash password using SHA256 algorithm
       name : name
     };
@@ -47,9 +59,11 @@ function createAccount(accountType, email, password, name, accountDetails){
       var userId = result.insertId; //Get the userId form user_account
 
       if(accountType == 'student'){
+        console.log('[Creating student]');
         createStudentAccount(userId, accountDetails);
       }
-      else if(accountType =='host'){
+      else if(accountType =='teacher'){
+        console.log('[Creating Teacher]');
         createHostAccount(userId, accountDetails)
       }
     });
@@ -103,8 +117,9 @@ function createStudentAccount(userId, studentDetails){
 
   var studentAccount = {
     user_id: userId,
-    username: studentDetails.username,
-    achievement: 0
+    date_of_birth: studentDetails.dateOfBirth,
+    school: studentDetails.school,
+    // achievement: 0
   };
 
   var query = connection.query("INSERT INTO student_details SET ?", studentAccount, function(error, result){
@@ -142,4 +157,4 @@ function createHostAccount(userId, hostDetails){
 }
 
 // emailAvailable("nigel_ncch@hotmaisl.com");
-createAccount("student", "nigel_ncch@hotmail.com", "password_hashed", "Nigel Chen Chin Hao HOST", {username: "nigelhao"});
+createAccount("student", "nigel_ncch@hotmail.com", "nigelhao" ,"password_hashed", "Nigel Chen Chin Hao HOST", {dateOfBirth : "08/05/1998", school : "NYP"});
