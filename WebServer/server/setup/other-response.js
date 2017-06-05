@@ -43,7 +43,8 @@ async function host_room_res(response, pendingResponses) {
   if(response.validLogin == true) {
     let res = pendingResponses[response.resNo];
     res.render('host', {
-      'roomNo': response.roomNo
+      'roomNo': response.roomNo,
+      'gamemode': response.gamemode
     });  //sending the html file
     delete pendingResponses[response.resNo];
     //socket.io will handle the rest

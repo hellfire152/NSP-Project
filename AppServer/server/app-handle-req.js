@@ -15,11 +15,12 @@ module.exports = async function(input) {
   console.log("REQ TYPE: " +data.type);
   switch(data.type) {
     case C.REQ_TYPE.JOIN_ROOM: {
-      return await join_room(data);
+      return (await join_room(data));
       break;
     }
     case C.REQ_TYPE.HOST_ROOM: {
-      return await host_room(data);
+      return (await host_room(data));
+      console.log(await host_room(data));
       break;
     }
     //ADD MORE CASES HERE
@@ -41,7 +42,8 @@ async function join_room(data) {
           'validLogin': true, /*TODO::PROPER LOGIN*/
           'roomNo': data.roomNo,
           'resNo': data.resNo,
-          'id': data.id
+          'id': data.id,
+          'gamemode': allRooms[data.roomNo].gamemode
         };
         return response;
       } else {  //player already in room
@@ -81,72 +83,51 @@ async function host_room(data) {
   response =  {};
   validLogin = true /*TODO::Proper login check*/
 
-  let generateRoomNo = async function() {
-    //generate a room number
-    roomNo = Math.floor(Math.random() * 10000000 + 1); //generate a number between 1 and 10 million for the room id
-    let count = 0;
-    while(!(allRooms[roomNo] === undefined)){ //keeps searching for an available number
-      roomNo = Math.floor(Math.random() * 10000000 + 1);
-      console.log("app-handle-io.js: REGENERATED ROOM, NUMBER: " +roomNo);
-      if (count > 100) {
-        throw new Error(C.ERR.NO_SPARE_ROOMS);
+  //generate a room number
+  let roomNo = Math.floor(Math.random() * 10000000 + 1); //generate a number between 1 and 10 million for the room id
+  let count = 0;
+  while(!(allRooms[roomNo] === undefined)){ //keeps searching for an available number
+    roomNo = Math.floor(Math.random() * 10000000 + 1);
+    console.log("app-handle-io.js: REGENERATED ROOM, NUMBER: " +roomNo);
+    if (count > 100) {
+      return {
+        'err': C.ERR.NO_SPARE_ROOMS,
+        'id': data.id
       }
     }
-    return roomNo;
   }
 
-  let loadQuiz = async function(){
-    //load quiz
-    if(data.quizId == 'TEST') {
-      let quiz = require('../../test-quiz.json');
-      if(quiz.public == false && data.id !== quiz.author) {
-        throw new Error(C.ERR.INACCESSIBLE_PRIVATE_QUIZ);
+  let quiz;
+  //load quiz
+  if(data.quizId == 'TEST') {
+    quiz = require('../../test-quiz.json');
+    if(quiz.public == false && data.id !== quiz.author) {
+      return {
+        'err': C.ERR.INACCESSIBLE_PRIVATE_QUIZ,
+        'quizId': data.quizId
       }
-      return quiz;
-    } //TODO::Get quiz from database
-    else {
-      throw new Error(C.ERR.QUIZ_DOES_NOT_EXIST);
+    }
+  } //TODO::Get quiz from database
+  else {
+    return {
+      'err': C.ERR.QUIZ_DOES_NOT_EXIST,
+      'id': data.id,
+      'quizId': data.quizId
     }
   }
 
-  Promise.all([generateRoomNo, loadQuiz])
-    .catch(reason => {
-      if(reason.prototype.message == C.ERR.NO_SPARE_ROOMS) {
-        return {
-          'err': C.ERR.NO_SPARE_ROOMS,
-          'id': data.id
-        }
-      } else if (reason.prototype.message == C.ERR.QUIZ_DOES_NOT_EXIST) {
-        return {
-          'err': C.ERR.QUIZ_DOES_NOT_EXIST,
-          'id': data.id,
-          'quizId': data.quizId
-        }
-      } else if (reason.prototype.message == C.ERR.INACCESSIBLE_PRIVATE_QUIZ) {
-        return {
-          'err': C.ERR.INACCESSIBLE_PRIVATE_QUIZ,
-          'quizId': data.quizId
-        }
-      }
-    })
-    .then(results => {
-      a
-    });
-  //setting the data in allRooms
-  allRooms[roomNo] = {
-    'host': data.id,
-    'joinable' : false,
-    'players' : [],
-    'quiz' : null
-  }
+  //add data to allRooms
+  allRooms[data.roomNo] = {
+    'host': data.id
+  };
 
-  //bulid response
+  //build response
   response = {
     'type': C.RES_TYPE.HOST_ROOM_RES,
     'validLogin': true,//TODO::Proper login check
     'resNo': data.resNo,
     'hostId': data.id,
-    'quizId' : data.quizId,
+    'quizId' : quiz.id,
     'roomNo' : roomNo
   };
   return response;

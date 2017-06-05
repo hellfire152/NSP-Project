@@ -7,8 +7,6 @@
     4. WebServer assigns the server-side socket a room, sends the room no here
     5. Room number is displayed!
 */
-//disable start button
-document.getElementById('start').disabled = true;
 
 var socket = io();
 socket.on('receive', function(input) {
@@ -28,6 +26,28 @@ socket.on('receive', function(input) {
           let gamemode = document.createElement('h3');
           gamemode.appendChild(document.createTextNode(C.GAMEMODE[data.gamemode] + ": Waiting..."));
           gameNode.appendChild(gamemode);
+
+          //load gamemode's javascript
+          var tag = document.createElement("script");
+          switch(data.gamemode) {
+            case 0: {
+              tag.src = '/client/host/classic.js';
+              break;
+            }
+            case 1: {
+              tag.src = '/client/host/race.js';
+              break;
+            }
+            case 2: {
+              tag.src = 'client/host/team-battle.js';
+              break;
+            }
+            case 3: {
+              tag.src = '/client/host/tug-of-war.js'
+              break;
+            }
+          }
+          document.getElementsByTagName("head")[0].appendChild(tag);
           break;
         }
         case C.EVENT_RES.PLAYER_JOIN: {
@@ -103,3 +123,6 @@ function appendToWaitingList(playerId) {
     document.getElementById('start').disabled = true;
   }
 }
+
+//disable start button
+document.getElementById("start").disabled = true;

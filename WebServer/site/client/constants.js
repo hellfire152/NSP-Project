@@ -10,28 +10,28 @@ const C = {
     1: 'B',
     2: 'C',
     3: 'D'
-  }
+  },
   "EVENT" : {
     "JOIN_ROOM": 1,
     "GAMEMODE_SET": 2,
-    "PLAYER_JOIN" : 3,
+    "PLAYER_JOIN" : 3
   },
   "EVENT_RES" : {
     "GAMEMODE_CONFIRM" : 1,
     "PLAYER_JOIN": 2,
-    "PLAYER_LIST": 3,
+    "PLAYER_LIST": 3
   },
   "GAME" : {
     "START" : 0
   },
   "GAME_RES": {
     "BEGIN_FIRST_QUESTION": 0
-  }
+  },
   "GAMEMODE" : {
     0 : "Classic",
     1 : "Race",
     2 : "Team Battle",
-    3 : "Tug Of War",
+    3 : "Tug Of War"
   },
   "SPECIAL" : {
     "SOCKET_DISCONNECT" : 500,

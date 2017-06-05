@@ -4,15 +4,6 @@ html
       var room = #{roomNo};
     script(src='/client/constants.js')
     script(src='/socket.io/socket.io.js')
-    var gamemode = #{gamemode}
-    if gamemode == 0
-      script(src='/client/game/host/classic.js')
-    else if gamemode == 1
-      script(src='/client/game/host/race.js')
-    else if gamemode == 2
-      script(src='/client/game/host/team-battle.js')
-    else if gamemode == 3
-      script(src='/client/game/host/tug-of-war.js')
     script(src='/client/host-logic.js')
     title exQuizit! - Play
   body
@@ -24,4 +15,4 @@ html
       button(onclick='gameRoom(2)') Battle
       button(onclick='gameRoom(3)') Tug Of War
     ul(id='waiting-list')
-    button(id='start' onclick='start()')Start!
+    button(id='start' onclick='start()') Start!

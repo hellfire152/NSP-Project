@@ -9,7 +9,7 @@
  The server will delegate most processing and Database Access to the AppServer.
 
  The default port is 8080.
- 
+
   Author: Jin Kuan
  */
  //do not shut down on error
@@ -21,8 +21,8 @@
 var pass = process.argv[2];
 
 //Shared SessionHandler
-var SessionHandler = require('../custom-API/session-handler.js');
-var SessionHandler = new SessionHandler();
+// var SessionHandler = require('../custom-API/session-handler.js');
+// var SessionHandler = new SessionHandler();
 
 //various imports
 var express = require('express');
@@ -48,9 +48,9 @@ var io = require('socket.io').listen(server);
 //connection with app server
 var appConn = net.connect(9090);
 
-// shared session handler
-var SessionHandler = require('../custom-API/session-handler.js');
-var sessionHandler = new SessionHandler();
+// // shared session handler
+// var SessionHandler = require('../custom-API/session-handler.js');
+// var sessionHandler = new SessionHandler();
 
 //key for cookie
 const COOKIE_KEY = "cookieSECREEET";
@@ -64,7 +64,7 @@ require("./server-setup.js")({
   "cookieParser": cookieParser,
   "cipher": cipher,
   "COOKIE_KEY": COOKIE_KEY,
-  "sessionHandler" : sessionHandler
+  // "sessionHandler" : sessionHandler
 });
 
 //confimation message

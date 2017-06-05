@@ -127,7 +127,7 @@ module.exports = function(data) {
 }
 
 //handlers for the different response types
-var errorHandler = require('./error-response.js');
+var errorHandler = require('./error-handler.js');
 var handleIoResponse = require('./io-response.js');
 var handleOtherResponse = require('./other-response.js');
 var handleSpecialResponse = require('./special-response.js');
