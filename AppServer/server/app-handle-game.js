@@ -1,6 +1,7 @@
 var C, allRooms, data;
 module.exports = async function() {
-  switch(data.gamemode) {
+  let gamemode = allRooms[data.roomNo].gamemode;
+  switch(gamemode) {
     case C.GAMEMODE.CLASSIC: {
       handleClassic({
         'data': data,

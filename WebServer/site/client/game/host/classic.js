@@ -4,7 +4,7 @@
 console.log('Loaded: classic gamemode handler!');
 async function handleGame(response) {
   switch(response) {
-    case C.GAME.START: {
+    case C.GAME.BEGIN_FIRST_QUESTION: {
       document.getElementById('game').innerHTML = ""; //clear game area
 
 
@@ -50,7 +50,7 @@ function submitAnswer(type, ans) {
   if (type == 0){
     send({
       'game': C.GAME.SUBMIT_ANSWER,
-      'answer': C.MCQ[ans];
+      'answer': C.MCQ[ans]
     });
   } else {
     send({

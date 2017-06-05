@@ -13,7 +13,15 @@ module.exports = function(input) {
 
   switch(data.game) {
     case C.GAME.START: {
-      
+      currentRoom.joinable = false; //room not joinable anymore
+      currentRoom.questionCounter = 0; //question counter for the whole room
+      let question = currentRoom.quiz.question[0]; //get first question
+
+      return {
+        'game': C.GAME.BEGIN_FIRST_QUESTION,
+        'question': question,
+        'roomNo': data.roomNo
+      }
     }
   }
 };
