@@ -34,13 +34,14 @@ async function join_room() {
   if(!(r === undefined)) {  //if room exists
     if(r.joinable) {
       if(r.players.indexOf(data.id) < 0) {
-        allRooms[data.roomNo].players.push(data.id); //add use to player list
+        allRooms[data.roomNo].players[data.id] = {}; //add use to player list
       } else {
         return {
           'err': C.ERR.DUPLICATE_ID,
           'id': data.id,
         }
       }
+      //build response (no error)
       response = {
         'event' : C.EVENT_RES.PLAYER_JOIN,
         'validLogin' : true,
@@ -95,23 +96,4 @@ async function gamemode_set() {
   response.setId = true;
   response.id = data.id;
   return response;
-}
-
-async function start() {
-  //shorthand
-  let r = allRooms[data.roomNo];
-  r.joinable = false; //room no longer can be joined
-
-  //set a question counter
-  r.questionCounter = 0;
-
-  //get first question
-  let question = r.quiz.questions[r.questionCounter];
-  //build response
-  return {
-    'event': C.EVENT_RES.GAME_START,
-    'roomNo': data.roomNo,
-    'question': question,
-    'gamemode': r.gamemode
-  }
 }

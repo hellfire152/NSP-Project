@@ -84,59 +84,14 @@ module.exports = function(data) {
       console.log("AppServer Response: ");
       console.log(response);
       if(response.err) {  //if there's an error
-        switch(response.err) {
-          case C.ERR.NO_SPARE_ROOMS: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': "Unable to generate unique room ID!",
-              'pendingResponses': pendingResponses
-            });
-            break;
-          }
-          case C.ERR.QUIZ_DOES_NOT_EXIST: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': 'Quiz ' +data.quizId +' does not exist!'
-              'pendingResponses': pendingResponses
-            });
-            break;
-          }
-          case C.ERR.INACCESSIBLE_PRIVATE_QUIZ: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': 'Quiz is a private quiz by someone else!'
-              'pendingResponses': pendingResponses
-            });
-          }
-          case C.ERR.ROOM_DOES_NOT_EXIST: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': "Room " +response.roomNo +" does not exist!",
-              'pendingResponses': pendingResponses
-            });
-            break;
-          }
-          case C.ERR.ROOM_NOT_JOINABLE: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': "Room " +response.roomNo +" is not joinable!",
-              'pendingResponses': pendingResponses
-            });
-            break;
-          }
-          case C.ERR.DUPLICATE_ID: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': "ID " +response.id +" is already in the room!",
-              'pendingResponses': pendingResponses
-            });
-            break;
-          }
-          //ADD MORE CASES HERE
-          default: {
-            console.log("AppServer to WebServer ERR value is " +response.err +" not a preset case!");
-          }
-        }
+        await errorHandler({
+          'response': response,
+          'C': C,
+          'pendingResponses': pendingResponses,
+          'roomOfUser' : roomOfUser,
+          'socketObj':  io.sockets.sockets,
+          'socketOfUser': socketOfUser
+        });
       }
       if(!(response.type === undefined)) { //custom type -> general website stuff
          await handleOtherResponse({
@@ -171,9 +126,12 @@ module.exports = function(data) {
   });
 }
 
+//handlers for the different response types
+var errorHandler = require('./error-response.js');
 var handleIoResponse = require('./io-response.js');
 var handleOtherResponse = require('./other-response.js');
 var handleSpecialResponse = require('./special-response.js');
+var handleGameResponse = require('./game-response.js');
 
 //get login cookie (for socket.io)
 async function getLoginCookieS(socket, cipher, cookie) {

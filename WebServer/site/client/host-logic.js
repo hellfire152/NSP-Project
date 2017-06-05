@@ -19,7 +19,7 @@ socket.on('receive', function(input) {
     //if setId for speed later
     if(data.setId) id = data.id;
 
-    if(data.special === undefined) {  //regualr stuff
+    if(data.event != undefined) {  //regualr stuff
       switch(data.event) {
         case C.EVENT_RES.GAMEMODE_CONFIRM : {
           //replaces buttons with "<gamemode>: Waiting..."
@@ -40,7 +40,9 @@ socket.on('receive', function(input) {
           console.log("Event response value is " +data.event +"not a preset case!");
         }
       }
-    } else {  //special events
+    } else if (data.game != undefined) {  //special events
+      handleGame(data); //delegate to the handleGame function defined in the gamemode js files
+    } else {
       switch(data.special) {
         case C.SPECIAL.SOCKET_DISCONNECT: {
           let player = document.getElementById(response.id);
@@ -69,7 +71,7 @@ function gameRoom(gamemode) {
 
 function start(){
   send({
-    'event': C.EVENT.START
+    'game': C.GAME.START
   });
 }
 //convenience function for encoding the json for sending

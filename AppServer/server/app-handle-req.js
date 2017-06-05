@@ -35,7 +35,7 @@ async function join_room(data) {
   if(!(allRooms[data.roomNo] === undefined)) { //if room exists
     if(allRooms[data.roomNo].joinable) {
       //if player is not in the room
-      if(allRooms[data.roomNo].players.indexOf(data.id) < 0) {
+      if(allRooms[data.roomNo].players[data.id] === undefined) {
         response = { //build response
           'type': C.RES_TYPE.JOIN_ROOM_RES,
           'validLogin': true, /*TODO::PROPER LOGIN*/
