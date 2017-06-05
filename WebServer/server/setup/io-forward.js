@@ -96,7 +96,7 @@ module.exports = function(data) {
           case C.ERR.QUIZ_DOES_NOT_EXIST: {
             sendErrorPage({
               'response': response,
-              'errormsg': 'Quiz ' +data.quizId +' does not exist!'
+              'errormsg': 'Quiz ' +data.quizId +' does not exist!',
               'pendingResponses': pendingResponses
             });
             break;
@@ -104,7 +104,7 @@ module.exports = function(data) {
           case C.ERR.INACCESSIBLE_PRIVATE_QUIZ: {
             sendErrorPage({
               'response': response,
-              'errormsg': 'Quiz is a private quiz by someone else!'
+              'errormsg': 'Quiz is a private quiz by someone else!',
               'pendingResponses': pendingResponses
             });
           }

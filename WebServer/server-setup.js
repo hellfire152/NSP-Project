@@ -83,6 +83,6 @@ module.exports = function(data) {
     'appConn' : appConn,
     'io' : io,
     'cookie' : cookie,
-    'socketOfUser': socketOfUser,
+    'socketOfUser': socketOfUser
   });
 }
