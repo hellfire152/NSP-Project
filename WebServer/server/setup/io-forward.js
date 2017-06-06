@@ -22,6 +22,7 @@ module.exports = function(data) {
     cookie = data.cookie,
     socketOfUser = data.socketOfUser,
     roomOfUser = data.roomOfUser;
+    
   //setting up forwarding of data between user and game server
   //short hand
   var socketObj = io.sockets.sockets;

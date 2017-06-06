@@ -16,7 +16,26 @@ module.exports = async function(input) {
         'game': C.GAME_RES.BEGIN_FIRST_QUESTION,
         'question': response.question
       }, response.roomNo);
+      break;
     }
+    case C.GAME_RES.ANSWER_CHOSEN: {
+      console.log("ANSWER_CHOSEN");
+      sendToUser({
+        'game': C.GAME_RES.ANSWER_CHOSEN,
+        'id': response.id,
+        'answer': response.answer
+      }, response.hostId);
+      break;
+    }
+    case C.GAME_RES.ROUND_END: {
+      sendToRoom({
+        'game': C.GAME_RES.ROUND_END,
+        'roundEndResults': response.roundEndResults,
+        'answers': response.answers
+      }, response.roomNo);
+      break;
+    }
+    //ADD MORE CASES HERE
   }
 }
 

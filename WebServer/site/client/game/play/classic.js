@@ -37,7 +37,7 @@ function loadQuestion(question) {
           submitAnswer(0, C.MCQ_LETTERS[i]); //setting the proper onclick function
         }
       })();
-      button.innerHTML = C.MCQ_LETTERS[i];
+      button.appendChild(document.createTextNode(question.choices[i]));
       ansNode.appendChild(button);
     }
   } else {  //short answer question

@@ -4,7 +4,7 @@
   Author: Jin Kuan
 */
 var data, C, allRooms, sendToServer, conn;
-var currentRoom;
+var currentRoom, currentPlayer;
 module.exports = async function(input) {
   data = input.data;
   C = input.C;
@@ -23,11 +23,17 @@ module.exports = async function(input) {
       currentRoom.questionCounter = 0; //question counter for the whole room
       let question = currentRoom.quiz.questions[0]; //get first question
 
-      setTimeout(() => {
+      //store answer resutls
+      currentRoom.answers = {};
+
+      //set timer
+      currentRoom.timer = setTimeout(() => {
+        common.setAllAnswered(currentRoom.players);
         sendToServer({
-          'game': C.GAME_RES.TIMER_END
+          sendRoundEnd(currentRoom, data, currentRoom.answers, question.solution);
         });
       }, question.time * 1000);
+
       return {
         'game': C.GAME_RES.BEGIN_FIRST_QUESTION,
         'question': { //send question, without the solution
@@ -39,14 +45,23 @@ module.exports = async function(input) {
         'roomNo': data.roomNo
       }
     }
+    case C.GAME.NEXT_ROUND: {
+
+      break;
+    }
     case C.GAME.SUBMIT_ANSWER: {
       if(currentRoom.answerCount === undefined) currentRoom.answerCount = 0;
-      currentRoom.answerCount++;
       let question = currentRoom.quiz.question[currentRoom.questionCounter];
       let correctAnswer = question.solution;
       let qType = question.type;
 
       if(currentPlayer.answered === undefined) { if //if currentPlayer has not answered
+        //store the answer
+        if(currentRoom.answers[data.answer] === undefined) {
+          currentRoom.answers[data.answer] = 0;
+        }
+        currentRoom.answers[data.answer]++;
+
         //calculating score
         if(data.answer & correctAnswer) { //if correctAnswer
           //getting question reward value
@@ -79,15 +94,12 @@ module.exports = async function(input) {
         }
 
         currentPlayer.answered = true;
+        currentRoom.answerCount++;
 
         if(currentRoom.answerCount == currentRoom.playerCount) {
-          common.setAllUnanswered(currentRoom.players);
-          return {
-            //send round signal
-            'game': C.GAME_RES.ROUND_END,
-            'roomNo': data.roomNo,
-            'playerData': common.roundEnd(currentRoom.players);
-          }
+          //stop the auto round end on timer end
+          clearTimeout(currentRoom.timer);
+          return sendRoundEnd(currentRoom, data, currentRoom.answers);
         } else {
           //send response for host
           return {
@@ -110,5 +122,19 @@ module.exports = async function(input) {
     }
   }
 };
+
+/*
+  Function for ending the round.
+  Delegated to an outside function as this can be triggered in multiple ways
+*/
+function sendRoundEnd(currentRoom, data, answers) {
+  return {
+    //send round signal
+    'game': C.GAME_RES.ROUND_END,
+    'roomNo': data.roomNo,
+    'roundEndResults': common.roundEndResults(currentRoom.players, true);
+    'answers': answers
+  };
+}
 
 var common = require('./common.js');

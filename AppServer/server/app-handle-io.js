@@ -39,7 +39,7 @@ async function join_room() {
           'wrongAnswers': 0,
           'score': 0,
           'answerStreak': 0
-        }; //add use to player list
+        };
         allRooms[data.room].playerCount++;
       } else {
         return {
@@ -103,5 +103,8 @@ async function gamemode_set() {
   response.validLogin = validLogin;
   response.setId = true;
   response.id = data.id;
+
+  response.sendTo = C.SEND_TO.USER;
+  response.targetId = data.id;
   return response;
 }

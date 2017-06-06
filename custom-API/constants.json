@@ -9,6 +9,12 @@
     "SOCKET_DISCONNECT" : 500,
     "HOST_DISCONNECT": 501
   },
+  "SEND_TO": {
+    "ALL": 0,
+    "USER": 1,
+    "ROOM": 2,
+    "ROOM_EXCEPT_SENDER": 3
+  },
   "EVENT" : {
     "JOIN_ROOM": 1,
     "GAMEMODE_SET": 2,
