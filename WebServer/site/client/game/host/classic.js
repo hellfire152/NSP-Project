@@ -1,13 +1,13 @@
 /*
   handleGame function for the classic gamemode
 */
-console.log('Loaded: classic gamemode handler!');
-async function handleGame(response) {
-  switch(response) {
-    case C.GAME.BEGIN_FIRST_QUESTION: {
-      document.getElementById('game').innerHTML = ""; //clear game area
+console.log('HOST: Loaded: classic gamemode handler!');
+function handleGame(response) {
+  console.log('HOST: Handling game response!');
+  switch(response.game) {
+    case C.GAME_RES.BEGIN_FIRST_QUESTION: {
+      clearBody();
       loadQuestion(response.question);
-
       break;
     }
   }
@@ -22,28 +22,29 @@ function loadQuestion(question) {
   let promptNode = document.createElement('h3');
   promptNode.appendChild(document.createTextNode(question.prompt));
 
+  let ansNode = document.createElement('div');
+  ansNode.id = 'ans';
+
   if(question.type == 0) { //if MCQ question
     //create MCQ buttons
-    let buttonArr = [];
+    console.log("HOST QUESTION HANDLER: MCQ");
     for(let i = 0; i < 4; i++) {
-      let button = document.createElement('button');
-      button.id = 'MCQ-' + MCQ_LETTERS[i];
-      button.appendChild(document.createTextNode(question.choices[i]));
-      button.onclick = function() {
-        return function() {
-          submitAnswer(0, C.MCQ_LETTERS[i]); //setting the proper onclick function
-        }
-      };
+      let ansDiv = document.createElement('div');
+      ansDiv.id = 'MCQ-' + C.MCQ_LETTERS[i];
+      ansDiv.appendChild(document.createTextNode("No. of people that chose " +question.choices[i] +": ");
+      //append to ansNode
+      ansNode.appendChild(ansDiv);
     }
+
   } else {  //short answer question
     //create textfiedl
     //let textField =
   }
-}
 
-//clears the game area (by settin innerHTML for now)
-function clearGameArea() {
-  document.getElementById('game').innerHTML = "";
+  //adding to the document
+  questionDiv.appendChild(promptNode);
+  questionDiv.appendChild(ansNode);
+  document.getElementById('game').appendChild(questionDiv);
 }
 
 //sends the answer to the server

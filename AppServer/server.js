@@ -77,7 +77,9 @@ var server = net.createServer(function (conn) {
             response = await handleGame({
               'data' : data,
               'C' : C,
-              'allRooms' : allRooms
+              'allRooms' : allRooms,
+              'conn': conn,
+              'sendToServer': sendToServer
             });
           } else {
             response = await handleSpecial({  //special

@@ -34,7 +34,13 @@ async function join_room() {
   if(r !== undefined) {  //if room exists
     if(r.joinable) {
       if(r.players[data.id] === undefined) {  //if player is not in the room
-        allRooms[data.room].players[data.id] = {}; //add use to player list
+        allRooms[data.room].players[data.id] = {
+          'correctAnswers': 0,
+          'wrongAnswers': 0,
+          'score': 0,
+          'answerStreak': 0
+        }; //add use to player list
+        allRooms[data.room].playerCount++;
       } else {
         return {
           'err': C.ERR.DUPLICATE_ID,
@@ -80,10 +86,11 @@ async function gamemode_set() {
   let response = {};
   validLogin = true /*TODO::VALID LOGIN*/
 
-  //set the data in allRooms
+  //setting data in allRooms
   allRooms[data.room].gamemode = data.gamemode;
   allRooms[data.room].host = data.cookieData.id;
   allRooms[data.room].joinable = true;
+  allRooms[data.room].playerCount = 0;
 
   //build response
   console.log("DATA");
