@@ -2,17 +2,18 @@ html
   head
     script.
       var room = #{roomNo}
+    script.
+      var gamemode = #{gamemode}
     script(src='/socket.io/socket.io.js')
     script(src='/client/constants.js')
-    var gamemode = #{gamemode}
     if gamemode == 0
-      script(src='/client/game/host/classic.js')
+      script(src='/client/game/play/classic.js')
     else if gamemode == 1
-      script(src='/client/game/host/race.js')
+      script(src='/client/game/play/race.js')
     else if gamemode == 2
-      script(src='/client/game/host/team-battle.js')
+      script(src='/client/game/play/team-battle.js')
     else if gamemode == 3
-      script(src='/client/game/host/tug-of-war.js')
+      script(src='/client/game/play/tug-of-war.js')
     script(src='/client/play-logic.js')
     title exQuizit! - Play
   body

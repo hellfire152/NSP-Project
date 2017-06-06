@@ -32,6 +32,12 @@ module.exports = function(data) {
     //get login cookie first
     try {
       let loginCookie =  await getLoginCookieS(socket, cipher, cookie);
+      console.log("SOCKET IO CONNECTION INITIATED BY");
+      console.log(loginCookie);
+      if(socketOfUser[loginCookie.id] !== undefined) { //if user with that id already exists
+        console.log('User with that ID already logged in!');
+        //socket.disconnect();
+      }
       socketOfUser[loginCookie.id] = socket;
       socket.userId = loginCookie.id;
     } catch (err) {
@@ -66,8 +72,7 @@ module.exports = function(data) {
       }
     });
     socket.on('disconnect', () => {
-      console.log(socket.rooms);
-      console.log("Socket with id " +socket.id + " " +"and user " +socket.userId +" has disconnected.");
+      console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
       delete socketOfUser[socket.userId];
       appConn.write(JSON.stringify({
         'special': C.SPECIAL.SOCKET_DISCONNECT,
@@ -93,7 +98,7 @@ module.exports = function(data) {
           'socketOfUser': socketOfUser
         });
       }
-      if(!(response.type === undefined)) { //custom type -> general website stuff
+      if(response.type !== undefined) { //custom type -> general website stuff
          await handleOtherResponse({
           'response': response,
           'C' : C,
@@ -101,7 +106,7 @@ module.exports = function(data) {
           'dirname' : dirname,
           'roomOfUser': roomOfUser
         });
-      } else if(response.special === undefined){ //no type -> socket.io stuff
+      } else if(response.event !== undefined){ //no type -> socket.io stuff
         await handleIoResponse({
           'response' : response,
           'io' : io,
@@ -109,7 +114,16 @@ module.exports = function(data) {
           'socketObj' : io.sockets.sockets,
           'socketOfUser' : socketOfUser
         });
-      } else {  //handleSpecial
+      } else if (response.game !== undefined) {
+        await handleGameResponse({
+          'response' : response,
+          'io' : io,
+          'C' : C,
+          'socketObj' : io.sockets.sockets,
+          'socketOfUser' : socketOfUser
+        });
+      }
+      else {  //handleSpecial
         await handleSpecialResponse({
           'response' : response,
           'io' : io,

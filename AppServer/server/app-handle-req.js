@@ -15,12 +15,13 @@ module.exports = async function(input) {
   console.log("REQ TYPE: " +data.type);
   switch(data.type) {
     case C.REQ_TYPE.JOIN_ROOM: {
+      console.log("ALL ROOMS: ");
+      console.log(allRooms);
       return (await join_room(data));
       break;
     }
-    case C.REQ_TYPE.HOST_ROOM: {
+    case C.REQ_TYPE.HOST_ROOM: {;
       return (await host_room(data));
-      console.log(await host_room(data));
       break;
     }
     //ADD MORE CASES HERE
@@ -117,8 +118,10 @@ async function host_room(data) {
   }
 
   //add data to allRooms
-  allRooms[data.roomNo] = {
-    'host': data.id
+  allRooms[roomNo] = {
+    'host': data.id,
+    'players': {},
+    'quiz': quiz
   };
 
   //build response

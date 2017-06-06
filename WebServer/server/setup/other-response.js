@@ -32,7 +32,8 @@ module.exports = async function(data) {
 async function join_room_res(response, pendingResponses) {
   let res = pendingResponses[response.resNo]; //get pending response
   res.render('play', {
-    'roomNo' : response.roomNo
+    'roomNo' : response.roomNo,
+    'gamemode': response.gamemode
   });
   delete pendingResponses[response.resNo]; //remove the pending request
   //Let socket.io take the game stuff from here

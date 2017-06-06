@@ -30,11 +30,11 @@ module.exports = async function(input) {
   TODO::FINISH THIS SHIT
 */
 async function join_room() {
-  let r = allRooms[data.roomNo];
-  if(!(r === undefined)) {  //if room exists
+  let r = allRooms[data.room];
+  if(r !== undefined) {  //if room exists
     if(r.joinable) {
-      if(r.players.indexOf(data.id) < 0) {
-        allRooms[data.roomNo].players[data.id] = {}; //add use to player list
+      if(r.players[data.id] === undefined) {  //if player is not in the room
+        allRooms[data.room].players[data.id] = {}; //add use to player list
       } else {
         return {
           'err': C.ERR.DUPLICATE_ID,
@@ -46,23 +46,23 @@ async function join_room() {
         'event' : C.EVENT_RES.PLAYER_JOIN,
         'validLogin' : true,
         'roomEvent' : C.ROOM_EVENT.JOIN,
-        'roomNo': data.roomNo,
+        'roomNo': data.room,
         'id': data.id,
-        'playerList' : allRooms[data.roomNo].players
+        'playerList' : allRooms[data.room].players
       }
       return response;
     } else {
       return {
         'err': C.ERR.ROOM_NOT_JOINABLE,
         'id': data.id,
-        'roomNo': data.roomNo
+        'roomNo': data.room
       }
     }
   } else {
     return {
       'err': C.ERR.ROOM_DOES_NOT_EXIST,
       'id' : data.id,
-      'roomNo': data.roomNo
+      'roomNo': data.room
     }
   }
 }
@@ -81,18 +81,19 @@ async function gamemode_set() {
   validLogin = true /*TODO::VALID LOGIN*/
 
   //set the data in allRooms
-  allRooms[data.roomNo].gamemode = data.gamemode;
-  allRooms[data.roomNo].host = data.cookieData.id;
-  allRooms[data.roomNo].joinable = true;
+  allRooms[data.room].gamemode = data.gamemode;
+  allRooms[data.room].host = data.cookieData.id;
+  allRooms[data.room].joinable = true;
 
   //build response
+  console.log("DATA");
+  console.log(data);
   response.roomEvent = C.ROOM_EVENT.JOIN; //Join the created room immediately
-  response.roomNo = data.roomNo;
+  response.roomNo = data.room;
 
   response.event = C.EVENT_RES.GAMEMODE_CONFIRM;
   response.gamemode = data.gamemode;
   response.validLogin = validLogin;
-  response.socketId = data.socketId;
   response.setId = true;
   response.id = data.id;
   return response;

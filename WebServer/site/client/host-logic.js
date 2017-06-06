@@ -11,39 +11,39 @@
 var socket = io();
 socket.on('receive', function(input) {
   try {
-    var data = JSON.parse(input);
-    console.log(data);
+    var response = JSON.parse(input);
+    console.log(response);
 
     //if setId for speed later
-    if(data.setId) id = data.id;
+    if(response.setId) id = response.id;
 
-    if(data.event != undefined) {  //regualr stuff
-      switch(data.event) {
+    if(response.event != undefined) {  //regualr stuff
+      switch(response.event) {
         case C.EVENT_RES.GAMEMODE_CONFIRM : {
           //replaces buttons with "<gamemode>: Waiting..."
           let gameNode = document.getElementById('game');
           gameNode.innerHTML = "";
           let gamemode = document.createElement('h3');
-          gamemode.appendChild(document.createTextNode(C.GAMEMODE[data.gamemode] + ": Waiting..."));
+          gamemode.appendChild(document.createTextNode(C.GAMEMODE[response.gamemode] + ": Waiting..."));
           gameNode.appendChild(gamemode);
 
           //load gamemode's javascript
           var tag = document.createElement("script");
-          switch(data.gamemode) {
+          switch(response.gamemode) {
             case 0: {
-              tag.src = '/client/host/classic.js';
+              tag.src = '/client/game/host/classic.js';
               break;
             }
             case 1: {
-              tag.src = '/client/host/race.js';
+              tag.src = '/client/game/host/race.js';
               break;
             }
             case 2: {
-              tag.src = 'client/host/team-battle.js';
+              tag.src = 'client/game/host/team-battle.js';
               break;
             }
             case 3: {
-              tag.src = '/client/host/tug-of-war.js'
+              tag.src = '/client/game/host/tug-of-war.js'
               break;
             }
           }
@@ -51,19 +51,19 @@ socket.on('receive', function(input) {
           break;
         }
         case C.EVENT_RES.PLAYER_JOIN: {
-          console.log("Player " +data.id +" has joined!");
-          appendToWaitingList(data.id);
+          console.log("Player " +response.id +" has joined!");
+          appendToWaitingList(response.id);
           break;
         }
         //ADD MORE CASES HERE
         default: {
-          console.log("Event response value is " +data.event +"not a preset case!");
+          console.log("Event response value is " +response.event +"not a preset case!");
         }
       }
-    } else if (data.game != undefined) {  //special events
+    } else if (response.game != undefined) {  //special events
       handleGame(data); //delegate to the handleGame function defined in the gamemode js files
     } else {
-      switch(data.special) {
+      switch(response.special) {
         case C.SPECIAL.SOCKET_DISCONNECT: {
           let player = document.getElementById(response.id);
           player.parentNode.removeChild(player); //remove the player from waiting-list
@@ -85,7 +85,7 @@ function gameRoom(gamemode) {
     "event" : C.EVENT.GAMEMODE_SET,
     "sendLoginCookie" : true,
     "gamemode" : gamemode,
-    'roomNo' : room
+    "room" : room
   });
 }
 
@@ -100,7 +100,7 @@ async function encode(json) {
 }
 
 function send(data) {
-  if (data.event === undefined) throw new Error("Event not defined!");
+  if (data.event === undefined && data.game === undefined) throw new Error("Event/game type not defined!");
   encode(data)
     .then(encodedData => {
       socket.emit('send', encodedData);
@@ -125,4 +125,6 @@ function appendToWaitingList(playerId) {
 }
 
 //disable start button
-document.getElementById("start").disabled = true;
+window.onload = function() {
+  document.getElementById("start").disabled = true;
+};

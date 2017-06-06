@@ -16,7 +16,7 @@ var socket = io();
 socket.on('receive', function(data) {
   var response = JSON.parse(data);
   console.log(response);
-  if(response.special === undefined) {
+  if(response.event !== undefined) {
     switch(response.event) {
       case C.EVENT_RES.PLAYER_LIST: {
         Object.keys(response.playerList).forEach(playerId => {
@@ -32,7 +32,14 @@ socket.on('receive', function(data) {
       }
 
     }
-  } else {
+  } else if (response.game !== undefined) {
+    switch(response.game) {
+      case C.GAME_RES.BEGIN_FIRST_QUESTION: {
+        console.log('QUESTION TYPE: ' +response.question.type);
+        console.log(response.question.prompt);
+      }
+    }
+  } else {  //special
     switch(response.special) {
       case C.SPECIAL.SOCKET_DISCONNECT: {
         let player = document.getElementById(response.id);
@@ -41,13 +48,14 @@ socket.on('receive', function(data) {
     }
   }
 });
+
 socket.on('err', function(err) {
   console.log(err);
-}
+});
 
 send({
   'event': C.EVENT.JOIN_ROOM,
-  'roomNo' : room
+  'room' : room
 });
 
 //convenience function for encoding the json for sending

@@ -57,13 +57,6 @@ module.exports = async function(input) {
         sendToRoomExceptSender(clientResponse, response.id, response.roomNo);
         break;
       }
-      case C.EVENT_RES.GAME_START: {
-        clientResponse = {
-          'event': C.EVENT_RES.GAME_START,
-          'question': response.question
-        };
-        sendToRoom(clientResponse, response.roomNo);
-      }
       //ADD MORE CASES HERE
       default: {
         console.log('AppServer to WebServer EVENT_RES value is ' +response.event +', not a preset case');

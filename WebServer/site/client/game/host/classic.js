@@ -6,7 +6,7 @@ async function handleGame(response) {
   switch(response) {
     case C.GAME.BEGIN_FIRST_QUESTION: {
       document.getElementById('game').innerHTML = ""; //clear game area
-
+      loadQuestion(response.question);
 
       break;
     }
@@ -28,6 +28,7 @@ function loadQuestion(question) {
     for(let i = 0; i < 4; i++) {
       let button = document.createElement('button');
       button.id = 'MCQ-' + MCQ_LETTERS[i];
+      button.appendChild(document.createTextNode(question.choices[i]));
       button.onclick = function() {
         return function() {
           submitAnswer(0, C.MCQ_LETTERS[i]); //setting the proper onclick function

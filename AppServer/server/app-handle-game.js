@@ -1,30 +1,34 @@
 var C, allRooms, data;
-module.exports = async function() {
+module.exports = async function(input) {
+  C = input.C;
+  allRooms = input.allRooms;
+  data = input.data;
+  console.log(data);
   let gamemode = allRooms[data.roomNo].gamemode;
   switch(gamemode) {
     case C.GAMEMODE.CLASSIC: {
-      handleClassic({
+      return handleClassic({
         'data': data,
         'C': C,
         'allRooms': allRooms
       });
     }
     case C.GAMEMODE.RACE: {
-      handleRace({
+      return handleRace({
         'data': data,
         'C': C,
         'allRooms': allRooms
       });
     }
     case C.GAMEMODE.TEAM_BATTLE: {
-      handleTeamBattle({
+      return handleTeamBattle({
         'data': data,
         'C': C,
         'allRooms': allRooms
       });
     }
     case C.GAMEMODE.TUG_OF_WAR: {
-      handleTugOfWar({
+      return handleTugOfWar({
         'data': data,
         'C': C,
         'allRooms': allRooms
