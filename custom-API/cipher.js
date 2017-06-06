@@ -101,8 +101,8 @@ function decryptIv(cipher) {
 }
 
 //Not sure if a function like this is needed or not
-function hash() {
-
+async function hash(password) {
+  return crypto.createHash('SHA256').update(password).digest('base64');
 }
 
 module.exports = function(options) {
