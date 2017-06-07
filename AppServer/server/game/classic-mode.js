@@ -29,13 +29,14 @@ module.exports = async function(input) {
       //set timer
       currentRoom.timer = setTimeout(() => {
         common.setAllAnswered(currentRoom.players);
-        sendToServer({
-          sendRoundEnd(currentRoom, data, currentRoom.answers, question.solution);
-        });
+        sendToServer(
+          sendRoundEnd(currentRoom, data, currentRoom.answers, question.solution)
+        );
       }, question.time * 1000);
 
       return {
         'game': C.GAME_RES.BEGIN_FIRST_QUESTION,
+        'sendTo': C.SEND_TO.ROOM,
         'question': { //send question, without the solution
           'prompt': question.prompt,
           'choices': question.choices,
@@ -55,7 +56,7 @@ module.exports = async function(input) {
       let correctAnswer = question.solution;
       let qType = question.type;
 
-      if(currentPlayer.answered === undefined) { if //if currentPlayer has not answered
+      if(currentPlayer.answered === undefined) { //if currentPlayer has not answered
         //store the answer
         if(currentRoom.answers[data.answer] === undefined) {
           currentRoom.answers[data.answer] = 0;
@@ -99,12 +100,13 @@ module.exports = async function(input) {
         if(currentRoom.answerCount == currentRoom.playerCount) {
           //stop the auto round end on timer end
           clearTimeout(currentRoom.timer);
-          return sendRoundEnd(currentRoom, data, currentRoom.answers);
+          sendToServer(sendRoundEnd(currentRoom, data, currentRoom.answers));
         } else {
           //send response for host
           return {
             'game': C.GAME_RES.ANSWER_CHOSEN,
-            'hostId': currentRoom.host,
+            'sendTo': C.SEND_TO.USER,
+            'targetId': currentRoom.host,
             'id': data.id,
             'answer': data.answer
           };
@@ -112,6 +114,8 @@ module.exports = async function(input) {
       } else {  //if user has answered
         return {
           'err': C.ERR.ALREADY_ANSWERED,
+          'sendTo': C.SEND_TO.USER,
+          'targetId': data.id,
           'id': data.id,
           'roomNo': data.roomNo
         }
@@ -127,13 +131,15 @@ module.exports = async function(input) {
   Function for ending the round.
   Delegated to an outside function as this can be triggered in multiple ways
 */
-function sendRoundEnd(currentRoom, data, answers) {
+function sendRoundEnd(currentRoom, data, answers, solution) {
   return {
     //send round signal
     'game': C.GAME_RES.ROUND_END,
+    'sendTo': C.SEND_TO.ROOM,
     'roomNo': data.roomNo,
-    'roundEndResults': common.roundEndResults(currentRoom.players, true);
-    'answers': answers
+    'roundEndResults': common.roundEndResults(currentRoom.players, true),
+    'answers': answers,
+    'solution': solution
   };
 }
 

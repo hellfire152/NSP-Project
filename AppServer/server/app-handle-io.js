@@ -45,6 +45,8 @@ async function join_room() {
         return {
           'err': C.ERR.DUPLICATE_ID,
           'id': data.id,
+          'sendTo': C.SEND_TO.USER,
+          'targetId': data.id
         }
       }
       //build response (no error)
@@ -52,6 +54,7 @@ async function join_room() {
         'event' : C.EVENT_RES.PLAYER_JOIN,
         'validLogin' : true,
         'roomEvent' : C.ROOM_EVENT.JOIN,
+        'sendTo': C.SEND_TO.ROOM,
         'roomNo': data.room,
         'id': data.id,
         'playerList' : allRooms[data.room].players
@@ -61,14 +64,18 @@ async function join_room() {
       return {
         'err': C.ERR.ROOM_NOT_JOINABLE,
         'id': data.id,
-        'roomNo': data.room
+        'roomNo': data.room,
+        'sendTo': C.SEND_TO.USER,
+        'targetId': data.id
       }
     }
   } else {
     return {
       'err': C.ERR.ROOM_DOES_NOT_EXIST,
       'id' : data.id,
-      'roomNo': data.room
+      'roomNo': data.room,
+      'sendTo': C.SEND_TO.USER,
+      'targetId': data.id
     }
   }
 }
@@ -88,13 +95,11 @@ async function gamemode_set() {
 
   //setting data in allRooms
   allRooms[data.room].gamemode = data.gamemode;
-  allRooms[data.room].host = data.cookieData.id;
+  allRooms[data.room].host = data.id;
   allRooms[data.room].joinable = true;
   allRooms[data.room].playerCount = 0;
 
   //build response
-  console.log("DATA");
-  console.log(data);
   response.roomEvent = C.ROOM_EVENT.JOIN; //Join the created room immediately
   response.roomNo = data.room;
 

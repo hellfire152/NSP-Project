@@ -2,7 +2,7 @@ function calculateScore(reward, startTime, answerStreak) {
   //taking the time difference in seconds
   let timeDiff = (Date.now() - startTime) / 1000;
   //set minimum
-  if(timeDiff > 60) timeDiff -
+  if(timeDiff > 60) timeDiff = 60;
   //capping answerStreak bonus at 10
   if(answerStreak > 10) answerStreak = 10;
 
@@ -55,9 +55,7 @@ function roundEndResults(players, sortByPoints) {
   return results;
 }
 
-//testing
-calculateScore(100, )
 module.exports = {
   'calculateScore': calculateScore,
   'setAllUnanswered': setAllUnanswered
-}
+};

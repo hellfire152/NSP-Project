@@ -11,7 +11,7 @@ module.exports = async function(input) {
   socketOfUser = input.socketOfUser;
 
   if(response.sendTo === undefined) throw new Error('sendTo value must be defined!');
-
+  
   if(response.validLogin) {
     if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
       switch(response.roomEvent) {
