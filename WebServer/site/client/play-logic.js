@@ -20,6 +20,7 @@ socket.on('receive', function(data) {
     switch(response.event) {
       case C.EVENT_RES.PLAYER_LIST: {
         Object.keys(response.playerList).forEach(playerId => {
+          console.log(playerId);
           //generate a new li for each player
           appendToWaitingList(playerId);
         });

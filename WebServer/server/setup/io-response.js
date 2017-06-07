@@ -2,8 +2,9 @@
 */
 var socketObj;  //object mapping socketIds to socketS
 var socketOfUser; //object mapping userIds to sockets
+var io;
 module.exports = async function(input) {
-  let io = input.io;
+  io = input.io;
   const C = input.C;
   let response = input.response;
 
@@ -11,7 +12,7 @@ module.exports = async function(input) {
   socketOfUser = input.socketOfUser;
 
   if(response.sendTo === undefined) throw new Error('sendTo value must be defined!');
-  
+
   if(response.validLogin) {
     if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
       switch(response.roomEvent) {
@@ -59,39 +60,6 @@ module.exports = async function(input) {
         console.log("AppServer to WebServer sendTo value is " +response.sendTo +" not a preset case!");
       }
     }
-    // switch(response.event) {
-    //   case C.EVENT_RES.GAMEMODE_CONFIRM : {
-    //     clientResponse = {
-    //       'event': response.event,
-    //       'gamemode': response.gamemode,
-    //       'id': response.id,
-    //       'setId': response.setId
-    //     };
-    //     sendToUser(clientResponse, response.id);
-    //     break;
-    //   }
-    //   case C.EVENT_RES.PLAYER_JOIN: {
-    //     //Handle JOIN_ROOM
-    //     clientResponse = {
-    //       'event': C.EVENT_RES.PLAYER_LIST,
-    //       'playerList': response.playerList,
-    //       'id': response.id
-    //     }
-    //     sendToUser(clientResponse, response.id);
-    //
-    //     //Sending PLAYER_JOIN to all other players
-    //     clientResponse = {
-    //       'event': C.EVENT_RES.PLAYER_JOIN,
-    //       'id': response.id
-    //     }
-    //     sendToRoomExceptSender(clientResponse, response.id, response.roomNo);
-    //     break;
-    //   }
-    //   //ADD MORE CASES HERE
-    //   default: {
-    //     console.log('AppServer to WebServer EVENT_RES value is ' +response.event +', not a preset case');
-    //   }
-    // }
   } else {  //INVALID login
     clientResponse = {
       'err' : C.ERR.INVALID_LOGIN

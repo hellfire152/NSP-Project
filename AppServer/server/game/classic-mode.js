@@ -6,13 +6,9 @@
 var data, C, allRooms, sendToServer, conn;
 var currentRoom, currentPlayer;
 module.exports = async function(input) {
-  data = input.data;
-  C = input.C;
-  allRooms = input.allRooms;
+  ({data, C, allRooms, conn, sendToServer} = input);
   currentRoom = allRooms[data.roomNo];
   currentPlayer = currentRoom.players[data.id];
-  sendToServer = input.sendToServer;
-  conn = input.conn;
 
   console.log("CLASSIC-MODE HANDLER");
   console.log(currentRoom);

@@ -1,37 +1,42 @@
-var C, allRooms, data;
+var C, allRooms, data, conn, sendToServer;
 module.exports = async function(input) {
-  C = input.C;
-  allRooms = input.allRooms;
-  data = input.data;
-  console.log(data);
+  ({C, allRooms, data, conn, sendToServer} = input);
   let gamemode = allRooms[data.roomNo].gamemode;
   switch(gamemode) {
     case C.GAMEMODE.CLASSIC: {
       return handleClassic({
         'data': data,
         'C': C,
-        'allRooms': allRooms
+        'allRooms': allRooms,
+        'conn': connection,
+        'sendToServer': sendToServer
       });
     }
     case C.GAMEMODE.RACE: {
       return handleRace({
         'data': data,
         'C': C,
-        'allRooms': allRooms
+        'allRooms': allRooms,
+        'conn': conn,
+        'sendToServer': sendToServer
       });
     }
     case C.GAMEMODE.TEAM_BATTLE: {
       return handleTeamBattle({
         'data': data,
         'C': C,
-        'allRooms': allRooms
+        'allRooms': allRooms,
+        'conn': conn,
+        'sendToServer': sendToServer
       });
     }
     case C.GAMEMODE.TUG_OF_WAR: {
       return handleTugOfWar({
         'data': data,
         'C': C,
-        'allRooms': allRooms
+        'allRooms': allRooms,
+        'conn': conn,
+        'sendToServer': sendToServer
       });
     }
   }

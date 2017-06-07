@@ -127,6 +127,12 @@ function appendToWaitingList(playerId) {
   }
 }
 
+function test_next_round() {
+  send({
+
+  });
+}
+
 //disable start button
 window.onload = function() {
   document.getElementById("start").disabled = true;

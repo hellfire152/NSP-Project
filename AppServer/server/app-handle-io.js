@@ -4,11 +4,9 @@
 
   Author: Jin Kuan
 */
-var data, C, allRooms;
+var data, C, allRooms, conn, sendToServer;
 module.exports = async function(input) {
-  data = input.data,
-  C = input.C,
-  allRooms = input.allRooms;
+  ({data, C, allRooms, conn, sendToServer} = input);
 
   switch(data.event) {
     case C.EVENT.JOIN_ROOM : {
@@ -49,16 +47,25 @@ async function join_room() {
           'targetId': data.id
         }
       }
-      //build response (no error)
+      //send the join room to everybody else in the room
       response = {
         'event' : C.EVENT_RES.PLAYER_JOIN,
         'validLogin' : true,
         'roomEvent' : C.ROOM_EVENT.JOIN,
-        'sendTo': C.SEND_TO.ROOM,
+        'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
         'roomNo': data.room,
-        'id': data.id,
-        'playerList' : allRooms[data.room].players
+        'sourceId': data.id
       }
+
+      //extra response for the player in question
+      sendToServer({
+        'event': C.EVENT_RES.PLAYER_LIST,
+        'playerList': allRooms[data.room].players,
+        'sendTo': C.SEND_TO.USER,
+        'targetId': data.id,
+        'id': data.id
+      });
+
       return response;
     } else {
       return {

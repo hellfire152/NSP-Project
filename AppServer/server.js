@@ -29,9 +29,10 @@ var net = require('net');
 var allRooms = {};
 
 //setting up of the logic server
+var connection;
 var server = net.createServer(function (conn) {
   console.log("Logic: Server Start");
-
+  connection = conn;
   // If connection is closed
   conn.on("end", function() {
       console.log('Server: Logic disconnected');
@@ -71,14 +72,16 @@ var server = net.createServer(function (conn) {
             response = await handleIo({
               'data' : data,
               'C' : C,
-              'allRooms' : allRooms
+              'allRooms' : allRooms,
+              'sendToServer': sendToServer,
+              'conn': connection
             });
           } else if (!(data.game === undefined)){  //special
             response = await handleGame({
               'data' : data,
               'C' : C,
               'allRooms' : allRooms,
-              'conn': conn,
+              'conn': connection,
               'sendToServer': sendToServer
             });
           } else {

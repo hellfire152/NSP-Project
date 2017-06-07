@@ -34,7 +34,7 @@ function handleGame(response) {
     }
     case C.GAME_RES.ROUND_END: {
       clearAnsDiv();
-      
+
       break;
     }
   }
@@ -46,7 +46,7 @@ function updateResponseDisplay() {
     for(let i = 0; i < 4; i++) {
       let ansSpan = document.createElement('span');
       ansSpan.appendChild(document.createTextNode(
-        "  " +question.choices[i] +" x " +answersObj[COUNTER_TO_MCQ[i]] +"  ";
+        "  " +question.choices[i] +" x " +answersObj[COUNTER_TO_MCQ[i]] +"  "
       ));
     }
   } else {
