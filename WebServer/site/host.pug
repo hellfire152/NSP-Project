@@ -1,0 +1,21 @@
+html
+  head
+    script.
+      var room = #{roomNo};
+    script(src='/client/constants.js')
+    script(src='/socket.io/socket.io.js')
+    script(src='/client/game/common.js')
+    script(src='/client/host-logic.js')
+    title exQuizit! - Play
+  body
+    #room
+      h1 Room Number: #{roomNo}
+    #game
+      button(onclick='gameRoom(0)') Classic
+      button(onclick='gameRoom(1)') Race
+      button(onclick='gameRoom(2)') Battle
+      button(onclick='gameRoom(3)') Tug Of War
+    ul(id='waiting-list')
+    button(id='start' onclick='start()') Start!
+    #test
+      button(onclick='test_next_round()') (TEST) NEXT ROUND

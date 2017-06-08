@@ -1,11 +1,13 @@
 {
+  "id": "TEST",
   "questions": [
     {
       "prompt": "1+1=?",
       "type": 0,
       "choices": ["1", "2", "3", "4"],
       "solution": 8,
-      "time": 5
+      "time": 5,
+      "penalty": 10000
     },
     {
       "prompt": "12+23=?",
@@ -19,7 +21,8 @@
       "type": 0,
       "choices": ["757", "768", "812", "702"],
       "solution": 4,
-      "time": 15
+      "time": 15,
+      "reward": 2000
     },
     {
       "prompt": "482+714=?",
@@ -34,8 +37,16 @@
       "choices": ["Window", "11", "2", "Some lame ass joke"],
       "solution": 2,
       "time": 20
+    },
+    {
+      "prompt": "What is zero in Roman Numerals?",
+      "type": 1,
+      "solution": " ",
+      "time": 20
     }
   ],
+  "reward": 1000,
   "author": "Kuan",
-  "creationDate": "29/05/2017"
+  "creationDate": "29/05/2017",
+  "public": true
 }

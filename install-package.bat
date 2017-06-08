@@ -15,5 +15,6 @@ call npm install body-parser
 call npm install uuid
 call npm install promise
 call npm install cookie
+call npm install pug
 cls
 echo All required modules installed!
