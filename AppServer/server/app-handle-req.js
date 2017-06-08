@@ -85,10 +85,10 @@ async function host_room(data) {
   validLogin = true /*TODO::Proper login check*/
 
   //generate a room number
-  let roomNo = Math.floor(Math.random() * 10000000 + 1); //generate a number between 1 and 10 million for the room id
+  let roomNo = Math.floor(Math.random() * 899999999 + 100000000); //generate a number between 1 and 10 million for the room id
   let count = 0;
   while(!(allRooms[roomNo] === undefined)){ //keeps searching for an available number
-    roomNo = Math.floor(Math.random() * 10000000 + 1);
+    roomNo = Math.floor(Math.random() * 899999999 + 100000000);
     console.log("app-handle-io.js: REGENERATED ROOM, NUMBER: " +roomNo);
     if (count > 100) {
       return {

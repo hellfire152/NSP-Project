@@ -31,7 +31,9 @@
   },
   "GAME_RES": {
     "BEGIN_FIRST_QUESTION": 10,
-    "ANSWER_CHOSEN": 11
+    "ANSWER_CHOSEN": 11,
+    "ROUND_END": 12,
+    "NEXT_QUESTION": 13
   },
   "GAMEMODE" : {
     "CLASSIC": 0,

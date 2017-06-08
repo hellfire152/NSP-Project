@@ -33,7 +33,7 @@
     },
     {
       "prompt": "1+1=?",
-      "type": 0,
+      "type": 1,
       "choices": ["Window", "11", "2", "Some lame ass joke"],
       "solution": 2,
       "time": 20
@@ -48,5 +48,6 @@
   "reward": 1000,
   "author": "Kuan",
   "creationDate": "29/05/2017",
-  "public": true
+  "public": true,
+  "description": "Quiz created for testing purposes"
 }
