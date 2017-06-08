@@ -5,7 +5,7 @@
       "prompt": "1+1=?",
       "type": 0,
       "choices": ["1", "2", "3", "4"],
-      "solution": 8,
+      "solution": 4,
       "time": 5,
       "penalty": 10000
     },
@@ -13,7 +13,7 @@
       "prompt": "12+23=?",
       "type": 0,
       "choices": ["35", "24", "22", "25"],
-      "solution": 1,
+      "solution": 8,
       "time": 10
     },
     {
@@ -29,19 +29,6 @@
       "type": 0,
       "choices": ["1023", "1196", "1203", "1056"],
       "solution": 4,
-      "time": 20
-    },
-    {
-      "prompt": "1+1=?",
-      "type": 1,
-      "choices": ["Window", "11", "2", "Some lame ass joke"],
-      "solution": 2,
-      "time": 20
-    },
-    {
-      "prompt": "What is zero in Roman Numerals?",
-      "type": 1,
-      "solution": " ",
       "time": 20
     }
   ],

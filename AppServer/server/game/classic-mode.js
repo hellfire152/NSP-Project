@@ -40,7 +40,7 @@ module.exports = async function(input) {
     }
     case C.GAME.SUBMIT_ANSWER: {
       if(currentRoom.answerCount === undefined) currentRoom.answerCount = 0;
-      let question = currentRoom.quiz.question[currentRoom.questionCounter];
+      let question = currentRoom.quiz.questions[currentRoom.questionCounter];
       let correctAnswer = question.solution;
       let qType = question.type;
 
@@ -52,6 +52,7 @@ module.exports = async function(input) {
         currentRoom.answers[data.answer]++;
 
         //calculating score
+        console.log(data.answer & correctAnswer);
         if(data.answer & correctAnswer) { //if correctAnswer
           //getting question reward value
           let reward;
@@ -88,7 +89,7 @@ module.exports = async function(input) {
         if(currentRoom.answerCount == currentRoom.playerCount) {
           //stop the auto round end on timer end
           clearTimeout(currentRoom.timer);
-          sendToServer(sendRoundEnd(currentRoom, data, currentRoom.answers));
+          return sendRoundEnd(currentRoom, data, currentRoom.answers);
         } else {
           //send response for host
           return {
@@ -108,6 +109,7 @@ module.exports = async function(input) {
           'roomNo': data.roomNo
         }
       }
+      break;
     }
     default: {
       console.log("CLASSIC MODE: Game event of " +data.game +" is not defined!");
@@ -135,7 +137,7 @@ function sendQuestion(currentRoom, question, data) {
   //set timer
   currentRoom.timer = setTimeout(() => {
     common.setAllAnswered(currentRoom.players);
-    sendToServer(
+    sendToServer(conn,
       sendRoundEnd(currentRoom, data, currentRoom.answers, question.solution)
     );
   }, question.time * 1000);

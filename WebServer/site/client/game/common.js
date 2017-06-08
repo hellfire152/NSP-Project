@@ -11,3 +11,27 @@ function clearBody(){
   gameDiv.id = 'game';
   body.appendChild(gameDiv);
 }
+
+function displayResults(roundEndResults) {
+  //create and append a div to hold the results
+  let resultsDiv = document.createElement('div');
+  resultsDiv.id = 'results';
+  document.getElementById('game').appendChild(resultsDiv);
+
+  //create and append a list to hold the results
+  let resultsList = document.createElement('ol');
+  resultsList.id = 'resultsList';
+  resultsDiv.appendChild(resultsList);
+
+  //add player data to the results list
+  for(let playerResult of roundEndResults) {
+    //create a li for each player
+    let playerData = document.createElement('li');
+
+    //format results and append
+    playerData.appendChild(document.createTextNode('Id: ' +playerResult.player +'\t'
+      + 'Score: ' +playerResult.score +'\t Correct Answers: ' + playerResult.correctAnswers));
+
+    resultsList.appendChild(playerData);
+  }
+}

@@ -7,6 +7,12 @@
     4. WebServer assigns the server-side socket a room, sends the room no here
     5. Room number is displayed!
 */
+const GAMEMODE_NO_TO_STRING = {
+  0: 'Classic',
+  1: 'Race',
+  2: 'Team Battle',
+  3: 'Tug of War'
+};
 
 var socket = io();
 socket.on('receive', function(input) {
@@ -24,7 +30,7 @@ socket.on('receive', function(input) {
           let gameNode = document.getElementById('game');
           gameNode.innerHTML = "";
           let gamemode = document.createElement('h3');
-          gamemode.appendChild(document.createTextNode(C.GAMEMODE[response.gamemode] + ": Waiting..."));
+          gamemode.appendChild(document.createTextNode(GAMEMODE_NO_TO_STRING[response.gamemode] + ": Waiting..."));
           gameNode.appendChild(gamemode);
 
           //load gamemode's javascript
@@ -129,7 +135,7 @@ function appendToWaitingList(playerId) {
 
 function test_next_round() {
   send({
-
+    'game': C.GAME.NEXT_ROUND
   });
 }
 

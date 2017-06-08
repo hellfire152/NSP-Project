@@ -57,5 +57,7 @@ function roundEndResults(players, sortByPoints) {
 
 module.exports = {
   'calculateScore': calculateScore,
-  'setAllUnanswered': setAllUnanswered
+  'setAllUnanswered': setAllUnanswered,
+  'setAllAnswered': setAllAnswered,
+  'roundEndResults': roundEndResults
 };

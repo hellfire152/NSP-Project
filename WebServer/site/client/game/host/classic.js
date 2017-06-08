@@ -15,16 +15,11 @@ const COUNTER_TO_MCQ = {
 }
 var answersObj = {};
 var currentQuestion;
+var firstQuestion = true;
 console.log('HOST: Loaded: classic gamemode handler!');
 function handleGame(response) {
   console.log('HOST: Handling game response!');
   switch(response.game) {
-    case C.GAME_RES.BEGIN_FIRST_QUESTION: {
-      clearBody();
-      currentQuestion = response.question;
-      loadQuestion(currentQuestion);
-      break;
-    }
     case C.GAME_RES.ANSWER_CHOSEN: {
       if(answersObj[response.answer] === undefined)
         answersObj[response.answer] = 0;
@@ -38,7 +33,10 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
-      console.log(response.question);
+      if(firstQuestion) clearBody();
+      clearGameArea();
+
+      loadQuestion(response.question);
       break;
     }
   }
@@ -58,10 +56,11 @@ function updateResponseDisplay() {
     uniqueAnsArr.forEach(ans => {
       let ansSpan = document.createElement('span');
       ansSpan.appendChild(document.createTextNode(
-        "  " +ans +" x " +answersObj[ans] +"  ";
-      ))
+        "  " +ans +" x " +answersObj[ans] +"  "
+      ));
     });
   }
+  document.getElementById('ans').appendChild(ansSpan);
 }
 
 function loadQuestion(question) {
@@ -81,7 +80,7 @@ function loadQuestion(question) {
     console.log("HOST QUESTION HANDLER: MCQ");
     for(let i = 0; i < 4; i++) {
       let ansSpan = document.createElement('span');
-      ansSpan.appendChild(document.createTextNode("  " +question.choices[i] +" x 0" +"  ");
+      ansSpan.appendChild(document.createTextNode("  " +question.choices[i] +" x 0" +"  "));
       //append to ansNode
       ansNode.appendChild(ansSpan);
     }
