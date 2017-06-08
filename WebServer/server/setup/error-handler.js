@@ -15,6 +15,9 @@ module.exports = async function(input) {
   C = input.C;
 
   switch(response.err) {
+    /*
+      OTHER ERRORS
+    */
     case C.ERR.NO_SPARE_ROOMS: {
       sendError(false, "Unable to generate unique room ID!");
       break;
@@ -39,6 +42,13 @@ module.exports = async function(input) {
       sendError(false, 'ID ' +response.id +' is already in the room!');
       break;
     }
+    /*
+      SOCKET_IO ERRORS
+    */
+    case C.ERR.ALREADY_ANSWERED: {
+
+      break;
+    }
     //ADD MORE CASES HERE
     default: {
       console.log("AppServer to WebServer ERR value is " +response.err +" not a preset case!");
@@ -48,7 +58,7 @@ module.exports = async function(input) {
 
 function sendError(socketError, errormsg) {
   if(socketError) {
-    socketObj[socketOfUser[response.id]].emit('err', ""+response.id + " is already in the room!");
+    socketObj[socketOfUser[response.id]].emit('err', errormsg);
   } else {
     try { //res/req errors
       pendingResponses[response.resNo].render('error', {

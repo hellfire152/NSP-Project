@@ -20,6 +20,7 @@ socket.on('receive', function(data) {
     switch(response.event) {
       case C.EVENT_RES.PLAYER_LIST: {
         Object.keys(response.playerList).forEach(playerId => {
+          console.log(playerId);
           //generate a new li for each player
           appendToWaitingList(playerId);
         });
@@ -33,12 +34,7 @@ socket.on('receive', function(data) {
 
     }
   } else if (response.game !== undefined) {
-    switch(response.game) {
-      case C.GAME_RES.BEGIN_FIRST_QUESTION: {
-        console.log('QUESTION TYPE: ' +response.question.type);
-        console.log(response.question.prompt);
-      }
-    }
+    handleGame(response) //defined in the /play folder
   } else {  //special
     switch(response.special) {
       case C.SPECIAL.SOCKET_DISCONNECT: {
@@ -64,11 +60,10 @@ async function encode(json) {
 }
 
 function send(data) {
-  if (data.event === undefined) throw new Error("Event not defined!");
   encode(data)
     .then(encodedData => {
       socket.emit('send', encodedData);
-    });
+  });
 }
 
 function appendToWaitingList(playerId) {

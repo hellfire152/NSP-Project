@@ -61,7 +61,7 @@ socket.on('receive', function(input) {
         }
       }
     } else if (response.game != undefined) {  //special events
-      handleGame(data); //delegate to the handleGame function defined in the gamemode js files
+      handleGame(response); //delegate to the handleGame function defined in the gamemode js files
     } else {
       switch(response.special) {
         case C.SPECIAL.SOCKET_DISCONNECT: {
@@ -93,6 +93,9 @@ function start(){
   send({
     'game': C.GAME.START
   });
+  //remove the start button
+  let s = document.getElementById('start');
+  s.parentNode.removeChild(s);
 }
 //convenience function for encoding the json for sending
 async function encode(json) {
@@ -122,6 +125,12 @@ function appendToWaitingList(playerId) {
   } else {
     document.getElementById('start').disabled = true;
   }
+}
+
+function test_next_round() {
+  send({
+
+  });
 }
 
 //disable start button

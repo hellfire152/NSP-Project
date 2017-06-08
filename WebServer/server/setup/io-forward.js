@@ -22,6 +22,7 @@ module.exports = function(data) {
     cookie = data.cookie,
     socketOfUser = data.socketOfUser,
     roomOfUser = data.roomOfUser;
+
   //setting up forwarding of data between user and game server
   //short hand
   var socketObj = io.sockets.sockets;
@@ -106,7 +107,7 @@ module.exports = function(data) {
           'dirname' : dirname,
           'roomOfUser': roomOfUser
         });
-      } else if(response.event !== undefined){ //no type -> socket.io stuff
+      } else if(response.sendTo !== undefined){ //no type -> socket.io stuff
         await handleIoResponse({
           'response' : response,
           'io' : io,
@@ -114,16 +115,7 @@ module.exports = function(data) {
           'socketObj' : io.sockets.sockets,
           'socketOfUser' : socketOfUser
         });
-      } else if (response.game !== undefined) {
-        await handleGameResponse({
-          'response' : response,
-          'io' : io,
-          'C' : C,
-          'socketObj' : io.sockets.sockets,
-          'socketOfUser' : socketOfUser
-        });
-      }
-      else {  //handleSpecial
+      } else {  //handleSpecial
         await handleSpecialResponse({
           'response' : response,
           'io' : io,
@@ -145,7 +137,6 @@ var errorHandler = require('./error-handler.js');
 var handleIoResponse = require('./io-response.js');
 var handleOtherResponse = require('./other-response.js');
 var handleSpecialResponse = require('./special-response.js');
-var handleGameResponse = require('./game-response.js');
 
 //get login cookie (for socket.io)
 async function getLoginCookieS(socket, cipher, cookie) {

@@ -1,15 +1,62 @@
 /*
-  handleGame function for the classic gamemode
+  handleGame function for the classic gamemode (HOST)
 */
-console.log('Loaded: classic gamemode handler!');
-async function handleGame(response) {
-  switch(response) {
-    case C.GAME.BEGIN_FIRST_QUESTION: {
-      document.getElementById('game').innerHTML = ""; //clear game area
-      loadQuestion(response.question);
+const MCQ_NO_TO_LETTER = {
+  8: 'A',
+  4: 'B',
+  2: 'C',
+  1: 'D'
+}
+const COUNTER_TO_MCQ = {
+  0 : 8,
+  1 : 4,
+  2 : 2,
+  3 : 1
+}
+var answersObj = {};
+var currentQuestion;
+console.log('HOST: Loaded: classic gamemode handler!');
+function handleGame(response) {
+  console.log('HOST: Handling game response!');
+  switch(response.game) {
+    case C.GAME_RES.BEGIN_FIRST_QUESTION: {
+      clearBody();
+      currentQuestion = response.question;
+      loadQuestion(currentQuestion);
+      break;
+    }
+    case C.GAME_RES.ANSWER_CHOSEN: {
+      if(answersObj[response.answer] === undefined)
+        answersObj[response.answer] = 0;
+      answersObj[response.answer]++;
+      updateResponseDisplay();
+      break;
+    }
+    case C.GAME_RES.ROUND_END: {
+      clearAnsDiv();
 
       break;
     }
+  }
+}
+
+function updateResponseDisplay() {
+  clearAnsDiv();
+  if(currentQuestion.type == 0) { //MCQ
+    for(let i = 0; i < 4; i++) {
+      let ansSpan = document.createElement('span');
+      ansSpan.appendChild(document.createTextNode(
+        "  " +question.choices[i] +" x " +answersObj[COUNTER_TO_MCQ[i]] +"  "
+      ));
+    }
+  } else {
+    let uniqueAnsArr = Object.keys(answersObj);
+    uniqueAnsArr.forEach(ans => {
+      let ansSpan = document.createElement('span');
+      ansSpan.appendChild(document.createTextNode(
+        "  " +ans +" x " +answersObj[ans] +"  ";
+      ))
+    });
   }
 }
 
@@ -22,28 +69,30 @@ function loadQuestion(question) {
   let promptNode = document.createElement('h3');
   promptNode.appendChild(document.createTextNode(question.prompt));
 
+  let ansNode = document.createElement('div');
+  ansNode.id = 'ans';
+
   if(question.type == 0) { //if MCQ question
-    //create MCQ buttons
-    let buttonArr = [];
+    //create MCQ display
+    console.log("HOST QUESTION HANDLER: MCQ");
     for(let i = 0; i < 4; i++) {
-      let button = document.createElement('button');
-      button.id = 'MCQ-' + MCQ_LETTERS[i];
-      button.appendChild(document.createTextNode(question.choices[i]));
-      button.onclick = function() {
-        return function() {
-          submitAnswer(0, C.MCQ_LETTERS[i]); //setting the proper onclick function
-        }
-      };
+      let ansSpan = document.createElement('span');
+      ansSpan.appendChild(document.createTextNode("  " +question.choices[i] +" x 0" +"  ");
+      //append to ansNode
+      ansNode.appendChild(ansSpan);
     }
   } else {  //short answer question
-    //create textfiedl
-    //let textField =
+    ansNode.appendChild(document.createTextNode('Responses so far...'));
   }
+
+  //adding to the document
+  questionDiv.appendChild(promptNode);
+  questionDiv.appendChild(ansNode);
+  document.getElementById('game').appendChild(questionDiv);
 }
 
-//clears the game area (by settin innerHTML for now)
-function clearGameArea() {
-  document.getElementById('game').innerHTML = "";
+function clearAnsDiv() {
+  document.getElementById('ans').innerHTML = "";
 }
 
 //sends the answer to the server

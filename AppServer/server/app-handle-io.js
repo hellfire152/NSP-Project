@@ -4,11 +4,9 @@
 
   Author: Jin Kuan
 */
-var data, C, allRooms;
+var data, C, allRooms, conn, sendToServer;
 module.exports = async function(input) {
-  data = input.data,
-  C = input.C,
-  allRooms = input.allRooms;
+  ({data, C, allRooms, conn, sendToServer} = input);
 
   switch(data.event) {
     case C.EVENT.JOIN_ROOM : {
@@ -34,35 +32,57 @@ async function join_room() {
   if(r !== undefined) {  //if room exists
     if(r.joinable) {
       if(r.players[data.id] === undefined) {  //if player is not in the room
-        allRooms[data.room].players[data.id] = {}; //add use to player list
+        allRooms[data.room].players[data.id] = {
+          'correctAnswers': 0,
+          'wrongAnswers': 0,
+          'score': 0,
+          'answerStreak': 0
+        };
+        allRooms[data.room].playerCount++;
       } else {
         return {
           'err': C.ERR.DUPLICATE_ID,
           'id': data.id,
+          'sendTo': C.SEND_TO.USER,
+          'targetId': data.id
         }
       }
-      //build response (no error)
+      //send the join room to everybody else in the room
       response = {
         'event' : C.EVENT_RES.PLAYER_JOIN,
         'validLogin' : true,
         'roomEvent' : C.ROOM_EVENT.JOIN,
+        'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
         'roomNo': data.room,
-        'id': data.id,
-        'playerList' : allRooms[data.room].players
+        'sourceId': data.id
       }
+
+      //extra response for the player in question
+      sendToServer({
+        'event': C.EVENT_RES.PLAYER_LIST,
+        'playerList': allRooms[data.room].players,
+        'sendTo': C.SEND_TO.USER,
+        'targetId': data.id,
+        'id': data.id
+      });
+
       return response;
     } else {
       return {
         'err': C.ERR.ROOM_NOT_JOINABLE,
         'id': data.id,
-        'roomNo': data.room
+        'roomNo': data.room,
+        'sendTo': C.SEND_TO.USER,
+        'targetId': data.id
       }
     }
   } else {
     return {
       'err': C.ERR.ROOM_DOES_NOT_EXIST,
       'id' : data.id,
-      'roomNo': data.room
+      'roomNo': data.room,
+      'sendTo': C.SEND_TO.USER,
+      'targetId': data.id
     }
   }
 }
@@ -80,14 +100,13 @@ async function gamemode_set() {
   let response = {};
   validLogin = true /*TODO::VALID LOGIN*/
 
-  //set the data in allRooms
+  //setting data in allRooms
   allRooms[data.room].gamemode = data.gamemode;
-  allRooms[data.room].host = data.cookieData.id;
+  allRooms[data.room].host = data.id;
   allRooms[data.room].joinable = true;
+  allRooms[data.room].playerCount = 0;
 
   //build response
-  console.log("DATA");
-  console.log(data);
   response.roomEvent = C.ROOM_EVENT.JOIN; //Join the created room immediately
   response.roomNo = data.room;
 
@@ -96,5 +115,8 @@ async function gamemode_set() {
   response.validLogin = validLogin;
   response.setId = true;
   response.id = data.id;
+
+  response.sendTo = C.SEND_TO.USER;
+  response.targetId = data.id;
   return response;
 }

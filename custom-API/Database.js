@@ -64,6 +64,7 @@ async function userDetails(userId, details, type){
     console.log(result);
   });
 }
+
 var index;
 async function createQuiz(data){
   data.quiz.date_created = new Date();

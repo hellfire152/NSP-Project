@@ -22,10 +22,12 @@ const C = {
     "PLAYER_LIST": 3
   },
   "GAME" : {
-    "START" : 10
+    "START" : 10,
+    "SUBMIT_ANSWER": 11
   },
   "GAME_RES": {
-    "BEGIN_FIRST_QUESTION": 10
+    "BEGIN_FIRST_QUESTION": 10,
+    "ANSWER_CHOSEN": 11
   },
   "GAMEMODE" : {
     0 : "Classic",
