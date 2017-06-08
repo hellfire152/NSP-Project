@@ -101,6 +101,10 @@
       "LOG_QUESTION" : 408,
       "ACHIEVEMENTS" : 409,
       "ACHIEVEMENTS_EARNED" : 410
+    },
+    "OTHERS" : {
+      "MCQ" : 501,
+      "SHORT_ANS" : 502
     }
   },
   "ERR" : {
