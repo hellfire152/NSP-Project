@@ -34,7 +34,11 @@ function handleGame(response) {
     }
     case C.GAME_RES.ROUND_END: {
       clearAnsDiv();
-
+      console.log(response.roundEndResults);
+      break;
+    }
+    case C.GAME_RES.NEXT_QUESTION: {
+      console.log(response.question);
       break;
     }
   }

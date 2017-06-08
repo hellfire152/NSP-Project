@@ -54,15 +54,18 @@ async function join_room() {
         'roomEvent' : C.ROOM_EVENT.JOIN,
         'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
         'roomNo': data.room,
-        'sourceId': data.id
+        'sourceId': data.id,
+        'id': data.id
       }
 
       //extra response for the player in question
-      sendToServer({
+      sendToServer(conn, {
         'event': C.EVENT_RES.PLAYER_LIST,
         'playerList': allRooms[data.room].players,
         'sendTo': C.SEND_TO.USER,
         'targetId': data.id,
+        'roomEvent': C.ROOM_EVENT.JOIN,
+        'roomNo': data.room,
         'id': data.id
       });
 

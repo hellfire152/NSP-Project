@@ -8,7 +8,7 @@ module.exports = async function(input) {
         'data': data,
         'C': C,
         'allRooms': allRooms,
-        'conn': connection,
+        'conn': conn,
         'sendToServer': sendToServer
       });
     }

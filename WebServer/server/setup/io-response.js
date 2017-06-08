@@ -13,7 +13,7 @@ module.exports = async function(input) {
 
   if(response.sendTo === undefined) throw new Error('sendTo value must be defined!');
 
-  if(response.validLogin) {
+  if(response.validLogin || (response.validating === undefined)) {
     if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
       switch(response.roomEvent) {
         case C.ROOM_EVENT.JOIN : {

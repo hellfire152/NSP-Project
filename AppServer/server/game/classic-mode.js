@@ -22,29 +22,21 @@ module.exports = async function(input) {
       //store answer resutls
       currentRoom.answers = {};
 
-      //set timer
-      currentRoom.timer = setTimeout(() => {
-        common.setAllAnswered(currentRoom.players);
-        sendToServer(
-          sendRoundEnd(currentRoom, data, currentRoom.answers, question.solution)
-        );
-      }, question.time * 1000);
-
-      return {
-        'game': C.GAME_RES.BEGIN_FIRST_QUESTION,
-        'sendTo': C.SEND_TO.ROOM,
-        'question': { //send question, without the solution
-          'prompt': question.prompt,
-          'choices': question.choices,
-          'time': question.time,
-          'type': question.type
-        },
-        'roomNo': data.roomNo
-      }
+      return sendQuestion(currentRoom, question, data);
     }
     case C.GAME.NEXT_ROUND: {
-
-      break;
+      currentRoom.questionCounter++;
+      //if there are no questions left
+      if(currentRoom.questionCounter >= currentRoom.quiz.questions.length) {
+        //TODO::CAULCULATE TITLES
+        return {
+          'game': C.GAME_RES.GAME_END,
+          'sendTo': C.SEND_TO.ROOM,
+          'playerList': currentRoom.players
+        }
+      } else { //next question available
+        return sendQuestion(currentRoom, question, data);
+      }
     }
     case C.GAME.SUBMIT_ANSWER: {
       if(currentRoom.answerCount === undefined) currentRoom.answerCount = 0;
@@ -139,4 +131,25 @@ function sendRoundEnd(currentRoom, data, answers, solution) {
   };
 }
 
+function sendQuestion(currentRoom, question, data) {
+  //set timer
+  currentRoom.timer = setTimeout(() => {
+    common.setAllAnswered(currentRoom.players);
+    sendToServer(
+      sendRoundEnd(currentRoom, data, currentRoom.answers, question.solution)
+    );
+  }, question.time * 1000);
+
+  return {
+    'game': C.GAME_RES.NEXT_QUESTION,
+    'sendTo': C.SEND_TO.ROOM,
+    'question': { //send question, without the solution
+      'prompt': question.prompt,
+      'choices': question.choices,
+      'time': question.time,
+      'type': question.type
+    },
+    'roomNo': data.roomNo
+  }
+}
 var common = require('./common.js');
