@@ -64,9 +64,66 @@ async function userDetails(userId, details, type){
     console.log(result);
   });
 }
-
+var index;
 async function createQuiz(data){
-  
+  data.quiz.date_created = new Date();
+  console.log(data);
+  var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
+    if(error){
+      console.error('[Error in query]: ' + error);
+      return;
+    }
+
+    console.log('[Query successful]');
+    console.log(result);
+    var quizId = result.insertId; //Get the quizId form quiz
+
+    index = 0;
+    data.question.forEach(function(question){
+      addQuestion(question, data, quizId);
+    });
+  });
+}
+
+async function addQuestion(questionData, mainData, quizId){
+  console.log(quizId);
+
+  questionData.quiz_id = quizId;
+
+  var query = connection.query("INSERT INTO quiz_question SET ?", questionData, function(error, result){
+    if(error){
+      console.error('[Error in query]: ' + error);
+      return;
+    }
+
+    console.log('[Query successful]');
+    console.log(result);
+
+    var questionId = result.insertId;
+    console.log("[question_id: ]: " + questionId);
+
+    console.log(index);
+    if(questionData.question_type == C.DB.OTHERS.MCQ){
+      addChoices(mainData.choices[index++], questionId);
+    }
+  });
+}
+
+async function addChoices(data, questionId){
+
+data.question_id = questionId;
+
+console.log("[Choices_arr]: " + data.choice_arr);
+
+  var query = connection.query("INSERT INTO quiz_question_choices SET ?", data, function(error, result){
+    if(error){
+      console.error('[Error in query]: ' + error);
+      return;
+    }
+
+    console.log('[Query successful]');
+    console.log(result);
+  });
 }
 
 module.exports = async function(input) {

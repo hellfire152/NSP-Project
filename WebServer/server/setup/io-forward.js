@@ -32,6 +32,12 @@ module.exports = function(data) {
     //get login cookie first
     try {
       let loginCookie =  await getLoginCookieS(socket, cipher, cookie);
+      console.log("SOCKET IO CONNECTION INITIATED BY");
+      console.log(loginCookie);
+      if(socketOfUser[loginCookie.id] !== undefined) { //if user with that id already exists
+        console.log('User with that ID already logged in!');
+        //socket.disconnect();
+      }
       socketOfUser[loginCookie.id] = socket;
       socket.userId = loginCookie.id;
     } catch (err) {
@@ -66,8 +72,7 @@ module.exports = function(data) {
       }
     });
     socket.on('disconnect', () => {
-      console.log(socket.rooms);
-      console.log("Socket with id " +socket.id + " " +"and user " +socket.userId +" has disconnected.");
+      console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
       delete socketOfUser[socket.userId];
       appConn.write(JSON.stringify({
         'special': C.SPECIAL.SOCKET_DISCONNECT,
@@ -84,61 +89,16 @@ module.exports = function(data) {
       console.log("AppServer Response: ");
       console.log(response);
       if(response.err) {  //if there's an error
-        switch(response.err) {
-          case C.ERR.NO_SPARE_ROOMS: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': "Unable to generate unique room ID!",
-              'pendingResponses': pendingResponses
-            });
-            break;
-          }
-          case C.ERR.QUIZ_DOES_NOT_EXIST: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': 'Quiz ' +data.quizId +' does not exist!',
-              'pendingResponses': pendingResponses
-            });
-            break;
-          }
-          case C.ERR.INACCESSIBLE_PRIVATE_QUIZ: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': 'Quiz is a private quiz by someone else!',
-              'pendingResponses': pendingResponses
-            });
-          }
-          case C.ERR.ROOM_DOES_NOT_EXIST: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': "Room " +response.roomNo +" does not exist!",
-              'pendingResponses': pendingResponses
-            });
-            break;
-          }
-          case C.ERR.ROOM_NOT_JOINABLE: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': "Room " +response.roomNo +" is not joinable!",
-              'pendingResponses': pendingResponses
-            });
-            break;
-          }
-          case C.ERR.DUPLICATE_ID: {
-            sendErrorPage({
-              'response': response,
-              'errormsg': "ID " +response.id +" is already in the room!",
-              'pendingResponses': pendingResponses
-            });
-            break;
-          }
-          //ADD MORE CASES HERE
-          default: {
-            console.log("AppServer to WebServer ERR value is " +response.err +" not a preset case!");
-          }
-        }
+        await errorHandler({
+          'response': response,
+          'C': C,
+          'pendingResponses': pendingResponses,
+          'roomOfUser' : roomOfUser,
+          'socketObj':  io.sockets.sockets,
+          'socketOfUser': socketOfUser
+        });
       }
-      if(!(response.type === undefined)) { //custom type -> general website stuff
+      if(response.type !== undefined) { //custom type -> general website stuff
          await handleOtherResponse({
           'response': response,
           'C' : C,
@@ -146,7 +106,7 @@ module.exports = function(data) {
           'dirname' : dirname,
           'roomOfUser': roomOfUser
         });
-      } else if(response.special === undefined){ //no type -> socket.io stuff
+      } else if(response.event !== undefined){ //no type -> socket.io stuff
         await handleIoResponse({
           'response' : response,
           'io' : io,
@@ -154,7 +114,16 @@ module.exports = function(data) {
           'socketObj' : io.sockets.sockets,
           'socketOfUser' : socketOfUser
         });
-      } else {  //handleSpecial
+      } else if (response.game !== undefined) {
+        await handleGameResponse({
+          'response' : response,
+          'io' : io,
+          'C' : C,
+          'socketObj' : io.sockets.sockets,
+          'socketOfUser' : socketOfUser
+        });
+      }
+      else {  //handleSpecial
         await handleSpecialResponse({
           'response' : response,
           'io' : io,
@@ -171,9 +140,12 @@ module.exports = function(data) {
   });
 }
 
+//handlers for the different response types
+var errorHandler = require('./error-handler.js');
 var handleIoResponse = require('./io-response.js');
 var handleOtherResponse = require('./other-response.js');
 var handleSpecialResponse = require('./special-response.js');
+var handleGameResponse = require('./game-response.js');
 
 //get login cookie (for socket.io)
 async function getLoginCookieS(socket, cipher, cookie) {

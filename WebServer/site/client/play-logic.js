@@ -9,26 +9,19 @@
     4.1 emits 'PLAYER_JOIN to everybody else in the room'
   5. Player receives response, joins room, emits 'PLAYER_LIST'
   6. ... ... AppServer sends the player list of the room.
- */
-//constants for the for loop later down
-const MCQ_LETTERS = {
-  0 : 'A',
-  1 : 'B',
-  2 : 'C',
-  3 : 'D'
-}
-
+ *
+*/
 //initializes a socket.io connection
 var socket = io();
 socket.on('receive', function(data) {
   var response = JSON.parse(data);
   console.log(response);
-  if(response.special === undefined) {
+  if(response.event !== undefined) {
     switch(response.event) {
       case C.EVENT_RES.PLAYER_LIST: {
-        response.playerList.forEach(playerId => {
+        Object.keys(response.playerList).forEach(playerId => {
           //generate a new li for each player
-          appendToWaitingList(playerId)
+          appendToWaitingList(playerId);
         });
         break;
       }
@@ -37,13 +30,16 @@ socket.on('receive', function(data) {
         appendToWaitingList(response.id);
         break;
       }
-      case C.EVENT_RES.GAME_START: {
-        clearGameArea();
-        handleGameStart(response);
-        loadQuestion(response.question);
+
+    }
+  } else if (response.game !== undefined) {
+    switch(response.game) {
+      case C.GAME_RES.BEGIN_FIRST_QUESTION: {
+        console.log('QUESTION TYPE: ' +response.question.type);
+        console.log(response.question.prompt);
       }
     }
-  } else {
+  } else {  //special
     switch(response.special) {
       case C.SPECIAL.SOCKET_DISCONNECT: {
         let player = document.getElementById(response.id);
@@ -52,13 +48,14 @@ socket.on('receive', function(data) {
     }
   }
 });
+
 socket.on('err', function(err) {
   console.log(err);
 });
 
 send({
   'event': C.EVENT.JOIN_ROOM,
-  'roomNo' : room
+  'room' : room
 });
 
 //convenience function for encoding the json for sending
@@ -72,33 +69,6 @@ function send(data) {
     .then(encodedData => {
       socket.emit('send', encodedData);
     });
-}
-
-function clearGameArea() {
-  document.getElementById('game').innerHTML = "";
-}
-
-function loadQuestion(question) {
-  //create div for question
-  let questionDiv = document.createElement('div');
-  questionDiv.id = 'question';
-
-  //create h3 node for the question prompt
-  let promptNode = document.createElement('h3');
-  promptNode.appendChild(document.createTextNode(question.prompt));
-
-  if(question.type == 0) { //if MCQ question
-    //create MCQ buttons
-    let buttonArr = [];
-    for(let i = 0; i < 4; i++) {
-      let button = document.createElement('button');
-      button.id = 'MCQ-' + MCQ_LETTERS[i];
-      button.onclick = submitAnswer(C.MCQ[MCQ_LETTERS[i]]);
-
-    }
-  } else {  //short answer question
-
-  }
 }
 
 function appendToWaitingList(playerId) {

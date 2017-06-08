@@ -12,14 +12,18 @@
   "EVENT" : {
     "JOIN_ROOM": 1,
     "GAMEMODE_SET": 2,
-    "PLAYER_JOIN" : 3,
-    "START": 10
+    "PLAYER_JOIN" : 3
   },
   "EVENT_RES" : {
     "GAMEMODE_CONFIRM" : 1,
     "PLAYER_JOIN" : 2,
-    "PLAYER_LIST" : 3,
-    "GAME_START" : 10
+    "PLAYER_LIST" : 3
+  },
+  "GAME": {
+    "START": 10
+  },
+  "GAME_RES": {
+    "BEGIN_FIRST_QUESTION": 10
   },
   "GAMEMODE" : {
     "CLASSIC": 0,
@@ -87,6 +91,10 @@
       "LOG_QUESTION" : 408,
       "ACHIEVEMENTS" : 409,
       "ACHIEVEMENTS_EARNED" : 410
+    },
+    "OTHERS" : {
+      "MCQ" : 501,
+      "SHORT_ANS" : 502
     }
   },
 

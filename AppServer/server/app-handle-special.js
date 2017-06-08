@@ -47,10 +47,7 @@ async function socket_disconnect(data) {
   } else {  //player disconnect
     console.log("PLAYER_DISCONNECT");
     //remove player from playerList
-    var index = r.players.indexOf(data.id);
-    if (index > -1) {
-       r.players.splice(index, 1);
-    }
+    delete r.players[data.id];
 
     return {
       'special': C.SPECIAL.SOCKET_DISCONNECT,
