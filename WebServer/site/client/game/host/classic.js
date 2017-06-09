@@ -30,14 +30,24 @@ function handleGame(response) {
     case C.GAME_RES.ROUND_END: {
       clearAnsDiv();
       console.log(response.roundEndResults);
+      displayResults(response.roundEndResults);
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
-      if(firstQuestion) clearBody();
+      if(firstQuestion) //clearBody();
+      document.getElementById('room').innerHTML = ""; //temporary fix
       clearGameArea();
 
       loadQuestion(response.question);
       break;
+    }
+    case C.GAME_RES.GAME_END: {
+      clearGameArea();
+      displayGameEnd(response.roundEndResults);
+      break;
+    }
+    default: {
+      console.log('AppServer to User GAME_RES value is ' +response.game +' not a preset case!');
     }
   }
 }

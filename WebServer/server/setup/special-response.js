@@ -29,6 +29,10 @@ module.exports = async function(input) {
 
       //TODO::Host disconnect
     }
+    case C.SPECIAL.NULL: {
+      console.log('null response');
+      break;
+    }
   }
 }
 

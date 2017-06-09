@@ -26,6 +26,11 @@ function handleGame(response) {
       displayResults(response.roundEndResults);
       break;
     }
+    case C.GAME_RES.GAME_END: {
+      clearGameArea();
+      displayGameEnd(response.roundEndResults);
+      break;
+    }
   }
 }
 
@@ -65,9 +70,40 @@ function loadQuestion(question) {
       ansNode.appendChild(button);
     }
   } else {  //short answer question
-    //create textfiedl
-    //let textField =
+    //create prompt for the textfield
+    let prompt = document.createElement('p');
+    prompt.appendChild(document.createTextNode('Type your answer!'));
+    ansNode.appendChild(prompt);
+
+    //create Short Answer text field
+    let textfield = document.createElement('input');
+    textfield.type = text;
+    textfield.id = 'short-ans';
+    ansNode.appendChild(prompt);
+
+    let shortAns = "";
+    setOnKeyPress(e => {
+      let event = window.event ? window.event : e;
+      switch (e.which){
+        case 13: { //ENTER key
+          textfield.disabled = true;
+          clearKeyPress();  //stop taking input
+          //submit answer
+          send({
+            'game': C.GAME.SUBMIT_ANSWER,
+            'answer': shortAns
+          });
+          break;
+        }
+        default: {  //all other keys
+          shortAns += event.which;
+          textfield.value = String.fromCharCode(shortAns);
+          break;
+        }
+      }
+    });
   }
+
   questionDiv.appendChild(promptNode);
   questionDiv.appendChild(ansNode);
   document.getElementById('game').appendChild(questionDiv);

@@ -17,7 +17,7 @@ function calculateScore(reward, startTime, answerStreak) {
 function setAllUnanswered(players) {
   for(let player in players){
     if(players.hasOwnProperty(player)) {
-      delete player.answered;
+      players[player].answered = false;
     }
   }
 }
@@ -25,7 +25,7 @@ function setAllUnanswered(players) {
 function setAllAnswered(players) {
   for(let player in players){
     if(players.hasOwnProperty(player)) {
-      player.answered = true;
+      players[player].answered = true;
     }
   }
 }

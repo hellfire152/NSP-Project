@@ -38,21 +38,28 @@ module.exports = async function(input) {
     2. Remove the player from the associated room's playerList (if applicable)
 */
 async function socket_disconnect(data) {
-  let r = allRooms[data.roomNo];
-  if(r.host == data.id) { //host disconnect
-    response = {
-      'special': C.SPECIAL.HOST_DISCONNECT,
-      'roomNo': data.roomNo
-    }
-  } else {  //player disconnect
-    console.log("PLAYER_DISCONNECT");
-    //remove player from playerList
-    delete r.players[data.id];
+  try {
+    let host = allRooms[data.roomNo];
+    let r = allRooms[data.roomNo];
+    if(r.host == data.id) { //host disconnect
+      response = {
+        'special': C.SPECIAL.HOST_DISCONNECT,
+        'roomNo': data.roomNo
+      }
+    } else {  //player disconnect
+      console.log("PLAYER_DISCONNECT");
+      //remove player from playerList
+      delete r.players[data.id];
 
+      return {
+        'special': C.SPECIAL.SOCKET_DISCONNECT,
+        'id': data.id,
+        'roomNo': data.roomNo
+      }
+    }
+  } catch (err) {
     return {
-      'special': C.SPECIAL.SOCKET_DISCONNECT,
-      'id': data.id,
-      'roomNo': data.roomNo
+      'special': C.SPECIAL.NULL
     }
   }
 }
