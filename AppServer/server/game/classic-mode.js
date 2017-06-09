@@ -26,25 +26,25 @@ module.exports = async function(input) {
     }
     case C.GAME.NEXT_ROUND: {
       currentRoom.questionCounter++;
+      let questions = currentRoom.quiz.questions;
       //if there are no questions left
-      if(currentRoom.questionCounter >= currentRoom.quiz.questions.length) {
+      if(currentRoom.questionCounter >= questions.length) {
         //TODO::CAULCULATE TITLES
-        return {
-          'game': C.GAME_RES.GAME_END,
-          'sendTo': C.SEND_TO.ROOM,
-          'playerList': currentRoom.players
-        }
+        console.log("GAME " +data.roomNo +" END");
+        return sendGameEnd(currentRoom.players, data);
       } else { //next question available
-        return sendQuestion(currentRoom, question, data);
+        return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);
       }
     }
     case C.GAME.SUBMIT_ANSWER: {
       if(currentRoom.answerCount === undefined) currentRoom.answerCount = 0;
-      let question = currentRoom.quiz.question[currentRoom.questionCounter];
+      let question = currentRoom.quiz.questions[currentRoom.questionCounter];
       let correctAnswer = question.solution;
       let qType = question.type;
 
-      if(currentPlayer.answered === undefined) { //if currentPlayer has not answered
+      //if currentPlayer has not answered
+      console.log(currentPlayer.answered);
+      if(!currentPlayer.answered || currentPlayer.answered === undefined) {
         //store the answer
         if(currentRoom.answers[data.answer] === undefined) {
           currentRoom.answers[data.answer] = 0;
@@ -52,7 +52,9 @@ module.exports = async function(input) {
         currentRoom.answers[data.answer]++;
 
         //calculating score
-        if(data.answer & correctAnswer) { //if correctAnswer
+        if((question.type == 0 && data.answer & correctAnswer)  //MCQ correct
+          || (question.type == 1 && //short answer correct (case insensitive)
+            data.answer.toUpperCase() == correctAnswer.toUpperCase())) {
           //getting question reward value
           let reward;
           //if question specific reward set
@@ -63,7 +65,7 @@ module.exports = async function(input) {
           } else {  //default reward value
             reward = 100;
           }
-          //score penalty based on time difference from the first answerer
+          //score penalty based on time difference from the first correct answerer
           if (currentRoom.timeStart === undefined) {
             currentRoom.timeStart = Date.now();
           }
@@ -88,7 +90,7 @@ module.exports = async function(input) {
         if(currentRoom.answerCount == currentRoom.playerCount) {
           //stop the auto round end on timer end
           clearTimeout(currentRoom.timer);
-          sendToServer(sendRoundEnd(currentRoom, data, currentRoom.answers));
+          return sendRoundEnd(currentRoom, data, currentRoom.answers);
         } else {
           //send response for host
           return {
@@ -108,6 +110,7 @@ module.exports = async function(input) {
           'roomNo': data.roomNo
         }
       }
+      break;
     }
     default: {
       console.log("CLASSIC MODE: Game event of " +data.game +" is not defined!");
@@ -120,6 +123,9 @@ module.exports = async function(input) {
   Delegated to an outside function as this can be triggered in multiple ways
 */
 function sendRoundEnd(currentRoom, data, answers, solution) {
+  delete currentRoom.timeStart;
+  clearTimeout(currentRoom.timer);
+  common.setAllAnswered(currentRoom.players);
   return {
     //send round signal
     'game': C.GAME_RES.ROUND_END,
@@ -132,10 +138,12 @@ function sendRoundEnd(currentRoom, data, answers, solution) {
 }
 
 function sendQuestion(currentRoom, question, data) {
+  currentRoom.answerCount = 0;
+  common.setAllUnanswered(currentRoom.players);
   //set timer
   currentRoom.timer = setTimeout(() => {
     common.setAllAnswered(currentRoom.players);
-    sendToServer(
+    sendToServer(conn,
       sendRoundEnd(currentRoom, data, currentRoom.answers, question.solution)
     );
   }, question.time * 1000);
@@ -151,5 +159,18 @@ function sendQuestion(currentRoom, question, data) {
     },
     'roomNo': data.roomNo
   }
+}
+
+function sendGameEnd(players, data) {
+  console.log(players);
+  common.setAllAnswered(players);
+
+  let gameEndResults = {};
+  gameEndResults.roundEndResults = common.roundEndResults(players, true);
+  gameEndResults.game = C.GAME_RES.GAME_END;
+  gameEndResults.sendTo = C.SEND_TO.ROOM;
+  gameEndResults.roomNo = data.roomNo;
+
+  return gameEndResults;
 }
 var common = require('./common.js');
