@@ -52,8 +52,9 @@ module.exports = async function(input) {
         currentRoom.answers[data.answer]++;
 
         //calculating score
-        console.log(data.answer & correctAnswer);
-        if(data.answer & correctAnswer) { //if correctAnswer
+        if((question.type == 0 && data.answer & correctAnswer)  //MCQ correct
+          || (question.type == 1 && //short answer correct (case insensitive)
+            data.answer.toUpperCase() == correctAnswer.toUpperCase())) {
           //getting question reward value
           let reward;
           //if question specific reward set
