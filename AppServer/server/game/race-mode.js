@@ -61,7 +61,7 @@ module.exports = async function(input) {
           }
         }
       } else {  //cannot answer
-        
+
         return {
           'err': C.ERR.CANNOT_ANSWER,
           'sendTo': C.SEND_TO.USER,
