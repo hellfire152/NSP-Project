@@ -10,6 +10,7 @@ module.exports = async function(input) {
     case C.GAME.START: {
       //prevent others from joining the room
       currentRoom.joinable = false;
+      currentRoom.completedPlayers = 0;
 
       //get the first question
       let question = currentRoom.quiz.questions[0];
@@ -43,11 +44,51 @@ module.exports = async function(input) {
         let question = currentRoom.quiz.questions[currentPlayer.questionCounter];
 
         if(common.checkCorrectAnswer(question, data.answer)) {
-          currentPlayer.
-          return {
-            'game': C.GAME_RES.NEXT_QUESTION,
-            'sendTo': C.SEND_TO.USER,
-            'targetId': data.id
+          currentPlayer.answerable = true;  //just in case
+          currentPlayer.questionCounter++;
+
+          //finished the last question
+          if(currentPlayer.questionCounter >= currentRoom.quiz.questions.length) {
+            currentRoom.completedPlayers++;
+            if(currentRoom.completedPlayers >= currentRoom.playerCount) {
+              return {  //if all players completed
+                'game': C.GAME_RES.GAME_END,
+                'sendTo': C.SEND_TO.ROOM,
+                'roomNo': data.roomNo
+              }
+            } else {  //send player finish event
+              sendToServer({
+                'game': C.GAME_RES.PLAYER_FINISH,
+                'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
+                'sourceId': data.id,
+                'roomNo': data.roomNo,
+                'id': data.id
+              });
+            }
+
+            return {//send finish message to player
+              'game': C.GAME_RES.ROUND_END,
+              'sendTo': C.SEND_TO.USER,
+              'targetId': data.id
+            }
+          } else {  //player hasn't finished
+            //send correct answer event to everybody else
+            sendToServer({
+              'game': C.GAME_RES.ANSWER_CHOSEN,
+              'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
+              'roomNo': data.roomNo,
+              'id': data.id,
+              'sourceId': data.id,
+              'roomNo': data.roomNo
+            });
+
+            return {  //send next question to player
+              'game': C.GAME_RES.NEXT_QUESTION,
+              'sendTo': C.SEND_TO.USER,
+              'targetId': data.id,
+              'question': common.removeSolution(
+                currentRoom.quiz.questions[currentPlayer.questionCounter])
+            };
           }
         } else {  //wrong answer
           currentPlayer.answerable = false;

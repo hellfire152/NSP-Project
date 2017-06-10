@@ -152,3 +152,41 @@ got this down I can move on to the fun part, the game!
 
 ...and then have to go back to this to extend this with some additional features
 and more importantly, security stuff.
+
+
+10/6/2017 - And Jin Kuan:
+I haven't written in here in a while, haven't I?
+
+I've been working on this everyday, as per usual.
+As I mentioned on the last update, I was working on room hosting, and classic mode.
+I've actually managed to get the room hosting and classic mode working!
+At least, the MCQ part.
+
+I'm not going to bother even testing the short answer one. The main thing I wanted
+to do was to get the logic and game flow down together. That's what the crude HTML
+shit was for. Now that that's figured out, I'll move on straight to pixi graphics,
+what most of my term break would be dedicated to.
+
+Started race as well, though as mentioned above I'm not going to test anything
+just yet, until I get the client side stuff all down.
+
+The plan now is:
+  (This weekend) Code up the server side logic for all the gamemodes.
+  (Term Break Week 1) Draw out all assets needed
+  (Term Break Week 2) Figure out all PIXI stuff. Hopefully finish classic with
+  graphics by the time the technical assessment 1 starts.
+
+Doesn't seem to hard right? But that's what I thought for the coding for room hosting
+and joining. That took 2 weeks longer than anticipated. Welp. The schedule I
+drew for my row is already completely screwed up it seems.
+
+I've given Chloe and Qing Ning their first real tasks. Please, let them be able to
+do it without help. (That'll never happen honestly)
+
+Nigel seems to be doing work. I've merged his branch into mine, and saw the
+files he made for testing. Hope he's got this......
+
+Bryan website is in progress, I saw the state of it 2 days ago, and while there's
+a lot of testing stuff like random logos, it's coming together!
+
+My guess is that my coding would take a lot longer than one week, but let's try regardless!

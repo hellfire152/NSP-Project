@@ -38,7 +38,8 @@
     "ROUND_END": 12,
     "NEXT_QUESTION": 13,
     "GAME_END": 14,
-    "WRONG_ANSWER": 15
+    "WRONG_ANSWER": 15,
+    "PLAYER_FINISH": 16
   },
   "GAMEMODE" : {
     "CLASSIC": 0,
