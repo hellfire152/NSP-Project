@@ -100,13 +100,23 @@ function encryptIv(plain) {
 function decryptIv(cipher) {
 }
 
-//Not sure if a function like this is needed or not
-async function hash(password) {
-  return crypto.createHash('SHA256').update(password).digest('base64');
+//Hash value with SHA256
+async function hash(input) {
+  return crypto.createHash('SHA256').update(input).digest('base64');
+}
+
+async function generateSalt(){
+  var saltValue = crypto.randomBytes(32).toString('base64');
+  console.log(saltValue.length);
+  return saltValue;
+}
+
+async function xorValue(input, key){
+  return input^key;
 }
 
 module.exports = function(options) {
-  if(!(options === undefined)) {  //setting options (if used);
+  if(!(options === undefined)) {  //setting options (if used)
     if (!(options.password === undefined)) password = options.password;
     if (!(options.iv === undefined)) iv = options.iv;
   }
@@ -119,6 +129,8 @@ module.exports = function(options) {
     "encryptIv": encryptIv,
     "decryptIv": decryptIv,
     "hash": hash,
-    "iv": iv
+    "iv": iv,
+    "generateSalt" : generateSalt,
+    "xorValue" : xorValue
   }
 }

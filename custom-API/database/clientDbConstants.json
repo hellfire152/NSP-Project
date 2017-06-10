@@ -1,0 +1,11 @@
+{
+  "CREATE" : {
+    "STUDENT_ACC" : 101,
+    "TEACHER_ACC" : 102,
+    "QUIZ" : 103
+  },
+  "QUESTION_TYPE" : {
+    "MCQ" : 501,
+    "SHORT_ANS" : 502
+  }
+}

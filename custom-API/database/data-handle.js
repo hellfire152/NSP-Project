@@ -1,46 +1,37 @@
-var db = require("./database.js");
-var C = require("./constants.json");
-var cipher = require("./cipher.js");
+// var db = require("./database.js");
+var db = require("../database.js");
+var cipher = require("../cipher.js")();
+const C = require("./clientDbConstants.json");
 
+//Input user data password will undergo hashing and salting before storing to database
+function handleCreateAccount(userAccount){
+  cipher.hash(userAccount.data.account.password_hash)
+    .then(cipher => {
+      userAccount.data.account.password_hash = cipher;
+      console.log(cipher);
+      console.log(cipher.length);
+    })
+    .then(function(){
+      cipher.generateSalt()
+        .then(saltValue =>{
+          userAccount.data.account.salt = saltValue;
+          //function to XOR passoword and salt
+        })
+        .then(function(){
+          db(userAccount);
+        })
+    })
+    .catch(reason => {
+      console.log(reason);
+    });
+}
 
-function createAccount(data, details, accountType){
-
-  if(accountType == 'student'){
-    data.type = C.DB.INSERT.STUDENT_DETAILS;
-  }
-  else{
-    data.type = C.DB.INSERT.TEACHER_DETAILS;
-  }
-
-  var account = {
-    C : C,
-    data : data,
-    details : details
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+module.exports = {
+  'handleCreateAccount' : handleCreateAccount
+}
 
 
 
-
-
-
-
-
-  db(account);
   // db(
   //   {
   //     C : C,
@@ -59,7 +50,7 @@ function createAccount(data, details, accountType){
   //     }
   //   }
   // );
-}
+// }
 
 // var input = {
 //   C : C,

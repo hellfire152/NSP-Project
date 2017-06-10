@@ -1,4 +1,4 @@
-const cipher = require('./custom-API/cipher.js')();
+const cipher = require('../custom-API/cipher.js')();
 const Promise = require('promise');
 
 (async () => { //calling inside async function

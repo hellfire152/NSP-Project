@@ -1,7 +1,17 @@
+/*
+  Add data recieve from app server and store to respecitve table in the database.
+  Note: only app server will have direct access to database for security purpose
+  TODO: All data in the database will be encrypted with AES256 encryption
+
+  Author: Nigel Chen Chin Hao
+  Date: 09062017
+ */
+
 var mysql = require('mysql');
 var crypto = require('crypto');
+const C = require('./constants.json')
 
-//Connect to database
+//Create connection between app and database
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -9,6 +19,7 @@ var connection = mysql.createConnection({
   database: 'exquizit'
 });
 
+//Ensure connection have been successful between data and database
 connection.connect(function(error){
   if(!!error){
     console.error('[Failed to connect to database]: ' + error);
@@ -18,6 +29,27 @@ connection.connect(function(error){
   }
 });
 
+module.exports = async function(input) {
+  data = input.data;
+  // C = input.C;
+
+  console.log("DB TYPE: " +data.type);
+  switch(data.type) {
+    case C.DB.CREATE.STUDENT_ACC :
+    case C.DB.CREATE.TEACHER_ACC : {
+      return await createAccount(data);
+      break;
+    }
+    case C.DB.CREATE.QUIZ : {
+      return await createQuiz(data);
+      break;
+    }
+    //ADD MORE CASES HERE
+  }
+}
+
+//Create user account (student or teacher).
+//data.type should state clearly if it is STUDENT_DETAILS or TEACHER_DETAILS
 async function createAccount(data){
   console.log(data);
 
@@ -29,14 +61,14 @@ async function createAccount(data){
 
     console.log('[Query successful]');
     console.log(result);
-    var userId = result.insertId; //Get the userId form user_account
+    var userId = result.insertId; //Get the userId for this user
 
     switch(data.type){
-      case C.DB.INSERT.STUDENT_DETAILS : {
+      case C.DB.CREATE.STUDENT_ACC : {
         userDetails(userId, data.details, "student_details");
         break;
       }
-      case C.DB.INSERT.TEACHER_DETAILS : {
+      case C.DB.CREATE.TEACHER_ACC : {
         userDetails(userId, data.details, "teacher_details");
         break;
       }
@@ -46,6 +78,7 @@ async function createAccount(data){
   console.log('[Account created]');
 }
 
+//Apply additional details for teacher or student respecively
 async function userDetails(userId, details, type){
   console.log("[Creating student]");
   console.log("[data.details]: " + details.date_of_birth);
@@ -65,10 +98,9 @@ async function userDetails(userId, details, type){
   });
 }
 
-var index;
+//Planning to recreate create quiz function
 async function createQuiz(data){
   data.quiz.date_created = new Date();
-  console.log(data);
   var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
     if(error){
       console.error('[Error in query]: ' + error);
@@ -76,17 +108,17 @@ async function createQuiz(data){
     }
 
     console.log('[Query successful]');
-    console.log(result);
     var quizId = result.insertId; //Get the quizId form quiz
 
-    index = 0;
+    console.log("[quiz_id]: " + quizId);
+
     data.question.forEach(function(question){
       addQuestion(question, data, quizId);
     });
   });
 }
 
-async function addQuestion(questionData, mainData, quizId){
+async function addQuestion(questionData, data, quizId){
   console.log(quizId);
 
   questionData.quiz_id = quizId;
@@ -97,54 +129,34 @@ async function addQuestion(questionData, mainData, quizId){
       return;
     }
 
-    console.log('[Query successful]');
-    console.log(result);
-
     var questionId = result.insertId;
     console.log("[question_id: ]: " + questionId);
 
-    console.log(index);
-    if(questionData.question_type == C.DB.OTHERS.MCQ){
-      addChoices(mainData.choices[index++], questionId);
+    if(questionData.question_type == C.DB.QUESTION_TYPE.MCQ){
+      addChoices(data.choices, questionId, questionData.question_no);
     }
   });
 }
 
-async function addChoices(data, questionId){
+async function addChoices(choiceData, questionId, questionNo){
+  data.question_id = questionId;
+  var choice;
+  console.log(choiceData);
+  choiceData.forEach(function(choice){
+    console.log("IN");
+    if(choice.question_no == questionNo){
+      console.log(choice.question_no);
+      choice.question_id = questionId;
+      console.log(choice);
+      var query = connection.query("INSERT INTO quiz_question_choices SET ?", choice, function(error, result){
+        if(error){
+          console.error('[Error in query]: ' + error);
+          return;
+        }
 
-data.question_id = questionId;
-
-console.log("[Choices_arr]: " + data.choice_arr);
-
-  var query = connection.query("INSERT INTO quiz_question_choices SET ?", data, function(error, result){
-    if(error){
-      console.error('[Error in query]: ' + error);
-      return;
+        console.log('[Query successful]');
+        console.log(result);
+      });
     }
-
-    console.log('[Query successful]');
-    console.log(result);
   });
-}
-
-module.exports = async function(input) {
-  data = input.data;
-  C = input.C;
-
-  console.log("DB TYPE: " +data.type);
-  switch(data.type) {
-    case C.DB.INSERT.STUDENT_DETAILS : {
-      return await createAccount(data);
-      break;
-    }
-    case C.DB.INSERT.TEACHER_DETAILS : {
-      return await createAccount(data);
-      break;
-    }
-    case C.DB.INSERT.QUIZ : {
-      return await createQuiz(data);
-      break;
-    }
-    //ADD MORE CASES HERE
-  }
 }
