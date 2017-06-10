@@ -48,7 +48,9 @@ module.exports = async function(input) {
         break;
       }
       case C.SEND_TO.ROOM: {
-        sendToRoom(response, response.roomNo);
+        let r = response.roomNo;
+        delete response.roomNo;
+        sendToRoom(response, r);
         break;
       }
       case C.SEND_TO.ROOM_EXCEPT_SENDER: {

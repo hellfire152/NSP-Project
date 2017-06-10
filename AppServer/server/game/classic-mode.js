@@ -52,20 +52,11 @@ module.exports = async function(input) {
         currentRoom.answers[data.answer]++;
 
         //calculating score
-        if((question.type == 0 && data.answer & correctAnswer)  //MCQ correct
-          || (question.type == 1 && //short answer correct (case insensitive)
-            data.answer.toUpperCase() == correctAnswer.toUpperCase())) {
+        if(common.checkCorrectAnswer(question, data.answer)) {
           //getting question reward value
-          let reward;
-          //if question specific reward set
-          if(question.reward !== undefined) {
-            reward = question.reward;
-          } else if(currentRoom.quiz.reward !== undefined) { //quiz-wide reward
-            reward = currentRoom.quiz.reward;
-          } else {  //default reward value
-            reward = 100;
-          }
-          //score penalty based on time difference from the first correct answerer
+          let reward = common.getReward(quiz, question);
+
+          //score penalty based on time difference from the first correct answer
           if (currentRoom.timeStart === undefined) {
             currentRoom.timeStart = Date.now();
           }
@@ -77,11 +68,7 @@ module.exports = async function(input) {
           //increment correctAnswer count
           currentRoom.players[data.id].correctAnswers++;
         } else {  //wrong answer
-          if(question.penalty !== undefined) { //if question-specific penalty is defined
-            currentRoom.players[data.id].score -= question.penalty;
-          } else if(currentRoom.quiz.penalty !== undefined){ //if quiz-wide penalty is defined
-            currentRoom.players[data.id].score -= currentRoom.quiz.penalty
-          } //no penalty otherwise
+          currentPlayer.score -= common.getPenalty(currentRoom.quiz, question);
         }
 
         currentPlayer.answered = true;
@@ -151,12 +138,7 @@ function sendQuestion(currentRoom, question, data) {
   return {
     'game': C.GAME_RES.NEXT_QUESTION,
     'sendTo': C.SEND_TO.ROOM,
-    'question': { //send question, without the solution
-      'prompt': question.prompt,
-      'choices': question.choices,
-      'time': question.time,
-      'type': question.type
-    },
+    'question': common.removeSolution(question),
     'roomNo': data.roomNo
   }
 }
