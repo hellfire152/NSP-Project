@@ -27,13 +27,14 @@ const C = {
   },
   "GAME": {
     "START": 10,
-    "SUBMIT_ANSWER": 11
+    "SUBMIT_ANSWER": 11,
+    "NEXT_ROUND": 12
   },
   "GAME_RES": {
-    "BEGIN_FIRST_QUESTION": 10,
     "ANSWER_CHOSEN": 11,
     "ROUND_END": 12,
-    "NEXT_QUESTION": 13
+    "NEXT_QUESTION": 13,
+    "GAME_END": 14
   },
   "GAMEMODE" : {
     "CLASSIC": 0,

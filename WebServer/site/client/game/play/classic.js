@@ -18,7 +18,7 @@ function handleGame(response) {
         firstQuestion = false;
       }
       clearGameArea();
-      loadQuestion(response.question);
+      showQuestion(response.question)
       break;
     }
     case C.GAME_RES.ROUND_END: {
@@ -26,65 +26,14 @@ function handleGame(response) {
       displayResults(response.roundEndResults);
       break;
     }
+    case C.GAME_RES.GAME_END: {
+      clearGameArea();
+      displayGameEnd(response.roundEndResults);
+      break;
+    }
   }
 }
 
-function loadQuestion(question) {
-  //create div for question
-  let questionDiv = document.createElement('div');
-  questionDiv.id = 'question';
-
-  //create h3 node for the question prompt
-  let promptNode = document.createElement('h3');
-  promptNode.appendChild(document.createTextNode(question.prompt));
-
-  //creating and initializing timer
-  let time = question.time;
-  let timerNode = document.createElement('h4');
-  timerNode.id = 'timer';
-  let timerText = time + " seconds left!";
-  timerNode.appendChild(document.createTextNode(timerText));
-
-  let ansNode = document.createElement('div');
-  ansNode.id = 'ans';
-
-  if(question.type == 0) { //if MCQ question
-    console.log("QUESTION HANDLER: MCQ");
-    //create MCQ buttons
-    let buttonArr = [];
-    for(let i = 0; i < 4; i++) {
-      let button = document.createElement('button');
-      button.id = 'MCQ-' + MCQ_LETTERS[i];
-      button.onclick = (function() {
-        return function() {
-          submitAnswer(0, MCQ_LETTERS[i]); //setting the proper onclick function
-          button.disabled = true;
-        }
-      })();
-      button.appendChild(document.createTextNode(question.choices[i]));
-      ansNode.appendChild(button);
-    }
-  } else {  //short answer question
-    //create textfiedl
-    //let textField =
-  }
-  questionDiv.appendChild(promptNode);
-  questionDiv.appendChild(ansNode);
-  document.getElementById('game').appendChild(questionDiv);
-
-  //set timer
-  let t = setInterval(() => {
-    time--;
-    timerText.nodeValue = time + ' seconds left!';
-
-    //stop timer if it reaches 0
-    if(time <= 0) {
-      clearInterval(t);
-    }
-  });
-}
-
-//sends the answer to the server
 function submitAnswer(type, ans) {
   send({
     'game': C.GAME.SUBMIT_ANSWER,
