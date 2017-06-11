@@ -64,7 +64,9 @@
       "QUIZ" : 103
     },
     "SELECT" : {
-
+      "ALL_QUIZ" : 201,
+      "QUESTION" : 202,
+      "SEARCH_QUIZ" : 203
     },
     "UPDATE" : {
 
@@ -75,6 +77,9 @@
     "QUESTION_TYPE" : {
       "MCQ" : 501,
       "SHORT_ANS" : 502
+    },
+    "OTHERS" : {
+      "TEST" : 601
     }
   },
   "ERR" : {
@@ -88,6 +93,9 @@
     "DUPLICATE_ID": 1007,
     "INACCESSIBLE_PRIVATE_QUIZ": 1008,
 
-    "ALREADY_ANSWERED": 1500
+    "ALREADY_ANSWERED": 1500,
+
+    "DB_NO_RESULT" : 2000,
+    "DB_EMAIL_TAKEN" : 2001
   }
 }

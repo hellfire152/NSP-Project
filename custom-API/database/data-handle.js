@@ -4,7 +4,7 @@ var cipher = require("../cipher.js")();
 const C = require("./clientDbConstants.json");
 
 //Input user data password will undergo hashing and salting before storing to database
-function handleCreateAccount(userAccount){
+async function handleCreateAccount(userAccount){
   cipher.hash(userAccount.data.account.password_hash)
     .then(cipher => {
       userAccount.data.account.password_hash = cipher;
@@ -26,9 +26,35 @@ function handleCreateAccount(userAccount){
     });
 }
 
-module.exports = {
-  'handleCreateAccount' : handleCreateAccount
+async function handleSearchQuiz(searchItem){
+  var searchArr = [];
+  var word = "";
+  for(i=0 ; i<searchItem.data.searchItem.length ; i++){
+    if(searchItem.data.searchItem.charAt(i) === " "){
+      searchArr.push(word);
+      word = "";
+      continue;
+    }
+    word += searchItem.data.searchItem.charAt(i);
+  }
+  searchArr.push(word);
+
+  searchItem.data.searchArr = searchArr;
+
+  console.log(searchArr);
+console.log("DONE");
+  db(searchItem);
+
+
 }
+
+module.exports = function() {
+  return {
+    'handleCreateAccount' : handleCreateAccount,
+    'handleSearchQuiz' : handleSearchQuiz
+  }
+}
+
 
 
 

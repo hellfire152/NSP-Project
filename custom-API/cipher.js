@@ -104,13 +104,14 @@ function decryptIv(cipher) {
 async function hash(input) {
   return crypto.createHash('SHA256').update(input).digest('base64');
 }
-
+//Generate new salt value for newly created account
 async function generateSalt(){
   var saltValue = crypto.randomBytes(32).toString('base64');
   console.log(saltValue.length);
   return saltValue;
 }
 
+//TODO: Will work on this in the future
 async function xorValue(input, key){
   return input^key;
 }

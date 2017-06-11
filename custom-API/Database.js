@@ -9,6 +9,7 @@
 
 var mysql = require('mysql');
 var crypto = require('crypto');
+var handleDb = require("./database/data-handle.js")();
 const C = require('./constants.json')
 
 //Create connection between app and database
@@ -32,7 +33,7 @@ connection.connect(function(error){
 module.exports = async function(input) {
   data = input.data;
   // C = input.C;
-
+  console.log(input.data);
   console.log("DB TYPE: " +data.type);
   switch(data.type) {
     case C.DB.CREATE.STUDENT_ACC :
@@ -44,6 +45,22 @@ module.exports = async function(input) {
       return await createQuiz(data);
       break;
     }
+    case C.DB.SELECT.ALL_QUIZ : {
+      return await retrieveAllQuiz();
+      break
+    }
+    case C.DB.SELECT.QUESTION : {
+      return await retrieveQuestions(data.quizId); //quizId of the data
+      break;
+    }
+    case C.DB.SELECT.SEARCH_QUIZ : {
+      return await searchQuiz(data);
+      break;
+    }
+    case C.DB.OTHERS.TEST : {
+      return await testFunction();
+      break;
+    }
     //ADD MORE CASES HERE
   }
 }
@@ -53,29 +70,44 @@ module.exports = async function(input) {
 async function createAccount(data){
   console.log(data);
 
-  var query = connection.query("INSERT INTO user_account SET ?", data.account, function(error, result){
+  var query = connection.query("SELECT user_id FROM user_account WHERE email = " + connection.escape(data.account.email), function(error, result){
+    // console.log(query);
     if(error){
       console.error('[Error in query]: ' + error);
       return;
     }
 
-    console.log('[Query successful]');
-    console.log(result);
-    var userId = result.insertId; //Get the userId for this user
+    if(result.length === 0){
+      console.log("[Email available]");
 
-    switch(data.type){
-      case C.DB.CREATE.STUDENT_ACC : {
-        userDetails(userId, data.details, "student_details");
-        break;
-      }
-      case C.DB.CREATE.TEACHER_ACC : {
-        userDetails(userId, data.details, "teacher_details");
-        break;
-      }
+      var query = connection.query("INSERT INTO user_account SET ?", data.account, function(error, result){
+        if(error){
+          console.error('[Error in query]: ' + error);
+          return;
+        }
+
+        console.log('[Query successful]');
+        console.log(result);
+        var userId = result.insertId; //Get the userId for this user
+
+        switch(data.type){
+          case C.DB.CREATE.STUDENT_ACC : {
+            userDetails(userId, data.details, "student_details");
+            break;
+          }
+          case C.DB.CREATE.TEACHER_ACC : {
+            userDetails(userId, data.details, "teacher_details");
+            break;
+          }
+        }
+      });
+
+      console.log('[Account created]');
+    }
+    else{
+      console.log("[Email have been taken]");
     }
   });
-
-  console.log('[Account created]');
 }
 
 //Apply additional details for teacher or student respecively
@@ -98,7 +130,7 @@ async function userDetails(userId, details, type){
   });
 }
 
-//Planning to recreate create quiz function
+//Create quiz and add to database accordinly
 async function createQuiz(data){
   data.quiz.date_created = new Date();
   var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
@@ -118,6 +150,7 @@ async function createQuiz(data){
   });
 }
 
+//Function will be called by createQuiz(), addQuestion will be called repeatedly until all question is stored.
 async function addQuestion(questionData, data, quizId){
   console.log(quizId);
 
@@ -129,25 +162,22 @@ async function addQuestion(questionData, data, quizId){
       return;
     }
 
-    var questionId = result.insertId;
+    var questionId = result.insertId; // Get the questionId from the question
     console.log("[question_id: ]: " + questionId);
 
+    //If question is a MCQ, addChoice function will be called to store the MCQ choices
     if(questionData.question_type == C.DB.QUESTION_TYPE.MCQ){
       addChoices(data.choices, questionId, questionData.question_no);
     }
   });
 }
 
+//Search for matching questionNo, and then store the data accordingly
 async function addChoices(choiceData, questionId, questionNo){
   data.question_id = questionId;
-  var choice;
-  console.log(choiceData);
   choiceData.forEach(function(choice){
-    console.log("IN");
     if(choice.question_no == questionNo){
-      console.log(choice.question_no);
       choice.question_id = questionId;
-      console.log(choice);
       var query = connection.query("INSERT INTO quiz_question_choices SET ?", choice, function(error, result){
         if(error){
           console.error('[Error in query]: ' + error);
@@ -159,4 +189,74 @@ async function addChoices(choiceData, questionId, questionNo){
       });
     }
   });
+}
+
+//Retrieve all the quiz available in the database
+async function retrieveAllQuiz(){
+  var query = connection.query('SELECT * FROM quiz ORDER BY date_created DESC', function(err, rows, fields){
+			if (!err) {
+        console.log(rows);
+        //TODO: Method to send data to app server
+			} else {
+				console.log('No results.');
+			}
+	});
+}
+
+
+async function retrieveQuiz(){
+
+}
+
+//Search quiz
+async function searchQuiz(searchItem){
+
+  var searchQuery = ""
+  if(searchItem.searchArr.length > 1){
+    for( i=0 ; i<searchItem.searchArr.length ; i++){
+      console.log(searchItem.searchArr[i]);
+      searchQuery +=
+      " OR quiz_title LIKE '%" + searchItem.searchArr[i] + "%'\
+        OR description LIKE '%" + searchItem.searchArr[i] + "%'"
+    }
+  }
+
+  console.log(searchQuery);
+
+  var query = connection.query("SELECT * FROM quiz\
+  WHERE\
+    quiz_title LIKE '%" + searchItem + "%'\
+    OR\
+    description LIKE '%" + searchItem + "%'" + searchQuery,
+    function(err, rows, fields){
+			if (!err) {
+        console.log(rows);
+        //TODO: Method to send data to app server
+			} else {
+				console.log('No results.');
+			}
+	});
+}
+
+//Retrieve every questions corresponding to the quiz specifed (quizId)
+//If question type is a short ans, choice_arr will be null
+async function retrieveQuestions(quizId){
+  var query = connection.query("SELECT quiz_question.question_no, quiz_question.question_type, quiz_question.question_statement, quiz_question.correct_ans, quiz_question.correct_ans, quiz_question.time, quiz_question_choices.choice_arr\
+  FROM quiz_question\
+  LEFT OUTER JOIN quiz_question_choices\
+    ON quiz_question.question_id = quiz_question_choices.question_id\
+  WHERE quiz_question.quiz_id = '" + quizId + "'\
+  ORDER BY quiz_question.question_no",
+  function(err, rows, fields){
+			if (!err) {
+        console.log(rows); //rows = data recieve from database
+        //TODO:Method to send data to app server
+			} else {
+				console.log('No results.');
+			}
+	});
+}
+
+async function testFunction(){
+
 }

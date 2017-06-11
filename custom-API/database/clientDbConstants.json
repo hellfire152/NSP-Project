@@ -1,11 +1,27 @@
 {
-  "CREATE" : {
-    "STUDENT_ACC" : 101,
-    "TEACHER_ACC" : 102,
-    "QUIZ" : 103
-  },
-  "QUESTION_TYPE" : {
-    "MCQ" : 501,
-    "SHORT_ANS" : 502
+  "DB" : {
+    "CREATE" : {
+      "STUDENT_ACC" : 101,
+      "TEACHER_ACC" : 102,
+      "QUIZ" : 103
+    },
+    "SELECT" : {
+      "ALL_QUIZ" : 201,
+      "QUESTION" : 202,
+      "SEARCH_QUIZ" : 203
+    },
+    "UPDATE" : {
+
+    },
+    "DELETE" : {
+
+    },
+    "QUESTION_TYPE" : {
+      "MCQ" : 501,
+      "SHORT_ANS" : 502
+    },
+    "OTHERS" : {
+      "TEST" : 601
+    }
   }
 }
