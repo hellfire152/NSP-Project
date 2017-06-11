@@ -1,6 +1,5 @@
-var handleDb = require("./data-handle.js");
+var handleDb = require("./data-handle.js")();
 var db = require("../database.js");
-var cipher = require("../cipher.js")();
 const C = require("./clientDbConstants.json");
 
 //Sample data to create student account
@@ -137,7 +136,7 @@ function searchQuiz(){
   return searchQuiz = {
     data : {
       type : C.DB.SELECT.SEARCH_QUIZ,
-      searchItem : "Nigel Chen Chin hao"
+      searchItem : "nigel chen chin hao"
     }
   }
 }
@@ -153,9 +152,10 @@ function searchQuiz(){
 // x(data).then(function(result){
 //   // console.log(result);
 // })
-// handleDb.handleSearchQuiz(searchQuiz())
+// db(searchQuiz());
 // db(retrieveAllQuiz());
 // db(retrieveQuestion());
 // db(quiz());
-handleDb.handleCreateAccount(studentAcc());
-handleDb.handleCreateAccount(teacherAcc());
+// handleDb.handleCreateAccount(studentAcc());
+// handleDb.handleCreateAccount(teacherAcc());
+handleDb.handleSearchQuiz(searchQuiz());

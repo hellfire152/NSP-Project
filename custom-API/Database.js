@@ -9,7 +9,7 @@
 
 var mysql = require('mysql');
 var crypto = require('crypto');
-var handleDb = require("./database/data-handle.js")();
+var handleDb = require("./database/data-handle.js");
 const C = require('./constants.json')
 
 //Create connection between app and database
@@ -210,7 +210,7 @@ async function retrieveQuiz(){
 
 //Search quiz
 async function searchQuiz(searchItem){
-
+  console.log("[searchQuiz]");
   var searchQuery = ""
   if(searchItem.searchArr.length > 1){
     for( i=0 ; i<searchItem.searchArr.length ; i++){
@@ -225,9 +225,9 @@ async function searchQuiz(searchItem){
 
   var query = connection.query("SELECT * FROM quiz\
   WHERE\
-    quiz_title LIKE '%" + searchItem + "%'\
+    quiz_title LIKE '%" + searchItem.searchItem + "%'\
     OR\
-    description LIKE '%" + searchItem + "%'" + searchQuery,
+    description LIKE '%" + searchItem.searchItem + "%'" + searchQuery,
     function(err, rows, fields){
 			if (!err) {
         console.log(rows);
@@ -258,5 +258,6 @@ async function retrieveQuestions(quizId){
 }
 
 async function testFunction(){
+  console.log("[Inside testFunction()]");
 
 }
