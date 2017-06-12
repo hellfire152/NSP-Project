@@ -1,6 +1,5 @@
-var handleDb = require("./data-handle.js");
+var handleDb = require("./data-handle.js")();
 var db = require("../database.js");
-var cipher = require("../cipher.js")();
 const C = require("./clientDbConstants.json");
 
 //Sample data to create student account
@@ -111,6 +110,7 @@ function quiz(){
 function retrieveAllQuiz(){
   return quizSet = {
     data : {
+      sessionId : "123",
       type : C.DB.SELECT.ALL_QUIZ
     }
   }
@@ -119,14 +119,7 @@ function retrieveAllQuiz(){
 function retrieveQuestion(){
   return quizSet = {
     data : {
-      type : C.DB.SELECT.QUESTION,
-      quizId : 8
-    }
-  }
-}
-function retrieveQuestion(){
-  return quizSet = {
-    data : {
+      sessionId : "123",
       type : C.DB.SELECT.QUESTION,
       quizId : 8
     }
@@ -136,8 +129,9 @@ function retrieveQuestion(){
 function searchQuiz(){
   return searchQuiz = {
     data : {
+      sessionId : "123",
       type : C.DB.SELECT.SEARCH_QUIZ,
-      searchItem : "Nigel Chen Chin hao"
+      searchItem : "nigel chen chin hao"
     }
   }
 }
@@ -153,9 +147,10 @@ function searchQuiz(){
 // x(data).then(function(result){
 //   // console.log(result);
 // })
-// handleDb.handleSearchQuiz(searchQuiz())
+// db(searchQuiz());
 // db(retrieveAllQuiz());
 // db(retrieveQuestion());
 // db(quiz());
-handleDb.handleCreateAccount(studentAcc());
-handleDb.handleCreateAccount(teacherAcc());
+// handleDb.handleCreateAccount(studentAcc());
+// handleDb.handleCreateAccount(teacherAcc());
+handleDb.handleSearchQuiz(searchQuiz());

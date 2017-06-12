@@ -107,7 +107,6 @@ async function hash(input) {
 //Generate new salt value for newly created account
 async function generateSalt(){
   var saltValue = crypto.randomBytes(32).toString('base64');
-  console.log(saltValue.length);
   return saltValue;
 }
 
