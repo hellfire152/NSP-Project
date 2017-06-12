@@ -129,28 +129,8 @@ function retrieveQuestion(){
 function searchQuiz(){
   return searchQuiz = {
     data : {
-      sessionId : "123",
       type : C.DB.SELECT.SEARCH_QUIZ,
-      searchItem : "nigel chen chin hao"
+      searchItem : "Hao Nigel"
     }
   }
 }
-
-// var data = retrieveQuiz();
-//
-// let x = data => {
-//   return db(data).then(value => { return value})
-// }
-//
-// let y = x(data);
-//
-// x(data).then(function(result){
-//   // console.log(result);
-// })
-// db(searchQuiz());
-// db(retrieveAllQuiz());
-// db(retrieveQuestion());
-// db(quiz());
-// handleDb.handleCreateAccount(studentAcc());
-// handleDb.handleCreateAccount(teacherAcc());
-handleDb.handleSearchQuiz(searchQuiz());

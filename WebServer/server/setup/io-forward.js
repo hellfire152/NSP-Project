@@ -37,7 +37,7 @@ module.exports = function(data) {
       console.log(loginCookie);
       if(socketOfUser[loginCookie.id] !== undefined) { //if user with that id already exists
         console.log('User with that ID already logged in!');
-        //socket.disconnect();
+        socket.disconnect();
       }
       socketOfUser[loginCookie.id] = socket;
       socket.userId = loginCookie.id;
