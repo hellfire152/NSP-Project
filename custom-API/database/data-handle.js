@@ -1,7 +1,7 @@
 // var db = require("./database.js");
-var db = require("../database.js");
+var db = require("./database.js");
 var cipher = require("../cipher.js")();
-const C = require("./clientDbConstants.json");
+const C = require("../constants.json");
 
 //Input user data password will undergo hashing and salting before storing to database
 async function handleCreateAccount(data){
@@ -23,9 +23,8 @@ async function handleCreateAccount(data){
     return data;
 }
 
+//Seperate the words in a string of text, and the store each individual word in an array.
 async function handleSearchQuiz(searchItem){
-  console.log("IN");
-  console.log(searchItem);
   var searchArr = [];
   var word = "";
   for(i=0 ; i<searchItem.searchItem.length ; i++){
@@ -37,11 +36,8 @@ async function handleSearchQuiz(searchItem){
     word += searchItem.searchItem.charAt(i);
   }
   searchArr.push(word);
-  console.log(searchArr);
   searchItem.searchArr = searchArr;
 
-  console.log(searchArr);
-  console.log("DONE");
   return searchItem;
 
 }

@@ -1,6 +1,5 @@
-var handleDb = require("./data-handle.js")();
-var db = require("../database.js");
-const C = require("./clientDbConstants.json");
+var db = require("./database.js");
+const C = require("../constants.json");
 
 //Sample data to create student account
 function studentAcc(){
