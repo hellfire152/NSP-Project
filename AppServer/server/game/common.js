@@ -97,6 +97,34 @@ function checkCorrectAnswer(question, answer) {
 }
 
 /*
+  Handles checking the answer, and calculating the score appropriately
+*/
+function handleScoring(input) {
+  let {data, currentRoom, currentPlayer} = input;
+  let question = currentRoom.quiz.questions[currentRoom.questionCounter];
+
+  //calculating score
+  if(checkCorrectAnswer(question, data.answer)) {
+    //getting question reward value
+    let reward = getReward(currentRoom.quiz, question);
+
+    //score penalty based on time difference from the first correct answer
+    if (currentRoom.timeStart === undefined) {
+      currentRoom.timeStart = Date.now();
+    }
+    currentPlayer.answerStreak++;
+    //calculate and store score
+    currentRoom.players[data.id].score += calculateScore(
+      reward, currentRoom.timeStart, currentPlayer.answerStreak
+    );
+    //increment correctAnswer count
+    currentRoom.players[data.id].correctAnswers++;
+  } else {  //wrong answer
+    currentPlayer.score -= getPenalty(currentRoom.quiz, question);
+  }
+}
+
+/*
   Private function for getting the reward/penalty out
   This function should not be used outside of this module, if there is a need to
   get the reward or penalty, use getReward and getPenalty instead

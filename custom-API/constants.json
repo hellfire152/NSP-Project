@@ -30,7 +30,8 @@
   "GAME": {
     "START": 10,
     "SUBMIT_ANSWER": 11,
-    "NEXT_ROUND": 12
+    "NEXT_ROUND": 12,
+    "SUBMIT_TEAM": 13
   },
   "GAME_RES": {
     "START": 10,
@@ -39,7 +40,9 @@
     "NEXT_QUESTION": 13,
     "GAME_END": 14,
     "WRONG_ANSWER": 15,
-    "PLAYER_FINISH": 16
+    "PLAYER_FINISH": 16,
+    "TEAM_CHOSEN": 17,
+    "CONFIRM_TEAM_NO" : 18
   },
   "GAMEMODE" : {
     "CLASSIC": 0,
