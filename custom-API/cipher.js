@@ -102,17 +102,13 @@ function decryptIv(cipher) {
 
 //Hash value with SHA256
 async function hash(input) {
-  return crypto.createHash('SHA256').update(input).digest('base64');
+  var hash =  crypto.createHash('SHA256').update(input).digest('base64');
+  return hash;
 }
 //Generate new salt value for newly created account
 async function generateSalt(){
   var saltValue = crypto.randomBytes(32).toString('base64');
   return saltValue;
-}
-
-//TODO: Will work on this in the future
-async function xorValue(input, key){
-  return input^key;
 }
 
 module.exports = function(options) {
@@ -130,7 +126,6 @@ module.exports = function(options) {
     "decryptIv": decryptIv,
     "hash": hash,
     "iv": iv,
-    "generateSalt" : generateSalt,
-    "xorValue" : xorValue
+    "generateSalt" : generateSalt
   }
 }

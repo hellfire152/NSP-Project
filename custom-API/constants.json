@@ -71,7 +71,8 @@
     "SELECT" : {
       "ALL_QUIZ" : 201,
       "QUESTION" : 202,
-      "SEARCH_QUIZ" : 203
+      "SEARCH_QUIZ" : 203,
+      "USER_ACCOUNT" : 204
     },
     "UPDATE" : {
 

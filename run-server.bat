@@ -14,12 +14,14 @@ goto end
 :start
 cd ./custom-API/database
 start node ./database.js %pass%
-timeout 2
+timeout 1
 cd ../../AppServer
 start node ./server.js %pass%
-timeout 2
-cd ../WebServer
-start node ./server.js %pass%
+
+::Temp remove webserver.js for convenience
+:: timeout 2
+:: cd ../WebServer
+:: start node ./server.js %pass%
 
 echo Servers started!
 

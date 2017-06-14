@@ -66,10 +66,11 @@ var server = net.createServer(function(conn){
           break;
         }
         case C.DB.SELECT.SEARCH_QUIZ : {
-          // console.log("HERE");
-          // conn.write(JSON.stringify({key: "hello"}));
-          // console.log("HERE");
           return await searchQuiz(data);
+          break;
+        }
+        case C.DB.SELECT.USER_ACCOUNT : {
+          return await retrieveAccount(data);
           break;
         }
         //ADD MORE CASES HERE
@@ -91,9 +92,13 @@ var server = net.createServer(function(conn){
   //Create user account (student or teacher).
   //data.type should state clearly if it is STUDENT_DETAILS or TEACHER_DETAILS
   async function createAccount(data){
-    await handleDb.handleCreateAccount(data)
+    await handleDb.handleCreateAccount(data) //TODO: Will shift handleCreateAccount lower, so it will be faster to check email availability
     .then(dataOut => {
-      var query = connection.query("SELECT user_id FROM user_account WHERE email = " + connection.escape(dataOut.account.email), function(error, result){
+      //Checking email availability
+      var query = connection.query(
+        "SELECT user_id FROM user_account\
+        WHERE email = " + connection.escape(dataOut.account.email) +
+        " OR username = " + connection.escape(data.account.username), function(error, result){
         // console.log(query);
         if(error){
           console.error('[Error in query]: ' + error);
@@ -128,7 +133,8 @@ var server = net.createServer(function(conn){
           console.log('[Account created]');
         }
         else{
-          console.log("[Email have been taken]");
+          console.log("[Username or Email have been taken]");
+          //TODO: return error to server
         }
       });
     });
@@ -136,12 +142,7 @@ var server = net.createServer(function(conn){
 
   //Apply additional details for teacher or student respecively
   async function userDetails(userId, details, type){
-    console.log("[Creating student]");
-    console.log("[data.details]: " + details.date_of_birth);
-    //
     details.user_id = userId;
-
-    console.log("[student_details, user_id {FK}]: " + details.user_id);
 
     var query = connection.query("INSERT INTO " + type + " SET ?", details, function(error, result){
       if(error){
@@ -152,6 +153,83 @@ var server = net.createServer(function(conn){
       console.log('[Query successful]');
       console.log(result);
     });
+  }
+
+  //Check if account exist or not
+  //Check if password input is correct
+  //If correct, user personal data will be retrieved from database
+  //Else no personal data will be sent
+  async function retrieveAccount(data){
+    var query = connection.query(
+      "SELECT user_id, password_hash, salt FROM user_account\
+      WHERE email = " + connection.escape(data.account.user) +
+      " OR username = " + connection.escape(data.account.user),
+      function(err, result){
+        if(err){
+          console.error('[Error in query]: ' + err);
+          return;
+        }
+        if(result.length > 0){
+          data.account.userId = result[0].user_id;
+          data.account.salt = result[0].salt;
+          data.account.dbPass = result[0].password_hash;
+          handleDb.handleRecieveAccount(data) //TODO: Dont know why cannot await
+          .then(dataOut => {
+            //If user password input is equal to database password
+            if(dataOut.account.hash_password === dataOut.account.dbPass){
+              console.log("Password correct");
+              var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
+                FROM user_account\
+                LEFT OUTER JOIN student_details\
+                ON user_account.user_id = student_details.user_id\
+                WHERE student_details.user_id = " + connection.escape(dataOut.account.userId),
+              function(err, result){
+                console.log(result.length);
+                if(result.length === 1){
+                  console.log(result);
+                  sendToServer(result);
+                }
+                else if(result.length === 0){
+                  console.log(dataOut.account.userId);
+                  var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, teacher_details.teacher_id, teacher_details.organisation\
+                    FROM user_account\
+                    LEFT OUTER JOIN teacher_details\
+                    ON user_account.user_id = teacher_details.user_id\
+                    WHERE teacher_details.user_id = " + connection.escape(dataOut.account.userId),
+                  function(err, result){
+                    if(result.length === 1){
+                      sendToServer(result);
+                    }
+                    else if(result.length === 0){
+                      console.log("[No related data found]");
+                      //TODO: Send error message to server
+                    }
+                    else{
+                      console.log("[Duplicate user_id, Entity integrity compromise]");
+                      //TODO: Send error message to server
+
+                    }
+                    console.log(result)
+                  });
+                }
+                else{
+                  console.log("[Duplicate user_id, Entity integrity compromise]");
+                  //TODO: Send error message to server
+                }
+              });
+            }
+            else {
+              console.log("[Password Incorrect]");
+              //TODO: Send error message to server
+            }
+          });
+        }
+        else{
+          console.log("[No such user found]");
+          //TODO: return error to server
+        }
+      }
+    );
   }
 
   //Create quiz and add to database accordinly
@@ -166,8 +244,6 @@ var server = net.createServer(function(conn){
       console.log('[Query successful]');
       var quizId = result.insertId; //Get the quizId form quiz
 
-      console.log("[quiz_id]: " + quizId);
-
       data.question.forEach(function(question){
         addQuestion(question, data, quizId);
       });
@@ -176,8 +252,6 @@ var server = net.createServer(function(conn){
 
   //Function will be called by createQuiz(), addQuestion will be called repeatedly until all question is stored.
   async function addQuestion(questionData, data, quizId){
-    console.log(quizId);
-
     questionData.quiz_id = quizId;
 
     var query = connection.query("INSERT INTO quiz_question SET ?", questionData, function(error, result){
@@ -187,7 +261,6 @@ var server = net.createServer(function(conn){
       }
 
       var questionId = result.insertId; // Get the questionId from the question
-      console.log("[question_id: ]: " + questionId);
 
       //If question is a MCQ, addChoice function will be called to store the MCQ choices
       if(questionData.question_type == C.DB.QUESTION_TYPE.MCQ){
@@ -217,13 +290,14 @@ var server = net.createServer(function(conn){
 
   //Retrieve all the quiz available in the database
   async function retrieveAllQuiz(){
-    var query = connection.query('SELECT * FROM quiz ORDER BY date_created DESC', function(err, rows, fields){
+    var query = connection.query('SELECT * FROM quiz ORDER BY date_created DESC', function(err, result, fields){
   			if (!err) {
-          console.log(rows);
+          console.log(result);
           //TODO: Method to send data to app server
-          sendToServer(rows);
+          sendToServer(result);
   			} else {
-  				console.log('No results.');
+  				console.log('[No result]');
+          //TODO: return error to server
   			}
   	});
   }
@@ -250,13 +324,14 @@ var server = net.createServer(function(conn){
         quiz_title LIKE '%" + dataOut.searchItem + "%'\
         OR\
         description LIKE '%" + dataOut.searchItem + "%'" + searchQuery,
-        function(err, rows, fields){
+        function(err, result, fields){
     			if (!err) {
-            console.log(rows);
+            console.log(result);
             //TODO: Method to send data to app server
-            sendToServer(rows);
+            sendToServer(result);
     			} else {
-    				console.log('No results.');
+    				console.log('[No result]');
+            //TODO: return error to server
     			}
     	});
     });
@@ -271,16 +346,17 @@ var server = net.createServer(function(conn){
       ON quiz_question.question_id = quiz_question_choices.question_id\
     WHERE quiz_question.quiz_id = '" + quizId + "'\
     ORDER BY quiz_question.question_no",
-    function(err, rows, fields){
+    function(err, result, fields){
   			if (!err) {
-          console.log(rows); //rows = data recieve from database
-          sendToServer(rows);
+          console.log(result); //result = data recieve from database
+          sendToServer(result);
   			} else {
-  				console.log('No results.');
+  				console.log('[No result]');
+          //TODO: return error to server
   			}
   	});
   }
 });
 
-console.log("Listening on port 7070")
+console.log("Listening on port 7070");
 server.listen(7070);

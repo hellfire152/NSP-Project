@@ -16,6 +16,7 @@ process.on('uncaughtException', function (err) {
 });
 
 const C = require('../custom-API/constants.json');
+var sampleData = require('../custom-API/database/dataSample.js'); //Sample data for database testing.
 
 //Check for password's existence
 var pass = process.argv[2];
@@ -119,8 +120,12 @@ var dbConn = net.connect(7070);
 //Recieve data from database
 dbConn.on('data', function(data) {
   console.log("[Data have been recieved form database]");
-  dataObj = JSON.parse(data);
+  var dataObj = JSON.parse(data);
+  console.log(dataObj);
 });
+
+//Test sample data
+sendToServer(dbConn, sampleData.loginAccountTeacher());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer
