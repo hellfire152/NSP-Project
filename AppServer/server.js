@@ -121,11 +121,11 @@ var dbConn = net.connect(7070);
 dbConn.on('data', function(data) {
   console.log("[Data have been recieved form database]");
   var dataObj = JSON.parse(data);
-  console.log(dataObj);
+  //TODO: Send dataObj to webserver
 });
 
 //Test sample data
-sendToServer(dbConn, sampleData.loginAccountTeacher());
+sendToServer(dbConn, sampleData.retrieveQuestion());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer

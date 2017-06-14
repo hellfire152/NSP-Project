@@ -46,7 +46,7 @@ module.exports = {
     }
   },
 
-  loginAccountStudent : function(){
+  loginStudentAcc : function(){
     return userAccount = {
       data : {
         type : C.DB.SELECT.USER_ACCOUNT,
@@ -58,7 +58,7 @@ module.exports = {
     }
   },
 
-  loginAccountTeacher : function(){
+  loginTeacherAcc : function(){
     return userAccount = {
       data : {
         type : C.DB.SELECT.USER_ACCOUNT,
@@ -160,11 +160,11 @@ module.exports = {
     }
   },
 
-  searchQuiz : function(){
+  searchQuiz : function(searchItem){
     return searchQuiz = {
       data : {
         type : C.DB.SELECT.SEARCH_QUIZ,
-        searchItem : "Hao Nigel"
+        searchItem : searchItem
       }
     }
   }
