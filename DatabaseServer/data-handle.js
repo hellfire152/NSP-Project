@@ -6,8 +6,8 @@
   Author : Nigel Chen Chin Hao
  */
 
-var cipher = require("../cipher.js")();
-const C = require("../constants.json");
+var cipher = require("../custom-API/cipher.js")();
+const C = require("../custom-API/constants.json");
 
 //Input user data password will undergo hashing and salting before storing to database
 async function handleCreateAccount(data){
@@ -58,10 +58,27 @@ async function handleSearchQuiz(searchItem){
 
 }
 
+//Convert string into integer for quiz solution
+//Convert JASON string to object for choices
+async function handleRecieveQuestion(data){
+  var num;
+  data.forEach(function(individualData){
+    num = parseInt(individualData.solution);
+    if(!isNaN(num)){
+      individualData.solution = num;
+    }
+    if(individualData.type === C.DB.QUESTION_TYPE.MCQ){
+      individualData.choices = JSON.parse(individualData.choices);
+    }
+  });
+  return data;
+}
+
 module.exports = function() {
   return {
     'handleCreateAccount' : handleCreateAccount,
     "handleRecieveAccount" : handleRecieveAccount,
-    'handleSearchQuiz' : handleSearchQuiz
+    'handleSearchQuiz' : handleSearchQuiz,
+    'handleRecieveQuestion' : handleRecieveQuestion
   }
 }

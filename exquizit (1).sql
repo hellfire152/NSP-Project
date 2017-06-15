@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 11, 2017 at 09:05 AM
+-- Generation Time: Jun 15, 2017 at 11:52 AM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 5.6.30
 
@@ -91,6 +91,14 @@ CREATE TABLE `quiz` (
   `date_created` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
+--
+-- Dumping data for table `quiz`
+--
+
+INSERT INTO `quiz` (`quiz_id`, `user_id`, `quiz_title`, `quiz_type`, `visibility`, `description`, `quiz_rating`, `date_created`) VALUES
+(23, 1, 'quiz title', 'Classic', 1, 'quiz description', 5, '2017-06-15'),
+(24, 1, 'quiz title', 'Classic', 1, 'quiz description', 5, '2017-06-15');
+
 -- --------------------------------------------------------
 
 --
@@ -101,11 +109,27 @@ CREATE TABLE `quiz_question` (
   `question_id` int(11) NOT NULL,
   `quiz_id` int(11) NOT NULL,
   `question_no` int(11) NOT NULL,
-  `question_type` int(11) NOT NULL,
-  `question_statement` text NOT NULL,
-  `correct_ans` varchar(100) NOT NULL,
+  `type` int(11) NOT NULL,
+  `prompt` text NOT NULL,
+  `solution` varchar(100) NOT NULL,
   `time` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `quiz_question`
+--
+
+INSERT INTO `quiz_question` (`question_id`, `quiz_id`, `question_no`, `type`, `prompt`, `solution`, `time`) VALUES
+(105, 23, 1, 0, 'Question statement 1', '2', 30),
+(106, 23, 2, 1, 'Question statement 2', 'This is the answer for short answer', 30),
+(107, 23, 3, 1, 'Question statement 3', 'No answer', 30),
+(108, 23, 4, 0, 'Question statement 4', '4', 30),
+(109, 23, 5, 0, 'Question statement 5', '2', 30),
+(110, 24, 1, 0, 'Question statement 1', '0', 30),
+(111, 24, 2, 1, 'Question statement 2', 'This is the answer for short answer', 30),
+(112, 24, 3, 1, 'Question statement 3', 'No answer', 30),
+(113, 24, 4, 0, 'Question statement 4', '8', 30),
+(114, 24, 5, 0, 'Question statement 5', '8', 30);
 
 -- --------------------------------------------------------
 
@@ -116,9 +140,21 @@ CREATE TABLE `quiz_question` (
 CREATE TABLE `quiz_question_choices` (
   `choice_id` int(11) NOT NULL,
   `question_id` int(11) NOT NULL,
-  `choice_arr` text NOT NULL,
+  `choices` text NOT NULL,
   `question_no` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `quiz_question_choices`
+--
+
+INSERT INTO `quiz_question_choices` (`choice_id`, `question_id`, `choices`, `question_no`) VALUES
+(31, 105, '[\"ANS1\",\"ANS2\",\"ANS3\",\"ANS4\"]', 1),
+(32, 108, '[\"ANS1\",\"ANS2\",\"ANS3\",\"ANS4\"]', 4),
+(33, 109, '[\"ANS1\",\"ANS2\",\"ANS3\",\"ANS4\"]', 5),
+(34, 110, '[\"ANS1\",\"ANS2\",\"ANS3\",\"ANS4\"]', 1),
+(35, 113, '[\"ANS1\",\"ANS2\",\"ANS3\",\"ANS4\"]', 4),
+(36, 114, '[\"ANS1\",\"ANS2\",\"ANS3\",\"ANS4\"]', 5);
 
 -- --------------------------------------------------------
 
@@ -133,6 +169,13 @@ CREATE TABLE `student_details` (
   `school` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `student_details`
+--
+
+INSERT INTO `student_details` (`student_id`, `user_id`, `date_of_birth`, `school`) VALUES
+(1, 2, '2017-06-14', 'NYP');
+
 -- --------------------------------------------------------
 
 --
@@ -144,6 +187,13 @@ CREATE TABLE `teacher_details` (
   `user_id` int(11) NOT NULL,
   `organisation` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `teacher_details`
+--
+
+INSERT INTO `teacher_details` (`teacher_id`, `user_id`, `organisation`) VALUES
+(1, 1, 'NYP organisation');
 
 -- --------------------------------------------------------
 
@@ -159,6 +209,14 @@ CREATE TABLE `user_account` (
   `password_hash` varchar(64) NOT NULL,
   `salt` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `user_account`
+--
+
+INSERT INTO `user_account` (`user_id`, `name`, `username`, `email`, `password_hash`, `salt`) VALUES
+(1, 'Nigel Chen Chin Hao Teacher', 'nigelhao_teacher', 'nigel.zch@gmail.com', 'hYTFh4g9zcsrbhJLghFclKpKxBO+z+BxG8U3e6OQx5Q=', 'HiyrvTsZ3TtLWAoI2FczQNPTogefxr4xmdkPChPmzVA='),
+(2, 'Nigel Chen Chin Hao', 'nigelhao', 'nigel_ncch@hotmail.com', 'nTRf725SxSGxVnIHsnYeIiqUKBLw3oMMK7Y3hGic2Gw=', '5BE3Tqi4kkpbtQLijhvroknO/OwH/FVTgcpBIvNxZRY=');
 
 --
 -- Indexes for dumped tables
@@ -257,32 +315,32 @@ ALTER TABLE `log_quiz`
 -- AUTO_INCREMENT for table `quiz`
 --
 ALTER TABLE `quiz`
-  MODIFY `quiz_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `quiz_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT for table `quiz_question`
 --
 ALTER TABLE `quiz_question`
-  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 --
 -- AUTO_INCREMENT for table `quiz_question_choices`
 --
 ALTER TABLE `quiz_question_choices`
-  MODIFY `choice_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `choice_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 --
 -- AUTO_INCREMENT for table `student_details`
 --
 ALTER TABLE `student_details`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `teacher_details`
 --
 ALTER TABLE `teacher_details`
-  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `user_account`
 --
 ALTER TABLE `user_account`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- Constraints for dumped tables
 --

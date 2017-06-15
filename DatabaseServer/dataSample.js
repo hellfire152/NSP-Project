@@ -5,7 +5,7 @@
   NOTE: this sample data format is required for database server to process.
   NOTE: Please do follow the format when inputing data into database, key must be named excatly.
  */
-const C = require("../constants.json");
+const C = require("../custom-API/constants.json");
 
 
 module.exports = {
@@ -87,37 +87,37 @@ module.exports = {
         },
         question : [
           {
-            question_type : C.DB.QUESTION_TYPE.MCQ,
-            question_statement : "Question statement 1",
-            correct_ans : "ANS 1",
+            type : C.DB.QUESTION_TYPE.MCQ,
+            prompt : "Question statement 1",
+            solution : "ANS 1",
             question_no : 1,
             time : 30
           },
           {
-            question_type : C.DB.QUESTION_TYPE.SHORT_ANS,
-            question_statement : "Question statement 2",
-            correct_ans : "This is the answer for short answer",
+            type : C.DB.QUESTION_TYPE.SHORT_ANS,
+            prompt : "Question statement 2",
+            solution : "This is the answer for short answer",
             question_no : 2,
             time : 30
           },
           {
-            question_type : C.DB.QUESTION_TYPE.SHORT_ANS,
-            question_statement : "Question statement 3",
-            correct_ans : "No answer",
+            type : C.DB.QUESTION_TYPE.SHORT_ANS,
+            prompt : "Question statement 3",
+            solution : "No answer",
             question_no : 3,
             time : 30
           },
           {
-            question_type : C.DB.QUESTION_TYPE.MCQ,
-            question_statement : "Question statement 4",
-            correct_ans : "ANS 4",
+            type : C.DB.QUESTION_TYPE.MCQ,
+            prompt : "Question statement 4",
+            solution : "ANS 4",
             question_no : 4,
             time : 30
           },
           {
-            question_type : C.DB.QUESTION_TYPE.MCQ,
-            question_statement : "Question statement 5",
-            correct_ans : "ANS 2",
+            type : C.DB.QUESTION_TYPE.MCQ,
+            prompt : "Question statement 5",
+            solution : "ANS 2",
             question_no : 5,
             time : 30
           }
@@ -125,15 +125,15 @@ module.exports = {
         ],
         choices : [
           {
-            choice_arr : JSON.stringify(['ANS1' , 'ANS2' , 'ANS3' , 'ANS4']),
+            choices : JSON.stringify(['ANS1' , 'ANS2' , 'ANS3' , 'ANS4']),
             question_no : 1
           },
           {
-            choice_arr : JSON.stringify(['ANS1' , 'ANS2' , 'ANS3' , 'ANS4']),
+            choices : JSON.stringify(['ANS1' , 'ANS2' , 'ANS3' , 'ANS4']),
             question_no : 4
           },
           {
-            choice_arr : JSON.stringify(['ANS1' , 'ANS2' , 'ANS3' , 'ANS4']),
+            choices : JSON.stringify(['ANS1' , 'ANS2' , 'ANS3' , 'ANS4']),
             question_no : 5
           }
         ]
@@ -155,7 +155,7 @@ module.exports = {
       data : {
         sessionId : "123",
         type : C.DB.SELECT.QUESTION,
-        quizId : 8
+        quizId : 23
       }
     }
   },

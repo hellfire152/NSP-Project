@@ -11,7 +11,7 @@
 
 var mysql = require('mysql');
 var handleDb = require("./data-handle.js")();
-const C = require('../constants.json');
+const C = require('../custom-API/constants.json');
 var net = require('net');
 
 //Create connection between app and database
@@ -261,9 +261,8 @@ var server = net.createServer(function(conn){
       }
 
       var questionId = result.insertId; // Get the questionId from the question
-
       //If question is a MCQ, addChoice function will be called to store the MCQ choices
-      if(questionData.question_type == C.DB.QUESTION_TYPE.MCQ){
+      if(questionData.type == C.DB.QUESTION_TYPE.MCQ){
         addChoices(data.choices, questionId, questionData.question_no);
       }
     });
@@ -273,6 +272,7 @@ var server = net.createServer(function(conn){
   async function addChoices(choiceData, questionId, questionNo){
     data.question_id = questionId;
     choiceData.forEach(function(choice){
+      console.log(choice);
       if(choice.question_no == questionNo){
         choice.question_id = questionId;
         var query = connection.query("INSERT INTO quiz_question_choices SET ?", choice, function(error, result){
@@ -340,17 +340,24 @@ var server = net.createServer(function(conn){
   //Retrieve every questions corresponding to the quiz specifed (quizId)
   //If question type is a short ans, choice_arr will be null
   async function retrieveQuestions(quizId){
-    var query = connection.query("SELECT quiz_question.question_no, quiz_question.question_type, quiz_question.question_statement, quiz_question.correct_ans, quiz_question.correct_ans, quiz_question.time, quiz_question_choices.choice_arr\
+    var query = connection.query("SELECT quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices\
     FROM quiz_question\
     LEFT OUTER JOIN quiz_question_choices\
       ON quiz_question.question_id = quiz_question_choices.question_id\
     WHERE quiz_question.quiz_id = '" + quizId + "'\
     ORDER BY quiz_question.question_no",
     function(err, result, fields){
-  			if (!err) {
-          console.log(result); //result = data recieve from database
-          sendToServer(result);
+  			if (!err) { //result = data recieve from database
+          handleDb.handleRecieveQuestion(result)
+          .then(outResult => {
+            console.log(outResult);
+            sendToServer(outResult);
+          })
+          .catch(reason => {
+            console.log(reason);
+          });
   			} else {
+          console.log(err);
   				console.log('[No result]');
           //TODO: return error to server
   			}
