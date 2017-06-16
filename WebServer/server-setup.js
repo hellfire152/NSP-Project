@@ -32,11 +32,7 @@ module.exports = function(data) {
 
   //express-session stuff
   var Session = require('express-session');
-  var sessionFile = require('session-file-store')(Session);
   var session = Session({
-        store: new sessionFile({
-          path: './tmp/sessions'
-        }),
         secret: COOKIE_KEY,
         resave: true,
         saveUninitialized: true,

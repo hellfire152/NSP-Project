@@ -67,7 +67,13 @@ module.exports = function(data) {
         });
     }
   });
-  //handling all other requests
+
+  /*TESTING*/
+  app.get('/test', function(req, res) {
+    res.render('test', {});
+  });
+
+  //handling all other requests (PUT THIS LAST)
   app.get('/*', function(req, res){
     res.sendFile(dirname + "/site" + req.path);
   });

@@ -1,92 +1,70 @@
-//allows me to create sprites easier
-var u = new SpriteUtilities(PIXI);
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
+const WIDTH = 800;
+const HEIGHT = 600;
 //the main PIXI app
 var app = new PIXI.Application({
-  'width': window.innerWidth,
-  'height': window.innerHeight
+  'width' : WIDTH,
+  'height' : HEIGHT,
+  'antialias' : false
 });
 
-//sprites object to store everything
+//object to store sprite for easier reference later
 var sprites = {};
-//container to store the buttons
-var buttonContainer = new PIXI.Container();
-buttonContainer.width = app.renderer.width;
-buttonContainer.height = app.renderer.height / 2;
-
-//container showing the car
-var carContainer = new PIXI.Container();
-carContainer.width = app.renderer.width;
-carContainer.height = app.renderer.height / 2;
-
-//positioning button container at the buttom half
-buttonContainer.y = buttonContainer.parent.height / 2;
-
-//alias for the loader's resources
-var resources = app.loader.resources;
-
-app.loader.onComplete.add(loadComplete);
-
-//adding buttons to the load list
-let buttonColours = ["red", "yellow", "blue", "green"];
-for(let colour of buttonColours) {
-  app.loader.add(colour + '-button', '../resources/graphics/buttons/' + colour + '-button.json');
-}
 
 app.loader
-  .add('car-base', '../resources/graphics/car/base.png')
-  .add('car-driving', '../resources/graphics/car/driving.json')
-  .add('engine-fireup', '../resources/grpahics/car/engine/fire.json')
-  .add('engine-firing', '../resources/graphics/car/engine/firing.json')
-  .load(resources => {
-    //create and add sprites to the sprites object
-    //loading two buttons
-     //first button
+  .add('green-button', 'resources/graphics/buttons/green-button.json')
+  .add('red-button', 'resources/graphics/buttons/red-button.json')
+  .add('car-body', 'resources/graphics/car/base.png')
+  .add('car-driving', 'resources/graphics/car/driving.json')
+  .add('engine-fireup', 'resources/graphics/car/engine/fire.json')
+  .add('engine-firing', 'resources/graphics/car/engine/firing.json')
+  .load((loader, resources) => {
+    //container to store the buttons
+    var buttonContainer = new PIXI.Container();
 
+    //adding two buttons
+    let greenButton = new Button(resources['green-button'].textures,
+      WIDTH / 2 - 15, () => {
+        console.log("GREEN BUTTON CLICKED");
+      sprites.car.start();
+    });
+    sprites.greenButton = greenButton;
+    buttonContainer.addChild(greenButton.sprite);
 
-    id = resources['red-button']; //second button
-    let redButton = t.button([
-      id["default.png"],
-      id["default.png"],
-      id["click.png"],
-    ], 10, buttonContainer.height / 2);
-    redButton.width = redContainer.width / 2 - 15;
-    redButton.anchor.set(0.5, 0.5);
-    redButton.tap = stopEngine;
-    sprites['red-button'] = redButton;
+    let redButton = new Button(resources['red-button'].textures,
+      WIDTH / 2 - 15, () => {
+      console.log("RED BUTTON CLICKED");
+      sprites.car.stop();
+    });
+    redButton.x = greenButton.width;
+    sprites.redButton = redButton;
+    buttonContainer.addChild(redButton.sprite);
 
-    //car textures
-    //static sprite for the car
-    sprites['car'] = new PIXI.Sprite(resources['car-base'].texture);
-    sprites['car'].running = false;
+    buttonContainer.height = HEIGHT / 2;
+    //container showing the car
+    var carContainer = new PIXI.Container();
+    var car = new Car({
+      'car-body' : resources['car-body'].texture,
+      'car-driving' : resources['car-driving'].textures,
+      'engine-fireup' : resources['engine-fireup'].textures,
+      'engine-firing' : resources['engine-firing'].textures
+    }, WIDTH - 300);
+    sprites.car = car;
+    carContainer.addChild(car.sprite);
+    carContainer.x = (WIDTH - carContainer.width) / 2;
+    carContainer.y = ((HEIGHT / 2) - carContainer.height) / 2;
 
-    //adding stuff into the containers
-    buttonContainer.addChild(yellowButton);
-    buttonContainer.addChild(redButton);
+    //positioning button container at the buttom half
+    buttonContainer.y = app.renderer.height / 2;
 
-    carContainer.addChild(sprites['car']);
+    //test spriting
+    app.stage.addChild(buttonContainer);
+    app.stage.addChild(carContainer);
+    app.renderer.render(app.stage);
   });
 
-
-function loadComplete() {
-  //append the PIXI canvas to the window
+window.onload = () => {
   document.body.appendChild(app.renderer.view);
-
-
-}
-
-function startEngine() {
-  let car = sprites['car'];
-  if (!sprites['car'].running) {
-    let fireup = resources['engine-fireup']
-    car.texture = fireup;
-    fireup.play();
-  }
-}
-
-function stopEngine() {
-  let car = sprites['car'];
-  if (sprites['car'].running) {
-
-  }
+  app.renderer.render(app.stage);
 }
