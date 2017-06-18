@@ -4,7 +4,8 @@
   Author: Jin Kuan
 */
 class Button {
-  constructor(textures, width, onClick) {
+  constructor(textures, width, send, answer) {
+    //button setup
     let s = this._sprite;
     this._textures = textures;
 
@@ -23,8 +24,22 @@ class Button {
       s.texture = this._textures["default.png"];
     });
     //setting onClick
-    s.on('pointertap', onClick);
-    this.sprite = s;
+    s.on('pointertap', (() => {
+      return function() {
+        send({
+          'game': C.GAME.SUBMIT_ANSWER,
+          'answer' : answer
+        });
+      }
+    })());
+
+    //setting text
+    this._text = new PIXI.Text('');
+    s.addChild(this._text);
+
+    //positioning by setting both anchors in the middle
+    this._text.anchor.x = this._text.anchor.y = 0.5;
+    this._sprite.anchor.x = this._sprite.anchor.y = 0.5;
   }
   get sprite() {
     return this._sprite;
@@ -42,7 +57,15 @@ class Button {
     return this._sprite.width;
   }
 
+  get height() {
+    return this._sprite.height;
+  }
+
   set x(a) {
     this._sprite.x = a;
+  }
+
+  set text(t) {
+    this._text.text = t;
   }
 }

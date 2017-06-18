@@ -1,7 +1,6 @@
 /*
   handleGame function for the classic gamemode (player side)
 */
-<<<<<<< HEAD
 const MCQ_LETTERS = {
   0: 'A',
   1: 'B',
@@ -9,13 +8,10 @@ const MCQ_LETTERS = {
   3: 'D'
 }
 var firstQuestion = true;
-=======
->>>>>>> 4b723d1... Merge branch 'nigel' of https://github.com/hellfire152/NSP-Project into nigel
 console.log('PLAY: Loaded: classic gamemode handler!');
 function handleGame(response) {
   console.log('PLAY: Handling game response!');
   switch(response.game) {
-<<<<<<< HEAD
     case C.GAME_RES.NEXT_QUESTION: {
       if(firstQuestion) {
         clearBody();
@@ -35,10 +31,6 @@ function handleGame(response) {
       displayGameEnd(response.roundEndResults);
       break;
     }
-  }
-}
-
-=======
     case C.GAME_RES.BEGIN_FIRST_QUESTION: {
       clearBody();
       loadQuestion(response.question);
@@ -83,8 +75,6 @@ function loadQuestion(question) {
   document.getElementById('game').appendChild(questionDiv);
 }
 
-//sends the answer to the server
->>>>>>> 4b723d1... Merge branch 'nigel' of https://github.com/hellfire152/NSP-Project into nigel
 function submitAnswer(type, ans) {
   send({
     'game': C.GAME.SUBMIT_ANSWER,

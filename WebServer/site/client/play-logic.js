@@ -1,6 +1,9 @@
 /*
-  Logic for the player side of the quiz game.
+  Logic for the player side of the quiz game, up until the actual game
+  with the PIXI stuff launches.
 
+  This file also contains the socket.io setup
+  
   Sequence of events (initialization):
   1. A socket.io instance is created, sends EVENT.INIT_ROOM
   2. WebServer gets cookieData, forwards all to AppServer
