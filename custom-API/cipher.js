@@ -26,49 +26,49 @@ var crypto = require('crypto');
 //DEFAULT VALUES
 var algorithm = "aes256";
 var password = "aVaTyAzkOqweA";
-var iv = "5dZoC41JFwmLQMYo"; 
+var iv = "5dZoC41JFwmLQMYo";
 var plainTextBlockSize = 16; //plain text block size (16-31) can change if needed.
 var cipherTextBlockSize = 64;
 
 //Encrypt data using IV and AES via CBC algorithm
-async function handleEncryption(plain){
-  var subIv = await newIv(iv);
-  var encodedPlain = await encode(plain);
+async function encrypt(plain){
+  var subIv = _newIv(iv);
+  var encodedPlain = _encode(plain);
   var cipherText = ""
   for(let encodedBlock of encodedPlain){
-    var encodedBlockWithIv = await xor(encodedBlock, subIv);
-    var decodedBlockWithIv = await decode(encodedBlockWithIv);
-    var cipherBlock = await encrypt(decodedBlockWithIv);
-    subIv = await newIv(cipherBlock);
+    var encodedBlockWithIv = _xor(encodedBlock, subIv);
+    var decodedBlockWithIv = _decode(encodedBlockWithIv);
+    var cipherBlock = _encryptBlock(decodedBlockWithIv);
+    subIv = _newIv(cipherBlock);
     cipherText += cipherBlock;
   }
 
-  console.log("[Encryption complete]");
+  //console.log("[Encryption complete]");
   return cipherText;
 }
 
 //Decrypt data using IV and AES via CBC algorithm
-async function handleDecryption(cipher){
+async function decrypt(cipher){
   var plainText = "";
-  var cipherTextBlock = await splitCipherBlock(cipher);
-  var subIv = await newIv(iv);
+  var cipherTextBlock = _splitCipherBlock(cipher);
+  var subIv = _newIv(iv);
   for(let cipherBlock of cipherTextBlock){
-    var cipherBlockWithIv = await decrypt(cipherBlock);
-    var encodedBlockWithIv = await encode(cipherBlockWithIv);
-    var encodedBlock = await xor(encodedBlockWithIv[0], subIv);
-    var plainTextBlock = await decode(encodedBlock);
-    subIv = await newIv(cipherBlock);
+    var cipherBlockWithIv = _decryptBlock(cipherBlock);
+    var encodedBlockWithIv = _encode(cipherBlockWithIv);
+    var encodedBlock = _xor(encodedBlockWithIv[0], subIv);
+    var plainTextBlock = _decode(encodedBlock);
+    subIv = _newIv(cipherBlock);
 
     plainText += plainTextBlock;
   }
-  console.log("[Decryption complete]");
+  //console.log("[Decryption complete]");
   return plainText;
 }
 
 /*
   Encrypts the data. Simple enough
 */
-async function encrypt(plain) {
+function _encryptBlock(plain) {
   var cipher = crypto.createCipher(algorithm,password);
   var encrypted = cipher.update(plain,'utf8','hex')
   encrypted += cipher.final('hex');
@@ -78,7 +78,7 @@ async function encrypt(plain) {
 /*
   Decrypts the data. Who would've thought
 */
-async function decrypt(cipher) {
+function _decryptBlock(cipher) {
   var decipher = crypto.createDecipher(algorithm,password);
   var dec = decipher.update(cipher, 'hex', 'utf8');
   dec += decipher.final('utf8');
@@ -111,8 +111,8 @@ async function decryptJSON(cipher) {
   }
 }
 
-//By using Convert every single character to ascii character code to obtain numeric value
-async function encode(plainText){
+//Converts every single character their respective character code
+function _encode(plainText){
   var encodedValue = [];
 
   var i = 0;
@@ -136,7 +136,7 @@ async function encode(plainText){
 }
 
 //Convert ascii character code to readable character block by block.
-async function decode(encodedText){
+function _decode(encodedText){
   var decodedText = "";
   for(i=0 ; i<encodedText.length ; i++){
     decodedText += String.fromCharCode(encodedText[i]);
@@ -145,7 +145,7 @@ async function decode(encodedText){
 }
 
 //Convert ascii charcater code to readable character all in one shot.
-async function decodeAll(encodedTextAll){
+function _decodeAll(encodedTextAll){
   var decodedTextAll = "";
   for(i=0 ; i<encodedText.length ; i++){
     for(j=0 ; j<encodedTextAll[i].length ; j++){
@@ -156,14 +156,14 @@ async function decodeAll(encodedTextAll){
 }
 
 //Create new iv by geting first 16 chracter in cipher text.
-async function newIv(text){
+function _newIv(text){
   var newIv = await encode(text.substr(0, 16));
   return newIv[0];
 }
 
 //xor iv with encodedText to increase the random-ness
 //CBC algorithm require iv from previous cipher block
-async function xor(value, iv){
+function _xor(value, iv){
   xorValue = [];
   for(i=0 ; i<value.length ; i++){
     xorValue.push(value[i]^iv[i])
@@ -172,7 +172,7 @@ async function xor(value, iv){
 }
 
 //Split cipher block to 64 equal character, leftover character will still work
-async function splitCipherBlock(cipher){
+function _splitCipherBlock(cipher){
   return cipher.match(/.{1,64}/g); // Depenending on cipher text block size, size may vary.
 }
 
@@ -198,8 +198,6 @@ module.exports = function(options) {
     "decrypt": decrypt,
     "encryptJSON": encryptJSON,
     "decryptJSON": decryptJSON,
-    "handleEncryption" : handleEncryption,
-    "handleDecryption" : handleDecryption,
     "hash": hash,
     "iv": iv,
     "generateSalt" : generateSalt
