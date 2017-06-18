@@ -71,7 +71,8 @@
     "SELECT" : {
       "ALL_QUIZ" : 201,
       "QUESTION" : 202,
-      "SEARCH_QUIZ" : 203
+      "SEARCH_QUIZ" : 203,
+      "USER_ACCOUNT" : 204
     },
     "UPDATE" : {
 
@@ -80,8 +81,8 @@
 
     },
     "QUESTION_TYPE" : {
-      "MCQ" : 501,
-      "SHORT_ANS" : 502
+      "MCQ" : 0,
+      "SHORT_ANS" : 1
     },
     "OTHERS" : {
       "TEST" : 601

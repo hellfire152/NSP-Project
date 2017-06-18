@@ -7,15 +7,15 @@
     4. WebServer assigns the server-side socket a room, sends the room no here
     5. Room number is displayed!
 */
-<<<<<<< HEAD
+// <<<<<<< HEAD
 const GAMEMODE_NO_TO_STRING = {
   0: 'Classic',
   1: 'Race',
   2: 'Team Battle',
   3: 'Tug of War'
 };
-=======
->>>>>>> 4b723d1... Merge branch 'nigel' of https://github.com/hellfire152/NSP-Project into nigel
+// =======
+// >>>>>>> 4b723d1... Merge branch 'nigel' of https://github.com/hellfire152/NSP-Project into nigel
 
 var socket = io();
 socket.on('receive', function(input) {
@@ -33,11 +33,11 @@ socket.on('receive', function(input) {
           let gameNode = document.getElementById('game');
           gameNode.innerHTML = "";
           let gamemode = document.createElement('h3');
-<<<<<<< HEAD
+// <<<<<<< HEAD
           gamemode.appendChild(document.createTextNode(GAMEMODE_NO_TO_STRING[response.gamemode] + ": Waiting..."));
-=======
+// =======
           gamemode.appendChild(document.createTextNode(C.GAMEMODE[response.gamemode] + ": Waiting..."));
->>>>>>> 4b723d1... Merge branch 'nigel' of https://github.com/hellfire152/NSP-Project into nigel
+// >>>>>>> 4b723d1... Merge branch 'nigel' of https://github.com/hellfire152/NSP-Project into nigel
           gameNode.appendChild(gamemode);
 
           //load gamemode's javascript
@@ -142,11 +142,11 @@ function appendToWaitingList(playerId) {
 
 function test_next_round() {
   send({
-<<<<<<< HEAD
+// <<<<<<< HEAD
     'game': C.GAME.NEXT_ROUND
-=======
+// =======
 
->>>>>>> 4b723d1... Merge branch 'nigel' of https://github.com/hellfire152/NSP-Project into nigel
+// >>>>>>> 4b723d1... Merge branch 'nigel' of https://github.com/hellfire152/NSP-Project into nigel
   });
 }
 

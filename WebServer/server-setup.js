@@ -43,7 +43,6 @@ module.exports = function(data) {
 
   //enables my use of socket.handshake.session
   io.use(ios(session));
-
   //template engine used
   app.set('view engine', 'pug');
   //where the templates are located

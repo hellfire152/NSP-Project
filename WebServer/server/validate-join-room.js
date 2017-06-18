@@ -35,5 +35,6 @@ module.exports = function(cipher, appConn) {
         res.redirect('/play?room=' +req.body.room);
       });
     }
+
   }
 }
