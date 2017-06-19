@@ -253,39 +253,46 @@ var server = net.createServer(function(conn){
   //Function will be called by createQuiz(), addQuestion will be called repeatedly until all question is stored.
   async function addQuestion(questionData, data, quizId){
     questionData.quiz_id = quizId;
+    // console.log(questionData);
+    await handleDb.handleEncryption(questionData)
+    .then(questionDataOut => {
+      console.log(questionDataOut);
+      var query = connection.query("INSERT INTO quiz_question SET ?", questionDataOut, function(error, result){
+        if(error){
+          console.error('[Error in query]: ' + error);
+          return;
+        }
 
-    var query = connection.query("INSERT INTO quiz_question SET ?", questionData, function(error, result){
-      if(error){
-        console.error('[Error in query]: ' + error);
-        return;
-      }
-
-      var questionId = result.insertId; // Get the questionId from the question
-      //If question is a MCQ, addChoice function will be called to store the MCQ choices
-      if(questionData.type == C.DB.QUESTION_TYPE.MCQ){
-        addChoices(data.choices, questionId, questionData.question_no);
-      }
-    });
+        var questionId = result.insertId; // Get the questionId from the question
+        //If question is a MCQ, addChoice function will be called to store the MCQ choices
+        if(questionData.type == C.DB.QUESTION_TYPE.MCQ){
+          addChoices(data.choices, questionId, questionData.question_no);
+        }
+      });
+    })
   }
 
   //Search for matching questionNo, and then store the data accordingly
   async function addChoices(choiceData, questionId, questionNo){
     data.question_id = questionId;
-    choiceData.forEach(function(choice){
+    for(let choice of choiceData){
       console.log(choice);
       if(choice.question_no == questionNo){
         choice.question_id = questionId;
-        var query = connection.query("INSERT INTO quiz_question_choices SET ?", choice, function(error, result){
-          if(error){
-            console.error('[Error in query]: ' + error);
-            return;
-          }
+        await handleDb.handleEncryption(choice)
+        .then(choiceDataOut => {
+          var query = connection.query("INSERT INTO quiz_question_choices SET ?", choiceDataOut, function(error, result){
+            if(error){
+              console.error('[Error in query]: ' + error);
+              return;
+            }
 
-          console.log('[Query successful]');
-          console.log(result);
+            console.log('[Query successful]');
+            console.log(result);
+          });
         });
       }
-    });
+    }
   }
 
   //Retrieve all the quiz available in the database
@@ -348,14 +355,27 @@ var server = net.createServer(function(conn){
     ORDER BY quiz_question.question_no",
     function(err, result, fields){
   			if (!err) { //result = data recieve from database
-          handleDb.handleRecieveQuestion(result)
-          .then(outResult => {
-            console.log(outResult);
-            sendToServer(outResult);
+
+          var plainResult;
+
+          handleDb.handleDecryption(result)
+          .then(outPlainResult => {
+            plainResult = outPlainResult;
+          })
+          .then(function(){
+            handleDb.handleRecieveQuestion(plainResult)
+            .then(outResult => {
+              console.log(outResult);
+              sendToServer(outResult);
+            })
           })
           .catch(reason => {
             console.log(reason);
           });
+
+          // .catch(reason => {
+          //   console.log(reason);
+          // });
   			} else {
           console.log(err);
   				console.log('[No result]');

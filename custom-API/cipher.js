@@ -26,7 +26,7 @@ var crypto = require('crypto');
 //DEFAULT VALUES
 var algorithm = "aes256";
 var password = "aVaTyAzkOqweA";
-var iv = "5dZoC41JFwmLQMYo"; 
+var iv = "5dZoC41JFwmLQMYo";
 var plainTextBlockSize = 16; //plain text block size (16-31) can change if needed.
 var cipherTextBlockSize = 64;
 
@@ -111,6 +111,38 @@ async function decryptJSON(cipher) {
   }
 }
 
+//Encrypt all data in the object and then store to database
+async function encryptDbData(plain) {
+  for (var key in plain) {
+    if (plain.hasOwnProperty(key)) {
+      if(await allow (key)){
+        plain[key] = await handleEncryption(plain[key]);
+      }
+    }
+  }
+  return plain;
+}
+
+//Decrypt all data in the object and then pass it to appserver.
+async function decryptDbData(cipherText) {
+  var plainText = [];
+  for(let cipher of cipherText){
+    for (var key in cipher) {
+      if (cipher.hasOwnProperty(key)) {
+        if(await allow (key)){
+          if(cipher[key] !== null){
+            cipher[key] = await handleDecryption(cipher[key]);
+          }
+        }
+      }
+      var cipherArr = cipher
+    }
+    plainText.push(cipherArr);
+  }
+
+  return plainText;
+}
+
 //By using Convert every single character to ascii character code to obtain numeric value
 async function encode(plainText){
   var encodedValue = [];
@@ -187,6 +219,36 @@ async function generateSalt(){
   return saltValue;
 }
 
+//Data with the column name stated below will be encrypted
+async function allow(key){
+ switch(key){
+   case "prompt" : {
+     return true;
+     break;
+   }
+   case "solution" : {
+     return true;
+     break;
+   }
+   case "choices" : {
+     return true;
+     break;
+   }
+   case "password_hash" : {
+     return true;
+     break;
+   }
+   case "salt" : {
+     return true;
+     break;
+   }
+   default : {
+     return false;
+     break;
+   }
+ }
+}
+
 module.exports = function(options) {
   if(!(options === undefined)) {  //setting options (if used)
     if (!(options.password === undefined)) password = options.password;
@@ -198,6 +260,8 @@ module.exports = function(options) {
     "decrypt": decrypt,
     "encryptJSON": encryptJSON,
     "decryptJSON": decryptJSON,
+    "encryptDbData" : encryptDbData,
+    "decryptDbData" : decryptDbData,
     "handleEncryption" : handleEncryption,
     "handleDecryption" : handleDecryption,
     "hash": hash,

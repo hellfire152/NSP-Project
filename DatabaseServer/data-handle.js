@@ -74,11 +74,31 @@ async function handleRecieveQuestion(data){
   return data;
 }
 
+async function handleEncryption(data){
+  var cipherData;
+  await cipher.encryptDbData(data)
+  .then(dataOut => {
+    cipherData = dataOut;
+  });
+  return cipherData;
+}
+
+async function handleDecryption(data){
+  var plainData;
+  await cipher.decryptDbData(data)
+  .then(dataOut => {
+    plainData = dataOut;
+  });
+  return plainData;
+}
+
 module.exports = function() {
   return {
     'handleCreateAccount' : handleCreateAccount,
     "handleRecieveAccount" : handleRecieveAccount,
     'handleSearchQuiz' : handleSearchQuiz,
-    'handleRecieveQuestion' : handleRecieveQuestion
+    'handleRecieveQuestion' : handleRecieveQuestion,
+    'handleEncryption' : handleEncryption,
+    'handleDecryption' : handleDecryption
   }
 }
