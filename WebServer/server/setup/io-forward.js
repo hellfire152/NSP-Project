@@ -98,8 +98,7 @@ module.exports = function(data) {
           'socketObj':  io.sockets.sockets,
           'socketOfUser': socketOfUser
         });
-      }
-      if(response.type !== undefined) { //custom type -> general website stuff
+      } else if(response.type !== undefined) { //custom type -> general website stuff
          await handleOtherResponse({
           'response': response,
           'C' : C,
@@ -107,7 +106,15 @@ module.exports = function(data) {
           'dirname' : dirname,
           'roomOfUser': roomOfUser
         });
-      } else if(response.sendTo !== undefined){ //no type -> socket.io stuff
+      } else if (response.sendTo !== undefined) {
+        await handleIoResponse({
+          'response' : response,
+          'io': io,
+          'C': C,
+          'socketObj' : io.sockets.sockets,
+          'socketOfUser': socketOfUser
+        });
+      } else if(response.special !== undefined){ //no type -> socket.io stuff
         await handleIoResponse({
           'response' : response,
           'io' : io,
