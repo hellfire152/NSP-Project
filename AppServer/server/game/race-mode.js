@@ -25,7 +25,7 @@ module.exports = async function(input) {
       }
 
       //send the first question to all players
-      let question = currentRoom.quiz.questions[0];
+      // let question = currentRoom.quiz.questions[0];
       return {
         'game': C.GAME_RES.NEXT_QUESTION,
         'question': common.removeSolution(question),

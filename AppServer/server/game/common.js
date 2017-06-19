@@ -87,7 +87,7 @@ function roundEndResults(players, sortByPoints) {
 }
 
 function checkCorrectAnswer(question, answer) {
-  if(question.type == 0 && answer & question.solution)  //MCQ correct
+  if((question.type == 0 && answer & question.solution)  //MCQ correct
     || (question.type == 1 && //short answer correct (case insensitive)
     data.answer.toUpperCase() == correctAnswer.toUpperCase())) {
       return true;

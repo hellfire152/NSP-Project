@@ -42,6 +42,7 @@ module.exports = function(data) {
         });
     }
   });
+
   app.get('/host', function(req, res) { //submit the form for hosting a room
     if(req.query.quizId.constructor === Array) {
       console.log("Please don't mess with my webpage");
@@ -67,6 +68,10 @@ module.exports = function(data) {
         });
     }
   });
+  //handling login
+  app.get('/login', function(req, res){
+    res.render('login');
+  });
   //handling all other requests
   app.get('/*', function(req, res){
     res.sendFile(dirname + "/site" + req.path);
@@ -75,4 +80,5 @@ module.exports = function(data) {
   //handling form submits
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
+  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn));
 }
