@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-modules.exports =function(cipher, appConn){
+module.exports =function(cipher, appConn){
   return function(req, res){
 
     var name = document.getElementById("username").value;
