@@ -1,10 +1,14 @@
 /*
-  Class for easily creating buttons for the game
+  Little button class I created for any button needs.
+  Load the textures before using this class!
+
+  The textures for each button is a spritesheet, with two subimages
+  'default.png' and 'click.png'
 
   Author: Jin Kuan
 */
 class Button {
-  constructor(textures, width, send, answer) {
+  constructor(textures, width, onclick, args) {
     //button setup
     let s = this._sprite;
     this._textures = textures;
@@ -26,10 +30,7 @@ class Button {
     //setting onClick
     s.on('pointertap', (() => {
       return function() {
-        send({
-          'game': C.GAME.SUBMIT_ANSWER,
-          'answer' : answer
-        });
+        onclick(args);
       }
     })());
 
@@ -41,16 +42,18 @@ class Button {
     this._text.anchor.x = this._text.anchor.y = 0.5;
     this._sprite.anchor.x = this._sprite.anchor.y = 0.5;
   }
+
+  //set onclick of the button
+  onClick(fn) {
+    this._sprite.on('pointertap', fn);
+  }
+
   get sprite() {
     return this._sprite;
   }
 
-  set sprite(sprite) {
-    this._sprite = sprite;
-  }
-  //set onclick of the button
-  onClick(fn) {
-    this._sprite.on('pointertap', fn);
+  set sprite(s) {
+    this._sprite = s;
   }
 
   get width() {
@@ -61,11 +64,19 @@ class Button {
     return this._sprite.height;
   }
 
-  set x(a) {
-    this._sprite.x = a;
-  }
-
   set text(t) {
     this._text.text = t;
+  }
+
+  set position(p) {
+    ([this._sprite.x, this._sprite.y] = p);
+  }
+
+  set filters(f) {
+    this._sprite.filters = f;
+  }
+
+  get scale() {
+    return this._sprite.scale;
   }
 }
