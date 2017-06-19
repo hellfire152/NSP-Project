@@ -46,7 +46,7 @@ module.exports = function(data) {
   //template engine used
   app.set('view engine', 'pug');
   //where the templates are located
-  app.set('views', './site');
+  app.set('views', './site/views');
 
   //Various middleware
   app.use(session);
