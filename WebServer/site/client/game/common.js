@@ -1,143 +1,113 @@
-//clears the game area (by settin innerHTML for now)
-function clearGameArea() {
-  document.getElementById('game').innerHTML = "";
-}
+/*
+  This file contains all the common stuff between all gamemodes,
+  mostly convenience functions and the PIXI setup.
 
-function clearBody(){
-  let body = document.getElementsByTagName('body')[0];
-  body.innerHTML = "";
-  //add game div back in
-  let gameDiv = document.createElement('div');
-  gameDiv.id = 'game';
-  body.appendChild(gameDiv);
-}
+  Author: Jin Kuan
+*/
+//game area dimensions
+const WIDTH   = 800,
+      HEIGHT  = 600;
 
-function displayResults(roundEndResults) {
-  //create and append a div to hold the results
-  let resultsDiv = document.createElement('div');
-  resultsDiv.id = 'results';
-  document.getElementById('game').appendChild(resultsDiv);
+//for the stage, renderer and loader.
+var app = new PIXI.Application({
+  'width': width,
+  'height': height
+});
+app.stage = false;
 
-  //create and append a list to hold the results
-  let resultsList = document.createElement('ol');
-  resultsList.id = 'resultsList';
-  resultsDiv.appendChild(resultsList);
+//for easier access to all textures
+var pixiElements = {};
 
-  //add player data to the results list
-  for(let playerResult of roundEndResults) {
-    //let playerResult = roundEndResults[i];
-    //create a li for each player
-    let playerData = document.createElement('li');
+//loading screen, just text at the moment
+var loading = new LoadingBar(9, WIDTH - 100);
 
-    //format results and append
-    playerData.appendChild(document.createTextNode('Id: ' +playerResult.player +'\t'
-      + 'Score: ' +playerResult.score +'\t Correct Answers: ' + playerResult.correctAnswers));
+//adding the loading bar to the stage
+app.stage.addChild(loading.sprite);
+app.loader.onLoad.add(() => {
+  loading.increment();
+});
+//on load completion
+app.loader.onComplete.add(() => {
+  loading.sprite.visible = false; //hide loading screen
+  loading = null; //leaving it to the garbage collector to deal with
+  pixiElements.ui.visible = true; //show game ui
+});
 
-    resultsList.appendChild(playerData);
-  }
-}
+//loading the stuff
+app.loader
+  .add('button-background', 'resources/graphics/ui/button-background.png')
+  .add('yellow-button', 'resources/graphics/buttons/yellow-button.json')
+  .add('blue-button', 'resources/graphics/buttons/blue-button.json')
+  .add('green-button', 'resources/graphics/buttons/green-button.json')
+  .add('red-button', 'resources/graphics/buttons/red-button.json')
+  .add('car-body', 'resources/graphics/car/base.png')
+  .add('car-driving', 'resources/graphics/car/driving.json')
+  .add('engine-fireup', 'resources/graphics/car/engine/fire.json')
+  .add('engine-firing', 'resources/graphics/car/engine/firing.json')
+  .load((loader, resources) => {
+    //initialize and positioning elements
+    let buttonContainer = new PIXI.Container();
 
-function displayGameEnd(roundEndResults) {
-  //append a big GAME END at the start
-  let endHeader = document.createElement('h1');
-  endHeader.appendChild(document.createTextNode('GAME END'));
-  let body = document.getElementsByTagName('body')[0];
-  body.insertBefore(endHeader, body.firstChild);
+    //initializing the ui
+    let ui = new PIXI.Container();
+    ui.visible = false;
 
-  //using displayResults to make it easier on me
-  displayResults(roundEndResults);
-}
+    //top bar
+    let topBar = new TopBar(WIDTH, 'TEST');
+    pixiElements.topBar = topBar;
+    //middle
+    let middle = new PIXI.Container();
+    middle.y = topBar.y;
 
-function showQuestion(question) {
-  //create div for question
-  let questionDiv = document.createElement('div');
-  questionDiv.id = 'question';
+    //buttons
+    let yellowButton = new Button(resources['yellow-button'].textures,
+      WIDTH / 2 - 25, send, 8);
+    let greenButton = new Button(resources['green-button'].textures,
+      WIDTH / 2 - 25, send, 4);
+    let blueButton = new Button(resources['blue-button'].textures,
+      WIDTH / 2 - 25, send, 2);
+    let redButton = new Button(resources['red-button'].textures,
+      WIDTH / 2 - 25, send, 1);
 
-  //create h3 node for the question prompt
-  let promptNode = document.createElement('h3');
-  promptNode.appendChild(document.createTextNode(question.prompt));
+    //setting the positioning of buttons
+    yellowButton.x = 5; //yellow -> top left
+    yellowButton.y = 5;
+    greenButton.x = yellowButton.width + 10;
+    greenButton.y = y;//green -> top right
+    blueButton.x = 5;//blue -> bottom left
+    blueButton.y = yellowButton.height + 5;
+    redButton.x = yellowButton.width + 10;//red -> buttom right
+    redButton.y = yellowButton.height + 5;
 
-  //creating and initializing timer
-  let time = question.time;
-  let timerNode = document.createElement('h4');
-  timerNode.id = 'timer';
-  let timerText = time + " seconds left!";
-  timerNode.appendChild(document.createTextNode(timerText));
+    //adding buttons to the container
+    //adding background first
+    buttonContainer.addChild(new PIXI.Sprite(resources['button-background'].texture));
+    buttonContainer.addChild(yellowButton);
+    buttonContainer.addChild(greenButton);
+    buttonContainer.addChild(blueButton);
+    buttonContainer.addChild(redButton);
 
-  let ansNode = document.createElement('div');
-  ansNode.id = 'ans';
+    //positioning the buttonContainer
+    buttonContainer.y = HEIGHT - buttonContainer.height;
 
-  if(question.type == 0) { //if MCQ question
-    console.log("QUESTION HANDLER: MCQ");
-    //create MCQ buttons
-    let buttonArr = [];
-    for(let i = 0; i < 4; i++) {
-      let button = document.createElement('button');
-      button.id = 'MCQ-' + MCQ_LETTERS[i];
-      button.onclick = (function() {
-        return function() {
-          submitAnswer(0, MCQ_LETTERS[i]); //setting the proper onclick function
-          button.disabled = true;
-        }
-      })();
-      button.appendChild(document.createTextNode(question.choices[i]));
-      ansNode.appendChild(button);
-    }
-  } else {  //short answer question
-    //create prompt for the textfield
-    let prompt = document.createElement('p');
-    prompt.appendChild(document.createTextNode('Type your answer!'));
-    ansNode.appendChild(prompt);
+    //adding to easy access object
+    pixiElements.topBar = topBar;
+    pixiElements.middle = middle;
+    pixiElements.buttonContainer = buttonContainer;
+    pixiElements.ui = ui;
 
-    //create Short Answer text field
-    let textfield = document.createElement('input');
-    textfield.type = text;
-    textfield.id = 'short-ans';
-    ansNode.appendChild(prompt);
+    //adding to the ui
+    ui.addChild(topBar.sprite);
+    ui.addChild(middle);
+    ui.addChild(buttonContainer);
 
-    let shortAns = "";
-    setOnKeyPress(e => {
-      let event = window.event ? window.event : e;
-      switch (e.which){
-        case 13: { //ENTER key
-          textfield.disabled = true;
-          clearKeyPress();  //stop taking input
-          //submit answer
-          send({
-            'game': C.GAME.SUBMIT_ANSWER,
-            'answer': shortAns
-          });
-          break;
-        }
-        default: {  //all other keys
-          shortAns += event.which;
-          textfield.value = String.fromCharCode(shortAns);
-          break;
-        }
-      }
-    });
-  }
-
-  questionDiv.appendChild(promptNode);
-  questionDiv.appendChild(ansNode);
-  document.getElementById('game').appendChild(questionDiv);
-
-  //set timer
-  let t = setInterval(() => {
-    time--;
-    timerText.nodeValue = time + ' seconds left!';
-
-    //stop timer if it reaches 0
-    if(time <= 0) {
-      clearInterval(t);
-    }
+    //add to the stage
+    app.stage.addChild(ui);
   });
-}
 
-function setOnKeyPress(callback) {
-  document.onkeypress = callback;
-}
-
-function clearKeyPress() {
-  document.onkeypress = undefined;
+//hide waiting room and show PIXI game screen
+startGame(question) {
+  //hideWaitingRoom();
+  document.body.appendChild(app.renderer.view);
+  nextQuestion(question);
 }
