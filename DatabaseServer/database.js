@@ -95,47 +95,58 @@ var server = net.createServer(function(conn){
     await handleDb.handleCreateAccount(data) //TODO: Will shift handleCreateAccount lower, so it will be faster to check email availability
     .then(dataOut => {
       //Checking email availability
-      var query = connection.query(
-        "SELECT user_id FROM user_account\
-        WHERE email = " + connection.escape(dataOut.account.email) +
-        " OR username = " + connection.escape(data.account.username), function(error, result){
-        // console.log(query);
-        if(error){
-          console.error('[Error in query]: ' + error);
-          return;
-        }
+      handleDb.handleEncryption(dataOut.account)
+      .then(dataAccount => {
+        var query = connection.query(
+          "SELECT user_id FROM user_account\
+          WHERE email = " + connection.escape(dataAccount.email) +
+          " OR username = " + connection.escape(dataAccount.username), function(error, result){
+          // console.log(query);
+          if(error){
+            console.error('[Error in query]: ' + error);
+            return;
+          }
 
-        if(result.length === 0){
-          console.log("[Email available]");
+          if(result.length === 0){
+            console.log("[Email available]");
 
-          var query = connection.query("INSERT INTO user_account SET ?", dataOut.account, function(error, result){
-            if(error){
-              console.error('[Error in query]: ' + error);
-              return;
-            }
-
-            console.log('[Query successful]');
-            console.log(result);
-            var userId = result.insertId; //Get the userId for this user
-
-            switch(dataOut.type){
-              case C.DB.CREATE.STUDENT_ACC : {
-                userDetails(userId, dataOut.details, "student_details");
-                break;
+            var query = connection.query("INSERT INTO user_account SET ?", dataAccount, function(error, result){
+              if(error){
+                console.error('[Error in query]: ' + error);
+                return;
               }
-              case C.DB.CREATE.TEACHER_ACC : {
-                userDetails(userId, dataOut.details, "teacher_details");
-                break;
-              }
-            }
-          });
 
-          console.log('[Account created]');
-        }
-        else{
-          console.log("[Username or Email have been taken]");
-          //TODO: return error to server
-        }
+              console.log('[Query successful]');
+              console.log(result);
+              var userId = result.insertId; //Get the userId for this user
+              handleDb.handleEncryption(dataOut.details)
+              .then(dataDetails => {
+                switch(dataOut.type){
+                  case C.DB.CREATE.STUDENT_ACC : {
+                    userDetails(userId, dataDetails, "student_details");
+                    break;
+                  }
+                  case C.DB.CREATE.TEACHER_ACC : {
+                    userDetails(userId, dataDetails, "teacher_details");
+                    break;
+                  }
+                }
+              })
+              .catch(reason => {
+                console.log(reason);
+              });
+            });
+
+            console.log('[Account created]');
+          }
+          else{
+            console.log("[Username or Email have been taken]");
+            //TODO: return error to server
+          }
+        });
+      })
+      .catch(reason => {
+        console.log(reason);
       });
     });
   }
@@ -160,76 +171,92 @@ var server = net.createServer(function(conn){
   //If correct, user personal data will be retrieved from database
   //Else no personal data will be sent
   async function retrieveAccount(data){
-    var query = connection.query(
-      "SELECT user_id, password_hash, salt FROM user_account\
-      WHERE email = " + connection.escape(data.account.user) +
-      " OR username = " + connection.escape(data.account.user),
-      function(err, result){
-        if(err){
-          console.error('[Error in query]: ' + err);
-          return;
-        }
-        if(result.length > 0){
-          data.account.userId = result[0].user_id;
-          data.account.salt = result[0].salt;
-          data.account.dbPass = result[0].password_hash;
-          handleDb.handleRecieveAccount(data) //TODO: Dont know why cannot await
-          .then(dataOut => {
-            //If user password input is equal to database password
-            if(dataOut.account.hash_password === dataOut.account.dbPass){
-              console.log("Password correct");
-              var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
-                FROM user_account\
-                LEFT OUTER JOIN student_details\
-                ON user_account.user_id = student_details.user_id\
-                WHERE student_details.user_id = " + connection.escape(dataOut.account.userId),
-              function(err, result){
-                console.log(result.length);
-                if(result.length === 1){
-                  console.log(result);
-                  sendToServer(result);
-                }
-                else if(result.length === 0){
-                  console.log(dataOut.account.userId);
-                  var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, teacher_details.teacher_id, teacher_details.organisation\
+    await handleDb.handleEncryption(data.account)
+    .then(dataAccount => {
+      var query = connection.query(
+        "SELECT user_id, password_hash, salt FROM user_account\
+        WHERE email = " + connection.escape(dataAccount.username) +
+        " OR username = " + connection.escape(dataAccount.username),
+        function(err, result){
+          if(err){
+            console.error('[Error in query]: ' + err);
+            return;
+          }
+          if(result.length > 0){
+              dataAccount.userId = result[0].user_id;
+              dataAccount.salt = result[0].salt;
+              dataAccount.dbPass = result[0].password_hash;
+              delete dataAccount.username; //Remove username to improve data processing
+
+              handleDb.handleRecieveAccount(dataAccount)
+              .then(dataOut => {
+                //If user password input is equal to database password
+                if(dataOut.hash_password === dataOut.dbPass){
+                  console.log("Password correct");
+                  var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
                     FROM user_account\
-                    LEFT OUTER JOIN teacher_details\
-                    ON user_account.user_id = teacher_details.user_id\
-                    WHERE teacher_details.user_id = " + connection.escape(dataOut.account.userId),
+                    LEFT OUTER JOIN student_details\
+                    ON user_account.user_id = student_details.user_id\
+                    WHERE student_details.user_id = " + connection.escape(dataOut.userId),
                   function(err, result){
                     if(result.length === 1){
-                      sendToServer(result);
+                      handleDb.handleDecryption(result)
+                      .then(resultOut => {
+                        console.log(result);
+                        sendToServer(result);
+                      })
+                      .catch(reason => {
+                        console.log(reason);
+                      });
                     }
                     else if(result.length === 0){
-                      console.log("[No related data found]");
-                      //TODO: Send error message to server
+                      console.log(dataOut.account.userId);
+                      var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, teacher_details.teacher_id, teacher_details.organisation\
+                        FROM user_account\
+                        LEFT OUTER JOIN teacher_details\
+                        ON user_account.user_id = teacher_details.user_id\
+                        WHERE teacher_details.user_id = " + connection.escape(dataOut.account.userId),
+                      function(err, result){
+                        if(result.length === 1){
+                          sendToServer(result);
+                        }
+                        else if(result.length === 0){
+                          console.log("[No related data found]");
+                          //TODO: Send error message to server
+                        }
+                        else{
+                          console.log("[Duplicate user_id, Entity integrity compromise]");
+                          //TODO: Send error message to server
+
+                        }
+                        console.log(result)
+                      });
                     }
                     else{
                       console.log("[Duplicate user_id, Entity integrity compromise]");
                       //TODO: Send error message to server
-
                     }
-                    console.log(result)
                   });
                 }
-                else{
-                  console.log("[Duplicate user_id, Entity integrity compromise]");
+                else {
+                  console.log("[Password Incorrect]");
                   //TODO: Send error message to server
                 }
+              })
+              .catch(reason => {
+                console.log(reason);
               });
-            }
-            else {
-              console.log("[Password Incorrect]");
-              //TODO: Send error message to server
-            }
-          });
+          }
+          else{
+            console.log("[No such user found]");
+            //TODO: return error to server
+          }
         }
-        else{
-          console.log("[No such user found]");
-          //TODO: return error to server
-        }
-      }
-    );
+      );
+    })
+    .catch(reason => {
+      console.log(reason);
+    });
   }
 
   //Create quiz and add to database accordinly
@@ -355,27 +382,20 @@ var server = net.createServer(function(conn){
     ORDER BY quiz_question.question_no",
     function(err, result, fields){
   			if (!err) { //result = data recieve from database
-
-          var plainResult;
-
           handleDb.handleDecryption(result)
           .then(outPlainResult => {
-            plainResult = outPlainResult;
-          })
-          .then(function(){
-            handleDb.handleRecieveQuestion(plainResult)
+            handleDb.handleRecieveQuestion(outPlainResult)
             .then(outResult => {
-              console.log(outResult);
+              // console.log(outResult);
               sendToServer(outResult);
             })
+            .catch(reason => {
+              console.log(reason);
+            });
           })
           .catch(reason => {
             console.log(reason);
           });
-
-          // .catch(reason => {
-          //   console.log(reason);
-          // });
   			} else {
           console.log(err);
   				console.log('[No result]');

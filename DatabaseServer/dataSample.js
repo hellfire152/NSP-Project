@@ -51,7 +51,7 @@ module.exports = {
       data : {
         type : C.DB.SELECT.USER_ACCOUNT,
         account : {
-          user : "nigelhao",
+          username : "nigelhao",
           password : "PasswordStudent"
         }
       }
@@ -63,7 +63,7 @@ module.exports = {
       data : {
         type : C.DB.SELECT.USER_ACCOUNT,
         account : {
-          user : "nigelhao_teacher",
+          username : "nigelhao_teacher",
           password : "PassowordTeachers"
         }
       }

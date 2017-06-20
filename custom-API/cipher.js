@@ -58,10 +58,9 @@ async function decrypt(cipher){
     var encodedBlock = _xor(encodedBlockWithIv[0], subIv);
     var plainTextBlock = _decode(encodedBlock);
     subIv = _newIv(cipherBlock);
-
     plainText += plainTextBlock;
   }
-  //console.log("[Decryption complete]");
+  console.log("[Decryption complete]");
   return plainText;
 }
 
@@ -127,7 +126,7 @@ async function encryptDbData(plain) {
 async function decryptDbData(cipherText) {
   var plainText = [];
   for(let cipher of cipherText){
-    for (var key in cipher) {
+    for (let key in cipher) {
       if (cipher.hasOwnProperty(key)) {
         if(await allow (key)){
           if(cipher[key] !== null){
@@ -135,11 +134,10 @@ async function decryptDbData(cipherText) {
           }
         }
       }
-      var cipherArr = cipher
+      var cipherArr = cipher;
     }
     plainText.push(cipherArr);
   }
-
   return plainText;
 }
 
@@ -148,7 +146,6 @@ async function decryptDbData(cipherText) {
 //Converts every single character their respective character code
 function _encode(plainText){
   var encodedValue = [];
-
   var i = 0;
   loop1:
     while(i < plainText.length){
@@ -207,7 +204,8 @@ function _xor(value, iv){
 
 //Split cipher block to 64 equal character, leftover character will still work
 function _splitCipherBlock(cipher){
-  return cipher.match(/.{1,64}/g); // Depenending on cipher text block size, size may vary.
+  var block = cipher.match(/.{1,64}/g); // Depenending on cipher text block size, size may vary.
+  return block;
 }
 
 //Hash value with SHA256
@@ -240,7 +238,31 @@ async function allow(key){
      return true;
      break;
    }
+   case "dbPass" : {
+     return true;
+     break;
+   }
    case "salt" : {
+     return true;
+     break;
+   }
+   case "school" : {
+     return true;
+     break;
+   }
+   case "organisation" : {
+     return true;
+     break;
+   }
+   case "email" : {
+     return true;
+     break;
+   }
+   case "username" : {
+     return true;
+     break;
+   }
+   case "name" : {
      return true;
      break;
    }
