@@ -49,6 +49,11 @@ module.exports = async function(input) {
 
       break;
     }
+
+    case C.ERR.NO_GAME_CREATED: {
+      sendError(false, 'Game cannot be created!');
+      // game can't be created because no fills are filled in 
+    }
     //ADD MORE CASES HERE
     default: {
       console.log("AppServer to WebServer ERR value is " +response.err +" not a preset case!");

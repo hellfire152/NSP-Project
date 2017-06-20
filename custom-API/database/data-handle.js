@@ -4,26 +4,23 @@ var cipher = require("../cipher.js")();
 const C = require("./clientDbConstants.json");
 
 //Input user data password will undergo hashing and salting before storing to database
-async function handleCreateAccount(userAccount){
-  cipher.hash(userAccount.data.account.password_hash)
+async function handleCreateAccount(data){
+  cipher.hash(data.account.password_hash)
     .then(cipher => {
-      userAccount.data.account.password_hash = cipher;
-      console.log(cipher);
-      console.log(cipher.length);
+      data.account.password_hash = cipher;
     })
     .then(function(){
       cipher.generateSalt()
         .then(saltValue =>{
-          userAccount.data.account.salt = saltValue;
+          data.account.salt = saltValue;
           //function to XOR passoword and salt
-        })
-        .then(function(){
-          db(userAccount);
         })
     })
     .catch(reason => {
       console.log(reason);
     });
+
+    return data;
 }
 
 async function handleSearchQuiz(searchItem){
@@ -31,22 +28,21 @@ async function handleSearchQuiz(searchItem){
   console.log(searchItem);
   var searchArr = [];
   var word = "";
-  for(i=0 ; i<searchItem.data.searchItem.length ; i++){
-    if(searchItem.data.searchItem.charAt(i) === " "){
+  for(i=0 ; i<searchItem.searchItem.length ; i++){
+    if(searchItem.searchItem.charAt(i) === " "){
       searchArr.push(word);
       word = "";
       continue;
     }
-    word += searchItem.data.searchItem.charAt(i);
+    word += searchItem.searchItem.charAt(i);
   }
   searchArr.push(word);
-console.log(searchArr);
-  searchItem.data.searchArr = searchArr;
+  console.log(searchArr);
+  searchItem.searchArr = searchArr;
 
   console.log(searchArr);
-console.log("DONE");
-console.log(searchItem.data);
-  db(searchItem);
+  console.log("DONE");
+  return searchItem;
 
 }
 

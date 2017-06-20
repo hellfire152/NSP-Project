@@ -8,9 +8,10 @@
  */
 
 var mysql = require('mysql');
-var crypto = require('crypto');
-var handleDb = require("./database/data-handle.js");
-const C = require('./constants.json')
+// var crypto = require('crypto');
+var handleDb = require("./database/data-handle.js")();
+const C = require('./constants.json');
+var net = require('net');
 
 //Create connection between app and database
 var connection = mysql.createConnection({
@@ -30,83 +31,93 @@ connection.connect(function(error){
   }
 });
 
-module.exports = async function(input) {
-  data = input.data;
-  // C = input.C;
-  console.log(input.data);
-  console.log("DB TYPE: " +data.type);
-  switch(data.type) {
-    case C.DB.CREATE.STUDENT_ACC :
-    case C.DB.CREATE.TEACHER_ACC : {
-      return await createAccount(data);
-      break;
+
+var server = net.createServer(function(conn){
+  console.log("Database server start");
+
+  conn.on('end', function(){
+    console.log('App server disconnected');
+    server.close();
+    process.exit(0);
+  });
+
+  conn.on('data', async function(input){
+    data = (JSON.parse(input)).data;
+    // C = input.C;
+    console.log("DB TYPE: " +data.type);
+    switch(data.type) {
+      case C.DB.CREATE.STUDENT_ACC :
+      case C.DB.CREATE.TEACHER_ACC : {
+        return await createAccount(data);
+        break;
+      }
+      case C.DB.CREATE.QUIZ : {
+        return await createQuiz(data.name);
+        break;
+      }
+      case C.DB.SELECT.ALL_QUIZ : {
+        return await retrieveAllQuiz();
+        break
+      }
+      case C.DB.SELECT.QUESTION : {
+        return await retrieveQuestions(data.quizId); //quizId of the data
+        break;
+      }
+      case C.DB.SELECT.SEARCH_QUIZ : {
+        return await searchQuiz(data);
+        break;
+      }
+      //ADD MORE CASES HERE
     }
-    case C.DB.CREATE.QUIZ : {
-      return await createQuiz(data);
-      break;
-    }
-    case C.DB.SELECT.ALL_QUIZ : {
-      return await retrieveAllQuiz();
-      break
-    }
-    case C.DB.SELECT.QUESTION : {
-      return await retrieveQuestions(data.quizId); //quizId of the data
-      break;
-    }
-    case C.DB.SELECT.SEARCH_QUIZ : {
-      return await searchQuiz(data);
-      break;
-    }
-    case C.DB.OTHERS.TEST : {
-      return await testFunction();
-      break;
-    }
-    //ADD MORE CASES HERE
-  }
-}
+  });
+})
+
+console.log("Listening on port 7070")
+server.listen(7070);
 
 //Create user account (student or teacher).
 //data.type should state clearly if it is STUDENT_DETAILS or TEACHER_DETAILS
 async function createAccount(data){
-  console.log(data);
+  await handleDb.handleCreateAccount(data)
+  .then(dataOut => {
+    var query = connection.query("SELECT user_id FROM user_account WHERE email = " + connection.escape(dataOut.account.email), function(error, result){
+      // console.log(query);
+      if(error){
+        console.error('[Error in query]: ' + error);
+        return;
+      }
 
-  var query = connection.query("SELECT user_id FROM user_account WHERE email = " + connection.escape(data.account.email), function(error, result){
-    // console.log(query);
-    if(error){
-      console.error('[Error in query]: ' + error);
-      return;
-    }
+      if(result.length === 0){
+        console.log("[Email available]");
 
-    if(result.length === 0){
-      console.log("[Email available]");
-
-      var query = connection.query("INSERT INTO user_account SET ?", data.account, function(error, result){
-        if(error){
-          console.error('[Error in query]: ' + error);
-          return;
-        }
-
-        console.log('[Query successful]');
-        console.log(result);
-        var userId = result.insertId; //Get the userId for this user
-
-        switch(data.type){
-          case C.DB.CREATE.STUDENT_ACC : {
-            userDetails(userId, data.details, "student_details");
-            break;
+        var query = connection.query("INSERT INTO user_account SET ?", dataOut.account, function(error, result){
+          if(error){
+            console.error('[Error in query]: ' + error);
+            return;
           }
-          case C.DB.CREATE.TEACHER_ACC : {
-            userDetails(userId, data.details, "teacher_details");
-            break;
-          }
-        }
-      });
 
-      console.log('[Account created]');
-    }
-    else{
-      console.log("[Email have been taken]");
-    }
+          console.log('[Query successful]');
+          console.log(result);
+          var userId = result.insertId; //Get the userId for this user
+
+          switch(dataOut.type){
+            case C.DB.CREATE.STUDENT_ACC : {
+              userDetails(userId, dataOut.details, "student_details");
+              break;
+            }
+            case C.DB.CREATE.TEACHER_ACC : {
+              userDetails(userId, dataOut.details, "teacher_details");
+              break;
+            }
+          }
+        });
+
+        console.log('[Account created]');
+      }
+      else{
+        console.log("[Email have been taken]");
+      }
+    });
   });
 }
 
@@ -209,33 +220,35 @@ async function retrieveQuiz(){
 }
 
 //Search quiz
-async function searchQuiz(searchItem){
-  console.log("[searchQuiz]");
-  var searchQuery = ""
-  if(searchItem.searchArr.length > 1){
-    for( i=0 ; i<searchItem.searchArr.length ; i++){
-      console.log(searchItem.searchArr[i]);
-      searchQuery +=
-      " OR quiz_title LIKE '%" + searchItem.searchArr[i] + "%'\
-        OR description LIKE '%" + searchItem.searchArr[i] + "%'"
+async function searchQuiz(data){
+  console.log(data);
+  await handleDb.handleSearchQuiz(data)
+  .then(dataOut => {
+    console.log(dataOut);
+    var searchQuery = ""
+    if(dataOut.searchArr.length > 1){
+      for( i=0 ; i<dataOut.searchArr.length ; i++){
+        console.log(dataOut.searchArr[i]);
+        searchQuery +=
+        " OR quiz_title LIKE '%" + dataOut.searchArr[i] + "%'\
+          OR description LIKE '%" + dataOut.searchArr[i] + "%'"
+      }
     }
-  }
 
-  console.log(searchQuery);
-
-  var query = connection.query("SELECT * FROM quiz\
-  WHERE\
-    quiz_title LIKE '%" + searchItem.searchItem + "%'\
-    OR\
-    description LIKE '%" + searchItem.searchItem + "%'" + searchQuery,
-    function(err, rows, fields){
-			if (!err) {
-        console.log(rows);
-        //TODO: Method to send data to app server
-			} else {
-				console.log('No results.');
-			}
-	});
+    var query = connection.query("SELECT * FROM quiz\
+    WHERE\
+      quiz_title LIKE '%" + dataOut.searchItem + "%'\
+      OR\
+      description LIKE '%" + dataOut.searchItem + "%'" + searchQuery,
+      function(err, rows, fields){
+  			if (!err) {
+          console.log(rows);
+          //TODO: Method to send data to app server
+  			} else {
+  				console.log('No results.');
+  			}
+  	});
+  });
 }
 
 //Retrieve every questions corresponding to the quiz specifed (quizId)
@@ -255,9 +268,4 @@ async function retrieveQuestions(quizId){
 				console.log('No results.');
 			}
 	});
-}
-
-async function testFunction(){
-  console.log("[Inside testFunction()]");
-
 }

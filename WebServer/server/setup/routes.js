@@ -3,6 +3,8 @@
 
   Author: Jin Kuan
 */
+
+ // relative path - path to somewhere
 module.exports = function(data) {
   const C = data.C;
   let app = data.app,
@@ -17,6 +19,11 @@ module.exports = function(data) {
   app.get('/', function(req, res){
     res.sendFile(dirname + "/site/index.html");
   });
+
+  // app.get('/createquiz', function(req, res) {
+  //   res.sendFile(dirname + "/site/create-quiz.html");
+  // });
+
   //handling play path
   app.get('/play', function(req, res) { //submitted a form for playing in a room
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
@@ -72,7 +79,12 @@ module.exports = function(data) {
     res.sendFile(dirname + "/site" + req.path);
   });
 
+
+
   //handling form submits
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
+  app.post('/create-quiz', require('../validate-create-quiz.js')(cipher, appConn));
+
+
 }

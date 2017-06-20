@@ -6,11 +6,13 @@
 
   Author: Jin Kuan
 */
-var C, allRooms;
+var C, allRooms, createQuiz;
 module.exports = async function(input) {
   data = input.data;
   C = input.C;
+  descrption = input.description;
   allRooms = input.allRooms;
+  createQuiz = input.createQuiz;
 
   console.log("REQ TYPE: " +data.type);
   switch(data.type) {
@@ -20,11 +22,15 @@ module.exports = async function(input) {
       return (await join_room(data));
       break;
     }
-    case C.REQ_TYPE.HOST_ROOM: {;
+    case C.REQ_TYPE.HOST_ROOM: {
       return (await host_room(data));
       break;
     }
-    //ADD MORE CASES HERE
+    case C.DB.CREATE.QUIZ: {
+      console.log("CREATING A QUIZ: ")
+      return (await create_quiz(data));
+      break;
+    }
   }
 }
 
@@ -117,6 +123,31 @@ async function host_room(data) {
     }
   }
 
+  async function create_quiz(data) {
+    response =  {};
+    validLogin = true /*TODO::Proper login check*/
+     if(!(createQuiz[data.name] === undefined)) {
+        if(createQuiz[data.name].players[data.id] === undefined) {
+          response = { //build response
+            'type': C.DB.CREATE.QUIZ,
+            'name': data.name,
+            'description': data.description
+          };
+          return response;
+    }     else {  // no game created
+          return {
+            'err': C.ERR.NO_GAME_CREATED,
+            'name': data.name,
+            'description': data.description
+            // 'resNo': data.resNo,
+            // 'id': data.id,
+            // 'socketId': data.socketId
+          };
+        }
+      }
+      }
+
+
   //add data to allRooms
   allRooms[roomNo] = {
     'host': data.id,
@@ -135,5 +166,7 @@ async function host_room(data) {
   };
   return response;
 }
+
+
 
 var handleSpecial = require('./app-handle-special.js');

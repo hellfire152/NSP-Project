@@ -1,0 +1,31 @@
+<DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src='/client/constants.js'></script>
+  <script src='socket.io/socket.io.js'></script>
+  <script src='resources/pixi.js'></script>
+</head>
+
+
+<body>
+  <div id='form'>
+<form action="/create-quiz" method='POST'>
+
+<title> Create Quiz </title>
+<h1>Create a quiz</h1>
+<label>Name of Quiz</label>
+      <input type="text" class="text"> <br />
+<label>Description</label>
+      <input type="textarea" class="text"><br />
+
+    <input type="radio" value="public">Public Quiz
+ 	<input type="radio" value="private">Private Quiz<br>
+		<input type="reset" class="cancel" value="Cancel"> <input type="submit" class="submit" value="Submit" onclick="create_quiz()">
+
+    <script src="client/create-quiz.js">
+    </script>
+</body>
+</html>
+</form>
