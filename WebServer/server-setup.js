@@ -32,11 +32,7 @@ module.exports = function(data) {
 
   //express-session stuff
   var Session = require('express-session');
-  var sessionFile = require('session-file-store')(Session);
   var session = Session({
-        store: new sessionFile({
-          path: './tmp/sessions'
-        }),
         secret: COOKIE_KEY,
         resave: true,
         saveUninitialized: true,
@@ -47,11 +43,10 @@ module.exports = function(data) {
 
   //enables my use of socket.handshake.session
   io.use(ios(session));
-
   //template engine used
   app.set('view engine', 'pug');
   //where the templates are located
-  app.set('views', './site');
+  app.set('views', './site/views');
 
   //Various middleware
   app.use(session);

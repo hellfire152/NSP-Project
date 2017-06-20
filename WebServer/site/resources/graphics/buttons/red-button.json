@@ -1,0 +1,28 @@
+{"frames": {
+
+"click.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100}
+},
+"default.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "red-button.png",
+	"format": "RGBA8888",
+	"size": {"w":200,"h":100},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:f87c524f2ebfc5bf6c7141155ef5343f:ac7829f06aa4ac1f2efd197315dfb5f5:7d8a0f9ef72589eef016156fa6208046$"
+}
+}

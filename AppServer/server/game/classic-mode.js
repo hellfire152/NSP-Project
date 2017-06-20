@@ -43,7 +43,6 @@ module.exports = async function(input) {
       let qType = question.type;
 
       //if currentPlayer has not answered
-      console.log(currentPlayer.answered);
       if(!currentPlayer.answered || currentPlayer.answered === undefined) {
         //store the answer
         if(currentRoom.answers[data.answer] === undefined) {
@@ -51,26 +50,12 @@ module.exports = async function(input) {
         }
         currentRoom.answers[data.answer]++;
 
-        //calculating score
-        if(common.checkCorrectAnswer(question, data.answer)) {
-          //getting question reward value
-          let reward = common.getReward(quiz, question);
-
-          //score penalty based on time difference from the first correct answer
-          if (currentRoom.timeStart === undefined) {
-            currentRoom.timeStart = Date.now();
-          }
-          currentPlayer.answerStreak++;
-          //calculate and store score
-          currentRoom.players[data.id].score += common.calculateScore(
-            reward, currentRoom.timeStart, currentPlayer.answerStreak
-          );
-          //increment correctAnswer count
-          currentRoom.players[data.id].correctAnswers++;
-        } else {  //wrong answer
-          currentPlayer.score -= common.getPenalty(currentRoom.quiz, question);
-        }
-
+        common.handleScoring({
+          'data': data,
+          'currentRoom': currentRoom,
+          'currentPlayer': currentPlayer
+        });
+        
         currentPlayer.answered = true;
         currentRoom.answerCount++;
 

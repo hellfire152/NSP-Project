@@ -18,12 +18,19 @@ module.exports = async function(input) {
       switch(response.roomEvent) {
         case C.ROOM_EVENT.JOIN : {
           console.log("ROOM JOIN RESPONSE ID: " +response.id);
-          if(socketOfUser[response.id].roomNo === undefined) {  //no not already in room
-            socketOfUser[response.id].join(response.roomNo); //socket joins room
-            socketOfUser[response.id].roomNo = response.roomNo; //include roomNo in the socketObj
-            delete response.roomEvent;
-          } else {  //socket already in room, not supposed to happen
-            socketOfUser[response.id].emit('err', "Already in a room!");
+          try {
+            if(socketOfUser[response.id].roomNo === undefined) {  //no not already in room
+              socketOfUser[response.id].join(response.roomNo); //socket joins room
+              socketOfUser[response.id].roomNo = response.roomNo; //include roomNo in the socketObj
+              delete response.roomEvent;
+            } else {  //socket already in room, not supposed to happen
+              socketOfUser[response.id].emit('err', "Already in a room!");
+            }
+          } catch(err) {
+            console.log("ROOM EVENT ERROR: ");
+            console.log(err);
+            console.log(response.id);
+            console.log(socketOfUser[response.id]);
           }
           break;
         }
@@ -66,7 +73,7 @@ module.exports = async function(input) {
   } else {  //INVALID login
     clientResponse = {
       'err' : C.ERR.INVALID_LOGIN
-    }
+    };
     sendToUser(clientResponse, response.id);
   }
 }

@@ -55,25 +55,53 @@ const C = {
     "HOST_ROOM_RES": 1
   },
   "DB" : {
-    "CREATE" : {
-      "STUDENT_ACC" : 101,
-      "TEACHER_ACC" : 102,
-      "QUIZ" : 103
-    },
     "SELECT" : {
-      "ALL_QUIZ" : 201,
-      "QUESTION" : 202,
-      "SEARCH_QUIZ" : 203
+      "USER_ACCOUNT" : 101,
+      "STUDENT_DETAILS" : 102,
+      "TEACHER_DETAILS" : 103,
+      "QUIZ" : 104,
+      "QUIZ_QUESTION" : 105,
+      "QUIZ_QUESTION_CHOICES" : 106,
+      "LOG_QUIZ" : 107,
+      "LOG_QUESTION" : 108,
+      "ACHIEVEMENTS" : 109,
+      "ACHIEVEMENTS_EARNED" : 110
+     },
+    "INSERT" : {
+      "USER_ACCOUNT" : 201,
+      "STUDENT_DETAILS" : 202,
+      "TEACHER_DETAILS" : 203,
+      "QUIZ" : 204,
+      "QUIZ_QUESTION" : 205,
+      "QUIZ_QUESTION_CHOICES" : 206,
+      "LOG_QUIZ" : 207,
+      "LOG_QUESTION" : 208,
+      "ACHIEVEMENTS" : 209,
+      "ACHIEVEMENTS_EARNED" : 210
     },
     "UPDATE" : {
-
+      "USER_ACCOUNT" : 301,
+      "STUDENT_DETAILS" : 302,
+      "TEACHER_DETAILS" : 303,
+      "QUIZ" : 304,
+      "QUIZ_QUESTION" : 305,
+      "QUIZ_QUESTION_CHOICES" : 306,
+      "LOG_QUIZ" : 307,
+      "LOG_QUESTION" : 308,
+      "ACHIEVEMENTS" : 309,
+      "ACHIEVEMENTS_EARNED" : 310
     },
     "DELETE" : {
-
-    },
-    "QUESTION_TYPE" : {
-      "MCQ" : 501,
-      "SHORT_ANS" : 502
+      "USER_ACCOUNT" : 401,
+      "STUDENT_DETAILS" : 402,
+      "TEACHER_DETAILS" : 403,
+      "QUIZ" : 404,
+      "QUIZ_QUESTION" : 405,
+      "QUIZ_QUESTION_CHOICES" : 406,
+      "LOG_QUIZ" : 407,
+      "LOG_QUESTION" : 408,
+      "ACHIEVEMENTS" : 409,
+      "ACHIEVEMENTS_EARNED" : 410
     }
   },
   "ERR" : {

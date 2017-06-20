@@ -16,6 +16,7 @@ process.on('uncaughtException', function (err) {
 });
 
 const C = require('../custom-API/constants.json');
+var sampleData = require('../DatabaseServer/dataSample.js'); //Sample data for database testing.
 
 //Check for password's existence
 var pass = process.argv[2];
@@ -108,6 +109,7 @@ conn.on("data", async function(input) {
     console.log('WebServer to AppServer input Error!');
   }
 });
+<<<<<<< HEAD
 });
 
 console.log("Listening on port 9090...");
@@ -154,11 +156,36 @@ function retrieveQuestion(){
   }
 }
 sendToServer(dbConn, retrieveQuestion());
+=======
+});
+
+console.log("Listening on port 9090...");
+server.listen(9090);
+
+//connection with datbase server
+var dbConn = net.connect(7070);
+
+//Recieve data from database
+dbConn.on('data', function(data) {
+  console.log("[Data have been recieved form database]");
+  var dataObj = JSON.parse(data);
+  console.log(dataObj);
+  //TODO: Send dataObj to webserver
+});
+
+//Test sample data
+// sendToServer(dbConn, sampleData.retrieveQuestion());
+>>>>>>> origin/master
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer
 This is a convenience function, so that future implementations of encryption/whatever
 will be easy to add in
+<<<<<<< HEAD
+=======
+Use this function to send data to database
+e.g.: sendToServer(dbConn, json);
+>>>>>>> origin/master
 */
 async function sendToServer(conn, json) {
 conn.write(JSON.stringify(json));
