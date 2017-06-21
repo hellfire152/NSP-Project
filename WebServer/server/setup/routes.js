@@ -68,21 +68,20 @@ module.exports = function(data) {
         });
     }
   });
-<<<<<<< HEAD
+
   //handling login
   app.get('/login', function(req, res){
-    res.render('login');
+    res.render('login',{title: 'Login',success:req.session.success, errors:req.session.errors});
+    req.session.errors=null;
   });
-  //handling all other requests
-=======
-
+  //handling all other
   /*TESTING*/
   app.get('/test', function(req, res) {
     res.render('test', {});
   });
 
   //handling all other requests (PUT THIS LAST)
->>>>>>> origin/master
+
   app.get('/*', function(req, res){
     res.sendFile(dirname + "/site" + req.path);
   });

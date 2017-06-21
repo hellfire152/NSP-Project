@@ -1,0 +1,15 @@
+html
+  head
+    title Login
+  body
+    form(onsubmit='/validate-login-room', method='POST', action='/login-room')
+      div.form-group
+        p username
+        input(type='username', name='username', id='username')
+        p email
+        input(type ='email', name='email', id='email')
+        p password
+        input(type ='password' , name ='password', id ='password')
+
+
+      input(type='submit' value = 'Login')

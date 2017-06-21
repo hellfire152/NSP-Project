@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 console.log("hello");
 var question = [{
   "prompt": "1+1=?",
@@ -7,6 +7,7 @@ var question = [{
   "solution": "Go away", //there is no solution in the choices
   "time": 20
 },
+
 {
   "prompt": "What is zero in Roman Numerals?",
   "type": 1,
@@ -25,7 +26,7 @@ question.forEach(function(individualQuestion){
   console.log(individualQuestion.solution);
   console.log(individualQuestion.time);
 })
-=======
+
 [
   {
     "prompt": "1+1=?",
@@ -44,4 +45,3 @@ question.forEach(function(individualQuestion){
 
 
 console.log(("abcD" === "abcd"));
->>>>>>> origin/master
