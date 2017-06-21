@@ -2,10 +2,16 @@
   Serves as a factory and a container to hold the MCQ buttons
   also adds a bunch of convenience functions
 
+  NOTE::BEFORE YOU USE THIS class
+  Load 'yellow-button', 'red-button', 'green-button', 'blue-button', 'button-background'
+  into the pixi loader's resources beforehand, and pass them into the constructor
+
   Author: Jin Kuan
 */
 class McqButtonHandler {
-  constructor(resources, buttonWidth, noOfChoices) {
+  constructor(resources, width, noOfChoices) {
+    let buttonWidth = width / 2 - 15;
+
     //ticker for animations
     this._ticker = new PIXI.ticker.Ticker();
     this._ticker.stop();
@@ -34,35 +40,40 @@ class McqButtonHandler {
         'game': C.GAME.SUBMIT_ANSWER,
         'answer' : 1
       }));
+
+    //create a container to hold the buttons
+    this._container = new PIXI.Sprite(resources['button-background'].texture);
+
+    //add all buttons to the container
+    for(let button of this._buttons) {
+      this._container.addChild(button.sprite);
+    }
     //saving the original scale for later animation resets
     this._originalScale = [this._buttons[0].scale.x, this._buttons[0].scale.y];
 
-    //create a container to hold the buttons
-    this._container = new PIXI.Sprite('resources/graphics/ui/button-background.png');
-
-    //add all buttons to the container
-    for(let button of buttonArr) {
-      this._container.addChild(button.sprite);
-    }
-
     //positioning
     //calculating positions
-    let xOffset = b[0].width / 2,
+    let b = this._buttons,
+      xOffset = b[0].width / 2,
       yOffset = b[0].height / 2,
       bWidth = b[0].width,
-      bHeight = b[0].height;
+      bHeight = b[0].height,
+      paddingY = (this._container.height - bHeight * 2) / 3,
+      paddingX = (this._container.width - bWidth * 2) / 3;
 
     this.POSITIONS = {
-      'TOP_LEFT': [xOffset + padding, yOffset + padding],
-      'TOP_RIGHT': [xOffset + bWidth + padding * 2, yOffset + padding],
-      'BOTTOM_LEFT': [xOffset + padding, yOffset + bHeight + padding],
-      'BOTTOM_RIGHT': [xOffset + bWidth + padding * 2, yOffset + bHeight + padding],
-      'BOTTOM_MIDDLE': [bWidth + padding, yOffset + bHeight + padding],
-      'MIDDLE_LEFT': [xOffset + padding, bHeight + padding],
-      'MIDDLE_RIGHT': [xOffset + bWidth + padding, bHeight + padding]
+      'TOP_LEFT': [xOffset + paddingX, yOffset + paddingY],
+      'TOP_RIGHT': [xOffset + bWidth + paddingX * 2, yOffset + paddingY],
+      'BOTTOM_LEFT': [xOffset + paddingX, yOffset + bHeight + paddingY * 2],
+      'BOTTOM_RIGHT': [xOffset + bWidth + paddingX * 2, yOffset + bHeight + paddingY * 2],
+      'BOTTOM_MIDDLE': [bWidth + paddingX, yOffset + bHeight + paddingY * 2],
+      'MIDDLE_LEFT': [xOffset + paddingX, bHeight + paddingY],
+      'MIDDLE_RIGHT': [xOffset + bWidth + paddingX, bHeight + paddingY]
     }
     this.setNoOfChoices(noOfChoices);
   }
+
+  //handles scaling of the container
 
   /*changes the number of buttons displayed
     the number of buttons of displayed affect the positioning of the buttons
@@ -179,8 +190,20 @@ class McqButtonHandler {
     this.setNoOfChoices(this._noOfChoices);
   }
 
+  setText(buttonIndex, text) {
+    this._buttons[buttonIndex].text = text;
+  }
+
   get sprite() {
     return this._container;
+  }
+
+  get width() {
+    return this._container.width;
+  }
+
+  get height() {
+    return this._container.height;
   }
 
   get x() {
