@@ -14,5 +14,5 @@
   }
 ]
 
-
-console.log(("abcD" === "abcd"));
+var x;
+console.log(x.range(1,10))
