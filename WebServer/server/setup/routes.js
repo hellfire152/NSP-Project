@@ -15,14 +15,20 @@ module.exports = function(data) {
     uuid = data.uuid,
     queryOfUser = data.queryOfUser;
   //routing
+  //handling requests for .html, controller, css or resource files
+  app.get('((/resources|/controller|/css)*)|*.html', function(req, res) {
+    res.sendFile(`${dirname}/site${req.path}`);
+  });
   //sends index.html when someone sends a https request
   app.get('/', function(req, res){
     res.sendFile(dirname + "/site/index.html");
   });
 
+
   // app.get('/createquiz', function(req, res) {
   //   res.sendFile(dirname + "/site/create-quiz.html");
   // });
+
 
   //handling play path
   app.get('/play', function(req, res) { //submitted a form for playing in a room
@@ -49,6 +55,7 @@ module.exports = function(data) {
         });
     }
   });
+  //handling hosting
   app.get('/host', function(req, res) { //submit the form for hosting a room
     if(req.query.quizId.constructor === Array) {
       console.log("Please don't mess with my webpage");
@@ -75,14 +82,10 @@ module.exports = function(data) {
     }
   });
 
-  /*TESTING*/
-  app.get('/test', function(req, res) {
-    res.render('test', {});
-  });
-
   //handling all other requests (PUT THIS LAST)
   app.get('/*', function(req, res){
-    res.sendFile(dirname + "/site" + req.path);
+    //doing this just in case req.params has something defined for some reason
+    res.render(req.path.substring(1));
   });
 
 

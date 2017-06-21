@@ -34,7 +34,7 @@ var cipherTextBlockSize = 64;
 async function encrypt(plain){
   var subIv = _newIv(iv);
   var encodedPlain = _encode(plain);
-  var cipherText = ""
+  var cipherText = "";
   for(let encodedBlock of encodedPlain){
     var encodedBlockWithIv = _xor(encodedBlock, subIv);
     var decodedBlockWithIv = _decode(encodedBlockWithIv);
@@ -58,10 +58,9 @@ async function decrypt(cipher){
     var encodedBlock = _xor(encodedBlockWithIv[0], subIv);
     var plainTextBlock = _decode(encodedBlock);
     subIv = _newIv(cipherBlock);
-
     plainText += plainTextBlock;
   }
-  //console.log("[Decryption complete]");
+  console.log("[Decryption complete]");
   return plainText;
 }
 
@@ -92,7 +91,7 @@ function _decryptBlock(cipher) {
 */
 async function encryptJSON(plain) {
   try {
-    return await handleEncryption(JSON.stringify(plain));
+    return await encrypt(JSON.stringify(plain));
   } catch (err) {
     throw new Error(err);
   }
@@ -105,16 +104,48 @@ async function encryptJSON(plain) {
 */
 async function decryptJSON(cipher) {
   try {
-    return JSON.parse(await handleDecryption(cipher));
+    return JSON.parse(await decrypt(cipher));
   } catch (err) {
     throw new Error(err);
   }
 }
 
+//Encrypt all data in the object and then store to database
+async function encryptDbData(plain) {
+  for (var key in plain) {
+    if (plain.hasOwnProperty(key)) {
+      if(await allow (key)){
+        plain[key] = await encrypt(plain[key]);
+      }
+    }
+  }
+  return plain;
+}
+
+//Decrypt all data in the object and then pass it to appserver.
+async function decryptDbData(cipherText) {
+  var plainText = [];
+  for(let cipher of cipherText){
+    for (let key in cipher) {
+      if (cipher.hasOwnProperty(key)) {
+        if(await allow (key)){
+          if(cipher[key] !== null){
+            cipher[key] = await decrypt(cipher[key]);
+          }
+        }
+      }
+      var cipherArr = cipher;
+    }
+    plainText.push(cipherArr);
+  }
+  return plainText;
+}
+
+// //By using Convert every single character to ascii character code to obtain numeric value
+// async function encode(plainText){
 //Converts every single character their respective character code
 function _encode(plainText){
   var encodedValue = [];
-
   var i = 0;
   loop1:
     while(i < plainText.length){
@@ -173,7 +204,8 @@ function _xor(value, iv){
 
 //Split cipher block to 64 equal character, leftover character will still work
 function _splitCipherBlock(cipher){
-  return cipher.match(/.{1,64}/g); // Depenending on cipher text block size, size may vary.
+  var block = cipher.match(/.{1,64}/g); // Depenending on cipher text block size, size may vary.
+  return block;
 }
 
 //Hash value with SHA256
@@ -187,6 +219,60 @@ async function generateSalt(){
   return saltValue;
 }
 
+//Data with the column name stated below will be encrypted
+async function allow(key){
+ switch(key){
+   case "prompt" : {
+     return true;
+     break;
+   }
+   case "solution" : {
+     return true;
+     break;
+   }
+   case "choices" : {
+     return true;
+     break;
+   }
+   case "password_hash" : {
+     return true;
+     break;
+   }
+   case "dbPass" : {
+     return true;
+     break;
+   }
+   case "salt" : {
+     return true;
+     break;
+   }
+   case "school" : {
+     return true;
+     break;
+   }
+   case "organisation" : {
+     return true;
+     break;
+   }
+   case "email" : {
+     return true;
+     break;
+   }
+   case "username" : {
+     return true;
+     break;
+   }
+   case "name" : {
+     return true;
+     break;
+   }
+   default : {
+     return false;
+     break;
+   }
+ }
+}
+
 module.exports = function(options) {
   if(!(options === undefined)) {  //setting options (if used)
     if (!(options.password === undefined)) password = options.password;
@@ -198,6 +284,8 @@ module.exports = function(options) {
     "decrypt": decrypt,
     "encryptJSON": encryptJSON,
     "decryptJSON": decryptJSON,
+    "encryptDbData" : encryptDbData,
+    "decryptDbData" : decryptDbData,
     "hash": hash,
     "iv": iv,
     "generateSalt" : generateSalt

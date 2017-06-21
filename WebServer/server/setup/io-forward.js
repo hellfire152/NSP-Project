@@ -47,6 +47,12 @@ module.exports = function(data) {
       socket.disconnect();
     }
 
+
+    /*
+    Client Side
+    socket.emit('send' JSON.stringify({name:nigel, age:19});
+
+     */
     //adding listeners
     console.log("Request received: " +socket.id);
     socket.on('send', async function(input){ //from user
