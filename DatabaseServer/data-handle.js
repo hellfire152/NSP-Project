@@ -29,14 +29,27 @@ async function handleCreateAccount(data){
 }
 
 async function handleRecieveAccount(data){
-  cipher.hash(data.account.password + data.account.salt)
-  .then(hashed => {
-    data.account.hash_password = hashed;
+  var dataArr = [];
+  dataArr.push(data); // Push to array to follow the format of encryption
+
+  var plainData;
+
+  await handleDecryption(dataArr)
+  .then(dataOut => {
+    cipher.hash(dataOut[0].password + dataOut[0].salt)
+    .then(hashed => {
+      dataOut[0].hash_password = hashed;
+      plainData = dataOut[0];
+    })
+    .catch(reason => {
+      console.log(reason);
+    });
+
   })
   .catch(reason => {
     console.log(reason);
   });
-  return data;
+  return plainData;
 }
 
 //Seperate the words in a string of text, and the store each individual word in an array.
@@ -74,11 +87,33 @@ async function handleRecieveQuestion(data){
   return data;
 }
 
+async function handleEncryption(data){
+  // return data; //For testing purposes where data will not be encrypted before storing to database
+  var cipherData;
+  await cipher.encryptDbData(data)
+  .then(dataOut => {
+    cipherData = dataOut;
+  });
+  return cipherData;
+}
+
+async function handleDecryption(data){
+  // return data; //For testing purposes where data will not be decrypted before processing data to client
+  var plainData;
+  await cipher.decryptDbData(data)
+  .then(dataOut => {
+    plainData = dataOut;
+  });
+  return plainData;
+}
+
 module.exports = function() {
   return {
     'handleCreateAccount' : handleCreateAccount,
     "handleRecieveAccount" : handleRecieveAccount,
     'handleSearchQuiz' : handleSearchQuiz,
-    'handleRecieveQuestion' : handleRecieveQuestion
+    'handleRecieveQuestion' : handleRecieveQuestion,
+    'handleEncryption' : handleEncryption,
+    'handleDecryption' : handleDecryption
   }
 }

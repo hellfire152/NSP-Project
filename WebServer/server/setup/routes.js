@@ -17,6 +17,7 @@ module.exports = function(data) {
   app.get('/', function(req, res){
     res.sendFile(dirname + "/site/index.html");
   });
+
   //handling play path
   app.get('/play', function(req, res) { //submitted a form for playing in a room
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
