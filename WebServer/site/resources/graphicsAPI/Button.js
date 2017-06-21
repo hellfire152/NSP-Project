@@ -12,9 +12,10 @@ class Button {
     //button setup
     this._textures = textures;
 
+    this._container = new PIXI.Container();
+
     //initializing the sprite
     let s = new PIXI.Sprite(this._textures["default.png"]);
-    s.width = width;
     s.interactive = true;
 
     //setting on pointer down and up
@@ -36,14 +37,26 @@ class Button {
 
     //setting text
     this._text = new PIXI.Text('');
-    s.addChild(this._text);
 
     //positioning by setting both anchors in the middle
     this._text.anchor.x = this._text.anchor.y = 0.5;
     s.anchor.x = s.anchor.y = 0.5;
 
-    //expose sprite
-    this.sprite = s;
+    this._sprite = s;
+
+    //expose contianer
+    this._container.addChild(s);
+    this._container.addChild(this._text);
+
+    //set width
+    this.scaleToWidth(width);
+  }
+
+  //scales the button's size, stops at a set width
+  scaleToWidth(width) {
+    let scaleFactor = width / this.sprite.width;
+    this.scale.x = scaleFactor;
+    this.scale.y = scaleFactor;
   }
 
   //set onclick of the button
@@ -52,7 +65,7 @@ class Button {
   }
 
   get sprite() {
-    return this._sprite;
+    return this._container;
   }
 
   set sprite(s) {
@@ -60,11 +73,11 @@ class Button {
   }
 
   get width() {
-    return this._sprite.width;
+    return this._container.width;
   }
 
   get height() {
-    return this._sprite.height;
+    return this._container.height;
   }
 
   set text(t) {
@@ -72,7 +85,7 @@ class Button {
   }
 
   set position(p) {
-    ([this._sprite.x, this._sprite.y] = p);
+    ([this._container.x, this._container.y] = p);
   }
 
   set filters(f) {

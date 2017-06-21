@@ -1,6 +1,12 @@
 17/5/2017 - Ang Jin Kuan
 First entry of the update log!
 
+First of all, I'm going to write this in a more narrative style, unlike the very
+to the point and specific way that I had everybody do it last time.
+This is because I got everybody to use git! Git gives me plenty of tracking stuff
+already, so I don't need them to write exactly everything they've done for me now.
+This update log's purpose is now to track the overall progress/general view of the project.
+
 I've actually been working on the project for about a week now.
 I've managed to get the website up and running, accessible from over the internet.
 The security cert still gives me warning with some AltName or something.
@@ -190,3 +196,48 @@ Bryan website is in progress, I saw the state of it 2 days ago, and while there'
 a lot of testing stuff like random logos, it's coming together!
 
 My guess is that my coding would take a lot longer than one week, but let's try regardless!
+
+22/6/2017 - Ang Jin Kuan
+12 days since my last update, I'm kinda slacking off XD.
+
+Of course, as it's the holidays, I've been going easy. It's kinda weird actually,
+with more time on my hands, I do lesser work. A lot of the work I do is on Nigel's
+spare laptop during lesson time. With that lesson time gone, I guess my own initiative
+isn't enough to keep up the rate of work. Still, it's like 5 hours per day to 2,
+except on days which I go out with friends (3) PRETTY SURE THAT'S STILL OK.
+
+As for my progress so far, I've written some untested code for the gamemodes,
+and leaving it until I finish doing the thing I'm currently working on:
+The grahpicsAPI folder!
+This folder will contain all the classes and stuff for the PIXI graphics elements
+that are used in the quiz game. Most likely animations as well. The point of this
+is to abstract the actual graphics creation and update functions that I will need
+to use a lot later. So far I've done Car, Button, McqButtonHandler, TopBar, and
+2 untested as of now, ShortAnswerTextBox, LoadingBar. QuestionDisplay was just created,
+and is an empty class.
+
+Another thing I've done is a small revamp of how our website files are organized.
+There are now 3 new folders:
+views, controller, and css.
+The views package is for all the pug files, controller is for all the associated
+javascript files, and css is for... you guessed it, css!
+I changed the routing as well, now the server will by default search for a .pug file
+instead of a .html one, but if .html is put, the server will go to the path specified
+and get the html if it exists at that location. I've also reordered the app.get
+handlers for hopefully maximum efficiency.
+
+Last thing for now, I've looked into javascript compressors/minifiers/uglifiers
+whatever you want to call them. I ended up getting closure-compiler, which
+is used by Google. I've tested it too, and it actually works pretty well.
+Uglifyjs couldn't recognize the const keyword for some reason.
+So, closure-compiler.jar is now available for use in the project root folder!
+I've put in a new file compress.bat too, that for now is a placeholder.
+The plan is to have all the javascript files compressed on the server start,
+and that compress.bat should be called a bunch of times for that.
+It's low on my priority list, so it'll just sit there doing nothing for a while.
+
+As for the other group members' progress, Nigel's upgraded cipher.js to use CBC,
+and added a encrypted database file. The rest are still in progress.
+
+For now, I've got to get all the graphicsAPI stuff running by the time the
+term break ends!

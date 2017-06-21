@@ -6,10 +6,10 @@
   Author: Jin Kuan
 */
 class TopBar {
-  constructor(width, name) {
+  constructor(resources, width, name) {
     //initializing variables
     this._width = width;
-    this._container = new PIXI.Container();
+    this._container = new PIXI.Sprite(resources['topbar-background'].texture);
     this._name = 0;
     this._pixiElements = {};
 
@@ -18,9 +18,9 @@ class TopBar {
     p.name = new PIXI.Text(name);
     p.name.x = 5;
     p.correctAnswers = new PIXI.Text('');
-    p.correctAnswers.anchor.set(1, 0.5);
+    p.correctAnswers.anchor.set(1, 0);
     p.score = new PIXI.Text('');
-    p.score.anchor.set(1, 0.5);
+    p.score.anchor.set(1, 0);
 
     this.updateCorrect(0, 0);
     this._container.addChild(p.name);
@@ -34,7 +34,7 @@ class TopBar {
     p.correctAnswers.text = `Correct Answers: ${correctAnswers}`;
     p.score.text = `Score: ${score}`;
     //correct positioning
-    p.score.x = width - 5;
+    p.score.x = this._width - 5;
     p.correctAnswers.x = p.score.x - p.score.width - 5;
   }
 
