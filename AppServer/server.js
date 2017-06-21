@@ -109,7 +109,7 @@ conn.on("data", async function(input) {
     console.log('WebServer to AppServer input Error!');
   }
 });
-<<<<<<< HEAD
+
 });
 
 console.log("Listening on port 9090...");
@@ -156,8 +156,8 @@ function retrieveQuestion(){
   }
 }
 sendToServer(dbConn, retrieveQuestion());
-=======
-});
+
+// });
 
 console.log("Listening on port 9090...");
 server.listen(9090);
@@ -175,7 +175,7 @@ dbConn.on('data', function(data) {
 
 //Test sample data
 // sendToServer(dbConn, sampleData.retrieveQuestion());
->>>>>>> origin/master
+
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer

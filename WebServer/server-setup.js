@@ -2,9 +2,7 @@
   File that does most of the setup work.
   Most of the actual setting of stuff is delegated to smaller, easier to parse
   modules.
-
   This file does set most of the middleware used
-
   Author: Jin Kuan
 */
 

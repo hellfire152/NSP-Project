@@ -38,15 +38,11 @@
     "ANSWER_CHOSEN": 11,
     "ROUND_END": 12,
     "NEXT_QUESTION": 13,
-
-    "GAME_END": 14
-
     "GAME_END": 14,
     "WRONG_ANSWER": 15,
     "PLAYER_FINISH": 16,
     "TEAM_CHOSEN": 17,
     "CONFIRM_TEAM_NO" : 18
-
   },
   "GAMEMODE" : {
     "CLASSIC": 0,
@@ -75,12 +71,8 @@
     "SELECT" : {
       "ALL_QUIZ" : 201,
       "QUESTION" : 202,
-
-      "SEARCH_QUIZ" : 203
-
       "SEARCH_QUIZ" : 203,
       "USER_ACCOUNT" : 204
-
     },
     "UPDATE" : {
 
@@ -89,13 +81,8 @@
 
     },
     "QUESTION_TYPE" : {
-
-      "MCQ" : 501,
-      "SHORT_ANS" : 502
-
       "MCQ" : 0,
       "SHORT_ANS" : 1
-
     },
     "OTHERS" : {
       "TEST" : 601
@@ -115,6 +102,7 @@
     "NO_GAME_CREATED" : 1100,
 
     "ALREADY_ANSWERED": 1500,
+
 
     "DB_NO_RESULT" : 2000,
     "DB_EMAIL_TAKEN" : 2001

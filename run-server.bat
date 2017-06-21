@@ -12,15 +12,9 @@ echo "Usage: ./run-server.bat <password>"
 goto end
 
 :start
-<<<<<<< HEAD
-cd ./custom-API
-start node ./database.js %pass%
-timeout 2
-=======
 cd ./DatabaseServer
 start node ./database.js %pass%
 timeout 1
->>>>>>> origin/master
 cd ../AppServer
 start node ./server.js %pass%
 timeout 1

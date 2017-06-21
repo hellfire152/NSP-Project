@@ -12,26 +12,32 @@
 
 <body>
   <div id='form'>
-<form action="/add-question.html" method='POST'>
+<form action="/c" method='POST'>
 
-<title> Create Quiz </title>
+<title> Add Question </title>
 
-<h1>Create a quiz</h1>
+<h1>Add Question</h1>
 
-<label>Name of Quiz</label>
-      <input type="text" id="nameofQuiz"name="nameofQuiz"> <br />
+<label>Prompt</label>
+      <input type="text" id="prompt"name="prompt"> <br />
 
-<label>Description</label>
-      <input type="textarea" id="desc" name="desc"><br />
+<label>Type</label>
+      <input type="textarea" id="type" name="type"><br />
+
+<label>Choices</label>
+      <input type="textarea" id="choices" name="choices"><br />
+
+<label>Solution</label>
+      <input type="textarea" id="solution" name="solution"><br />
+
+<!-- <label>Time</label> -->
+      <!-- <input type="textarea" id="time" name="time"><br /> -->
 
 <label>Reward</label>
       <input type="number" id="reward" name="reward"><br />
 
 <label>Penalty</label>
       <input type="number" id="penalty" name="penalty"><br />
-
-     <input type="radio" value="public" name= "typeOfQuiz">Public Quiz
- 	   <input type="radio" value="private" name= "typeOfQuiz">Private Quiz<br>
 
 		 <input type="reset" class="cancel" value="Cancel">
      <input type="submit" value="Submit" onclick="create_quiz()">
