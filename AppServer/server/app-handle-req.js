@@ -101,7 +101,7 @@ async function host_room(data) {
   let quiz;
   //load quiz
   if(data.quizId == 'TEST') {
-    quiz = require('../../test-quiz.json');
+    quiz = require('../../!quiz.json');
     if(quiz.public == false && data.id !== quiz.author) {
       return {
         'err': C.ERR.INACCESSIBLE_PRIVATE_QUIZ,

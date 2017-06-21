@@ -1,0 +1,40 @@
+{
+  "id": "TEST",
+  "questions": [
+    {
+      "prompt": "1+1=?",
+      "type": 0,
+      "choices": ["1", "2", "3", "4"],
+      "solution": 4,
+      "time": 5,
+      "penalty": 10000
+    },
+    {
+      "prompt": "12+23=?",
+      "type": 0,
+      "choices": ["35", "24", "22", "25"],
+      "solution": 8,
+      "time": 10
+    },
+    {
+      "prompt": "126+642=?",
+      "type": 0,
+      "choices": ["757", "768", "812", "702"],
+      "solution": 4,
+      "time": 15,
+      "reward": 2000
+    },
+    {
+      "prompt": "482+714=?",
+      "type": 0,
+      "choices": ["1023", "1196", "1203", "1056"],
+      "solution": 4,
+      "time": 20
+    }
+  ],
+  "reward": 1000,
+  "author": "Kuan",
+  "creationDate": "29/05/2017",
+  "public": true,
+  "description": "Quiz created for testing purposes"
+}

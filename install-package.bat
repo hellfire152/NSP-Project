@@ -16,5 +16,6 @@ call npm install uuid
 call npm install promise
 call npm install cookie
 call npm install pug
+call npm install uglify-js -g
 cls
 echo All required modules installed!
