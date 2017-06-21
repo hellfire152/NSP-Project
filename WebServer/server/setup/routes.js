@@ -13,6 +13,10 @@ module.exports = function(data) {
     uuid = data.uuid,
     queryOfUser = data.queryOfUser;
   //routing
+  // //handle controller requests
+  // app.get('/controller*.js', function(req, res) {
+  //   res.sendFile(`${dirname}/site${req.path}`)
+  // })
   //sends index.html when someone sends a https request
   app.get('/', function(req, res){
     res.sendFile(dirname + "/site/index.html");
@@ -69,14 +73,16 @@ module.exports = function(data) {
     }
   });
 
-  /*TESTING*/
-  app.get('/test', function(req, res) {
-    res.render('test', {});
+  //handling requests for .html, controller or css files
+  app.get('((/resources|/controller|/css)*)|*.html', function(req, res) {
+    res.sendFile(`${dirname}/site${req.path}`);
   });
 
   //handling all other requests (PUT THIS LAST)
   app.get('/*', function(req, res){
-    res.sendFile(dirname + "/site" + req.path);
+    console.log(req.params);
+    console.log(req.path);
+    res.render(req.params[0]);
   });
 
   //handling form submits

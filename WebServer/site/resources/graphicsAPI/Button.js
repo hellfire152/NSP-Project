@@ -10,10 +10,10 @@
 class Button {
   constructor(textures, width, onclick, args) {
     //button setup
-    let s = this._sprite;
     this._textures = textures;
 
-    s = new PIXI.Sprite(this._textures["default.png"]);
+    //initializing the sprite
+    let s = new PIXI.Sprite(this._textures["default.png"]);
     s.width = width;
     s.interactive = true;
 
@@ -40,7 +40,10 @@ class Button {
 
     //positioning by setting both anchors in the middle
     this._text.anchor.x = this._text.anchor.y = 0.5;
-    this._sprite.anchor.x = this._sprite.anchor.y = 0.5;
+    s.anchor.x = s.anchor.y = 0.5;
+
+    //expose sprite
+    this.sprite = s;
   }
 
   //set onclick of the button
