@@ -1,18 +1,20 @@
 <html>
+  <head>
+    <script src='resources/constants.js'></script>
+    <script src='socket.io/socket.io.js'></script>
+    <script src='resources/pixi.js'></script>
+    <script src="https://code.jquery.com/jquery-latest.js"></script> <!--HTTPS -->
+  </head>
   <body>
-      <form onsubmit="" method="POST" action="">
-        <h2>Retrieve quiz question</h2>
-				<br>
-        <input type = "text" name = "quizId" placeholder = "Quiz ID" autocomplete="off"/>
-        <br>
-        <button>GET ALL QUIZ</button>
-				<table id="button">
-					<tr>
-						<td><input type = "submit" value = "Submit" id ="submit"></td>
-						<td><input type = "reset" value = "Clear" id ="clear" ></td>
-					</tr>
-				</table>
-				<p id="print"></p>
-			</form>
+    <div id='dbRetrieveQuiz'>
+      <h1>Database Testing</h1>
+      <form action='/host-room' method='POST'>
+        <label>Quiz ID:
+          <input type="text" name="quizId" id="quizId"/>
+        </label>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <script src="/controller/dbTest.js"></script>
   </body>
 </html>
