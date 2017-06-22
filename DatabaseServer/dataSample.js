@@ -153,7 +153,6 @@ module.exports = {
   retrieveQuestion : function(){
     return quizSet = {
       data : {
-        sessionId : "123",
         type : C.DB.SELECT.QUESTION,
         quizId : 23
       }

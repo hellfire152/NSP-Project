@@ -157,7 +157,7 @@ function _decodeAll(encodedTextAll){
 
 //Create new iv by geting first 16 chracter in cipher text.
 function _newIv(text){
-  var newIv = await encode(text.substr(0, 16));
+  var newIv = _encode(text.substr(0, 16));
   return newIv[0];
 }
 
