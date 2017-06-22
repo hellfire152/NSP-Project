@@ -14,7 +14,7 @@ module.exports = function(data) {
     queryOfUser = data.queryOfUser;
   //routing
   //handling requests for .html, controller, css or resource files
-  app.get('((/resources|/controller|/css)*)|*.html', function(req, res) {
+  app.get('((/resources|/controller|/css)*)|*.html|favicon.ico', function(req, res) {
     res.sendFile(`${dirname}/site${req.path}`);
   });
   //sends index.html when someone sends a https request

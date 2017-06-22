@@ -12,6 +12,6 @@
   "contributors": [],
   "dependencies": {},
   "scripts": {
-    "start": "node server.js"
+    "start": "./run-server.bat password"
   }
 }
