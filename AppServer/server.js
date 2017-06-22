@@ -45,11 +45,12 @@ conn.on("end", function() {
 
 // Handle data from client
 conn.on("data", async function(input) {
+  console.log("INININININ");
   try {
     let data = JSON.parse(input);
     console.log("FROM WEBSERVER"); //Log all data received from the WebServer
     console.log(data);
-
+    // console.log("[Data type]: " + data.data.type);
     //if there's an Error
     if (data.err) {
       console.log("ERROR RECEIVED, CODE: " + data.err);
@@ -85,6 +86,10 @@ conn.on("data", async function(input) {
             'conn': connection,
             'sendToServer': sendToServer
           });
+        } else if (!(data.data.type === undefined)){  //database
+          console.log("[Sending request to database]");
+          sendToServer(dbConn, data);
+
         } else {
           response = await handleSpecial({  //special
             'data' : data,
@@ -96,7 +101,7 @@ conn.on("data", async function(input) {
         //logging and response
         console.log("AppServer Response: ");
         console.log(response);
-        sendToServer(conn, response);
+        // sendToServer(conn, response);
       } else if(data.password === pass) { //valid password
         console.log("WebServer Validated");
         conn.auth = true;
@@ -126,7 +131,7 @@ dbConn.on('data', function(data) {
 });
 
 //Test sample data
-sendToServer(dbConn, sampleData.loginStudentAcc());
+// sendToServer(dbConn, sampleData.loginStudentAcc());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer
@@ -136,6 +141,8 @@ Use this function to send data to database
 e.g.: sendToServer(dbConn, json);
 */
 async function sendToServer(conn, json) {
+  console.log("HELLO");
+  console.log(json);
   conn.write(JSON.stringify(json));
 }
 

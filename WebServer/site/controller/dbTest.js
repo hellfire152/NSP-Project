@@ -23,6 +23,7 @@ function send(data) {
   // if (data.event === undefined && data.game === undefined) throw new Error("Event/game type not defined!");
   encode(data)
     .then(encodedData => {
+      console.log(socket);
       socket.emit('send', encodedData);
     });
 }

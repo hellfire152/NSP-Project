@@ -43,8 +43,11 @@ var server = net.createServer(function(conn){
   });
 
   conn.on('data', async function(input){
+    console.log("Request recieved from appserver");
+    console.log(input);
     try{
       data = (JSON.parse(input)).data;
+      console.log(data);
       // C = input.C;
       console.log("DB TYPE: " +data.type);
       switch(data.type) {
