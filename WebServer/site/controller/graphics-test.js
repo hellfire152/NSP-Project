@@ -12,6 +12,8 @@ var app = new PIXI.Application({
 //object to store sprite for easier reference later
 var sprites = {};
 
+var questionDisplay;
+
 app.loader
   .add('yellow-button', '/resources/graphics/buttons/yellow-button.json')
   .add('blue-button', '/resources/graphics/buttons/blue-button.json')
@@ -32,10 +34,13 @@ app.loader
     //testing top bar
     var topBar = new TopBar(resources, WIDTH, 'hellfire152');
 
-    //var questionDisplay = new QuestionDisplay(width);
-
-    app.stage.addChild(buttonContainer.sprite);
+    //testing short answer text box
+    var shortAnsTextField = new ShortAnswerTextField(WIDTH / 2, 50);
+    shortAnsTextField.y = topBar.height;
+    
     app.stage.addChild(topBar.sprite);
+    app.stage.addChild(shortAnsTextField.sprite);
+    app.stage.addChild(buttonContainer.sprite);
   });
 
 window.onload = () => {
