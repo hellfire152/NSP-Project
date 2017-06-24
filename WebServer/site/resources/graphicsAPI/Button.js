@@ -7,12 +7,12 @@
 
   Author: Jin Kuan
 */
-class Button {
+class Button extends DisplayElement {
   constructor(textures, width, onclick, args) {
+    super();
+
     //button setup
     this._textures = textures;
-
-    this._container = new PIXI.Container();
 
     //initializing the sprite
     let s = new PIXI.Sprite(this._textures["default.png"]);
@@ -64,32 +64,12 @@ class Button {
     this._sprite.on('pointertap', fn);
   }
 
-  get sprite() {
-    return this._container;
-  }
-
-  set sprite(s) {
-    this._sprite = s;
-  }
-
-  get width() {
-    return this._container.width;
-  }
-
-  get height() {
-    return this._container.height;
-  }
-
   set text(t) {
     this._text.text = t;
   }
 
   set position(p) {
     ([this._container.x, this._container.y] = p);
-  }
-
-  set filters(f) {
-    this._sprite.filters = f;
   }
 
   get scale() {

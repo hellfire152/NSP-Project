@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 console.log("hello");
 var question = [{
@@ -26,6 +27,8 @@ question.forEach(function(individualQuestion){
   console.log(individualQuestion.time);
 })
 
+=======
+>>>>>>> origin/master
 [
   {
     "prompt": "1+1=?",
@@ -42,5 +45,10 @@ question.forEach(function(individualQuestion){
   }
 ]
 
+<<<<<<< HEAD
 
 console.log(("abcD" === "abcd"));
+=======
+var x;
+console.log(x.range(1,10))
+>>>>>>> origin/master

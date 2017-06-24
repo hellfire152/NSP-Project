@@ -13,14 +13,17 @@ module.exports = function(data) {
     queryOfUser = data.queryOfUser;
   //routing
   //handling requests for .html, controller, css or resource files
-  app.get('((/resources|/controller|/css)*)|*.html', function(req, res) {
+  app.get('((/resources|/controller|/css)*)|*.html|/favicon.ico', function(req, res) {
     res.sendFile(`${dirname}/site${req.path}`);
   });
   //sends index.html when someone sends a https request
   app.get('/', function(req, res){
     res.sendFile(dirname + "/site/index.html");
   });
-
+//Nigel area
+  app.get('/nigel', function(req,res){
+    res.sendFile(dirname + "/site/dbTest.html")
+  })
   //handling play path
   app.get('/play', function(req, res) { //submitted a form for playing in a room
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times

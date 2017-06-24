@@ -5,8 +5,9 @@
 
   Author: Jin Kuan
 */
-class TopBar {
+class TopBar extends DisplayElement {
   constructor(resources, width, name) {
+    super();
     //initializing variables
     this._width = width;
     this._container = new PIXI.Sprite(resources['topbar-background'].texture);
@@ -36,25 +37,5 @@ class TopBar {
     //correct positioning
     p.score.x = this._width - 5;
     p.correctAnswers.x = p.score.x - p.score.width - 5;
-  }
-
-  get sprite() {
-    return this._container;
-  }
-
-  get x() {
-    return this._container.x;
-  }
-
-  get y() {
-    return this._container.y;
-  }
-
-  set x(a) {
-    this._container.x = a;
-  }
-
-  set y(b) {
-    this._container.y = b;
   }
 }
