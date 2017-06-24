@@ -2,8 +2,7 @@
 <html>
 
 <head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src='/client/constants.js'></script>
+  <script src='/resources/constants.js'></script>
   <script src='socket.io/socket.io.js'></script>
   <script src='resources/pixi.js'></script>
 
@@ -12,7 +11,7 @@
 
 <body>
   <div id='form'>
-<form action="/add-question.html" method='POST'>
+<form action="/create-quiz" method='POST'>
 
 <title> Create Quiz </title>
 
@@ -34,9 +33,9 @@
  	   <input type="radio" value="private" name= "typeOfQuiz">Private Quiz<br>
 
 		 <input type="reset" class="cancel" value="Cancel">
-     <input type="submit" value="Submit" onclick="create_quiz()">
+     <input type="submit" value="Submit">
 
-    <script src="client/create-quiz.js">
+    <script src="controller/create-quiz.js">
     </script>
 
 

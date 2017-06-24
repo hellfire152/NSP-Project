@@ -1,5 +1,5 @@
 /**
-  Test file for validating the test version of the room creating.
+  Test file for validating the test version of the adding questions
 
   Author: Chloe
 */
@@ -10,19 +10,22 @@ module.exports = function(cipher, appConn) {
     console.log(cipher);
 
     // check name + description not empty, ' ' -> id
-    req.checkBody('nameofQuiz', 'Name of quiz must be specified').notEmpty().isString;
-    req.checkBody('desc', 'Description must be specified').notEmpty().isString;
+    req.checkBody('prompt', 'Prompt must be specified').notEmpty().isString;
+    req.checkBody('solution', 'Solution must be specified').notEmpty().isString;
 
-    req.sanitize('desc').escape();
-    req.sanitize('nameofQuiz').escape();
-    req.sanitize('desc').trim();
-    req.sanitize('nameofQuiz').trim();
+    req.sanitize('prompt').escape();
+    req.sanitize('solution').escape();
+    req.sanitize('prompt').trim();
+    req.sanitize('solution').trim();
 
-    console.log(req.body.nameofQuiz);
-    console.log(req.body.desc);
-    console.log(req.body.typeOfQuiz);
+    console.log(req.body.prompt);
+    console.log(req.body.type);
+    console.log(req.body.choice);
+    console.log(req.body.solution);
+    console.log(req.body.time);
     console.log(req.body.reward);
     console.log(req.body.penalty);
+
     var errors = req.validationErrors();
 
     if(errors) {
@@ -40,7 +43,7 @@ module.exports = function(cipher, appConn) {
         })
         .then(function(cookieData) {
         res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-        res.redirect('/create-quiz?nameofQuiz=' +req.body.nameofQuiz); // For example, if the application is on
+        res.redirect('/add-question?prompt=' +req.body.prompt); // For example, if the application is on
         //http://example.com/admin/post/new, the following would redirect to the URL http://example.com/admin:
       });
     }

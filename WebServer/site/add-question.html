@@ -2,36 +2,47 @@
 <html>
 
 <head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src='/client/constants.js'></script>
+  <script src='/resources/constants.js'></script>
   <script src='socket.io/socket.io.js'></script>
   <script src='resources/pixi.js'></script>
 
 </head>
 
-
 <body>
   <div id='form'>
-<form action="/c" method='POST'>
+<form action="/add-question" method='POST'>
 
 <title> Add Question </title>
 
 <h1>Add Question</h1>
 
 <label>Prompt</label>
-      <input type="text" id="prompt"name="prompt"> <br />
+      <input type="text" id="prompt" name="prompt"> <br />
 
 <label>Type</label>
-      <input type="textarea" id="type" name="type"><br />
+      <input type="radio" id="mcq" name="type" value='0' >MCQ
+      <input type="radio" id="short-answer" name="type" value='1'>Short Answer
+      <br />
+      <!-- come back to this later  -->
+
 
 <label>Choices</label>
-      <input type="textarea" id="choices" name="choices"><br />
+     <input type="textarea" id="choice1" class="1" name="choices" disabled><br />
+     <input type="textarea" id="choice2" class="2" name="choices" disabled><br />
+     <input type="textarea" id="choice3" class="3" name="choices" disabled><br />
+     <input type="textarea" id="choice4" class="4" name="choices" disabled><br />
 
 <label>Solution</label>
       <input type="textarea" id="solution" name="solution"><br />
 
-<!-- <label>Time</label> -->
-      <!-- <input type="textarea" id="time" name="time"><br /> -->
+<label>Time</label>
+      <select id="time" name="time">
+        <option value="5s">5 seconds</option>
+        <option value="10s">10 seconds</option>
+        <option value="15s">15 seconds</option>
+        <option value="20s">20 seconds</option>
+      </select>
+      <br />
 
 <label>Reward</label>
       <input type="number" id="reward" name="reward"><br />
@@ -40,9 +51,9 @@
       <input type="number" id="penalty" name="penalty"><br />
 
 		 <input type="reset" class="cancel" value="Cancel">
-     <input type="submit" value="Submit" onclick="create_quiz()">
+     <input type="submit" value="Submit">
 
-    <script src="client/create-quiz.js">
+     <script src="controller/add-question.js">
     </script>
 
 

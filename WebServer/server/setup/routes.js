@@ -1,10 +1,7 @@
 /*
   Includes functions that handles all GET or POST requests.
-
   Author: Jin Kuan
 */
-
- // relative path - path to somewhere
 module.exports = function(data) {
   const C = data.C;
   let app = data.app,
@@ -23,12 +20,6 @@ module.exports = function(data) {
   app.get('/', function(req, res){
     res.sendFile(dirname + "/site/index.html");
   });
-
-
-  // app.get('/createquiz', function(req, res) {
-  //   res.sendFile(dirname + "/site/create-quiz.html");
-  // });
-
 
   //handling play path
   app.get('/play', function(req, res) { //submitted a form for playing in a room
@@ -88,12 +79,11 @@ module.exports = function(data) {
     res.render(req.path.substring(1));
   });
 
-
-
   //handling form submits
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
   app.post('/create-quiz', require('../validate-create-quiz.js')(cipher, appConn));
+  app.post('/add-question', require('../validate-add-question.js')(cipher, appConn));
 
 
 }
