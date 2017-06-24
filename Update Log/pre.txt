@@ -208,7 +208,7 @@ except on days which I go out with friends (3) PRETTY SURE THAT'S STILL OK.
 
 As for my progress so far, I've written some untested code for the gamemodes,
 and leaving it until I finish doing the thing I'm currently working on:
-The grahpicsAPI folder!
+The graphicsAPI folder!
 This folder will contain all the classes and stuff for the PIXI graphics elements
 that are used in the quiz game. Most likely animations as well. The point of this
 is to abstract the actual graphics creation and update functions that I will need

@@ -4,8 +4,9 @@
 
   Author: Jin Kuan
 */
-class ShortAnswerTextField {
+class ShortAnswerTextField extends DisplayElement{
   constructor(width, height) {
+    super();
     //textbox
     this._container = new PIXI.Graphics();
     this._container
@@ -18,12 +19,15 @@ class ShortAnswerTextField {
       'wordWrap' : true,
       'wordWrapWidth' : width - 10
     });
+    this._text.anchor.set(0.5,0.5);
+    this._text.x = this._container.width / 2;
+    this._text.y = this._container.
     this._container.addChild(this._text);
 
     document.onkeydown = ((textField) => {
       return (e) => {
-        if(e.which == 17 || e.which == 18) e.stopPropagation(); //ctrl or alt keys
-        else if(e.which == 13) ShortAnswerTextField.submit(send, textfield.text); //enter key
+        if(e.which == 17 || e.which == 18); //ctrl or alt keys (do nothing)
+        else if(e.which == 13) ShortAnswerTextField.submit(send, textField.text); //enter key
         else if(e.which == 8)textField.backspace(); //backspace key
         else {
           let char = String.fromCharCode(e.which);

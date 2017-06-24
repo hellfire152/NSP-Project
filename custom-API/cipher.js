@@ -110,7 +110,7 @@ async function decryptJSON(cipher) {
   }
 }
 
-//Encrypt all data in the object and then store to database
+//Encrypt all data in the object
 async function encryptDbData(plain) {
   for (var key in plain) {
     if (plain.hasOwnProperty(key)) {
@@ -122,7 +122,7 @@ async function encryptDbData(plain) {
   return plain;
 }
 
-//Decrypt all data in the object and then pass it to appserver.
+//Decrypt all data in the object
 async function decryptDbData(cipherText) {
   var plainText = [];
   for(let cipher of cipherText){

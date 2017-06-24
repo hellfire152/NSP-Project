@@ -3,10 +3,10 @@
 
   Author: Jin Kuan
 */
-class LoadingBar {
+class LoadingBar extends DisplayElement {
   constructor(max, width) {
     //container to hold all the sprites created
-    this._container = new PIXI.Container();
+    super();
 
     //total number of things to load
     this._max = max;
@@ -45,23 +45,11 @@ class LoadingBar {
     this.container.scale.y = scaleFactor;
   }
 
-  get sprite() {
-    return this._container;
-  }
-
   set text(t) {
     this._progressText.text = t;
   }
 
   get text() {
     return this._progressText.text;
-  }
-
-  get x() {
-    return this._container.x;
-  }
-
-  set x(a) {
-    this._container.x = a;
   }
 }
