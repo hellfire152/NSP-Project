@@ -1,4 +1,5 @@
 
+
 console.log("hello");
 var question = [{
   "prompt": "1+1=?",
@@ -27,6 +28,7 @@ question.forEach(function(individualQuestion){
   console.log(individualQuestion.time);
 })
 
+
 [
   {
     "prompt": "1+1=?",
@@ -44,4 +46,8 @@ question.forEach(function(individualQuestion){
 ]
 
 
+
 console.log(("abcD" === "abcd"));
+
+var x;
+console.log(x.range(1,10))

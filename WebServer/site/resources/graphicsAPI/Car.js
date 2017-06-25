@@ -6,11 +6,11 @@
 
   Author: Jin Kuan
 */
-class Car {
+class Car extends DisplayElement {
   constructor(textures, width) {
+    super();
     this._textures = textures;
     //initializing various variables that will be used
-    this.container = new PIXI.Container();
     this._ticker = new PIXI.ticker.Ticker();
     this._ticker.autoStart = false;
     this._ticker.stop();
@@ -165,33 +165,4 @@ class Car {
       }
     }
   }
-  //return container for rendering
-  get sprite() {
-    return this.container;
-  }
-
-  get width() {
-    return this.container.width;
-  }
-
-  set width(w) {
-    this.container.width = w;
-  }
-
-  get x() {
-    return this.container.x;
-  }
-
-  set x(x) {
-      this.container.x = x
-  }
-
-  get y() {
-    return this.container.y;
-  }
-
-  set y(y) {
-    this.container.y = y;
-  }
-
 }

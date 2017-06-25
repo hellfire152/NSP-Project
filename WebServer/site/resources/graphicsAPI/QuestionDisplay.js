@@ -3,6 +3,71 @@
 
   Author: Jin KuN
 */
-class QuestionDisplay {
-  
+class QuestionDisplay extends DisplayElement {
+  constructor(width, paddingX, paddingY, maxHeight) {
+    super();
+    this._paddingX = paddingX;
+    this._paddingY = paddingY;
+    this._maxHeight = maxHeight;
+    this._fontStyle = {
+      'align' : 'center',
+      'fontSize' : 26,
+      'wordWrap' : true,
+      'wordWrapWidth' : width - paddingX * 2
+    };
+
+    //initializing the PIXI text object
+    this._text = new PIXI.Text('', this._fontStyle);
+    this._text.anchor.set(0.5, 0.5);
+
+    this._background = new PIXI.Graphics();
+    this._background  //draw a white square for a background
+      .beginFill(0xffffff)
+      .drawRect(0, 0, 300, 300)
+      .endFill();
+
+    this._background.width = width;
+    this._container.addChild(this._background);
+    this._container.addChild(this._text);
+    this.resize();
+  }
+
+  minimize() {
+    this._fontStyle.fontSize = 16; //reduce size by half
+    this.resize();
+  }
+
+  maximize(height) {
+    this._fontStyle.fontSize = 26; //reset font size
+    this._background.height = height;
+    //expand to the limit
+    (async function(questionDisplay) {
+      for(;questionDisplay._text.height < height - questionDisplay._paddingY * 2;
+         questionDisplay._fontStyle.fontSize++) {
+        questionDisplay._text.style = questionDisplay._fontStyle;
+      }
+    })(this);
+    //reposition
+    this._text.x = this._background.width / 2;
+    this._text.y = this._background.height / 2;
+  }
+
+  resize() {
+    //making sure the text fits, reduce font size if needed
+    for(let first = true; first || this._background.height > this._maxHeight; this._fontStyle.fontSize--) {
+      if(first) first = false;
+      this._text.style = this._fontStyle;
+
+      let height = this._text.height;
+      this._background.height = height + this._paddingY * 2;
+    }
+    //reposition
+    this._text.x = this._background.width / 2;
+    this._text.y = this._background.height / 2;
+  }
+
+  set text(t) {
+    this._text.text = t;
+    this.resize();
+  }
 }
