@@ -37,7 +37,7 @@ function createStudentAccount(input){
       type : input.type,
       account : {
         email : input.email,
-        password_hash : input.passowrd,
+        password_hash : input.password,
         name : input.name,
         username : input.username
       },
