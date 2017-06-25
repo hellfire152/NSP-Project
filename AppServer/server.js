@@ -45,12 +45,11 @@ conn.on("end", function() {
 
 // Handle data from client
 conn.on("data", async function(input) {
-  console.log("INININININ");
   try {
     let data = JSON.parse(input);
     console.log("FROM WEBSERVER"); //Log all data received from the WebServer
     console.log(data);
-    // console.log("[Data type]: " + data.data.type);
+
     //if there's an Error
     if (data.err) {
       console.log("ERROR RECEIVED, CODE: " + data.err);
@@ -70,6 +69,10 @@ conn.on("data", async function(input) {
             'C' : C,
             'allRooms' : allRooms
           });
+        } else if (!(data.data.type === undefined)){ //Data base realted event.
+          response = data;
+          conn = dbConn;
+
         } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
           response = await handleIo({
             'data' : data,
@@ -86,10 +89,6 @@ conn.on("data", async function(input) {
             'conn': connection,
             'sendToServer': sendToServer
           });
-        } else if (!(data.data.type === undefined)){  //database
-          console.log("[Sending request to database]");
-          sendToServer(dbConn, data);
-
         } else {
           response = await handleSpecial({  //special
             'data' : data,
@@ -97,11 +96,12 @@ conn.on("data", async function(input) {
             'allRooms' : allRooms
           });
         }
-
         //logging and response
         console.log("AppServer Response: ");
         console.log(response);
-        // sendToServer(conn, response);
+
+        sendToServer(conn, response);
+
       } else if(data.password === pass) { //valid password
         console.log("WebServer Validated");
         conn.auth = true;
@@ -125,9 +125,9 @@ var dbConn = net.connect(7070);
 //Recieve data from database
 dbConn.on('data', function(data) {
   console.log("[Data have been recieved form database]");
-  var dataObj = JSON.parse(data);
-  console.log(dataObj);
-  //TODO: Send dataObj to webserver
+  var inputDataObj = JSON.parse(data);
+  console.log(inputDataObj);
+  sendToServer(connection, inputDataObj)
 });
 
 //Test sample data
@@ -141,8 +141,6 @@ Use this function to send data to database
 e.g.: sendToServer(dbConn, json);
 */
 async function sendToServer(conn, json) {
-  console.log("HELLO");
-  console.log(json);
   conn.write(JSON.stringify(json));
 }
 

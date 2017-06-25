@@ -1,16 +1,47 @@
 var socket = io();
-$('#dbRetrieveQuiz').submit(function(){
-  var type = C.DB.SELECT.QUESTION;
 
-  var retrieveQuiz = {
-    data : {
-      type : type,
-      quizId : $('#quizId').val()
-    }
-  }
+$('#dbCreateStudentAccount').submit(function(){
+  var data = formatData({
+    type : C.DB.CREATE.STUDENT_ACC,
+    email : $("#email").val(),
+    password : $("#password").val(),
+    name : $("#name").val(),
+    username : $("#username").val(),
+    school : $("#school").val()
+  });
 
-  send(retrieveQuiz);
+  send(data);
+  return false;
+});
 
+$('#dbLoginAccount').submit(function(){
+  var data = formatData({
+    type : C.DB.SELECT.USER_ACCOUNT,
+    user : $("#user").val(),
+    password : $("#loginPassword").val(),
+  });
+
+  send(data);
+  return false;
+});
+
+$('#dbRetrieveQuestion').submit(function(){
+  var data = formatData({
+    type : C.DB.SELECT.QUESTION,
+    quizId : $("#quizId").val(),
+  });
+
+  send(data);
+  return false;
+});
+
+$('#dbSearchQuiz').submit(function(){
+  var data = formatData({
+    type : C.DB.SELECT.SEARCH_QUIZ,
+    searchItem : $("#search").val(),
+  });
+
+  send(data);
   return false;
 });
 
@@ -20,10 +51,16 @@ async function encode(json) {
 }
 
 function send(data) {
-  // if (data.event === undefined && data.game === undefined) throw new Error("Event/game type not defined!");
+  console.log("Data send to webserver");
+  console.log(data);
   encode(data)
     .then(encodedData => {
-      console.log(socket);
       socket.emit('send', encodedData);
     });
 }
+
+//Recieve data from webserver
+socket.on('receive', function(data){
+  console.log("Data recived from webserver");
+  console.log(data);
+});

@@ -54,6 +54,7 @@ async function handleRecieveAccount(data){
 
 //Seperate the words in a string of text, and the store each individual word in an array.
 async function handleSearchQuiz(searchItem){
+  console.log(searchItem);
   var searchArr = [];
   var word = "";
   for(i=0 ; i<searchItem.searchItem.length ; i++){

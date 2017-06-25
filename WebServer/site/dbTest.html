@@ -6,8 +6,53 @@
     <script src="https://code.jquery.com/jquery-latest.js"></script> <!--HTTPS -->
   </head>
   <body>
-    <div id='dbRetrieveQuiz'>
-      <h1>Database Testing</h1>
+    <h1>Database Testing</h1>
+    <div id='dbCreateStudentAccount'>
+      <h2>Create student account</h2>
+      <form action='/host-room' method='POST'>
+        <label>Name:
+          <input type="text" name="name" id="name"/>
+        </label>
+        <br>
+        <label>Username:
+          <input type="text" name="username" id="username"/>
+        </label>
+        <br>
+        <label>Email:
+          <input type="text" name="email" id="email"/>
+        </label>
+        <br>
+        <label>Password:
+          <input type="password" name="password" id="password"/>
+        </label>
+        <br>
+        <label>School:
+          <input type="text" name="school" id="school"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbLoginAccount'>
+      <h2>Login Account</h2>
+      <form action='/host-room' method='POST'>
+        <label>Username:
+          <input type="text" name="username" id="user"/>
+        </label>
+        <br>
+        <label>Password:
+          <input type="password" name="password" id="loginPassword"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbRetrieveQuestion'>
+      <h2>Retrieve Question</h2>
       <form action='/host-room' method='POST'>
         <label>Quiz ID:
           <input type="text" name="quizId" id="quizId"/>
@@ -15,6 +60,26 @@
         <input type='submit' value='Submit' /><br>
       </form>
     </div>
+    <br>
+    <div id='dbSearchQuiz'>
+      <h2>Search Quiz</h2>
+      <form action='/host-room' method='POST'>
+        <label>Search:
+          <input type="text" name="search" id="search"/>
+        </label>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <!-- <div id='dbSearchQuiz'>
+      <h2>Search Quiz</h2>
+      <form action='/host-room' method='POST'>
+        <label>Search:
+          <input type="text" name="search" id="search"/>
+        </label>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div> -->
+    <script src="/controller/databaseFormat.js"></script>
     <script src="/controller/dbTest.js"></script>
   </body>
 </html>

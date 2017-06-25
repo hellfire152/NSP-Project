@@ -14,5 +14,16 @@
   }
 ]
 
-var x;
-console.log(x.range(1,10))
+var x = {
+  DB : {
+    CREATE : {
+      INFO : "YAY"
+    },
+    DELETE : {
+      INFO : "NO"
+    }
+  }
+}
+var value = x.DB.CREATE.INFO;
+
+console.log(value == x);
