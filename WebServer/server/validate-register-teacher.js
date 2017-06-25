@@ -13,16 +13,21 @@ module.exports =function(cipher, appConn){
     var username = req.body.username;
     var email = req.body.email;
     var password = req.body.password;
+    var confirmPassword = req.body.confirmPassword;
+    var school=req.body.school;
 
+    console.log(school);
         req.sanitize('username').escape();
         req.sanitize('email').escape();
         req.sanitize('password').escape();
+        req.sanitize('school').escape();
         req.sanitize('username').trim();
         req.sanitize('email').trim();
         req.sanitize('password').trim();
+        req.sanitize('school').trim();
 
     console.log(username);
-    if (username!="" && email!="" && password!=""){
+    if (username!="" && email!="" && password!=""&&school!=""){
       var schema = new passwordValidator();
       schema
       .is().min(8)
@@ -37,30 +42,29 @@ module.exports =function(cipher, appConn){
 
 
       if (passwordCheck){
-        if(!error){
-          console.log(error);
-          console.log("pass");
-          console.log("HOST FORM DATA: ");
-          console.log(req.body);
-          cipher.encryptJSON({
-            "username": req.body.username,
-            "email":req.body.email,
-            "password": req.body.password
-          })
-            .catch(function (err) {
-              throw new Error('Error parsing JSON!');
+
+          if(!error){
+            console.log(error);
+            console.log("pass");
+            cipher.encryptJSON({
+              "usernam": req.body.username,
+              "password": req.body.password,
+              "school":req.body.school
             })
-            .then(function(cookieData) {
-            res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-            res.redirect('/host?quizId=' +req.body.quizId);
-          });
-        }
-        else{
+              .catch(function (err) {
+                throw new Error('Error parsing JSON!');
+              })
+              .then(function(cookieData) {
+              res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
+              res.redirect('/login?room=' +req.body.room);
+            });
+          }
+          else{
 
-          console.log("FAIL");
+            console.log("FAIL");
 
-          res.redirect('/login');
-        }
+            res.redirect('/registerstud');
+          }
       }
 
       else{
@@ -70,7 +74,7 @@ module.exports =function(cipher, appConn){
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.redirect('/login');
+          res.redirect('/registerteach');
 
 
         }
@@ -86,12 +90,15 @@ module.exports =function(cipher, appConn){
         if(password==""){
           console.log("Please enter your password");
         }
+        if(confirmPassword==""){
+          console.log("Please enter your password");
+        }
         if(email==""){
           console.log("Please enter your email");
         }
         console.log("never fill in all");
 
-        res.redirect('/login');
+        res.redirect('/registerteach');
         return;
 
     }

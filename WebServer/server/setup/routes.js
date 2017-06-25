@@ -76,10 +76,29 @@ module.exports = function(data) {
     }
   });
 
-
+// var passport=require('passport');
+// var flash = require ('connect-flash');
+// app.use(flash());
+// app.use(passport.initialize());
+// app.use(passport.session());
   //handling login
+  var express=require('express');
+  // var cookieParser=require('cookie-parser');
+  // var bodyParser= require('body-parser');
+  var session = require('express-session');
+  // app.use(bodyParser());
+  // app.use(cookieParser('secret'));
+  app.use(session());
   app.get('/login', function(req, res){
     res.render('login',{title: 'Login',success:req.session.success, errors:req.session.errors});
+    req.session.errors=null;
+  });
+  app.get('/registerstud', function(req, res){
+    res.render('register-student',{title: 'Register(Student)',success:req.session.success, errors:req.session.errors});
+    req.session.errors=null;
+  });
+  app.get('/registerteach', function(req, res){
+    res.render('register-teacher',{title: 'Register(Teacher)',success:req.session.success, errors:req.session.errors});
     req.session.errors=null;
   });
   //handling all other
@@ -100,4 +119,6 @@ module.exports = function(data) {
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
   app.post('/login-room', require('../validate-login-room.js')(cipher, appConn));
+  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn));
+    app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn));
 }
