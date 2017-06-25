@@ -62,6 +62,9 @@ module.exports = function(data) {
         data.id = socket.userId;  //add userId to the sent data
         data.roomNo = socket.roomNo; //add roomNo (if applicable)
 
+        //TODO: Need to find a better solution
+        data.password = pass //Temp solution
+
         console.log("WebServer to AppServer Data:");
         console.log(data);
         appConn.write(JSON.stringify(data)); //to game server

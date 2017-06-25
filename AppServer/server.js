@@ -69,7 +69,8 @@ conn.on("data", async function(input) {
             'C' : C,
             'allRooms' : allRooms
           });
-        } else if (!(data.data.type === undefined)){ //Data base realted event.
+        } else if (!(data.data.type === undefined)){
+          // sendToServer(dbConn, data); //Send to database server
           response = data;
           conn = dbConn;
 
