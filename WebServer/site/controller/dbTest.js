@@ -1,5 +1,5 @@
 var socket = io();
-
+var output;
 $('#dbCreateStudentAccount').submit(function(){
   var data = formatData({
     type : C.DB.CREATE.STUDENT_ACC,
@@ -62,5 +62,6 @@ function send(data) {
 //Recieve data from webserver
 socket.on('receive', function(data){
   console.log("Data recived from webserver");
-  console.log(data);
+  output = JSON.parse(data);
+  console.log(output);
 });

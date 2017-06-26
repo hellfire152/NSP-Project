@@ -51,7 +51,6 @@ module.exports = async function(input) {
       case C.SEND_TO.USER: {
         let t = response.targetId;
         delete response.targetId;
-        console.log("This is the target: " + t);
         sendToUser(response, t);
         break;
       }
@@ -84,7 +83,6 @@ function sendToAll(data) {
   io.of('/').emit('receive', encode(data));
 }
 function sendToUser(data, user) {
-  console.log("SENDING TO USER YAY!");
   socketOfUser[user].emit('receive', encode(data));
 }
 function sendToRoom(data, room) {

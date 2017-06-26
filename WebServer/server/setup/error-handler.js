@@ -58,7 +58,6 @@ module.exports = async function(input) {
 }
 
 function sendError(socketError, errormsg) {
-  console.log("DFSYUGIHOJHGFDFGYHU");
   console.log(socketOfUser);
   console.log(response.id);
   if(socketError) {

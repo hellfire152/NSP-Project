@@ -127,7 +127,6 @@ var dbConn = net.connect(7070);
 dbConn.on('data', function(data) {
   console.log("[Data have been recieved form database]");
   var inputDataObj = JSON.parse(data);
-  console.log(inputDataObj);
   sendToServer(connection, inputDataObj)
 });
 
