@@ -1,5 +1,3 @@
-
-
 console.log("hello");
 var question = [{
   "prompt": "1+1=?",
@@ -8,7 +6,6 @@ var question = [{
   "solution": "Go away", //there is no solution in the choices
   "time": 20
 },
-
 {
   "prompt": "What is zero in Roman Numerals?",
   "type": 1,
@@ -27,27 +24,3 @@ question.forEach(function(individualQuestion){
   console.log(individualQuestion.solution);
   console.log(individualQuestion.time);
 })
-
-
-[
-  {
-    "prompt": "1+1=?",
-    "type": 1,
-    "choices": ["Window", "11", "2", "Some lame ass joke"],
-    "solution": "Go away",
-    "time": 20
-  },
-  {
-    "prompt": "What is zero in Roman Numerals?",
-    "type": 1,
-    "solution": " ",
-    "time": 20
-  }
-]
-
-
-
-console.log(("abcD" === "abcd"));
-
-var x;
-console.log(x.range(1,10))
