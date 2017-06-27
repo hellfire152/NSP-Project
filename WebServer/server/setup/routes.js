@@ -3,15 +3,15 @@
 
   Author: Jin Kuan
 */
+let uuid;
 module.exports = function(data) {
   const C = data.C;
   let app = data.app,
     dirname = data.dirname,
-    pendingResponses = data.pendingResponses,
     cipher = data.cipher,
     appConn = data.appConn,
-    uuid = data.uuid,
     queryOfUser = data.queryOfUser;
+  uuid = data.uuid;
   //routing
   //handling requests for .html, controller, css or resource files
   app.get('((/resources|/controller|/css)*)|*.html|/favicon.ico', function(req, res) {
@@ -36,17 +36,18 @@ module.exports = function(data) {
           console.log(reason);
         })
         .then(function(cookieData) {
-          //indirect reference as I can't directly srtingify it for some reason
-          let resNo = uuid();
-          pendingResponses[resNo] = res;
-          console.log('Response pending, no: ' +resNo);
-          appConn.write(JSON.stringify({ //AppServer does verification
+          appConn.send({
             'type': C.REQ_TYPE.JOIN_ROOM, //JOIN_ROOM
             'id': cookieData.id,
             'pass': cookieData.pass,
             'resNo': resNo,
             'roomNo': roomNo
-          }));
+          }, (response) => {
+            res.render('play', {
+              'roomNo' : response.roomNo,
+              'gamemode': response.gamemode
+            });
+          });
         });
     }
   });
@@ -61,18 +62,19 @@ module.exports = function(data) {
           console.log(reason);
         })
         .then(cookieData => {
-          let resNo = uuid();
-          pendingResponses[resNo] = res;
           console.log("COOKIE DATA: ");
           console.log(cookieData);
-
-          appConn.write(JSON.stringify({
-            'type': C.REQ_TYPE.HOST_ROOM,
+          appConn.send({
+            'type' : C.REQ_TYPE.HOST_ROOM,
             'id': cookieData.id,
             'pass': cookieData.pass,
-            'resNo': resNo,
             'quizId': quizId
-          }));
+          }, (response) => {
+            res.render('host', {
+              'roomNo' : response.roomNo,
+              'gamemode' : response.gamemode
+            });
+          });
         });
     }
   });
@@ -86,4 +88,10 @@ module.exports = function(data) {
   //handling form submits
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
+}
+
+function sendErrorPage(res, errormsg) {
+  res.render('error', {
+    'error': errormsg
+  });
 }

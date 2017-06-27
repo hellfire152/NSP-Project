@@ -13,15 +13,8 @@
 module.exports = function(data) {
   //extracting data...
   const C = data.C;
-  let dirname = data.dirname,
-    pass = data.pass,
-    io = data.io,
-    pendingResponses = data.pendingResponses,
-    cipher = data.cipher,
-    appConn = data.appConn,
-    cookie = data.cookie,
-    socketOfUser = data.socketOfUser,
-    roomOfUser = data.roomOfUser;
+  let {dirname, pass, io, pendingResponses, pendingAppResponses, cipher, appConn,
+    cookie, socketOfUser, roomOfUser} = data;
 
   //setting up forwarding of data between user and game server
   //short hand
@@ -70,8 +63,7 @@ module.exports = function(data) {
 
         console.log("WebServer to AppServer Data:");
         console.log(data);
-        appConn.write(JSON.stringify(data)); //to game server
-
+        appConn.send(data, null);
       } catch (err) {
         console.log(err);
         socket.emit('err', 'User to WebServer input Not a stringified JSON Object!\n Error Data:\n');
@@ -81,55 +73,34 @@ module.exports = function(data) {
     socket.on('disconnect', () => {
       console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
       delete socketOfUser[socket.userId];
-      appConn.write(JSON.stringify({
+      appConn.send({
         'special': C.SPECIAL.SOCKET_DISCONNECT,
         'id': socket.userId,
         'roomNo' : socket.roomNo
-      }));
+      }, null);
     });
   });
 
-  //from game server to user
+  //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
     try {
       let response = JSON.parse(input);
       console.log("AppServer Response: ");
       console.log(response);
-      if(response.err) {  //if there's an error
-        await errorHandler({
-          'response': response,
-          'C': C,
-          'pendingResponses': pendingResponses,
-          'roomOfUser' : roomOfUser,
-          'socketObj':  io.sockets.sockets,
-          'socketOfUser': socketOfUser
-        });
-      } else if(response.type !== undefined) { //custom type -> general website stuff
-         await handleOtherResponse({
-          'response': response,
-          'C' : C,
-          'pendingResponses': pendingResponses,
-          'dirname' : dirname,
-          'roomOfUser': roomOfUser
-        });
-      } else if (response.sendTo !== undefined) {
-        await handleIoResponse({
-          'response' : response,
-          'io': io,
-          'C': C,
-          'socketObj' : io.sockets.sockets,
-          'socketOfUser': socketOfUser
-        });
-      } else if(response.special !== undefined){ //no type -> socket.io stuff
-        await handleIoResponse({
+      if(response.special !== undefined){ //handling special stuff
+        await handleSpecialResponse({
+          'pendingResponses' : pendingResponses
           'response' : response,
           'io' : io,
           'C' : C,
           'socketObj' : io.sockets.sockets,
           'socketOfUser' : socketOfUser
         });
-      } else {  //handleSpecial
-        await handleSpecialResponse({
+      } else if(response.reqNo){  //others
+        pendingAppResponses[response.reqNo].callback(response);
+        delete pendingAppResponses[response.reqNo];
+      } else { //socket.io stuff
+        handleIoResponse({
           'response' : response,
           'io' : io,
           'C' : C,
@@ -137,7 +108,6 @@ module.exports = function(data) {
           'socketOfUser' : socketOfUser
         });
       }
-      if(!(response.callback === undefined)) response.callback();
     } catch (err) {
       console.log(err);
       console.log('Error Processing AppServer to WebServer input!');
@@ -146,9 +116,7 @@ module.exports = function(data) {
 }
 
 //handlers for the different response types
-var errorHandler = require('./error-handler.js');
 var handleIoResponse = require('./io-response.js');
-var handleOtherResponse = require('./other-response.js');
 var handleSpecialResponse = require('./special-response.js');
 
 //get login cookie (for socket.io)
