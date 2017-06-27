@@ -56,11 +56,15 @@
   },
   "REQ_TYPE" : {
     "JOIN_ROOM": 0,
-    "HOST_ROOM": 1
+    "HOST_ROOM": 1,
+    "CREATE_QUIZ": 10,
+    "ADD_QUESTION": 11
   },
   "RES_TYPE" : {
     "JOIN_ROOM_RES": 0,
-    "HOST_ROOM_RES": 1
+    "HOST_ROOM_RES": 1,
+    "CREATE_QUIZ_RES": 10,
+    "ADD_QUESTION_RES": 11
   },
   "DB" : {
     "CREATE" : {

@@ -9,7 +9,6 @@ module.exports = async function(input) {
   data = input.data;
   C = input.C;
   allRooms = input.allRooms;
-  name = input.nameofQuiz;
 
   console.log("REQ TYPE: " +data.type);
   switch(data.type) {
@@ -23,6 +22,18 @@ module.exports = async function(input) {
       return (await host_room(data));
       break;
     }
+
+    case C.REQ_TYPE.CREATE_QUIZ: { ;
+      return (await create_quiz(data));
+      break;
+    }
+
+    case C.REQ_TYPE.ADD_QUESTION: {;
+      return (await add_question(data));
+      break;
+
+    }
+
     //ADD MORE CASES HERE
   }
 }
@@ -73,7 +84,27 @@ async function join_room(data) {
   }
 }
 
+//Appserver response on port 9090
+async function create_quiz(data) {
+  var nameofQuiz = data.nameofQuiz;
+  response = {
+    'type' : C.RES_TYPE.CREATE_QUIZ_RES,
+    'name' : nameofQuiz,
+    // 'description' : desc,
+    // 'reward' : data.reward,
+    // 'penalty' : data.penalty,
+    // 'type of quiz': data.typeOfQuiz
+  };
+  return response;
+}
 
+async function add_question(data) {
+  response = {
+    'type' : C.RES_TYPE.ADD_QUESTION_RES,
+    // 'prompt' : data.prompt,
+  };
+  return response;
+}
 
 /**
   Function that handles the host-room form.

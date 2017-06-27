@@ -5,9 +5,8 @@
 */
 
 const uuid = require('uuid');
-module.exports = function(cipher, appConn) {
+module.exports = function(cipher, appConn, C) {
   return function(req, res) {
-    console.log(cipher);
 
     // check name + description not empty, ' ' -> id
     req.checkBody('prompt', 'Prompt must be specified').notEmpty().isString;
@@ -18,32 +17,26 @@ module.exports = function(cipher, appConn) {
     req.sanitize('prompt').trim();
     req.sanitize('shortAns').trim();
 
-// name
 
-
-
-
-    // var errors = req.validationErrors();
-    //
-    // if(errors) {
-    //
-    //
-    // } else {
       console.log("Data: ");
       console.log(req.body);
 
-      cipher.encryptJSON({
-
-        "type": req.body.type,
-        "prompt": req.body.prompt
-      })
-        .catch(function (err) {
-          throw new Error('Error parsing JSON!');
-        })
-        .then(function(cookieData) {
-        res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-        res.redirect('/add-question?prompt=' +req.body.prompt); // For example, if the application is on
-        //http://example.com/admin/post/new, the following would redirect to the URL http://example.com/admin:
-      });
+      // cipher.encryptJSON({
+      //
+      //   "type": req.body.type,
+      //   "prompt": req.body.prompt
+      // })
+      //   .catch(function (err) {
+      //     throw new Error('Error parsing JSON!');
+      //   })
+      //   .then(function(cookieData) {
+      //   res.cookie('login', cookieData, {"maxAge": 1000*60*60});
+      var prompt = req.body.prompt;
+      var type = req.body.type;
+        res.redirect('/add-question?prompt=' +req.body.prompt);
+        appConn.write(JSON.stringify({ //AppServer does verification
+          'type': C.REQ_TYPE.ADD_QUESTION,
+          'prompt': prompt,
+        }));
+      };
   }
-}

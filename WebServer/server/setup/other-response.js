@@ -20,7 +20,9 @@ module.exports = async function(data) {
     case C.RES_TYPE.HOST_ROOM_RES: {
       host_room_res(response, pendingResponses);
     }
-    //ADD MORE CASES HERE
+    // case C.RES_TYPE.CREATE_QUIZ_RES: {
+    //   create_quiz_res(response, pendingResponses)
+    // }
   }
 }
 

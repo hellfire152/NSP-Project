@@ -5,7 +5,7 @@
 */
 
 const uuid = require('uuid');
-module.exports = function(cipher, appConn) {
+module.exports = function(cipher, appConn, C) {
   return function(req, res) {
     // console.log(cipher);
 
@@ -24,22 +24,18 @@ module.exports = function(cipher, appConn) {
 
 
     } else {
+      var nameofQuiz = req.body.nameofQuiz;
+      var desc = req.body.desc;
       console.log("Creating a quiz data: ");
       console.log(req.body);
 
-
-      cipher.encryptJSON({
-        "nameofQuiz": req.body.nameofQuiz,
-        "desc": req.body.desc,
-      })
-        .catch(function (err) {
-          throw new Error('Error parsing JSON!');
-        })
-        .then(function(cookieData) {
-        res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-        res.redirect('/create-quiz?nameofQuiz=' +req.body.nameofQuiz); // For example, if the application is on
-        //http://example.com/admin/post/new, the following would redirect to the URL http://example.com/admin:
-      });
-    }
-  }
+      //the undefined cases: password' 123' there
+        res.redirect('/create-quiz?nameofQuiz=' +req.body.nameofQuiz);
+        appConn.write(JSON.stringify({ //AppServer does verification
+          'type': C.REQ_TYPE.CREATE_QUIZ,
+          'name': nameofQuiz,
+          'description': desc
+        }));
+      }
+    };
 }

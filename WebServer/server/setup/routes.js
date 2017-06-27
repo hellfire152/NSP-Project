@@ -59,7 +59,7 @@ module.exports = function(data) {
         .catch(reason => {
           console.log(reason);
         })
-        .then(cookieData => {
+        .then(cookiyData => {
           let resNo = uuid();
           pendingResponses[resNo] = res;
           console.log("COOKIE DATA: ");
@@ -76,30 +76,6 @@ module.exports = function(data) {
     }
   });
 
-  app.get('/create-quiz', function(req, res) { //creating a room
-    if(req.query.nameofQuiz.constructor === Array) {
-      console.log("Don't mess with the webpage");
-    } else {
-      let name = req.query.nameofQuiz;
-      cipher.decryptJSON(req.cookies.login)
-        // .catch(reason => {
-        //   console.log(reason);
-        // })
-        .then(function(cookieData) {
-          let resNo = uuid();
-          pendingResponses[resNo] = res;
-          // console.log('Response pending, no: ' +resNo);
-
-          appConn.write(JSON.stringify({ //AppServer does verification
-            'type': C.DB.CREATE.QUIZ, //CREATE QUIZ TYPE CONSTANT -> 103
-            'name': cookieData.nameofQuiz,
-            'description': cookieData.desc
-          }));
-        });
-    }
-  });
-
-
 
 
   //handling all other requests (PUT THIS LAST)
@@ -113,8 +89,8 @@ module.exports = function(data) {
   //handling form submits
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
-  app.post('/create-quiz', require('../validate-create-quiz.js')(cipher, appConn));
-  app.post('/add-question', require('../validate-add-question.js')(cipher, appConn));
+  app.post('/create-quiz', require('../validate-create-quiz.js')(cipher, appConn, C));
+  app.post('/add-question', require('../validate-add-question.js')(cipher, appConn, C));
 
 
 }
