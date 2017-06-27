@@ -11,32 +11,31 @@ module.exports = function(cipher, appConn) {
 
     // check name + description not empty, ' ' -> id
     req.checkBody('prompt', 'Prompt must be specified').notEmpty().isString;
-    req.checkBody('solution', 'Solution must be specified').notEmpty().isString;
+    req.checkBody('shortAns', 'Solution must be specified').notEmpty().isString;
 
     req.sanitize('prompt').escape();
-    req.sanitize('solution').escape();
+    req.sanitize('shortAns').escape();
     req.sanitize('prompt').trim();
-    req.sanitize('solution').trim();
+    req.sanitize('shortAns').trim();
 
-    console.log(req.body.prompt);
-    console.log(req.body.type);
-    console.log(req.body.choice);
-    console.log(req.body.solution);
-    console.log(req.body.time);
-    console.log(req.body.reward);
-    console.log(req.body.penalty);
-
-    var errors = req.validationErrors();
-
-    if(errors) {
+// name
 
 
-    } else {
-      console.log("HOST FORM DATA: ");
+
+
+    // var errors = req.validationErrors();
+    //
+    // if(errors) {
+    //
+    //
+    // } else {
+      console.log("Data: ");
       console.log(req.body);
+
       cipher.encryptJSON({
-        "desc": req.body.desc,
-        "nameofQuiz": req.body.nameofQuiz
+
+        "type": req.body.type,
+        "prompt": req.body.prompt
       })
         .catch(function (err) {
           throw new Error('Error parsing JSON!');
@@ -46,6 +45,5 @@ module.exports = function(cipher, appConn) {
         res.redirect('/add-question?prompt=' +req.body.prompt); // For example, if the application is on
         //http://example.com/admin/post/new, the following would redirect to the URL http://example.com/admin:
       });
-    }
   }
 }

@@ -95,8 +95,8 @@ conn.on("data", async function(input) {
 
         //logging and response
         console.log("AppServer Response: ");
-        console.log(response);
-        sendToServer(conn, response);
+        console.log(response); // from appserver
+        sendToServer(conn, response); // from webserver
       } else if(data.password === pass) { //valid password
         console.log("WebServer Validated");
         conn.auth = true;

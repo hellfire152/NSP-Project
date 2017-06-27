@@ -76,11 +76,39 @@ module.exports = function(data) {
     }
   });
 
+  app.get('/create-quiz', function(req, res) { //creating a room
+    if(req.query.nameofQuiz.constructor === Array) {
+      console.log("Don't mess with the webpage");
+    } else {
+      let name = req.query.nameofQuiz;
+      cipher.decryptJSON(req.cookies.login)
+        // .catch(reason => {
+        //   console.log(reason);
+        // })
+        .then(function(cookieData) {
+          let resNo = uuid();
+          pendingResponses[resNo] = res;
+          // console.log('Response pending, no: ' +resNo);
+
+          appConn.write(JSON.stringify({ //AppServer does verification
+            'type': C.DB.CREATE.QUIZ, //CREATE QUIZ TYPE CONSTANT -> 103
+            'name': cookieData.nameofQuiz,
+            'description': cookieData.desc
+          }));
+        });
+    }
+  });
+
+
+
+
   //handling all other requests (PUT THIS LAST)
   app.get('/*', function(req, res){
     //doing this just in case req.params has something defined for some reason
     res.render(req.path.substring(1));
   });
+
+
 
   //handling form submits
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
