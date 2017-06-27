@@ -8,8 +8,9 @@
 
   Author: Jin Kuan
 */
-class McqButtonHandler {
+class McqButtonHandler extends DisplayElement {
   constructor(resources, width, noOfChoices) {
+    super();
     let buttonWidth = width / 2 - 15;
 
     //ticker for animations
@@ -192,33 +193,5 @@ class McqButtonHandler {
 
   setText(buttonIndex, text) {
     this._buttons[buttonIndex].text = text;
-  }
-
-  get sprite() {
-    return this._container;
-  }
-
-  get width() {
-    return this._container.width;
-  }
-
-  get height() {
-    return this._container.height;
-  }
-
-  get x() {
-    return this._container.x;
-  }
-
-  set x(a) {
-    this._container.x = a;
-  }
-
-  get y() {
-    return this._container.y;
-  }
-
-  set y(b) {
-    this._container.y = b;
   }
 }

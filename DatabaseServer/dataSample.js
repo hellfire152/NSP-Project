@@ -16,10 +16,10 @@ module.exports = {
       data: {
         type : C.DB.CREATE.STUDENT_ACC,
         account : {
-          email : "nigel_ncch@hotmail.com",
+          email : "nigel_ncch@hotmail.com23",
           password_hash : "PasswordStudent",
           name : "Nigel Chen Chin Hao",
-          username : "nigelhao"
+          username : "nigelhao23"
         },
         details :{
           school : "NYP",

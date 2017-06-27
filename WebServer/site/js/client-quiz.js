@@ -1,5 +1,5 @@
-//Sample Data
-var clientQuiz = [{
+//Sample Data 
+var clientQuizQuestions = [{
         question_id: 105,
         quiz_id: 23,
         question_no: 1,
@@ -30,6 +30,7 @@ var clientQuiz = [{
 ];
 
 //Sample data for quiz
+//Completed client quiz
 
 var Totalquiz = [{
     quiz_id: 23,
@@ -43,7 +44,7 @@ var Totalquiz = [{
 }];
 
 function generateQuizQuestion() {
-    var total = clientQuiz.length;
+    var total = clientQuizQuestions.length;
 
     for (var index; index < total; index++) {
 
@@ -53,6 +54,6 @@ function generateQuizQuestion() {
         var headerDiv = document.createElement('div');
         headerDiv.className = "collapsible-header";
         li.appendChild(headerDiv);
-        headerDiv.innerHTML = (index + 1) + clientQuiz[i].prompt;
+        headerDiv.innerHTML = (index + 1) + clientQuizQuestions[i].prompt;
     }
 }

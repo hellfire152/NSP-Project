@@ -127,6 +127,7 @@ dbConn.on('data', function(data) {
 
 //Test sample data
 sendToServer(dbConn, sampleData.loginStudentAcc());
+
 /*
 Function that encodes the data in a proper format and sends it to the WebServer
 This is a convenience function, so that future implementations of encryption/whatever
