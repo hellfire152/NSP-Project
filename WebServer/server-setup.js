@@ -43,6 +43,23 @@ module.exports = function(data) {
 
   //enables my use of socket.handshake.session
   io.use(ios(session));
+
+  //handling app responses
+  pendingAppResponses = {};
+  appConn.send = (reqObj, callback) => {
+    let reqNo = uuid();
+    reqObj.reqNo = reqNo;
+
+    pendingAppResponses[reqNo] = {};
+    if(callback !== null)
+      pendingAppResponses[reqNo].callback = callback;
+
+    console.log("TO APPSERVER:");
+    console.log(reqObj);
+    appConn.write(JSON.stringify(reqObj));
+    return reqNo; //just in case
+  };
+
   //template engine used
   app.set('view engine', 'pug');
   //where the templates are located
@@ -66,6 +83,7 @@ module.exports = function(data) {
     'cipher' : cipher,
     'appConn' : appConn,
     'uuid' : uuid,
+    'pendingAppResponses' : pendingAppResponses
   });
 
   //setting up the communication between the WebServer and AppServer
@@ -74,6 +92,7 @@ module.exports = function(data) {
     'dirname' : __dirname,
     'pass' : pass,
     'pendingResponses' : pendingResponses,
+    'pendingAppResponses' : pendingAppResponses,
     'cipher' : cipher,
     'appConn' : appConn,
     'io' : io,

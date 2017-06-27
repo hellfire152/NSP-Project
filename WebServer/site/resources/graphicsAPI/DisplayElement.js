@@ -1,7 +1,7 @@
 /*
   Parent class of all the custom display elements in graphicsAPI
-  The primary thing this does is create a container and creates many aliases
-  for easier coding.
+  This class creates a container, and has a bunch of convenience functions,
+  intended to make other display functions like positioning shorter
 
   Author: Jin Kuan
 */
@@ -18,7 +18,7 @@ class DisplayElement {
     this._container.y = b;
   }
 
-  get sprite() {
+  get view() {
     return this._container;
   }
 
