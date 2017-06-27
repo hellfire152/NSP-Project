@@ -89,7 +89,7 @@ module.exports = {
           {
             type : C.DB.QUESTION_TYPE.MCQ,
             prompt : "Question statement 1",
-            solution : "ANS 1",
+            solution : '1',
             question_no : 1,
             time : 30
           },
@@ -110,14 +110,14 @@ module.exports = {
           {
             type : C.DB.QUESTION_TYPE.MCQ,
             prompt : "Question statement 4",
-            solution : "ANS 4",
-            question_no : 4,
+            solution : '8',
+            question_no : '4',
             time : 30
           },
           {
             type : C.DB.QUESTION_TYPE.MCQ,
             prompt : "Question statement 5",
-            solution : "ANS 2",
+            solution : '1',
             question_no : 5,
             time : 30
           }

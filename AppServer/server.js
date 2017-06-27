@@ -60,7 +60,7 @@ conn.on("data", async function(input) {
       if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
         throw new Error("WebServer unauthenticated, missing password");
       }
-
+      console.log(data);
       let response = {};
       if(conn.auth) { //if already authenticaed
         if(!(data.type === undefined)) { //data type defined
@@ -70,7 +70,6 @@ conn.on("data", async function(input) {
             'allRooms' : allRooms
           });
         } else if (!(data.data.type === undefined)){
-          // sendToServer(dbConn, data); //Send to database server
           response = data;
           conn = dbConn;
 
@@ -131,7 +130,7 @@ dbConn.on('data', function(data) {
 });
 
 //Test sample data
-// sendToServer(dbConn, sampleData.loginStudentAcc());
+// sendToServer(dbConn, sampleData.createQuiz());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer
