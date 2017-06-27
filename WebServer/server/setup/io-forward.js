@@ -91,9 +91,9 @@ module.exports = function(data) {
 
   //from game server to user
   appConn.on('data', async function(input) { //from app server
+    console.log("BEFORE ERROR?");
     try {
       let response = JSON.parse(input);
-      console.log("AppServer Response: ");
       console.log(response);
       if(response.err) {  //if there's an error
         await errorHandler({

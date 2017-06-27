@@ -56,11 +56,15 @@
   },
   "REQ_TYPE" : {
     "JOIN_ROOM": 0,
-    "HOST_ROOM": 1
+    "HOST_ROOM": 1,
+    "ACCOUNT_CREATE": 2,
+    "ACCOUNT-LOGIN": 3
   },
   "RES_TYPE" : {
     "JOIN_ROOM_RES": 0,
-    "HOST_ROOM_RES": 1
+    "HOST_ROOM_RES": 1,
+    "ACCOUNT_CREATED": 2,
+    "ACCOUNT_LOGGED_IN":3
   },
   "DB" : {
     "CREATE" : {

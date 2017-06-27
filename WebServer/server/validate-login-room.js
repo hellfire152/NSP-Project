@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn){
+module.exports =function(cipher, appConn,C){
   return function(req, res){
     // req.checkBody('username','Please enter username').notEmpty();
     //
@@ -52,7 +52,14 @@ module.exports =function(cipher, appConn){
             })
             .then(function(cookieData) {
             res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-            res.redirect('/host?quizId=' +req.body.quizId);
+            res.redirect('/login?room=' +req.body.usename);
+            appConn.write(JSON.stringify({
+              'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+              'username' :username,
+              'email':email,
+              'password':password
+
+            }));
           });
         }
         else{

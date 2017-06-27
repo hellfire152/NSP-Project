@@ -24,6 +24,15 @@ module.exports = async function(input) {
       return (await host_room(data));
       break;
     }
+    case C.REQ_TYPE.ACCOUNT_CREATE: {;
+      return (await account_create(data));
+      break;
+    }
+    case C.REQ_TYPE.ACCOUNT_LOGIN:{;
+      console.log("go in pls");
+      return (await account_login(data));
+      break;
+    }
     //ADD MORE CASES HERE
   }
 }
@@ -72,6 +81,21 @@ async function join_room(data) {
     };
     //INVALID LOGIN
   }
+}
+/**
+  Login account
+*/
+async function account_login(data){
+  console.log("hi");
+  response = {
+    'type':C.RES_TYPE.ACCOUNT_LOGGED_IN,
+    'username' :username,
+    'email':email,
+    'password':password
+  };
+  console.log("username: " );
+  console.log(username);
+  return response;
 }
 
 /**
@@ -135,5 +159,6 @@ async function host_room(data) {
   };
   return response;
 }
+
 
 var handleSpecial = require('./app-handle-special.js');
