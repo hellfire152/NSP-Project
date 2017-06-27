@@ -137,8 +137,6 @@ dbConn.on('data', function(data) {
 Function that encodes the data in a proper format and sends it to the WebServer
 This is a convenience function, so that future implementations of encryption/whatever
 will be easy to add in
-Use this function to send data to database
-e.g.: sendToServer(dbConn, json);
 */
 async function sendToServer(conn, json) {
   conn.write(JSON.stringify(json));

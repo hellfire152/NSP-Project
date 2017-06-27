@@ -26,7 +26,7 @@ var socketId;
 
 //Ensure connection have been successful between data and database
 connection.connect(function(error){
-  if(!!error){
+  if(error){
     console.error('[Failed to connect to database]: ' + error);
   }
   else{
@@ -93,7 +93,6 @@ var server = net.createServer(function(conn){
 
   var json = {};
     json.data = data;
-    json.targetId = socketId;
     json.sendTo = C.SEND_TO.USER;
 
     conn.write(JSON.stringify(json));
