@@ -26,8 +26,10 @@ process.exit(1);
 }
 
 var net = require('net');
+var uuid = require('uuid');
 
 var allRooms = {};
+var pendingDatabaseResponses = {};
 
 //setting up of the logic server
 var connection;
@@ -49,7 +51,6 @@ conn.on("data", async function(input) {
     let data = JSON.parse(input);
     console.log("FROM WEBSERVER"); //Log all data received from the WebServer
     console.log(data);
-
     //if there's an Error
     if (data.err) {
       console.log("ERROR RECEIVED, CODE: " + data.err);
@@ -63,7 +64,7 @@ conn.on("data", async function(input) {
       console.log(data);
       let response = {};
       if(conn.auth) { //if already authenticaed
-        if(!(data.type === undefined)) { //data type defined
+        if(data.type !== undefined) { //data type defined
           response = await handleReq({
             'data' : data,
             'C' : C,
@@ -99,7 +100,7 @@ conn.on("data", async function(input) {
         //logging and response
         console.log("AppServer Response: ");
         console.log(response);
-
+        response.reqNo = data.reqNo;
         sendToServer(conn, response);
 
       } else if(data.password === pass) { //valid password
@@ -124,9 +125,7 @@ var dbConn = net.connect(7070);
 
 //Recieve data from database
 dbConn.on('data', function(data) {
-  console.log("[Data have been recieved form database]");
-  var inputDataObj = JSON.parse(data);
-  sendToServer(connection, inputDataObj)
+  pendingDatabaseResponses[data.reqNo](data);
 });
 
 //Test sample data
@@ -136,11 +135,18 @@ dbConn.on('data', function(data) {
 Function that encodes the data in a proper format and sends it to the WebServer
 This is a convenience function, so that future implementations of encryption/whatever
 will be easy to add in
-Use this function to send data to database
-e.g.: sendToServer(dbConn, json);
 */
 async function sendToServer(conn, json) {
   conn.write(JSON.stringify(json));
+}
+
+/*
+  sets the database response,
+*/
+function setDatabaseResponse(callback) {
+  let reqNo = uuid();
+  pendingDatabaseResponses[reqNo] = callback;
+  return reqNo;
 }
 
 var handleIo = require('./server/app-handle-io.js');
