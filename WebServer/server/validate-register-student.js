@@ -9,7 +9,7 @@ module.exports =function(cipher, appConn){
     //
     // req.checkBody('password','Please enter password').notEmpty();
     // req.checkBody('password','Invalid password').isLength({min:8});
-    // console.log("hi");
+    console.log(cipher);
     var username = req.body.username;
     var email = req.body.email;
     var password = req.body.password;
@@ -46,13 +46,16 @@ module.exports =function(cipher, appConn){
 
 
           if(!error){
+
             console.log(error);
             console.log("pass");
+            console.log("Creating an account: ");
+            console.log(req.body);
             cipher.encryptJSON({
               "username": req.body.username,
               "password": req.body.password,
               "email":req.body.email,
-              "date_of_birth":req.body.DOB;
+              "date_of_birth":req.body.DOB,
               "school":req.body.school
             })
               .catch(function (err) {
