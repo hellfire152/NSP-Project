@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+	<!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="img/icons/favicon.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/icons/114x114.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/icons/72x72.png">
+    <link rel="apple-touch-icon-precomposed" href="img/icons/default.png">
+  
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900" rel="stylesheet">
+    
+    <!-- Bootstrap CSS File -->
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  
+    <!-- Libraries CSS Files -->
+    <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/owl.theme.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/owl.transitions.min.css" rel="stylesheet">
+    
+    <!-- Main Stylesheet File -->
+    <link href="css/style.css" rel="stylesheet">
+    
+    <!--Your custom colour override - predefined colours are: colour-blue.css, colour-green.css, colour-lavander.css, orange is default-->
+    <link href="#" id="colour-scheme" rel="stylesheet">
+
+</head>
+<body class = "page-elements">
+	<!--Change the background class to alter background image, options are: benches, boots, buildings, city, metro -->
+	<div id="background-wrapper" class="benches" data-stellar-background-ratio = "0.8">
+		
+		<div id="navigation" class="wrapper">
+			
+			<!-- Hidden Header -->
+			<div class="header-hidden collapse">
+				<div class="header-hidden-inner container">
+					<div class="row">
+						<div class="col-md-3">
+							<h3>
+								About Us,
+							</h3>
+							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+							</p>
+							<a href="about.html" class = "btn btn-more"><i class = "fa fa-plus"></i> Read More</a>
+						</div>
+
+						<div class="col-md-3">
+							&nbsp;
+						</div>
+
+						<div class="col-md-6">
+							<h3>
+								Choose A Theme
+							</h3>
+							<div class="switcher">
+								<div class="cols">
+									<br>
+									<a href="#benches" class = "background benches active" title = "Benches"> Benches</a>
+									<a href="#boots" class = "background boots" title = "Boots">Boots</a>
+									<a href="#buildings" class="background buildings " title="Buildings">Buildings</a>
+									<a href="#city" class="background city " title="City">City</a> <a href="#metro" class="background metro " title="Metro">Metro</a> 
+								</div>
+								<div class="cols">
+									Colours:
+									<br>
+									<a href="#orange" class="colour orange active" title="Orange">Orange</a>
+									  <a href="#green" class="colour green " title="Green">Green</a> <a href="#blue" class="colour blue" title="Blue">Blue</a> <a href="#lavender" class="colour lavender " title="Lavender">Lavender</a> 
+								</div>
+							</div>
+
+							<p>
+								<small>Selection is not persistent</small>
+							</p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<!-- Header & Logo -->
+			<div class="header">
+				<div class="header-inner container">
+					<div class="row">
+						<div class="col-md-8">
+							<a href="LoginIndex.html" class = "navbar-brand" title = "Home">
+							<h1 class = "hidden">
+								<img src="img/logo.png" alt = "Logo">
+							</h1>
+							</a>
+
+							<div class="navbar-slogan">
+								Make it happen
+							</div>
+						</div>
+
+						<!--Right side of Header -->
+
+						<div class="col-md-4">
+							
+							<!-- Login & Register -->
+
+							<ul class="list-inline user-menu pull-right">
+								<li class="hidden-xs">
+									<i class = "fa fa-edit text-primary"></i>
+									<a href="register.html" class = "text-uppercase">Register</a>
+								</li>
+								<li class="hidden-xs">
+									<i class="fa fa-sign-in text-primary"></i>
+									<a href="login.html" class="text-uppercase">Login</a>
+								</li>
+
+								 <li>
+								 	<a class="btn btn-primary btn-hh-trigger" role="button" data-toggle="collapse" data-target=".header-hidden">Open</a>
+								 </li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+				
+				<div class="container">
+					<div class="navbar navbar-default holder">
+						
+						<!--Mobile Hamburger -->
+
+						<button type = "button" class = "navbar-toggle collapsed" data-toggle = "collapse" data-target = ".navbar-collapse" aria-expanded = "false"><span class = "sr-only">Toggle Navigation</span><span class = "icon-bar"></span><span class = "icon-bar"></span><span class="icon-bar"></span></button>
+
+						 <div class="navbar-text social-media social-media-inline pull-right">
+              				<!--@todo: replace with company social media details-->
+				              <a href="#"><i class="fa fa-twitter"></i></a>
+				              <a href="#"><i class="fa fa-facebook"></i></a>
+				              <a href="#"><i class="fa fa-linkedin"></i></a>
+				              <a href="#"><i class="fa fa-google-plus"></i></a>
+            			</div>
+
+            			<!-- Everything in this div is collapsed in mobile-->
+            			<!-- @todo link up all href -->
+            			<div class="navbar-collapse collapse">
+			              <ul class="nav navbar-nav" id="main-menu">
+			                <li>
+			                  <a href="#"><i class="fa fa-plus-square-o"></i> Create</a>
+			                </li>
+			                <li>
+			                  <a href = "#" class = "active"><i class = "fa fa-graduation-cap"></i> Quiz</a>
+			                </li>
+			                <li>
+			                	<a href="#">Notification</a>
+			                </li>
+			                <li>
+			                	<a href="#">Join Quiz</a>
+			                </li>
+			                
+			              </ul>
+			            </div>
+			            <!--/.navbar-collapse -->
+					</div>
+				</div>	
+		</div>
+	</div>
+
+	<div class="container searchContent">
+		<div class="row">
+			<div class="col-md-2">
+				&nbsp;
+			</div>
+			<div class="col-md-8">
+				<h2>Quizzes that has been created</h2>
+				<input type="textbox" name="searchQuiz" placeholder = "Search within your quizzes">
+				<select>
+					<option>All Grades</option>
+					<option>University</option>
+					<option>Polytechnic</option>
+					<option>Secondary</option>
+				</select>
+				<button>Search</button>
+			</div>
+			<div class="col-md-2">
+				&nbsp;
+			</div>
+		</div>
+	</div>
+
+		<div class="container" style= "width:100%;">
+			<div class="row">
+				<div class="col-md-2">
+					<div class = "quizHeader">
+						My Quizzes
+					</div>
+					<div>
+						All my Quizzes
+					</div>
+					<div>
+						Created by me
+					</div>
+
+					
+				</div>
+				<div class="col-md-8">
+					<div class="quizSelection">
+						<img src = "img/slides/slide1.png" alt = ""/>
+						<h2>Blah Blah Quiz</h2>
+						<p><i class="fa fa-user" aria-hidden="true"></i>Bryan</p>
+						<p><i class="fa fa-play" aria-hidden="true"></i>Played 0 times</p>
+						<p><i class="fa fa-calendar-check-o" aria-hidden="true"></i>3 Hours ago</p>
+						<button id = "favourite"><i class = "fa-heart-o"></i><span name = "noOfFav">0</span></button>
+					</div>
+
+					<div class="quizSelection">
+						<img src = "img/slides/slide1.png" alt = ""/>
+						<h2>Blah Blah Quiz</h2>
+						<p><i class="fa fa-user" aria-hidden="true"></i>Bryan</p>
+						<p><i class="fa fa-play" aria-hidden="true"></i>Played 0 times</p>
+						<p><i class="fa fa-calendar-check-o" aria-hidden="true"></i>3 Hours ago</p>
+						<button id = "favourite"><i class = "fa-heart-o"></i><span name = "noOfFav">0</span></button>
+					</div>
+					
+				</div>
+				<div class="col-md-2">
+					&nbsp;
+				</div>
+			</div>
+		</div>
+
+		  <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/stellar/stellar.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/counterup/counterup.min.js"></script>
+
+       <!-- Template Specisifc Custom Javascript File -->
+    <script src="js/custom.js"></script>
+    
+    <!--Custom scripts demo background & colour switcher - OPTIONAL -->
+    <script src="js/color-switcher.js"></script>
+	
+
+    
+</body>
+</html>

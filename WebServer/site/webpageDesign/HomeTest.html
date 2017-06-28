@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+	
+	  <!-- Bootstrap CSS File -->
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+     <!-- Font Awesome Stylesheet File -->
+ 	<link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Material StyleSheet -->
+     <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+    <!-- Animate Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="css/animate.css">
+
+    <link rel="stylesheet" type="text/css" href="css/hometest.css">
+
+    <style>
+    	label {
+  float: right;
+  width: 100%;
+  height: 100%;
+  padding: 1em;
+  font-size: 1em;
+  transition: transform 400ms;
+  transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+  line-height: 18px;
+}
+
+input[type="submit"] {
+  width: 100%;
+  margin: 0;
+  background: none;
+}
+
+input,
+textarea {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  width: 75%;
+  height: 100%;
+  margin: 0;
+  padding: 1em;
+  border: none;
+  transform: translate3D(-100%, 0, 0);
+  transition: transform 400ms;
+  transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+  transition-delay: 60ms;
+}
+input:focus, input.filled,
+textarea:focus,
+textarea.filled {
+  transform: translate3D(100%, 0, 0);
+  outline: none;
+}
+input:focus + label, input.filled + label,
+textarea:focus + label,
+textarea.filled + label {
+  transform: translate3D(75%, 0, 0);
+}
+    </style>
+    
+</head>
+<body>
+
+<!-- Hidden Header -->
+			<div class="header-hidden collapse">
+				<div class="header-hidden-inner container">
+					<div class="row">
+						<div class="col-md-3">
+							<h3>
+								About Us,
+							</h3>
+							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+							</p>
+							<a href="about.html" class = "btn btn-more"><i class = "fa fa-plus"></i> Read More</a>
+						</div>
+
+						<div class="col-md-3">
+							&nbsp;
+						</div>
+
+						<div class="col-md-6">
+							<h3>
+								Choose A Theme
+							</h3>
+							<div class="switcher">
+								<div class="cols">
+									<br>
+									<a href="#benches" class = "background benches active" title = "Benches"> Benches</a>
+									<a href="#boots" class = "background boots" title = "Boots">Boots</a>
+									<a href="#buildings" class="background buildings " title="Buildings">Buildings</a>
+									<a href="#city" class="background city " title="City">City</a> <a href="#metro" class="background metro " title="Metro">Metro</a> 
+								</div>
+								<div class="cols">
+									Colours:
+									<br>
+									<a href="#orange" class="colour orange active" title="Orange">Orange</a>
+									  <a href="#green" class="colour green " title="Green">Green</a> <a href="#blue" class="colour blue" title="Blue">Blue</a> <a href="#lavender" class="colour lavender " title="Lavender">Lavender</a> 
+								</div>
+							</div>
+
+							<p>
+								<small>Selection is not persistent</small>
+							</p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+<nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo">Logo</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="#"><i class="fa fa-plus-square-o"></i> Create</a></li>
+        <li><a href = "#"><i class = "fa fa-graduation-cap"></i> Quiz</a><li>
+		<li><a href="#">Notification</a></li>
+		<li><a href="#">Join Quiz</a></li>
+        <li><a class="btn btn-primary btn-hh-trigger" role="button" data-toggle="collapse" data-target=".header-hidden">Open</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container-fluid getStarted">
+  	<div class="row">
+  		<div class="col-md-3">
+          &nbsp;
+        </div>
+
+        <div class="col-md-6">
+          <h2 class = "title">Get your students excited about <span>Learning</span></h2>
+          	<input type="text" id="name" />
+    		<label for="name">Name</label>
+          <button class = "enterQuizButton">Enter Quiz</button>
+        </div>
+
+        <div class="col-md-3">
+          &nbsp;
+        </div>
+  	</div>
+  </div>
+
+    <!-- Required JavaScript Libraries -->
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+
+    <script type="text/javascript">
+    	
+    //Initialize Image
+     $(document).ready(function(){
+      $('.parallax').parallax();
+    });
+
+     $('.form__field input').focusout(function(){
+    if( !$(this).val().length == "" ) {
+      $(this).addClass('filled');
+    } else if($(this).val.length == ""){
+      $(this).removeClass('filled');
+    }
+});
+
+$('.form__field textarea').focusout(function(){
+    if( !$(this).val().length == "" ) {
+      $(this).addClass('filled');
+    } else if($(this).val.length == ""){
+      $(this).removeClass('filled');
+    }
+});
+    </script>
+</body>
+</html>
