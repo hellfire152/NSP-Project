@@ -119,9 +119,18 @@ server.listen(9090);
 //connection with datbase server
 var dbConn = net.connect(7070);
 
-//Recieve data from database
+//implementing the send function on the database connection
+dbConn.send = (reqObj, callback) => {
+  let reqNo = uuid();
+  pendingDatabaseResponses[reqNo] = callback;
+
+  dbConn.write(JSON.stringify(reqObj));
+}
+
+//Recieve data from database and run callback
 dbConn.on('data', function(data) {
   pendingDatabaseResponses[data.reqNo](data);
+  delete pendingDatabaseResponses[data.reqNo];
 });
 
 //Test sample data

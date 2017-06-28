@@ -44,37 +44,40 @@ var server = net.createServer(function(conn){
 
   conn.on('data', async function(input){
     try{
-      data = (JSON.parse(input)).data;
+      let data = (JSON.parse(input)).data;
       // C = input.C;
       console.log("DB TYPE: " +data.type);
+      let response;
       switch(data.type) {
         case C.DB.CREATE.STUDENT_ACC :
         case C.DB.CREATE.TEACHER_ACC : {
-          return await createAccount(data);
+          response = await createAccount(data);
           break;
         }
         case C.DB.CREATE.QUIZ : {
-          return await createQuiz(data);
+          response = await createQuiz(data);
           break;
         }
         case C.DB.SELECT.ALL_QUIZ : {
-          return await retrieveAllQuiz();
+          response = await retrieveAllQuiz();
           break
         }
         case C.DB.SELECT.QUESTION : {
-          return await retrieveQuestions(data.quizId); //quizId of the data
+          response = await retrieveQuestions(data.quizId); //quizId of the data
           break;
         }
         case C.DB.SELECT.SEARCH_QUIZ : {
-          return await searchQuiz(data);
+          response = await searchQuiz(data);
           break;
         }
         case C.DB.SELECT.USER_ACCOUNT : {
-          return await retrieveAccount(data);
+          response = await retrieveAccount(data);
           break;
         }
         //ADD MORE CASES HERE
       }
+      response.reqNo = data.reqNo;
+      sendToServer(response);
     }
     catch (err) {
       console.log(err);
