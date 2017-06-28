@@ -9,7 +9,8 @@
     <h1>Database Testing</h1>
     <div id='dbCreateStudentAccount'>
       <h2>Create student account</h2>
-      <form action='/host-room' method='POST'>
+      <form action='/db-data' method='POST'>
+        <input type="hidden" name="dbType" value="accountCreation"/>
         <label>Name:
           <input type="text" name="name" id="name"/>
         </label>
@@ -37,7 +38,7 @@
     <br>
     <div id='dbLoginAccount'>
       <h2>Login Account</h2>
-      <form action='/host-room' method='POST'>
+      <form action='/db-data' method='POST'>
         <label>Username:
           <input type="text" name="username" id="user"/>
         </label>
@@ -105,7 +106,8 @@
     </div>
     <div id='dbRetrieveQuestion'>
       <h2>Retrieve Question</h2>
-      <form action='/host-room' method='POST'>
+      <form action='/db-data' method='POST'>
+        <input type="hidden" name="dbType" value="retrieveQuestion">
         <label>Quiz ID:
           <input type="text" name="quizId" id="quizId"/>
         </label>
@@ -115,7 +117,7 @@
     <br>
     <div id='dbSearchQuiz'>
       <h2>Search Quiz</h2>
-      <form action='/host-room' method='POST'>
+      <form action='/db-data' method='POST'>
         <label>Search:
           <input type="text" name="search" id="search"/>
         </label>
@@ -123,7 +125,7 @@
       </form>
     </div>
     <script src="/controller/databaseFormat.js"></script>
-    <script src="/controller/dbTest.js"></script>
+    <!-- <script src="/controller/dbTest.js"></script> -->
     <script>
       var questionArr = [];
       var choiceArr = [];

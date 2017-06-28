@@ -65,16 +65,18 @@ conn.on("data", async function(input) {
       let response = {};
       if(conn.auth) { //if already authenticaed
         if(data.type !== undefined) { //data type defined
+          if(data.type === C.REQ_TYPE.DATABASE){
+            conn = dbConn;
+            console.log("BEFORE");
+            console.log(data.reqNo);
+            data.reqNo = setDatabaseResponse(data.reqNo)
+          }
           response = await handleReq({
             'data' : data,
             'C' : C,
             'allRooms' : allRooms
           });
-        } else if (!(data.data.type === undefined)){
-          response = data;
-          conn = dbConn;
-
-        } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
+        }else if (!(data.event === undefined)){ //event defined -> socket.io stuff
           response = await handleIo({
             'data' : data,
             'C' : C,
@@ -103,6 +105,7 @@ conn.on("data", async function(input) {
         response.reqNo = data.reqNo;
         sendToServer(conn, response);
 
+
       } else if(data.password === pass) { //valid password
         console.log("WebServer Validated");
         conn.auth = true;
@@ -124,8 +127,12 @@ server.listen(9090);
 var dbConn = net.connect(7070);
 
 //Recieve data from database
-dbConn.on('data', function(data) {
-  pendingDatabaseResponses[data.reqNo](data);
+dbConn.on('data', function(inputData) {
+  var data = JSON.parse(inputData);
+  data.reqNo = pendingDatabaseResponses[data.reqNo];
+  console.log(data);
+  // pendingDatabaseResponses[data.reqNo](data); //This does not seem to work.
+  sendToServer(connection, data);
 });
 
 //Test sample data

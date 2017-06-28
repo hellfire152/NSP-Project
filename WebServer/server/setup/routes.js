@@ -5,6 +5,7 @@
 */
 let uuid;
 module.exports = function(data) {
+
   const C = data.C;
   let app = data.app,
     dirname = data.dirname,
@@ -21,9 +22,33 @@ module.exports = function(data) {
   app.get('/', function(req, res){
     res.sendFile(dirname + "/site/index.html");
   });
-//Nigel area
-  app.get('/nigel', function(req,res){
-    res.sendFile(dirname + "/site/dbTest.html")
+
+  app.get('/data', function(req,res){
+    // if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
+    //   console.log("Well someone's trying to cause an error...");
+    // } else {
+      // let roomNo = req.query.room;
+      console.log(req.cookies.encryptedDataReq);
+      cipher.decryptJSON(req.cookies.encryptedDataReq)
+        .catch(reason => {
+          console.log(reason);
+        })
+        .then(function(cookieData) {
+          console.log(cookieData);
+          appConn.send({
+            'type': C.REQ_TYPE.DATABASE, //JOIN_ROOM
+            'data': cookieData.data
+            // 'resNo': resNo,
+            // 'roomNo': roomNo
+          }, (response) => {
+            console.log("REVIEVED");
+            console.log(response);
+            res.render('dbTest', {
+              data: response.data
+            });
+          });
+        });
+    // }
   })
   //handling play path
   app.get('/play', function(req, res) { //submitted a form for playing in a room
@@ -88,6 +113,7 @@ module.exports = function(data) {
   //handling form submits
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
+  app.post('/db-data', require('../db-data.js')(cipher, appConn, C));
 }
 
 function sendErrorPage(res, errormsg) {

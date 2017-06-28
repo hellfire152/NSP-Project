@@ -86,7 +86,7 @@ module.exports = function(data) {
       console.log(response);
       if(response.special !== undefined){ //handling special stuff
         await handleSpecialResponse({
-          'pendingResponses' : pendingResponses
+          'pendingResponses' : pendingResponses,
           'response' : response,
           'io' : io,
           'C' : C,

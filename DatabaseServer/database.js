@@ -22,7 +22,7 @@ var connection = mysql.createConnection({
   database: 'exquizit'
 });
 
-var socketId;
+var reqNo;
 
 //Ensure connection have been successful between data and database
 connection.connect(function(error){
@@ -49,7 +49,8 @@ var server = net.createServer(function(conn){
     console.log("Request recieved from appserver");
     try{
       var inputData = (JSON.parse(input));
-      socketId = inputData.id;
+      console.log(inputData);
+      reqNo = inputData.reqNo;
       var data = inputData.data;
       // C = input.C;
       console.log("DB TYPE: " +data.type);
@@ -93,8 +94,9 @@ var server = net.createServer(function(conn){
 
   var json = {};
     json.data = data;
-    json.targetId = socketId;
-    json.sendTo = C.SEND_TO.USER;
+    json.reqNo = reqNo;
+    // json.targetId = socketId;
+    // json.sendTo = C.SEND_TO.USER;
 
     conn.write(JSON.stringify(json));
   }
