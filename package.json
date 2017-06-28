@@ -10,7 +10,9 @@
   ],
   "author": "AJK",
   "contributors": [],
-  "dependencies": {},
+  "dependencies": {
+    "password-validator": "^3.0.0"
+  },
   "scripts": {
     "start": "./run-server.bat password"
   }
