@@ -27,9 +27,6 @@ function calculateScore(reward, startTime, answerStreak) {
   return Math.floor(reward * streakMultiplier * speedMultiplier);
 }
 
-/*
-
-*/
 function removeSolution(question) {
   return {
     'prompt': question.prompt,
@@ -97,6 +94,17 @@ function checkCorrectAnswer(question, answer) {
 }
 
 /*
+  Returns an object representing the response data of that round
+*/
+function getResponseData(currentRoom) {
+  let question = currentRoom.quiz.questions[currentRoom.questionCounter];
+  let solution = question.solution;
+  return {
+    'question' : question,
+    'solution' : solution
+  }
+}
+/*
   Handles checking the answer, and calculating the score appropriately
 */
 function handleScoring(input) {
@@ -135,10 +143,10 @@ function __getRewardOrPenalty(quiz, question, reward) {
   }
   let field = reward ? 'reward' : 'penalty';
 
-  if(question[reward] !== undefined) {  //question specific value
+  if(question[field] !== undefined) {  //question specific value
     return question[field];
   } else if(quiz[field] !== undefined) { //quiz-wide value
-    return quiz[reward];
+    return quiz[field];
   } else {  //default reward : penalty values
     return reward ? 100 : 0;
   }

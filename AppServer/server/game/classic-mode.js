@@ -55,7 +55,7 @@ module.exports = async function(input) {
           'currentRoom': currentRoom,
           'currentPlayer': currentPlayer
         });
-        
+
         currentPlayer.answered = true;
         currentRoom.answerCount++;
 
@@ -116,7 +116,7 @@ function sendQuestion(currentRoom, question, data) {
   currentRoom.timer = setTimeout(() => {
     common.setAllAnswered(currentRoom.players);
     sendToServer(conn,
-      sendRoundEnd(currentRoom, data, currentRoom.answers, question.solution)
+      common.getResponseData(currentRoom);
     );
   }, question.time * 1000);
 
