@@ -86,14 +86,13 @@ async function join_room(data) {
 
 //Appserver response on port 9090
 async function create_quiz(data) {
-  var nameofQuiz = data.nameofQuiz;
   response = {
     'type' : C.RES_TYPE.CREATE_QUIZ_RES,
-    'name' : nameofQuiz,
-    // 'description' : desc,
-    // 'reward' : data.reward,
-    // 'penalty' : data.penalty,
-    // 'type of quiz': data.typeOfQuiz
+    'name' : data.name,
+    'description' : data.description,
+    'reward' : data.reward,
+    'penalty' : data.penalty,
+    'type of quiz': data.typeOfQuiz
   };
   return response;
 }
@@ -101,7 +100,13 @@ async function create_quiz(data) {
 async function add_question(data) {
   response = {
     'type' : C.RES_TYPE.ADD_QUESTION_RES,
-    // 'prompt' : data.prompt,
+    'prompt' : data.prompt,
+    'typeofQuestion' : data.typeofQuestion,
+    'choices' : data.choices,
+    'shortAns' : data.shortAns,
+    'time' : data.time,
+    'reward' : data.reward,
+    'penalty' :data.penalty
   };
   return response;
 }

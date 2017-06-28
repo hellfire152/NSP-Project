@@ -24,18 +24,34 @@ module.exports = function(cipher, appConn, C) {
 
 
     } else {
-      var nameofQuiz = req.body.nameofQuiz;
-      var desc = req.body.desc;
+      var name = req.body.nameofQuiz;
+      var description = req.body.desc;
+      var reward = req.body.reward;
+      var penalty = req.body.penalty;
+      var typeofQuiz = req.body.typeOfQuiz;
+
       console.log("Creating a quiz data: ");
       console.log(req.body);
 
       //the undefined cases: password' 123' there
-        res.redirect('/create-quiz?nameofQuiz=' +req.body.nameofQuiz);
-        appConn.write(JSON.stringify({ //AppServer does verification
+        // res.redirect('/create-quiz?nameofQuiz=' +req.body.nameofQuiz);
+        appConn.send({
           'type': C.REQ_TYPE.CREATE_QUIZ,
-          'name': nameofQuiz,
-          'description': desc
-        }));
+          'name' : name,
+          'description' : description,
+          'reward' : reward,
+          'penalty' : penalty,
+          'typeOfQuiz' : typeofQuiz,
+
+        }, (response) => {
+          res.render('create-quiz', {
+            'name' : name,
+            'description' : description,
+            'reward' : reward,
+            'penalty' : penalty,
+            'typeOfQuiz' : typeofQuiz,
+          });
+        });
       }
     };
 }

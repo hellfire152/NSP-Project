@@ -32,11 +32,33 @@ module.exports = function(cipher, appConn, C) {
       //   .then(function(cookieData) {
       //   res.cookie('login', cookieData, {"maxAge": 1000*60*60});
       var prompt = req.body.prompt;
-      var type = req.body.type;
-        res.redirect('/add-question?prompt=' +req.body.prompt);
-        appConn.write(JSON.stringify({ //AppServer does verification
+      var typeofQuestion = req.body.typeofQuestion;
+      var choices = req.body.choices;
+      var shortAns = req.body.shortAns;
+      var time = req.body.time;
+      var reward = req.body.reward;
+      var penalty = req.body.penalty;
+        // res.redirect('/add-question?prompt=' +req.body.prompt);
+        appConn.send({
           'type': C.REQ_TYPE.ADD_QUESTION,
-          'prompt': prompt,
-        }));
-      };
-  }
+          'prompt' : prompt,
+          'typeofQuestion' : typeofQuestion,
+          'choices' : choices,
+          'shortAns' : shortAns,
+          'time' : time,
+          'reward' : reward,
+          'penalty' : penalty,
+
+        }, (response) => {
+          res.render('create-quiz', {
+            'prompt' : prompt,
+            'typeofQuestion' : typeofQuestion,
+            'choices' : choices,
+            'shortAns' : shortAns,
+            'time' : time,
+            'reward' : reward,
+            'penalty' : penalty,
+          });
+        });
+      }
+    };

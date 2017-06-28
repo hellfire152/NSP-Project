@@ -18,8 +18,8 @@
       <input type="text" id="prompt" name="prompt"> <br />
 
 <label>Type</label>
-      <input type="radio" id="mcq" name="type" value='mcq' onclick= setMCQ()>MCQ
-      <input type="radio" id="short-answer" name ="type" value='short-answer' onclick= setShort()>Short Answer
+      <input type="radio" id="mcq" name="typeofQuestion" onclick= setMCQ()>MCQ
+      <input type="radio" id="short-answer" name ="typeofQuestion" onclick= setShort()>Short Answer
       <br />
       <!-- come back to this later  -->
 
@@ -143,6 +143,8 @@
 
       function defaultSetting(){
         setMCQ();
+        $("#mcq").val(C.DB.QUESTION_TYPE.MCQ);
+        $("#short-answer").val( C.DB.QUESTION_TYPE.SHORT_ANS);
       }
 
       defaultSetting();
@@ -155,26 +157,29 @@
        return false;
     }
 
-    else if($('input[name=type]:checked').length<=0)
+    else if($('input[name=typeofQuestion]:checked').length<=0)
     {
      alert("Please pick a type!");
      return false;
     }
+    console.log(C);
+    console.log($('#mcq').val() == C.DB.QUESTION_TYPE.MCQ);
+    if($('#mcq').val() == C.DB.QUESTION_TYPE.MCQ){
+      if($('input[name=choiceAns]:checked').length<=0)
+      {
+         alert("Please pick a check box!");
+         return false;
+      }
 
-    else if($('input[name=choiceAns]:checked').length<=0)
-    {
-     alert("Please pick a check box!");
-     return false;
-    }
+      else if( !$('#choice1').val() ) {
+         alert('Please fill in at least 2 choices!');
+         return false;
+      }
 
-    else if( !$('#choice1').val() ) {
-       alert('Please fill in at least 2 choices!');
-       return false;
-    }
-
-    else if( !$('#choice2').val() ) {
-       alert('Please fill in at least 2 choices!');
-       return false;
+      else if( !$('#choice2').val() ) {
+         alert('Please fill in at least 2 choices!');
+         return false;
+      }
     }
 
 

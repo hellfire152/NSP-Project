@@ -88,6 +88,8 @@ module.exports = function(data) {
   //handling form submits
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
+  app.post('/create-quiz', require('../validate-create-quiz.js')(cipher, appConn, C));
+  app.post('/add-question', require('../validate-add-question.js')(cipher, appConn, C));
 }
 
 function sendErrorPage(res, errormsg) {

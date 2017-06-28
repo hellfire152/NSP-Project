@@ -11,7 +11,7 @@
       2.b Other responses (via other-response.js)
 */
 module.exports = function(data) {
-  //extracting data... from server-setup 
+  //extracting data... from server-setup
   const C = data.C;
   let {dirname, pass, io, pendingResponses, pendingAppResponses, cipher, appConn,
     cookie, socketOfUser, roomOfUser} = data;
@@ -89,7 +89,7 @@ module.exports = function(data) {
       console.log(response);
       if(response.special !== undefined){ //handling special stuff
         await handleSpecialResponse({
-          'pendingResponses' : pendingResponses
+          'pendingResponses' : pendingResponses,
           'response' : response,
           'io' : io,
           'C' : C,
