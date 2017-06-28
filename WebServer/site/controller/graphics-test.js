@@ -26,21 +26,29 @@ app.loader
   .add('button-background', '/resources/graphics/ui/button-background.png')
   .add('topbar-background', '/resources/graphics/ui/topbar-background.png')
   .load((loader, resources) => {
-    //container to store the buttons
-    var buttonContainer = new McqButtonHandler(resources, WIDTH - 10, 4);
-    buttonContainer.y = HEIGHT - buttonContainer.height;
-    buttonContainer.setText(0, 'abc');
+    var playerRanking = new PlayerRanking(resources, {
+      'name' : 'hellfire152',
+      'score': 123,
+      'rank' : 1,
+      'correctAnswers' : 1,
+      'answerStreak' : 12,
+      'profilePic' : null
+    }, {
+      'paddingX' : 3,
+      'paddingY' : 3,
+    }, true);
 
-    //testing top bar
-    var topBar = new TopBar(resources, WIDTH, 'hellfire152');
-
-    //testing short answer text box
-    var shortAnsTextField = new ShortAnswerTextField(WIDTH / 2, 50);
-    shortAnsTextField.y = topBar.height;
-    
-    app.stage.addChild(topBar.sprite);
-    app.stage.addChild(shortAnsTextField.sprite);
-    app.stage.addChild(buttonContainer.sprite);
+    var barGraph = new BarGraph(resources, {
+      'labels' : ['a', 'b', 'c'],
+      'values' : [1, 2, 3]
+    }, {
+      'paddingX' : 3,
+      'paddingY' : 3,
+      'width' : WIDTH - 100,
+      'height' : 400
+    });
+    barGraph.y = playerRanking.height + 100;
+    app.stage.addChild(playerRanking.sprite, barGraph.sprite);
   });
 
 window.onload = () => {

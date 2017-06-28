@@ -12,9 +12,13 @@ console.log('PLAY: Loaded: classic gamemode handler!');
 function handleGame(response) {
   console.log('PLAY: Handling game response!');
   switch(response.game) {
+    case C.GAME_RES.GET_READY: {
+      document.body.innerHTML = ''; //clear the html body
+      document.body.appendChild(app.renderer.view); //add the game view
+      swapScene('getReady');
+    }
     case C.GAME_RES.NEXT_QUESTION: {
       if(firstQuestion) {
-        clearBody();
         firstQuestion = false;
       }
       clearGameArea();
@@ -84,4 +88,13 @@ function submitAnswer(type, ans) {
   document.getElementById('ans').childNodes.forEach(button => {
     button.disabled = true;
   });
+}
+
+function swapScene(scene) {
+  for(let scene in pixiScenes) {  //set all scenes not visible
+    if(pixiScenes.hasOwnProperty(scene)) {
+      pixiScenes[scene].visible = false;
+    }
+  }
+  pixiScenes[scene].visible = true; //set the specified one to be visible
 }
