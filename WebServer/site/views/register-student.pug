@@ -1,0 +1,31 @@
+html
+  head
+    title Register(student)
+    script.
+      var tim = 0;
+      function reload () {
+      tim = setTimeout("location.reload(true);",60000);   // 1 minute
+      }
+      function canceltimer() {
+      window.clearTimeout(tim);  // cancel the timer on each mousemove/click
+      reload();  // and restart it
+      }
+  body(onmousemove='canceltimer();', onclick='canceltimer();')
+
+  form(action='/reg-room', method='post', onsubmit='/validate-register-student')
+    input#username(type='text', name='username', placeholder='username')
+    br
+    input#Email.text(type='email', required='', name='Email', placeholder='Email')
+    br
+    input#password(type='password', required='', name='password', placeholder='password')
+    br
+    input#confirmPassword(type='password', required='', name='confirmPassword', placeholder='confirmPassword')
+    br
+    #dateOfBirth
+      label(for='DOB', style='float:left; display:inline;')
+        | Date of Birth:
+        input#DOB.text(style='width:230px;', required='', type='date', name='DOB')
+    input#school(type='text', required='', name='school', placeholder='school')
+    br
+    input.submit(style='display:inline-block;', type='submit', value='Submit')
+    input.submit(style='display:inline-block;', type='reset', value='Clear')

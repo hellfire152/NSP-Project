@@ -1,5 +1,8 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 console.log("hello");
 var question = [{
   "prompt": "1+1=?",
@@ -15,6 +18,7 @@ var question = [{
   "solution": "Go away", //there is no solution in the choices
   "time": 20
 }]
+<<<<<<< HEAD
 
 question.forEach(function(individualQuestion){
   //Display the whole object
@@ -51,4 +55,17 @@ console.log(("abcD" === "abcd"));
 =======
 var x;
 console.log(x.range(1,10))
+>>>>>>> origin/master
+=======
+
+question.forEach(function(individualQuestion){
+  //Display the whole object
+  // console.log(individualQuestion);
+
+  //Display the key
+  console.log(individualQuestion.prompt);
+  console.log(individualQuestion.type);
+  console.log(individualQuestion.solution);
+  console.log(individualQuestion.time);
+})
 >>>>>>> origin/master

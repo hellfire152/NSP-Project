@@ -144,7 +144,6 @@ module.exports = {
   retrieveAllQuiz : function(){
     return quizSet = {
       data : {
-        sessionId : "123",
         type : C.DB.SELECT.ALL_QUIZ
       }
     }
@@ -153,7 +152,6 @@ module.exports = {
   retrieveQuestion : function(){
     return quizSet = {
       data : {
-        sessionId : "123",
         type : C.DB.SELECT.QUESTION,
         quizId : 1
       }

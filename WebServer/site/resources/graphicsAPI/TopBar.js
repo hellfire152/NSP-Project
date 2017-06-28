@@ -6,11 +6,15 @@
   Author: Jin Kuan
 */
 class TopBar extends DisplayElement {
-  constructor(resources, width, name) {
+  constructor(resources, width, height, name) {
     super();
     //initializing variables
     this._width = width;
-    this._container = new PIXI.Sprite(resources['topbar-background'].texture);
+    this._height = height;
+    this._background = new PIXI.Sprite(resources['topbar-background'].texture);
+    this._background.width = width;
+    this._background.height = height;
+
     this._name = 0;
     this._pixiElements = {};
 

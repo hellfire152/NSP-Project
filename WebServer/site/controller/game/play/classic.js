@@ -12,17 +12,19 @@ console.log('PLAY: Loaded: classic gamemode handler!');
 function handleGame(response) {
   console.log('PLAY: Handling game response!');
   switch(response.game) {
+    case C.GAME_RES.GET_READY: {
+      document.body.innerHTML = ''; //clear the html body
+      document.body.appendChild(app.renderer.view); //add the game view
+      swapScene('getReady');
+    }
     case C.GAME_RES.NEXT_QUESTION: {
-      if(firstQuestion) {
-        clearBody();
-        firstQuestion = false;
-      }
-      clearGameArea();
-      showQuestion(response.question)
+      loadQuestion(response.question);
       break;
     }
+    case C.GAME_RES.RESPONSE_DATA: {
+      
+    }
     case C.GAME_RES.ROUND_END: {
-      clearGameArea();
       displayResults(response.roundEndResults);
       break;
     }
@@ -40,48 +42,36 @@ function handleGame(response) {
 }
 
 function loadQuestion(question) {
-  //create div for question
-  let questionDiv = document.createElement('div');
-  questionDiv.id = 'question';
+  let p = pixiScenes.answering;
 
-  //create h3 node for the question prompt
-  let promptNode = document.createElement('h3');
-  promptNode.appendChild(document.createTextNode(question.prompt));
-
-  let ansNode = document.createElement('div');
-  ansNode.id = 'ans';
-
-  if(question.type == 0) { //if MCQ question
-    console.log("QUESTION HANDLER: MCQ");
-    //create MCQ buttons
-    let buttonArr = [];
-    for(let i = 0; i < 4; i++) {
-      let button = document.createElement('button');
-      button.id = 'MCQ-' + C.MCQ_LETTERS[i];
-      button.onclick = (function() {
-        return function() {
-          submitAnswer(0, C.MCQ_LETTERS[i]); //setting the proper onclick function
-        }
-      })();
-      button.appendChild(document.createTextNode(question.choices[i]));
-      ansNode.appendChild(button);
-    }
-  } else {  //short answer question
-    //create textfiedl
-    //let textField =
+  let timerEnd; //callback for when timer ends
+  //set both not visible (just in case)
+  p.mcqButtonHandler.visible = p.shortAnswerTextField.visible = false;
+  if(question.type == 0) { //mcq question
+    p.mcqButtonHandler.reset();
+    p.mcqButtonHandler.visible = true;
+    p.mcqButtonHandler.setNoOfChoices(question.choices.length);
+    p.mcqButtonHandler.choices = question.choices;
+    p.mcqButtonHandler.enableAll();
+    timerEnd = () => {p.mcqButtonHandler.disableAll()};
+  } else {  //short answer
+    p.shortAnswerTextField.reset();
+    p.shortAnswerTextField.enable();
+    p.shortAnswerTextField.visible = true;
+    timerEnd = () => {p.shortAnswerTextField.disable()};
   }
-  questionDiv.appendChild(promptNode);
-  questionDiv.appendChild(ansNode);
-  document.getElementById('game').appendChild(questionDiv);
+  p.questionDisplay.text = question.prompt;
+  setTimeout(timerEnd, question.time * 1000);
+  swapScene('answering');
 }
 
-function submitAnswer(type, ans) {
-  send({
-    'game': C.GAME.SUBMIT_ANSWER,
-    'answer': (type == 0)? C.MCQ[ans] : ans
-  });
-  //disable all buttons
-  document.getElementById('ans').childNodes.forEach(button => {
-    button.disabled = true;
-  });
+function
+
+function swapScene(scene) {
+  for(let scene in pixiScenes) {  //set all scenes not visible
+    if(pixiScenes.hasOwnProperty(scene)) {
+      pixiScenes[scene].visible = false;
+    }
+  }
+  pixiScenes[scene].visible = true; //set the specified one to be visible
 }

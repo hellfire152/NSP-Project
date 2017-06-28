@@ -158,7 +158,7 @@ async function host_room(data) {
     'host': data.id,
     'players': {},
     'quiz': quiz
-  };
+  }
 
   //build response
   response = {

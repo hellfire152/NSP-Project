@@ -194,4 +194,10 @@ class McqButtonHandler extends DisplayElement {
   setText(buttonIndex, text) {
     this._buttons[buttonIndex].text = text;
   }
+
+  set choices(choicesArr) {
+    for(let i = 0; i < choicesArr.length; i++) {
+      this._buttons[i].text = answersArr[i];
+    }
+  }
 }

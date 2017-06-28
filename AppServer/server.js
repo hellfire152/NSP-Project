@@ -70,6 +70,11 @@ conn.on("data", async function(input) {
             'C' : C,
             'allRooms' : allRooms
           });
+        } else if (!(data.data.type === undefined)){
+          // sendToServer(dbConn, data); //Send to database server
+          response = data;
+          conn = dbConn;
+
         } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
           response = await handleIo({
             'data' : data,
@@ -93,12 +98,12 @@ conn.on("data", async function(input) {
             'allRooms' : allRooms
           });
         }
-
         //logging and response
         console.log("AppServer Response: ");
         console.log(response);
         response.reqNo = data.reqNo;
         sendToServer(conn, response);
+
       } else if(data.password === pass) { //valid password
         console.log("WebServer Validated");
         conn.auth = true;
@@ -119,13 +124,22 @@ server.listen(9090);
 //connection with datbase server
 var dbConn = net.connect(7070);
 
-//Recieve data from database
+//implementing the send function on the database connection
+dbConn.send = (reqObj, callback) => {
+  let reqNo = uuid();
+  pendingDatabaseResponses[reqNo] = callback;
+
+  dbConn.write(JSON.stringify(reqObj));
+}
+
+//Recieve data from database and run callback
 dbConn.on('data', function(data) {
   pendingDatabaseResponses[data.reqNo](data);
+  delete pendingDatabaseResponses[data.reqNo];
 });
 
 //Test sample data
-sendToServer(dbConn, sampleData.loginStudentAcc());
+// sendToServer(dbConn, sampleData.loginStudentAcc());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer

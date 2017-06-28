@@ -1,0 +1,25 @@
+html
+  head
+    title Login
+    script.
+      var tim = 0;
+      function reload () {
+      tim = setTimeout("location.reload(true);",60000);   // 1 minute
+      }
+      function canceltimer() {
+      window.clearTimeout(tim);  // cancel the timer on each mousemove/click
+      reload();  // and restart it
+      }
+  body(onmousemove='canceltimer();', onclick='canceltimer();')
+
+    form(onsubmit='/validate-login-room', method='POST', action='/login-room')
+      div.form-group
+        p username
+        input(type='text', name='username', id='username')
+        p email
+        input(type ='email', name='email', id='email')
+        p password
+        input(type ='password' , name ='password', id ='password')
+
+
+      input(type='submit' value = 'Login')
