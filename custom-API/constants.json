@@ -42,7 +42,8 @@
     "WRONG_ANSWER": 15,
     "PLAYER_FINISH": 16,
     "TEAM_CHOSEN": 17,
-    "CONFIRM_TEAM_NO" : 18
+    "CONFIRM_TEAM_NO" : 18,
+    "RESPONSE_DATA" : 19
   },
   "GAMEMODE" : {
     "CLASSIC": 0,

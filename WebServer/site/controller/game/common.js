@@ -65,17 +65,34 @@ app.loader
     p.ranking = new PIXI.Container();
 
     //setting up the various scenes...
+    //getReady scene
     p.getReady.addChild(new PIXI.Text('Get Ready!'));
 
+    //answering scene
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
+    let shortAnswerTextField = new shortAnswerTextField(WIDTH, HEIGHT);
     let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
       HEIGHT - mcqButtonHandler.height - topBar.height);
-    let answerResponses = new BarGraph(resources, null, {
+    let responseData = new BarGraph(resources, null, {
       'width' : WIDTH,
       'height' : HEIGHT - topBar.height - mcqButtonHandler.height,
       'paddingX' : 20,
       'paddingY' : 20
     });
+    //positioning
+    questionDisplay.y = topBar.height;
+    mcqButtonHandler.anchor.set(0, 1);
+    shortAnswerTextField.anchor.set(0, 1);
+    mcqButtonHandler.y = shortAnswerTextField.y = HEIGHT;
+    mcqButtonHandler.visible = shortAnswerTextField.visible = false; //do not show yet
+    //adding to scene
+    p.answering.mcqButtonHandler = mcqButtonHandler;
+    p.answering.topBar = topBar;
+    p.answering.responseData = responseData;
     p.answering.addChild(topBar, questionDisplay, mcqButtonHandler);
   });
+
+function displayResults(roundEndResults) {
+  
+}
