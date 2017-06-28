@@ -22,9 +22,11 @@ var connection = mysql.createConnection({
   database: 'exquizit'
 });
 
+var socketId;
+
 //Ensure connection have been successful between data and database
 connection.connect(function(error){
-  if(!!error){
+  if(error){
     console.error('[Failed to connect to database]: ' + error);
   }
   else{
@@ -43,6 +45,8 @@ var server = net.createServer(function(conn){
   });
 
   conn.on('data', async function(input){
+
+    console.log("Request recieved from appserver");
     try{
       let data = (JSON.parse(input)).data;
       // C = input.C;
@@ -86,7 +90,12 @@ var server = net.createServer(function(conn){
   });
 
   //Send JSON string to app server
-  async function sendToServer(json) {
+  async function sendToServer(data) {
+
+  var json = {};
+    json.data = data;
+    json.sendTo = C.SEND_TO.USER;
+
     conn.write(JSON.stringify(json));
   }
 
@@ -345,6 +354,7 @@ var server = net.createServer(function(conn){
 
   //Search quizes in database
   async function searchQuiz(data){
+    console.log("SEARCHING");
     await handleDb.handleSearchQuiz(data)
     .then(dataOut => {
       var searchQuery = ""
