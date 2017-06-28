@@ -2,37 +2,32 @@
   Class for drawing a bar graph
   This shows up for the response data (maybe on the rankings too?)
 
+  data consists of 2 arrays, labels and values.
   Author: Jin Kuan
 */
 //var colors = [0x]
 class BarGraph extends DisplayElement {
-  constructor(resources, data) {
+  constructor(resources, data, positionData) {
     super();
     //bar graph background
     this._background = new PIXI.Graphics()
       .beginFill(0xFFFFFF)
       .drawRect(0,0,100,100)
       .endFill();
-    this._background.width = data.width;
-    this._background.height = data.height;
+    this._background.width = positionData.width;
+    this._background.height = positionData.height;
     this._container.addChild(this._background);
-    
+
+    this._maxHeight = positionData.height;
+    this._width = positionData.width;
+    this._paddingX = positionData.paddingX;
+    this._paddingY = positionData.paddingY;
+
     this._bars = [];
-    //create a new bar for each column
-    barWidth = (data.Width - data.paddingX * (data.labels.length - 1)) / data.labels.length;
-    for(let i = 0, colorIndex = 0; i < data.labels.length; i++) {
-      let bar = new BarGraphBar({
-        'label' : data.labels[i],
-        'value' : data.values[i],
-        'color' : colors[colorIndex],
-        'width' : barWidth,
-        'maxHeight' : data.height,
-        'padding' : 20
-      });
-      bar.x = i * data.paddingX;
-      this._bars.push(bar);
-      //add to container
-      this._container.addChild(bar);
+
+    //set data if data was defined
+    if(data) {
+      this.data = data;
     }
   }
 
@@ -41,4 +36,25 @@ class BarGraph extends DisplayElement {
     this._bars[index].value = value;
   }
 
+  set data(d) {
+    for (let i = 0; i < this._container.children.length; i--) {
+      this._container.removeChild(this._container.children[i]); //remove all bars
+    }
+    //add one bar for each label and value
+    barWidth = (this._width - this._paddingX * (d.labels.length - 1)) / d.labels.length;
+    for(let i = 0, colorIndex = 0; i < d.labels.length; i++) {
+      let bar = new BarGraphBar({
+        'label' : d.labels[i],
+        'value' : d.values[i],
+        'color' : colors[colorIndex],
+        'width' : barWidth,
+        'maxHeight' : this._maxHeight,
+        'padding' : this._paddingY
+      });
+      bar.x = i * this._paddingX;
+      this._bars.push(bar);
+      //add to container
+      this._container.addChild(bar);
+    }
+  }
 }

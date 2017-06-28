@@ -35,7 +35,7 @@ class BarGraphBar extends DisplayElement {
     p.bar.y = -padding;
     p.label.y = padding;
     p.value.y = -p.bar.height - padding * 2;
-     
+
     //adding to container
     this._container.addChild(p.value, p.bar, p.label);
   }
@@ -68,7 +68,7 @@ class BarGraphBar extends DisplayElement {
   }
 
   set padding(pd) {
-    let this._pixiELements = p;
+    let p = this._pixiELements;
     //reposition
     p.bar.y = -pd;
     p.label.y = pd;

@@ -13,10 +13,23 @@ var app = new PIXI.Application({
   'width': width,
   'height': height
 });
-app.stage = false;
+app.loader  //load all
+  .add('yellow-button', '/resources/graphics/buttons/yellow-button.json')
+  .add('blue-button', '/resources/graphics/buttons/blue-button.json')
+  .add('green-button', '/resources/graphics/buttons/green-button.json')
+  .add('red-button', '/resources/graphics/buttons/red-button.json')
+  .add('car-body', '/resources/graphics/car/base.png')
+  .add('car-driving', '/resources/graphics/car/driving.json')
+  .add('engine-fireup', '/resources/graphics/car/engine/fire.json')
+  .add('engine-firing', '/resources/graphics/car/engine/firing.json')
+  .add('button-background', '/resources/graphics/ui/button-background.png')
+  .add('topbar-background', '/resources/graphics/ui/topbar-background.png'))
+  .load(loader, resources) {
 
-//for easier access to all textures
-var pixiElements = {};
+  }
+
+//for swapping between scenes
+var pixiScenes = {};
 
 //loading screen, just text at the moment
 var loading = new LoadingBar(9, WIDTH - 100);
@@ -30,7 +43,7 @@ app.loader.onLoad.add(() => {
 app.loader.onComplete.add(() => {
   loading.sprite.visible = false; //hide loading screen
   loading = null; //leaving it to the garbage collector to deal with
-  pixiElements.ui.visible = true; //show game ui
+  app.stage.addChild(new PIXI.Text('Get Ready!')); //show getReady screen, prepare for start signal...
 });
 
 //loading the stuff
@@ -45,69 +58,24 @@ app.loader
   .add('engine-fireup', 'resources/graphics/car/engine/fire.json')
   .add('engine-firing', 'resources/graphics/car/engine/firing.json')
   .load((loader, resources) => {
-    //initialize and positioning elements
-    let buttonContainer = new PIXI.Container();
+    //initialize all the various scenes
+    let p = pixiScenes;
+    p.answering = new PIXI.Container();
+    p.getReady = new PIXI.Container();
+    p.ranking = new PIXI.Container();
 
-    //initializing the ui
-    let ui = new PIXI.Container();
-    ui.visible = false;
+    //setting up the various scenes...
+    p.getReady.addChild(new PIXI.Text('Get Ready!'));
 
-    //top bar
-    let topBar = new TopBar(WIDTH, 'TEST');
-    pixiElements.topBar = topBar;
-    //middle
-    let middle = new PIXI.Container();
-    middle.y = topBar.y;
-
-    //buttons
-    let yellowButton = new Button(resources['yellow-button'].textures,
-      WIDTH / 2 - 25, send, 8);
-    let greenButton = new Button(resources['green-button'].textures,
-      WIDTH / 2 - 25, send, 4);
-    let blueButton = new Button(resources['blue-button'].textures,
-      WIDTH / 2 - 25, send, 2);
-    let redButton = new Button(resources['red-button'].textures,
-      WIDTH / 2 - 25, send, 1);
-
-    //setting the positioning of buttons
-    yellowButton.x = 5; //yellow -> top left
-    yellowButton.y = 5;
-    greenButton.x = yellowButton.width + 10;
-    greenButton.y = y;//green -> top right
-    blueButton.x = 5;//blue -> bottom left
-    blueButton.y = yellowButton.height + 5;
-    redButton.x = yellowButton.width + 10;//red -> buttom right
-    redButton.y = yellowButton.height + 5;
-
-    //adding buttons to the container
-    //adding background first
-    buttonContainer.addChild(new PIXI.Sprite(resources['button-background'].texture));
-    buttonContainer.addChild(yellowButton);
-    buttonContainer.addChild(greenButton);
-    buttonContainer.addChild(blueButton);
-    buttonContainer.addChild(redButton);
-
-    //positioning the buttonContainer
-    buttonContainer.y = HEIGHT - buttonContainer.height;
-
-    //adding to easy access object
-    pixiElements.topBar = topBar;
-    pixiElements.middle = middle;
-    pixiElements.buttonContainer = buttonContainer;
-    pixiElements.ui = ui;
-
-    //adding to the ui
-    ui.addChild(topBar.sprite);
-    ui.addChild(middle);
-    ui.addChild(buttonContainer);
-
-    //add to the stage
-    app.stage.addChild(ui);
+    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
+    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
+    let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
+      HEIGHT - mcqButtonHandler.height - topBar.height);
+    let answerResponses = new BarGraph(resources, null, {
+      'width' : WIDTH,
+      'height' : HEIGHT - topBar.height - mcqButtonHandler.height,
+      'paddingX' : 20,
+      'paddingY' : 20
+    });
+    p.answering.addChild(topBar, questionDisplay, mcqButtonHandler);
   });
-
-//hide waiting room and show PIXI game screen
-startGame(question) {
-  //hideWaitingRoom();
-  document.body.appendChild(app.renderer.view);
-  nextQuestion(question);
-}
