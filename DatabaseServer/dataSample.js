@@ -17,9 +17,9 @@ module.exports = {
         type : C.DB.CREATE.STUDENT_ACC,
         account : {
           email : "nigel_ncch@hotmail.com23",
-          password_hash : "PasswordStudent",
+          password_hash : "pass",
           name : "Nigel Chen Chin Hao",
-          username : "nigelhao23"
+          username : "nigelhao"
         },
         details :{
           school : "NYP",

@@ -9,7 +9,7 @@
     <h1>Database Testing</h1>
     <div id='dbCreateStudentAccount'>
       <h2>Create student account</h2>
-      <form action='/db-data' method='POST'>
+      <form action='/data-access' method='POST'>
         <input type="hidden" name="dbType" value="accountCreation"/>
         <label>Name:
           <input type="text" name="name" id="name"/>
@@ -38,9 +38,10 @@
     <br>
     <div id='dbLoginAccount'>
       <h2>Login Account</h2>
-      <form action='/db-data' method='POST'>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="accountLogin">
         <label>Username:
-          <input type="text" name="username" id="user"/>
+          <input type="text" name="user" id="user"/>
         </label>
         <br>
         <label>Password:
@@ -106,7 +107,7 @@
     </div>
     <div id='dbRetrieveQuestion'>
       <h2>Retrieve Question</h2>
-      <form action='/db-data' method='POST'>
+      <form action='/data-access' method='POST'>
         <input type="hidden" name="dbType" value="retrieveQuestion">
         <label>Quiz ID:
           <input type="text" name="quizId" id="quizId"/>
@@ -117,7 +118,8 @@
     <br>
     <div id='dbSearchQuiz'>
       <h2>Search Quiz</h2>
-      <form action='/db-data' method='POST'>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="searchQuestion">
         <label>Search:
           <input type="text" name="search" id="search"/>
         </label>

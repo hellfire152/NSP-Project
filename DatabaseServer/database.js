@@ -13,7 +13,7 @@ var mysql = require('mysql');
 var handleDb = require("./data-handle.js")();
 const C = require('../custom-API/constants.json');
 var net = require('net');
-
+var Promise = require('promise');
 //Create connection between app and database
 var connection = mysql.createConnection({
   host: 'localhost',
@@ -32,7 +32,6 @@ connection.connect(function(error){
   }
 });
 
-
 var server = net.createServer(function(conn){
   console.log("Database server start");
 
@@ -47,39 +46,36 @@ var server = net.createServer(function(conn){
     console.log("Request recieved from appserver");
     try{
       var inputData = (JSON.parse(input));
-      var data = inputData.data;
-      // C = input.C;
-      console.log("DB TYPE: " +data.type);
-      switch(data.type) {
+
+      console.log("DB TYPE: " + inputData.data.type);
+      switch(inputData.data.type) {
         case C.DB.CREATE.STUDENT_ACC :
         case C.DB.CREATE.TEACHER_ACC : {
-          response = await createAccount(data);
+          await createAccount(inputData);
           break;
         }
         case C.DB.CREATE.QUIZ : {
-          response = await createQuiz(data);
+          await createQuiz(inputData);
           break;
         }
         case C.DB.SELECT.ALL_QUIZ : {
-          response = await retrieveAllQuiz();
-          break
+          await retrieveAllQuiz();
+          break;
         }
         case C.DB.SELECT.QUESTION : {
-          response = await retrieveQuestions(data.quizId); //quizId of the data
+          await retrieveQuestions(inputData); //quizId of the data
           break;
         }
         case C.DB.SELECT.SEARCH_QUIZ : {
-          response = await searchQuiz(data);
+          await searchQuiz(inputData);
           break;
         }
         case C.DB.SELECT.USER_ACCOUNT : {
-          response = await retrieveAccount(data);
+          await retrieveAccount(inputData);
           break;
         }
         //ADD MORE CASES HERE
       }
-      response.reqNo = data.reqNo;
-      sendToServer(response);
     }
     catch (err) {
       console.log(err);
@@ -88,15 +84,20 @@ var server = net.createServer(function(conn){
   });
 
   //Send JSON string to app server
-  async function sendToServer(data) {
-    conn.write(JSON.stringify(json));
+  async function sendToServer(response, inputData) {
+    console.log("SEND TO SERVERERERERERERE");
+    console.log(inputData);
+    response.reqNo = inputData.reqNo;
+    console.log(response);
+    conn.write(JSON.stringify(response));
   }
 
   //==================== After this will be codes that access to physical database ====================
 
   //Create user account (student or teacher).
   //data.type should state clearly if it is STUDENT_DETAILS or TEACHER_DETAILS
-  async function createAccount(data){
+  async function createAccount(inputData){
+    var data = inputData.data;
     await handleDb.handleCreateAccount(data) //TODO: Will shift handleCreateAccount lower, so it will be faster to check email availability
     .then(dataOut => {
       //Checking email availability
@@ -175,9 +176,11 @@ var server = net.createServer(function(conn){
   //Check if password input is correct
   //If correct, user personal data will be retrieved from database
   //Else no personal data will be sent
-  async function retrieveAccount(data){
+  async function retrieveAccount(inputData){
+    var data = inputData.data;
     await handleDb.handleEncryption(data.account)
     .then(dataAccount => {
+      console.log(dataAccount);
       var query = connection.query(
         "SELECT user_id, password_hash, salt FROM user_account\
         WHERE email = " + connection.escape(dataAccount.username) +
@@ -207,8 +210,10 @@ var server = net.createServer(function(conn){
                     if(result.length === 1){
                       handleDb.handleDecryption(result)
                       .then(resultOut => {
-                        console.log(result);
-                        sendToServer(result);
+                        objOutResult = {
+                          data : resultOut
+                        }
+                        sendToServer(objOutResult, inputData);
                       })
                       .catch(reason => {
                         console.log(reason);
@@ -223,7 +228,16 @@ var server = net.createServer(function(conn){
                         WHERE teacher_details.user_id = " + connection.escape(dataOut.account.userId),
                       function(err, result){
                         if(result.length === 1){
-                          sendToServer(result);
+                          handleDb.handleDecryption(result)
+                          .then(resultOut => {
+                            objOutResult = {
+                              data : resultOut
+                            }
+                            sendToServer(objOutResult, inputData);
+                          })
+                          .catch(reason => {
+                            console.log(reason);
+                          });
                         }
                         else if(result.length === 0){
                           console.log("[No related data found]");
@@ -265,25 +279,36 @@ var server = net.createServer(function(conn){
   }
 
   //Create quiz and add to database accordinly
-  async function createQuiz(data){
+  async function createQuiz(inputData){
+    var data = inputData.data;
     data.quiz.date_created = new Date();
     var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
       if(error){
         console.error('[Error in query]: ' + error);
-        return;
+        var response = {
+          success : false,
+          error : error
+        }
+        sendToServer(response, inputData);
+        // return;
       }
 
       console.log('[Query successful]');
       var quizId = result.insertId; //Get the quizId form quiz
 
       data.question.forEach(function(question){
-        addQuestion(question, data, quizId);
+        addQuestion(question, data, quizId, inputData);
       });
+      var response = {
+        success : true
+      }
+      sendToServer(response, inputData);
     });
+
   }
 
   //Function will be called by createQuiz(), addQuestion will be called repeatedly until all question is stored.
-  async function addQuestion(questionData, data, quizId){
+  async function addQuestion(questionData, data, quizId, inputData){
     questionData.quiz_id = quizId;
     // console.log(questionData);
     await handleDb.handleEncryption(questionData)
@@ -292,21 +317,25 @@ var server = net.createServer(function(conn){
       var query = connection.query("INSERT INTO quiz_question SET ?", questionDataOut, function(error, result){
         if(error){
           console.error('[Error in query]: ' + error);
-          return;
+          var response = {
+            success : false,
+            error : error
+          }
+          sendToServer(response, inputData);
+          // return;
         }
 
         var questionId = result.insertId; // Get the questionId from the question
         //If question is a MCQ, addChoice function will be called to store the MCQ choices
         if(questionData.type == C.DB.QUESTION_TYPE.MCQ){
-          addChoices(data.choices, questionId, questionData.question_no);
+          addChoices(data.choices, questionId, questionData.question_no, inputData);
         }
       });
     })
   }
 
   //Search for matching questionNo, and then store the data accordingly
-  async function addChoices(choiceData, questionId, questionNo){
-    console.log("BLOODY INSIDE LIAO LAH");
+  async function addChoices(choiceData, questionId, questionNo, inputData){
     console.log(choiceData);
     console.log(questionId);
     console.log(questionNo);
@@ -321,7 +350,12 @@ var server = net.createServer(function(conn){
           var query = connection.query("INSERT INTO quiz_question_choices SET ?", choiceDataOut, function(error, result){
             if(error){
               console.error('[Error in query]: ' + error);
-              return;
+              var response = {
+                success : false,
+                error : error
+              }
+              sendToServer(response, inputData);
+              // return;
             }
 
             console.log('[Query successful]');
@@ -351,7 +385,8 @@ var server = net.createServer(function(conn){
   }
 
   //Search quizes in database
-  async function searchQuiz(data){
+  async function searchQuiz(inputData){
+    var data = inputData.data;
     console.log("SEARCHING");
     await handleDb.handleSearchQuiz(data)
     .then(dataOut => {
@@ -371,9 +406,10 @@ var server = net.createServer(function(conn){
         description LIKE '%" + dataOut.searchItem + "%'" + searchQuery,
         function(err, result, fields){
     			if (!err) {
-            console.log(result);
-            //TODO: Method to send data to app server
-            sendToServer(result);
+              objResult = {
+                data : result
+              }
+            sendToServer(objResult, inputData);
     			} else {
     				console.log('[No result]');
             //TODO: return error to server
@@ -384,21 +420,25 @@ var server = net.createServer(function(conn){
 
   //Retrieve every questions corresponding to the quiz specifed (quizId)
   //If question type is a short ans, choice_arr will be null
-  async function retrieveQuestions(quizId){
+  async function retrieveQuestions(inputData){
+    var quizId = inputData.data.quizId;
+    console.log("RETRIEVE QUESTION");
     var query = connection.query("SELECT quiz_question.quiz_id, quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices\
     FROM quiz_question\
     LEFT OUTER JOIN quiz_question_choices\
       ON quiz_question.question_id = quiz_question_choices.question_id\
     WHERE quiz_question.quiz_id = '" + quizId + "'\
     ORDER BY quiz_question.question_no",
-    function(err, result, fields){
+    async function(err, result, fields){
   			if (!err) { //result = data recieve from database
           handleDb.handleDecryption(result)
           .then(outPlainResult => {
             handleDb.handleRecieveQuestion(outPlainResult)
             .then(outResult => {
-              // console.log(outResult);
-              sendToServer(outResult);
+              objOutResult = {
+                data : outResult
+              }
+              sendToServer(objOutResult, inputData);
             })
             .catch(reason => {
               console.log(reason);

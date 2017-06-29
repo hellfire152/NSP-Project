@@ -89,8 +89,7 @@ async function handleRecieveQuestion(data){
 }
 
 async function handleEncryption(data){
-  console.log("HANDLE ENCRYPTION");
-  return data; //For testing purposes where data will not be encrypted before storing to database
+  // return data; //For testing purposes where data will not be encrypted before storing to database
   var cipherData;
   await cipher.encryptDbData(data)
   .then(dataOut => {
@@ -100,7 +99,7 @@ async function handleEncryption(data){
 }
 
 async function handleDecryption(data){
-  return data; //For testing purposes where data will not be decrypted before processing data to client
+  // return data; //For testing purposes where data will not be decrypted before processing data to client
   var plainData;
   await cipher.decryptDbData(data)
   .then(dataOut => {

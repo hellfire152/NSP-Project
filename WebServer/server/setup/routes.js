@@ -24,11 +24,6 @@ module.exports = function(data) {
   });
 
   app.get('/data', function(req,res){
-    // if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
-    //   console.log("Well someone's trying to cause an error...");
-    // } else {
-      // let roomNo = req.query.room;
-      console.log(req.cookies.encryptedDataReq);
       cipher.decryptJSON(req.cookies.encryptedDataReq)
         .catch(reason => {
           console.log(reason);
@@ -38,11 +33,7 @@ module.exports = function(data) {
           appConn.send({
             'type': C.REQ_TYPE.DATABASE, //JOIN_ROOM
             'data': cookieData.data
-            // 'resNo': resNo,
-            // 'roomNo': roomNo
           }, (response) => {
-            console.log("REVIEVED");
-            console.log(response);
             res.render('dbTest', {
               data: response.data
             });
@@ -65,7 +56,7 @@ module.exports = function(data) {
             'type': C.REQ_TYPE.JOIN_ROOM, //JOIN_ROOM
             'id': cookieData.id,
             'pass': cookieData.pass,
-            'resNo': resNo,
+            // 'resNo': resNo,
             'roomNo': roomNo
           }, (response) => {
             res.render('play', {
@@ -146,11 +137,12 @@ module.exports = function(data) {
   });
 
   //handling form submits
+  app.post('/data-access', require('../validate-data-access.js')(cipher, appConn, C));
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
   app.post('/login-room', require('../validate-login-room.js')(cipher, appConn));
   app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn));
-    app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn));
+  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn));
 }
 
 function sendErrorPage(res, errormsg) {

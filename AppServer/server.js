@@ -65,12 +65,12 @@ conn.on("data", async function(input) {
       let response = {};
       if(conn.auth) { //if already authenticaed
         if(data.type !== undefined) { //data type defined
-          if(data.type === C.REQ_TYPE.DATABASE){
-            conn = dbConn;
-            console.log("BEFORE");
-            console.log(data.reqNo);
-            data.reqNo = setDatabaseResponse(data.reqNo)
-          }
+          // if(data.type === C.REQ_TYPE.DATABASE){
+          //   conn = dbConn;
+          //   console.log("BEFORE");
+          //   console.log(data.reqNo);
+          //   data.reqNo = setDatabaseResponse(data.reqNo)
+          // }
           response = await handleReq({
             'data' : data,
             'C' : C,
@@ -103,8 +103,11 @@ conn.on("data", async function(input) {
         console.log("AppServer Response: ");
         console.log(response);
         response.reqNo = data.reqNo;
-        sendToServer(conn, response);
-
+        if(data.type === C.REQ_TYPE.DATABASE){
+          dbConn.send(response, response.reqNo);
+        }else{
+          sendToServer(conn, response);
+        }
 
       } else if(data.password === pass) { //valid password
         console.log("WebServer Validated");
@@ -130,18 +133,21 @@ var dbConn = net.connect(7070);
 dbConn.send = (reqObj, callback) => {
   let reqNo = uuid();
   pendingDatabaseResponses[reqNo] = callback;
-
+  reqObj.reqNo = reqNo;
   dbConn.write(JSON.stringify(reqObj));
 }
 
 //Recieve data from database and run callback
-dbConn.on('data', function(data) {
-  pendingDatabaseResponses[data.reqNo](data);
+dbConn.on('data', function(inputData) {
+  data = JSON.parse(inputData);
+  data.reqNo = pendingDatabaseResponses[data.reqNo];
+  // pendingDatabaseResponses[data.reqNo](data);
   delete pendingDatabaseResponses[data.reqNo];
+  sendToServer(connection, data);
 });
 
 //Test sample data
-// sendToServer(dbConn, sampleData.createQuiz());
+// sendToServer(dbConn, sampleData.studentAcc());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer
