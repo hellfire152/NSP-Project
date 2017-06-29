@@ -52,14 +52,21 @@ module.exports =function(cipher, appConn,C){
             })
             .then(function(cookieData) {
             res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-            res.redirect('/login?room=' +req.body.usename);
-            appConn.write(JSON.stringify({
+            // res.redirect('/login?room=' +req.body.usename);
+            appConn.send({
               'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'username' :username,
               'email':email,
               'password':password
 
-            }));
+            }, (response) => {
+              console.log("HELLO");
+              res.render('login',{
+                'username':response.username,
+                'email':response.email,
+                'password':response.password
+              });
+            });
           });
         }
         else{

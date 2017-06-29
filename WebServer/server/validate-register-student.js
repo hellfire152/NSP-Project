@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn){
+module.exports =function(cipher, appConn,C, errors){
   return function(req, res){
     // req.checkBody('username','Please enter username').notEmpty();
     //
@@ -10,21 +10,22 @@ module.exports =function(cipher, appConn){
     // req.checkBody('password','Please enter password').notEmpty();
     // req.checkBody('password','Invalid password').isLength({min:8});
     console.log(cipher);
+    errors=false;
     var username = req.body.username;
     var email = req.body.email;
     var password = req.body.password;
     var confirmPassword=req.body.confirmPassword;
-    var date_of_birth=req.body.DOB;
+    var dateOfBirth=req.body.DOB;
     var school=req.body.school;
 
         req.sanitize('username').escape();
         req.sanitize('email').escape();
         req.sanitize('password').escape();
-        req.sanitize('date_of_birth').escape();
+        req.sanitize('dateOfBirth').escape();
         req.sanitize('username').trim();
         req.sanitize('email').trim();
         req.sanitize('password').trim();
-        req.sanitize('date_of_birth').trim();
+        req.sanitize('dateOfBirth').trim();
 
 
     if (username!="" && email!="" && password!="" && confirmPassword!=""){
@@ -55,21 +56,40 @@ module.exports =function(cipher, appConn){
               "username": req.body.username,
               "password": req.body.password,
               "email":req.body.email,
-              "date_of_birth":req.body.DOB,
+              "dateOfBirth":req.body.DOB,
               "school":req.body.school
             })
               .catch(function (err) {
                 throw new Error('Error parsing JSON!');
               })
               .then(function(cookieData) {
-              res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-              res.redirect('/login?room=' +req.body.room);
+              res.cookie('register-student', cookieData, {"maxAge": 1000*60*60}); //one hour
+              // res.redirect('/login?room='  +req.body.room);
+
+              appConn.send({
+                'type':C.REQ_TYPE.ACCOUNT_CREATE_STUD,
+                'username' :username,
+                'email':email,
+                'password':password,
+                'dateOfBirth':dateOfBirth,
+                'school':school
+
+              }, (response) => {
+                res.render('register-student',{
+                  'username':response.username,
+                  'email':response.email,
+                  'password':response.password,
+                  'dateOfBirth':response.dateOfBirth,
+                  'school':response.school
+                });
+              });
             });
+            errors=false;
           }
           else{
 
             console.log("FAIL");
-
+            errors=true;
             res.redirect('/registerstud');
           }
         }
@@ -77,6 +97,7 @@ module.exports =function(cipher, appConn){
 
           req.session.errors=error;
           req.session.success=false;
+          errors=true;
           console.log("password not match");
           res.redirect('/registerstud');
         }
@@ -88,7 +109,7 @@ module.exports =function(cipher, appConn){
           req.session.success=false;
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
-
+          errors=true;
           res.redirect('/registerstud');
 
 
@@ -111,6 +132,7 @@ module.exports =function(cipher, appConn){
         console.log("never fill in all");
 
         res.redirect('/registerstud');
+        errors=true;
         return;
 
     }

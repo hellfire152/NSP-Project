@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn){
+module.exports =function(cipher, appConn, C){
   return function(req, res){
     // req.checkBody('username','Please enter username').notEmpty();
     //
@@ -47,7 +47,8 @@ module.exports =function(cipher, appConn){
             console.log(error);
             console.log("pass");
             cipher.encryptJSON({
-              "usernam": req.body.username,
+              "username": req.body.username,
+              "email":req.body.email,
               "password": req.body.password,
               "school":req.body.school
             })
@@ -55,8 +56,23 @@ module.exports =function(cipher, appConn){
                 throw new Error('Error parsing JSON!');
               })
               .then(function(cookieData) {
-              res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-              res.redirect('/login?room=' +req.body.room);
+              res.cookie('register-teacher', cookieData, {"maxAge": 1000*60*60}); //one hour
+              // res.redirect('/login?room=' +req.body.room);
+              appConn.send({
+                'type':C.REQ_TYPE.ACCOUNT_CREATE_TEACH,
+                'username' :username,
+                'email':email,
+                'password':password,
+                'school':school
+
+              }, (response) => {
+                res.render('register-teacher',{
+                  'username':response.username,
+                  'email':response.email,
+                  'password':response.password,
+                  'school':response.school
+                });
+              });
             });
           }
           else{
