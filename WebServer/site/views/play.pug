@@ -4,8 +4,20 @@ html
       var room = #{roomNo}
     script.
       var gamemode = #{gamemode}
+    script(src='/resources/pixi.js')
     script(src='/socket.io/socket.io.js')
-    script(src='/controller/constants.js')
+    script(src='/resources/constants.js')
+    script(src='/resources/graphicsAPI/DisplayElement.js')
+    script(src='/resources/graphicsAPI/BarGraphBar.js')
+    script(src='/resources/graphicsAPI/BarGraph.js')
+    script(src='/resources/graphicsAPI/PlayerRanking.js')
+    script(src='/resources/graphicsAPI/LoadingBar.js')
+    script(src='/resources/graphicsAPI/Button.js')
+    script(src='/resources/graphicsAPI/Car.js')
+    script(src='/resources/graphicsAPI/McqButtonHandler.js')
+    script(src='/resources/graphicsAPI/QuestionDisplay.js')
+    script(src='/resources/graphicsAPI/ShortAnswerTextField.js')
+    script(src='/resources/graphicsAPI/TopBar.js')
     if gamemode == 0
       script(src='/controller/game/play/classic.js')
     else if gamemode == 1

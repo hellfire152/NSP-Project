@@ -24,6 +24,10 @@ function formatData(input){
       output = searchQuiz(input);
       break;
     }
+    case C.DB.CREATE.QUIZ :{
+      output = createQuiz(input);
+      break;
+    }
     default : {
       console.log("No such constants");
     }
@@ -74,6 +78,24 @@ function loginAccount(input){
         username : input.user,
         password : input.password
       }
+    }
+  }
+}
+
+function createQuiz(input){
+  return {
+    data :{
+      type : input.type,
+      quiz : {
+        quiz_title : input.quizTitle,
+        visibility : input.visibility,
+        description : input.description,
+        quiz_type : input.quizType, //Constant
+        quiz_rating : input.quizRating, //Constant
+        user_id : input.userId //Constant
+      },
+      question : input.question,
+      choices : input.choices
     }
   }
 }

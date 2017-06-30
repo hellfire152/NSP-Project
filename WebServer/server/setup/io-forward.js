@@ -24,6 +24,15 @@ module.exports = function(data) {
   //send stuff from user to game server
   io.on('connection', async function(socket){
     //get login cookie first
+    socket.on('disconnect', () => {
+      console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
+      delete socketOfUser[socket.userId];
+      appConn.send({
+        'special': C.SPECIAL.SOCKET_DISCONNECT,
+        'id': socket.userId,
+        'roomNo' : socket.roomNo
+      }, null);
+    });
     try {
       let loginCookie =  await getLoginCookieS(socket, cipher, cookie);
       console.log("SOCKET IO CONNECTION INITIATED BY");
@@ -67,15 +76,6 @@ module.exports = function(data) {
         socket.emit('err', input);
       }
     });
-    socket.on('disconnect', () => {
-      console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
-      delete socketOfUser[socket.userId];
-      appConn.send({
-        'special': C.SPECIAL.SOCKET_DISCONNECT,
-        'id': socket.userId,
-        'roomNo' : socket.roomNo
-      }, null);
-    });
   });
 
   //from AppServer to WebServer
@@ -93,17 +93,20 @@ module.exports = function(data) {
           'socketObj' : io.sockets.sockets,
           'socketOfUser' : socketOfUser
         });
-      } else if(response.reqNo){  //others
-        pendingAppResponses[response.reqNo].callback(response);
+      } else {  //others
+        if(response.sendTo !== undefined) {
+          console.log("TO IO HANDLER");
+          await handleIoResponse({
+            'response' : response,
+            'io' : io,
+            'C' : C,
+            'socketObj' : io.sockets.sockets,
+            'socketOfUser' : socketOfUser
+          });
+        }
+        if(pendingAppResponses[response.reqNo].callback)
+          pendingAppResponses[response.reqNo].callback(response);
         delete pendingAppResponses[response.reqNo];
-      } else { //socket.io stuff
-        handleIoResponse({
-          'response' : response,
-          'io' : io,
-          'C' : C,
-          'socketObj' : io.sockets.sockets,
-          'socketOfUser' : socketOfUser
-        });
       }
     } catch (err) {
       console.log(err);
@@ -122,15 +125,4 @@ async function getLoginCookieS(socket, cipher, cookie) {
   console.log("decryptedLoginCookie");
   console.log(cookieData);
   return cookieData;
-}
-
-function sendErrorPage(data) {
-  try { //res/req errors
-    data.pendingResponses[data.response.resNo].render('error', {
-      'error': data.errormsg
-    });
-    delete data.pendingResponses[data.response.resNo];
-  } catch (err) { //socket.io
-    data.socketObj[data.response.socketId].emit('err', ""+response.id + " is already in the room!");
-  }
 }
