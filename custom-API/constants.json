@@ -57,7 +57,8 @@
   },
   "REQ_TYPE" : {
     "JOIN_ROOM": 0,
-    "HOST_ROOM": 1
+    "HOST_ROOM": 1,
+    "DATABASE" : 100
   },
   "RES_TYPE" : {
     "JOIN_ROOM_RES": 0,

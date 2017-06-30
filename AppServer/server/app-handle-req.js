@@ -20,8 +20,12 @@ module.exports = async function(input) {
       return (await join_room(data));
       break;
     }
-    case C.REQ_TYPE.HOST_ROOM: {;
+    case C.REQ_TYPE.HOST_ROOM: {
       return (await host_room(data));
+      break;
+    }
+    case C.REQ_TYPE.DATABASE: {
+      return (await databaseAccess(data));
       break;
     }
     //ADD MORE CASES HERE
@@ -134,6 +138,14 @@ async function host_room(data) {
     'roomNo' : roomNo
   };
   return response;
+}
+
+async function databaseAccess(data){
+  console.log("HI YOU ARE INSIDE HERE");
+  console.log(data);
+  return {
+    data : data.data
+  }
 }
 
 var handleSpecial = require('./app-handle-special.js');
