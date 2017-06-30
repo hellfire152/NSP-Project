@@ -116,7 +116,7 @@ function sendQuestion(currentRoom, question, data) {
   currentRoom.timer = setTimeout(() => {
     common.setAllAnswered(currentRoom.players);
     sendToServer(conn,
-      common.getResponseData(currentRoom);
+      common.getResponseData(currentRoom)
     );
   }, question.time * 1000);
 

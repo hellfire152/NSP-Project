@@ -11,7 +11,7 @@ module.exports = function(data) {
     cipher = data.cipher,
     appConn = data.appConn,
     queryOfUser = data.queryOfUser;
-  uuid = data.uuid;
+    uuid = data.uuid;
   //routing
   //handling requests for .html, controller, css or resource files
   app.get('((/resources|/controller|/css)*)|*.html|/favicon.ico', function(req, res) {
@@ -123,14 +123,12 @@ module.exports = function(data) {
   //handling form submits
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
-<<<<<<< HEAD
-  app.post('/create-quiz', require('../validate-create-quiz.js')(cipher, appConn, C));
-  app.post('/add-question', require('../validate-add-question.js')(cipher, appConn, C));
-=======
+  // app.post('/create-quiz', require('../validate-create-quiz.js')(cipher, appConn, C));
+  // app.post('/add-question', require('../validate-add-question.js')(cipher, appConn, C));
+  app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
   app.post('/login-room', require('../validate-login-room.js')(cipher, appConn));
   app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn));
-    app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn));
->>>>>>> origin/master
+  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn));
 }
 
 function sendErrorPage(res, errormsg) {

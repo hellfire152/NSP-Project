@@ -18,21 +18,16 @@ module.exports = async function(input) {
       return (await join_room(data));
       break;
     }
-    case C.REQ_TYPE.HOST_ROOM: {;
+    case C.REQ_TYPE.HOST_ROOM: {
       return (await host_room(data));
       break;
     }
 
-    case C.REQ_TYPE.CREATE_QUIZ: { ;
-      return (await create_quiz(data));
+    case C.REQ_TYPE.ADD_QUIZ: {
+      return (await add_quiz(data));
       break;
     }
 
-    case C.REQ_TYPE.ADD_QUESTION: {;
-      return (await add_question(data));
-      break;
-
-    }
 
     //ADD MORE CASES HERE
   }
@@ -85,24 +80,19 @@ async function join_room(data) {
 }
 
 //Appserver response on port 9090
-async function create_quiz(data) {
+async function add_quiz(data) {
   response = {
-    'type' : C.RES_TYPE.CREATE_QUIZ_RES,
-    'name' : data.name,
-    'description' : data.description,
+    'create quiz' : C.RES_TYPE.CREATE_QUIZ_RES,
+    'nameofQuiz' : data.nameofQuiz,
+    'desc' : data.desc,
     'reward' : data.reward,
     'penalty' : data.penalty,
-    'type of quiz': data.typeOfQuiz
-  };
-  return response;
-}
-
-async function add_question(data) {
-  response = {
-    'type' : C.RES_TYPE.ADD_QUESTION_RES,
+    'typeOfQuiz': data.typeOfQuiz,
+    'add question' : C.RES_TYPE.ADD_QUESTION_RES,
     'prompt' : data.prompt,
     'typeofQuestion' : data.typeofQuestion,
     'choices' : data.choices,
+    'choiceAns' : data.choiceAns,
     'shortAns' : data.shortAns,
     'time' : data.time,
     'reward' : data.reward,

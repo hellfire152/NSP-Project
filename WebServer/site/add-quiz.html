@@ -1,0 +1,279 @@
+<html>
+
+<head>
+  <script src='/resources/constants.js'></script>
+  <script src='socket.io/socket.io.js'></script>
+  <script src='resources/pixi.js'></script>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+
+</head>
+
+
+<body>
+  <div id='createQuiz'>
+<form action="/add-quiz" method='POST'>
+
+
+<h1>Create a quiz</h1>
+
+<label>Name of Quiz</label>
+      <input type="text" id="nameofQuiz"name="nameofQuiz"> <br />
+
+<label>Description</label>
+      <input type="textarea" id="desc" name="desc"><br />
+
+<label>Reward</label>
+      <input type="number" id="reward" name="reward"><br />
+
+<label>Penalty</label>
+      <input type="number" id="penalty" name="penalty"><br />
+
+     <input type="radio" value="public" name= "typeOfQuiz">Public Quiz
+ 	   <input type="radio" value="private" name= "typeOfQuiz">Private Quiz<br>
+
+		 <input type="reset" class="cancel" value="Clear">
+     <input type="button" value="Create Quiz!" id="next">
+     <br />
+
+<!-- </form> -->
+</div>
+
+
+<div id="addQuestion">
+  <!-- <form action="/add-quiz" method='POST'> -->
+    <h1>Add your question!</h1>
+     <label>Prompt</label>
+           <input type="text" id="prompt" name="prompt"> <br />
+
+     <label>Type</label>
+           <input type="radio" id="mcq" name="typeofQuestion" onclick= setMCQ()>MCQ
+           <input type="radio" id="short-answer" name ="typeofQuestion" onclick= setShort()>Short Answer
+           <br />
+
+
+     <div id="mcqSection">
+       <label>Choices</label>
+            <input type="textarea" id="choice1" class="choices" name="choices" >
+            <input type="checkbox" id="choice1Ans" name ="choiceAns" />
+            <br />
+            <input type="textarea" id="choice2" class="choices" name="choices"disabled='disabled'>
+            <input type="checkbox" id="choice2Ans" name ="choiceAns" />
+            <br />
+            <input type="textarea" id="choice3" class="choices" name="choices"disabled='disabled'>
+            <input type="checkbox" id="choice3Ans" name ="choiceAns" />
+            <br />
+            <input type="textarea" id="choice4" class="choices" name="choices"disabled='disabled'>
+            <input type="checkbox" id="choice4Ans" name ="choiceAns" />
+            <br />
+     </div>
+
+     <div id="shortSection">
+       <label>Solution</label>
+       <input type="text" id="shortAns" name="shortAns"/>
+     </div>
+
+
+
+     <label>Time</label>
+           <select id="time" name="time">
+             <option value="5s">5 seconds</option>
+             <option value="10s">10 seconds</option>
+             <option value="15s">15 seconds</option>
+             <option value="20s">20 seconds</option>
+           </select>
+           <br />
+
+     <label>Reward</label>
+           <input type="number" id="reward" name="reward"><br />
+
+     <label>Penalty</label>
+           <input type="number" id="penalty" name="penalty"><br />
+     <input type="reset" class="cancel" value="Add Quiz" onclick="addQuestion()" >
+     <input type="submit" id="submit" value="Submit">
+    </div>
+  </form>
+  <script>
+
+    $('#next').click(function(){
+      if( !$('#nameofQuiz').val() ) {
+         alert('Please fill in the name of the quiz!');
+         return false;
+      }
+
+      else if( !$('#desc').val() ) {
+         alert('Please fill in the description!');
+         return false;
+      }
+
+      else if($('input[name=typeOfQuiz]:checked').length<=0)
+      {
+       alert("Please pick a type of quiz!");
+       return false;
+      }
+      else{
+        $("#addQuestion").show();
+        $('#createQuiz').hide();
+      }
+
+      $(document).on('click', 'input[type="checkbox"]', function() {
+          $('input[type="checkbox"]').not(this).prop('checked', false);
+      });
+    });
+
+     function setMCQ(){
+       $("#mcqSection").show();
+       $('#shortSection').hide();
+     }
+
+     function setShort(){
+       $("#mcqSection").hide();
+       $('#shortSection').show();
+     }
+
+     function setDisplay() {
+       $("#addQuestion").hide();
+       $('#createQuiz').show();
+     }
+
+
+     // everything in an array
+     function displayAnswer() {
+       var choice = [];
+
+       choice[0] = $("#choice1").val();
+       choice[1] = $("#choice2").val();
+       choice[2] = $("#choice3").val();
+       choice[3] = $("#choice4").val();
+
+       var choiceArr  = []
+       choice.forEach(function(individualChoice){
+         if(individualChoice !== ""){
+           choiceArr.push(individualChoice);
+         }
+       });
+       var choiceArr = [choice[0] , choice[1], choice[2], choice[3]];
+
+      console.log(choiceArr);
+     }
+
+     function displayChoice1() {
+       if ($ ('#choice1').val() == "") {
+         $("#choice2").empty();
+         $("#choice2").prop('disabled', true);
+       }else {
+         $("#choice2").prop('disabled', false);
+       }
+     }
+
+     function displayChoice2() {
+       if ($ ('#choice2').val() == '') {
+         $("#choice3").empty();
+         $("#choice3").prop('disabled', true);
+       }else {
+         $("#choice3").prop('disabled', false);
+       }
+     }
+
+     function displayChoice3() {
+       if ($('#choice3').val() == '') {
+         $("#choice4").empty();
+         $("#choice4").prop('disabled', true);
+       }else {
+         $("#choice4").prop('disabled', false);
+       }
+     }
+
+     function displayChoice(){
+       displayChoice1();
+       displayChoice2();
+       displayChoice3();
+     }
+
+     $(".choices").on('keydown', function() {
+       displayChoice();
+     });
+
+
+     function defaultSetting(){
+       setMCQ();
+       //using constants
+       $("#mcq").val(C.DB.QUESTION_TYPE.MCQ);
+       $("#short-answer").val( C.DB.QUESTION_TYPE.SHORT_ANS);
+       $("#choice1Ans").val(C.MCQ.A);
+       $("#choice2Ans").val(C.MCQ.B);
+       $("#choice3Ans").val(C.MCQ.C);
+       $("#choice4Ans").val(C.MCQ.D);
+
+     }
+
+    defaultSetting();
+    setDisplay();
+
+     // validations
+   $('#submit').click(function()
+   {
+     if( !$('#prompt').val() ) {
+      alert('Please fill in the prompt!');
+      return false;
+     }
+
+     else if($('input[name=typeofQuestion]:checked').length<=0)
+     {
+       alert("Please pick a type!");
+       return false;
+     }
+
+    if($('#mcq').val() == C.DB.QUESTION_TYPE.MCQ){
+       if($('input[name=choiceAns]:checked').length<=0)
+         {
+            alert("Please pick a check box!");
+            return false;
+         }
+
+         else if( !$('#choice1').val() ) {
+            alert('Please fill in at least 2 choices!');
+            return false;
+         }
+
+         else if( !$('#choice2').val() ) {
+            alert('Please fill in at least 2 choices!');
+            return false;
+         }
+       }
+     });
+
+    //add questions
+    var choiceArr = [];
+
+    function addQuestion() {
+      var choice = [];
+      if ($ ('#choice1').val().length != 0) {
+        choice.push($('#choice1').val());
+      }
+      if ($ ('#choice2').val().length != 0) {
+        choice.push($('#choice2').val());
+      }
+      if ($ ('#choice3').val().length != 0) {
+          choice.push($('#choice3').val());
+      }
+      if ($ ('#choice4').val().length != 0) {
+          choice.push($('#choice4').val());
+      }
+      choice = {
+        choice : choice
+      }
+
+      choiceArr.push(choice);
+      console.log(choiceArr);
+
+      }
+
+
+
+
+
+
+   </script>
+ </body>
+ </html>

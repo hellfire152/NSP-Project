@@ -3,10 +3,8 @@ Application Server for the Project.
 This server handles all processing of data, this data is sent from
 the WebServer, and may or may not be from socket.io
 Socket.io requests have data.type undefined.
-
 This should be the only server that accesses the database.
 That means the WebServer will not make any direct database queries.
-
 Author: Jin Kuan
 Version: pre28052017
 */
@@ -61,21 +59,22 @@ conn.on("data", async function(input) {
       if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
         throw new Error("WebServer unauthenticated, missing password");
       }
-
+      console.log(data);
       let response = {};
       if(conn.auth) { //if already authenticaed
         if(data.type !== undefined) { //data type defined
+          // if(data.type === C.REQ_TYPE.DATABASE){
+          //   conn = dbConn;
+          //   console.log("BEFORE");
+          //   console.log(data.reqNo);
+          //   data.reqNo = setDatabaseResponse(data.reqNo)
+          // }
           response = await handleReq({
             'data' : data,
             'C' : C,
             'allRooms' : allRooms
           });
-        } else if (!(data.data.type === undefined)){
-          // sendToServer(dbConn, data); //Send to database server
-          response = data;
-          conn = dbConn;
-
-        } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
+        }else if (!(data.event === undefined)){ //event defined -> socket.io stuff
           response = await handleIo({
             'data' : data,
             'C' : C,
@@ -102,7 +101,11 @@ conn.on("data", async function(input) {
         console.log("AppServer Response: ");
         console.log(response);
         response.reqNo = data.reqNo;
-        sendToServer(conn, response);
+        if(data.type === C.REQ_TYPE.DATABASE){
+          dbConn.send(response, response.reqNo);
+        }else{
+          sendToServer(conn, response);
+        }
 
       } else if(data.password === pass) { //valid password
         console.log("WebServer Validated");
@@ -128,18 +131,21 @@ var dbConn = net.connect(7070);
 dbConn.send = (reqObj, callback) => {
   let reqNo = uuid();
   pendingDatabaseResponses[reqNo] = callback;
-
+  reqObj.reqNo = reqNo;
   dbConn.write(JSON.stringify(reqObj));
 }
 
 //Recieve data from database and run callback
-dbConn.on('data', function(data) {
-  pendingDatabaseResponses[data.reqNo](data);
+dbConn.on('data', function(inputData) {
+  data = JSON.parse(inputData);
+  data.reqNo = pendingDatabaseResponses[data.reqNo];
+  // pendingDatabaseResponses[data.reqNo](data);
   delete pendingDatabaseResponses[data.reqNo];
+  sendToServer(connection, data);
 });
 
 //Test sample data
-// sendToServer(dbConn, sampleData.loginStudentAcc());
+// sendToServer(dbConn, sampleData.studentAcc());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer

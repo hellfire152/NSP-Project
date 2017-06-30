@@ -1,4 +1,4 @@
-const C = {
+{
   "MCQ" : {
     "A" : 8,
     "B" : 4,
@@ -42,7 +42,8 @@ const C = {
     "WRONG_ANSWER": 15,
     "PLAYER_FINISH": 16,
     "TEAM_CHOSEN": 17,
-    "CONFIRM_TEAM_NO" : 18
+    "CONFIRM_TEAM_NO" : 18,
+    "RESPONSE_DATA" : 19
   },
   "GAMEMODE" : {
     "CLASSIC": 0,
@@ -58,7 +59,8 @@ const C = {
     "JOIN_ROOM": 0,
     "HOST_ROOM": 1,
     "CREATE_QUIZ": 10,
-    "ADD_QUESTION": 11
+    "ADD_QUESTION": 11,
+    "ADD_QUIZ" : 12
   },
   "RES_TYPE" : {
     "JOIN_ROOM_RES": 0,
@@ -105,7 +107,8 @@ const C = {
 
     "ALREADY_ANSWERED": 1500,
 
+
     "DB_NO_RESULT" : 2000,
     "DB_EMAIL_TAKEN" : 2001
   }
-};
+}
