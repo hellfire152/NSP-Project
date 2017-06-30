@@ -57,8 +57,6 @@ module.exports = function(cipher, appConn, C) {
           'create quiz': C.REQ_TYPE.CREATE_QUIZ,
           'nameofQuiz' : nameofQuiz,
           'desc' : desc,
-          'reward' : reward,
-          'penalty' : penalty,
           'typeOfQuiz' : typeOfQuiz,
           'add question': C.REQ_TYPE.ADD_QUESTION,
           'prompt' : prompt,
@@ -68,14 +66,12 @@ module.exports = function(cipher, appConn, C) {
           'shortAns' : shortAns,
           'time' : time,
           'reward' : reward,
-          'penalty' : penalty,
+          'penalty' : penalty
 
         }, (response) => {
           res.render('add-quiz', {
             'nameofQuiz' : nameofQuiz,
             'desc' : desc,
-            'reward' : reward,
-            'penalty' : penalty,
             'typeOfQuiz' : typeOfQuiz,
             'prompt' : prompt,
             'typeofQuestion' : typeofQuestion,
@@ -84,7 +80,7 @@ module.exports = function(cipher, appConn, C) {
             'shortAns' : shortAns,
             'time' : time,
             'reward' : reward,
-            'penalty' : penalty,
+            'penalty' : penalty
           });
         });
       }

@@ -88,8 +88,6 @@ async function add_quiz(data) {
     'create quiz' : C.RES_TYPE.CREATE_QUIZ_RES,
     'nameofQuiz' : data.nameofQuiz,
     'desc' : data.desc,
-    'reward' : data.reward,
-    'penalty' : data.penalty,
     'typeOfQuiz': data.typeOfQuiz,
     'add question' : C.RES_TYPE.ADD_QUESTION_RES,
     'prompt' : data.prompt,
