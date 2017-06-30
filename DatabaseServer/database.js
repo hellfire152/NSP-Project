@@ -85,10 +85,7 @@ var server = net.createServer(function(conn){
 
   //Send JSON string to app server
   async function sendToServer(response, inputData) {
-    console.log("SEND TO SERVERERERERERERE");
-    console.log(inputData);
     response.reqNo = inputData.reqNo;
-    console.log(response);
     conn.write(JSON.stringify(response));
   }
 
@@ -110,7 +107,13 @@ var server = net.createServer(function(conn){
           // console.log(query);
           if(error){
             console.error('[Error in query]: ' + error);
-            return;
+            var response = {
+              data : {
+                success : false,
+                message : error
+              }
+            }
+            sendToServer(response, inputData);
           }
 
           if(result.length === 0){
@@ -119,11 +122,14 @@ var server = net.createServer(function(conn){
             var query = connection.query("INSERT INTO user_account SET ?", dataAccount, function(error, result){
               if(error){
                 console.error('[Error in query]: ' + error);
-                return;
+                var response = {
+                  data : {
+                    success : false,
+                    message : error
+                  }
+                }
+                sendToServer(response, inputData);
               }
-
-              console.log('[Query successful]');
-              console.log(result);
               var userId = result.insertId; //Get the userId for this user
               handleDb.handleEncryption(dataOut.details)
               .then(dataDetails => {
@@ -144,10 +150,24 @@ var server = net.createServer(function(conn){
             });
 
             console.log('[Account created]');
+            var response = {
+              data : {
+                success : true,
+                message : "Account Created"
+              }
+            }
+            sendToServer(response, inputData);
           }
           else{
             console.log("[Username or Email have been taken]");
             //TODO: return error to server
+            var response = {
+              data : {
+                success : false,
+                message : "Username or Email have been taken"
+              }
+            }
+            sendToServer(response, inputData);
           }
         });
       })
@@ -164,11 +184,14 @@ var server = net.createServer(function(conn){
     var query = connection.query("INSERT INTO " + type + " SET ?", details, function(error, result){
       if(error){
         console.error('[Error in query]: ' + error);
-        return;
+        var response = {
+          data : {
+            success : false,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
       }
-
-      console.log('[Query successful]');
-      console.log(result);
     });
   }
 
@@ -188,7 +211,13 @@ var server = net.createServer(function(conn){
         function(err, result){
           if(err){
             console.error('[Error in query]: ' + err);
-            return;
+            var response = {
+              data : {
+                success : false,
+                message : err
+              }
+            }
+            sendToServer(response, inputData);
           }
           if(result.length > 0){
               dataAccount.userId = result[0].user_id;
@@ -207,6 +236,16 @@ var server = net.createServer(function(conn){
                     ON user_account.user_id = student_details.user_id\
                     WHERE student_details.user_id = " + connection.escape(dataOut.userId),
                   function(err, result){
+                    if(err){
+                      console.error('[Error in query]: ' + err);
+                      var response = {
+                        data : {
+                          success : false,
+                          message : err
+                        }
+                      }
+                      sendToServer(response, inputData);
+                    }
                     if(result.length === 1){
                       handleDb.handleDecryption(result)
                       .then(resultOut => {
@@ -227,6 +266,16 @@ var server = net.createServer(function(conn){
                         ON user_account.user_id = teacher_details.user_id\
                         WHERE teacher_details.user_id = " + connection.escape(dataOut.account.userId),
                       function(err, result){
+                        if(err){
+                          console.error('[Error in query]: ' + err);
+                          var response = {
+                            data : {
+                              success : false,
+                              message : err
+                            }
+                          }
+                          sendToServer(response, inputData);
+                        }
                         if(result.length === 1){
                           handleDb.handleDecryption(result)
                           .then(resultOut => {
@@ -242,24 +291,51 @@ var server = net.createServer(function(conn){
                         else if(result.length === 0){
                           console.log("[No related data found]");
                           //TODO: Send error message to server
+                          var response = {
+                            data : {
+                              success : false,
+                              message : "No such user"
+                            }
+                          }
+                          sendToServer(response, inputData);
                         }
                         else{
                           console.log("[Duplicate user_id, Entity integrity compromise]");
                           //TODO: Send error message to server
+                          var response = {
+                            data : {
+                              success : false,
+                              message : "Duplicate user_id"
+                            }
+                          }
+                          sendToServer(response, inputData);
 
                         }
-                        console.log(result)
                       });
                     }
                     else{
                       console.log("[Duplicate user_id, Entity integrity compromise]");
                       //TODO: Send error message to server
+                      var response = {
+                        data : {
+                          success : false,
+                          message : "Duplicate user_id"
+                        }
+                      }
+                      sendToServer(response, inputData);
                     }
                   });
                 }
                 else {
                   console.log("[Password Incorrect]");
                   //TODO: Send error message to server
+                  var response = {
+                    data : {
+                      success : false,
+                      message : "Password Incorrect"
+                    }
+                  }
+                  sendToServer(response, inputData);
                 }
               })
               .catch(reason => {
@@ -269,6 +345,13 @@ var server = net.createServer(function(conn){
           else{
             console.log("[No such user found]");
             //TODO: return error to server
+            var response = {
+              data : {
+                success : false,
+                message : "No such user"
+              }
+            }
+            sendToServer(response, inputData);
           }
         }
       );
@@ -286,11 +369,12 @@ var server = net.createServer(function(conn){
       if(error){
         console.error('[Error in query]: ' + error);
         var response = {
-          success : false,
-          error : error
+          data : {
+            success : false,
+            message : error
+          }
         }
         sendToServer(response, inputData);
-        // return;
       }
 
       console.log('[Query successful]');
@@ -300,7 +384,10 @@ var server = net.createServer(function(conn){
         addQuestion(question, data, quizId, inputData);
       });
       var response = {
-        success : true
+        data : {
+          success : true,
+          message : "Quiz Created"
+        }
       }
       sendToServer(response, inputData);
     });
@@ -310,19 +397,18 @@ var server = net.createServer(function(conn){
   //Function will be called by createQuiz(), addQuestion will be called repeatedly until all question is stored.
   async function addQuestion(questionData, data, quizId, inputData){
     questionData.quiz_id = quizId;
-    // console.log(questionData);
     await handleDb.handleEncryption(questionData)
     .then(questionDataOut => {
-      console.log(questionDataOut);
       var query = connection.query("INSERT INTO quiz_question SET ?", questionDataOut, function(error, result){
         if(error){
           console.error('[Error in query]: ' + error);
           var response = {
-            success : false,
-            error : error
+            data : {
+              success : false,
+              message : error
+            }
           }
           sendToServer(response, inputData);
-          // return;
         }
 
         var questionId = result.insertId; // Get the questionId from the question
@@ -336,26 +422,22 @@ var server = net.createServer(function(conn){
 
   //Search for matching questionNo, and then store the data accordingly
   async function addChoices(choiceData, questionId, questionNo, inputData){
-    console.log(choiceData);
-    console.log(questionId);
-    console.log(questionNo);
     choiceData.question_id = questionId;
     for(let choice of choiceData){
-      console.log(choice);
       if(choice.question_no == questionNo){
         choice.question_id = questionId;
         await handleDb.handleEncryption(choice)
         .then(choiceDataOut => {
-          console.log(choiceDataOut);
           var query = connection.query("INSERT INTO quiz_question_choices SET ?", choiceDataOut, function(error, result){
             if(error){
               console.error('[Error in query]: ' + error);
               var response = {
-                success : false,
-                error : error
+                data : {
+                  success : false,
+                  message : error
+                }
               }
               sendToServer(response, inputData);
-              // return;
             }
 
             console.log('[Query successful]');
@@ -387,7 +469,6 @@ var server = net.createServer(function(conn){
   //Search quizes in database
   async function searchQuiz(inputData){
     var data = inputData.data;
-    console.log("SEARCHING");
     await handleDb.handleSearchQuiz(data)
     .then(dataOut => {
       var searchQuery = ""
@@ -411,8 +492,13 @@ var server = net.createServer(function(conn){
               }
             sendToServer(objResult, inputData);
     			} else {
-    				console.log('[No result]');
-            //TODO: return error to server
+            var response = {
+              data : {
+                success : false,
+                message : err
+              }
+            }
+            sendToServer(response, inputData);
     			}
     	});
     });
@@ -422,7 +508,6 @@ var server = net.createServer(function(conn){
   //If question type is a short ans, choice_arr will be null
   async function retrieveQuestions(inputData){
     var quizId = inputData.data.quizId;
-    console.log("RETRIEVE QUESTION");
     var query = connection.query("SELECT quiz_question.quiz_id, quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices\
     FROM quiz_question\
     LEFT OUTER JOIN quiz_question_choices\
@@ -448,9 +533,14 @@ var server = net.createServer(function(conn){
             console.log(reason);
           });
   			} else {
-          console.log(err);
-  				console.log('[No result]');
-          //TODO: return error to server
+          console.error('[Error in query]: ' + err);
+          var response = {
+            data : {
+              success : false,
+              message : err
+            }
+          }
+          sendToServer(response, inputData);
   			}
   	});
   }

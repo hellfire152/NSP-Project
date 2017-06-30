@@ -140,11 +140,9 @@ async function host_room(data) {
   return response;
 }
 
-async function databaseAccess(data){
-  console.log("HI YOU ARE INSIDE HERE");
-  console.log(data);
+async function databaseAccess(inputData){
   return {
-    data : data.data
+    data : inputData.data
   }
 }
 

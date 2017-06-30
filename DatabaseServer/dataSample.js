@@ -78,9 +78,9 @@ module.exports = {
       data : {
         type : C.DB.CREATE.QUIZ,
         quiz : {
-          quiz_title : "quiz title",
+          quiz_title : "Know your product",
           visibility : true,
-          description : "quiz description",
+          description : "About new technology",
           quiz_type : "Classic",
           quiz_rating : 5,
           user_id : 1

@@ -64,13 +64,7 @@ conn.on("data", async function(input) {
       console.log(data);
       let response = {};
       if(conn.auth) { //if already authenticaed
-        if(data.type !== undefined) { //data type defined
-          // if(data.type === C.REQ_TYPE.DATABASE){
-          //   conn = dbConn;
-          //   console.log("BEFORE");
-          //   console.log(data.reqNo);
-          //   data.reqNo = setDatabaseResponse(data.reqNo)
-          // }
+        if(data.type !== undefined) {
           response = await handleReq({
             'data' : data,
             'C' : C,
@@ -147,7 +141,7 @@ dbConn.on('data', function(inputData) {
 });
 
 //Test sample data
-// sendToServer(dbConn, sampleData.studentAcc());
+sendToServer(dbConn, sampleData.createQuiz());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer

@@ -10,7 +10,7 @@
     <div id='dbCreateStudentAccount'>
       <h2>Create student account</h2>
       <form action='/data-access' method='POST'>
-        <input type="hidden" name="dbType" value="accountCreation"/>
+        <input type="hidden" name="dbType" value="createStudentAcc"/>
         <label>Name:
           <input type="text" name="name" id="name"/>
         </label>
@@ -29,6 +29,39 @@
         <br>
         <label>School:
           <input type="text" name="school" id="school"/>
+        </label>
+        <br>
+        <label>DOB:
+          <input type="date" name="dob" id="dob"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbCreateTeacherAccount'>
+      <h2>Create teacher account</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="createTeacherAcc"/>
+        <label>Name:
+          <input type="text" name="name" id="name"/>
+        </label>
+        <br>
+        <label>Username:
+          <input type="text" name="username" id="username"/>
+        </label>
+        <br>
+        <label>Email:
+          <input type="text" name="email" id="email"/>
+        </label>
+        <br>
+        <label>Password:
+          <input type="password" name="password" id="password"/>
+        </label>
+        <br>
+        <label>Organisation:
+          <input type="text" name="organisation" id="organisation"/>
         </label>
         <br>
         <br>
@@ -56,6 +89,7 @@
     <div>
       <h2>Create Question</h2>
       <div id="quizArea">
+        <input type="hidden" name="quizCreation" id="quizCreation" value="quizCreation"/>
         <label>Quiz title:
           <input type="text" name ="quizTitle" id="quizTitle">
         </label>
@@ -103,7 +137,7 @@
         </form>
       </div>
       <br>
-      <input type="button" value="Save Quiz" id="dbCreateQuiz">
+      <input type="button" value="Save Quiz" id="dbCreateQuiz" onclick="submitQuiz()">
     </div>
     <div id='dbRetrieveQuestion'>
       <h2>Retrieve Question</h2>
@@ -129,6 +163,7 @@
     <script src="/controller/databaseFormat.js"></script>
     <!-- <script src="/controller/dbTest.js"></script> -->
     <script>
+      var xhr = new XMLHttpRequest();
       var questionArr = [];
       var choiceArr = [];
       var questionNo = 1;
@@ -168,18 +203,54 @@
           question_no : questionNo,
           time : 30 // Constant
         }
-        choices = {
-          choices : choiceArr,
+        choicesObj = {
+          choices : choices,
           question_no : questionNo
         }
 
         questionArr.push(question);
-        choiceArr.push(choices);
+        choiceArr.push(choicesObj);
 
         console.log(questionArr);
         console.log(choiceArr);
         questionNo++;
       }
+
+      function formatQuiz(){
+        return {
+          dbType : $("#quizCreation").val(),
+          quiz_title : $("#quizTitle").val(),
+          visibility : true, //Lazy set
+          description : $("#quizDescription").val(),
+          quiz_type : "Classic",
+          quiz_rating : 5,
+          user_id : 1,
+          question : questionArr,
+          choices : choiceArr
+        }
+      }
+
+      function submitQuiz(){
+        console.log(formatQuiz());
+        xhr.open("POST", '/data-access', true);
+
+        //Send the proper header information along with the request
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        // xhr.onreadystatechange = function() {//Call a function when the state changes.
+        //     if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+        //         // Request finished. Do processing here.
+        //     }
+        // }
+        // xhr.send(formatQuiz());
+        // xhr.send('string');
+        // xhr.send(new Blob());
+        // xhr.send(new Int8Array());
+        var data = formatQuiz();
+        console.log(data);
+        xhr.send(JSON.stringify(data));
+        // xhr.send(document);
+    }
     </script>
   </body>
 </html>
