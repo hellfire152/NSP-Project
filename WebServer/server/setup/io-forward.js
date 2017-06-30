@@ -49,12 +49,6 @@ module.exports = function(data) {
       socket.disconnect();
     }
 
-
-    /*
-    Client Side
-    socket.emit('send' JSON.stringify({name:nigel, age:19});
-
-     */
     //adding listeners
     console.log("Request received: " +socket.id);
     socket.on('send', async function(input){ //from user
@@ -69,6 +63,9 @@ module.exports = function(data) {
 
         data.id = socket.userId;  //add userId to the sent data
         data.roomNo = socket.roomNo; //add roomNo (if applicable)
+
+        //TODO: Need to find a better solution
+        data.password = pass //Temp solution
 
         console.log("WebServer to AppServer Data:");
         console.log(data);
