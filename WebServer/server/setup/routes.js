@@ -23,7 +23,7 @@ module.exports = function(data) {
   });
 //Nigel area
   app.get('/nigel', function(req,res){
-    res.sendFile(dirname + "/site/dbTest.html")
+    res.sendFile(dirname + "/site/dbTest.html");
   })
   //handling play path
   app.get('/play', function(req, res) { //submitted a form for playing in a room
@@ -40,13 +40,25 @@ module.exports = function(data) {
             'type': C.REQ_TYPE.JOIN_ROOM, //JOIN_ROOM
             'id': cookieData.id,
             'pass': cookieData.pass,
-            'resNo': resNo,
             'roomNo': roomNo
           }, (response) => {
-            res.render('play', {
-              'roomNo' : response.roomNo,
-              'gamemode': response.gamemode
-            });
+            //TODO::Valid Login
+            let errorMsg;
+            if(response.err) {
+              for(let e of Object.keys(C.ERR)) {
+                if(C.ERR[e] == response.err) {
+                  errorMsg = e;
+                }
+              }
+              res.render('error', {
+                'error' : `Encountered error ${errorMsg}`
+              });
+            } else {
+              res.render('play', {
+                'roomNo' : response.roomNo,
+                'gamemode': response.gamemode
+              });
+            }
           });
         });
     }
@@ -82,6 +94,8 @@ module.exports = function(data) {
   //handling all other requests (PUT THIS LAST)
   app.get('/*', function(req, res){
     //doing this just in case req.params has something defined for some reason
+    console.log("OTHER PATH");
+    console.log("GET FILE: " +req.path.substring(1));
     res.render(req.path.substring(1));
   });
 
