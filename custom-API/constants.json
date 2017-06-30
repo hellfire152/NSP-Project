@@ -69,7 +69,9 @@
     "JOIN_ROOM_RES": 0,
     "HOST_ROOM_RES": 1,
     "CREATE_QUIZ_RES": 10,
-    "ADD_QUESTION_RES": 11
+    "ADD_QUESTION_RES": 11,
+    "ADD_QUIZ_RES" : 12
+
   },
   "DB" : {
     "CREATE" : {

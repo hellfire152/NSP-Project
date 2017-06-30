@@ -23,14 +23,8 @@
 <label>Description</label>
       <input type="textarea" id="desc" name="desc"><br />
 
-<label>Reward</label>
-      <input type="number" id="reward" name="reward"><br />
-
-<label>Penalty</label>
-      <input type="number" id="penalty" name="penalty"><br />
-
-     <input type="radio" value="public" name= "typeOfQuiz">Public Quiz
- 	   <input type="radio" value="private" name= "typeOfQuiz">Private Quiz<br>
+     <input type="radio" value="public" name= "typeOfQuiz" id="public">Public Quiz
+ 	   <input type="radio" value="private" name= "typeOfQuiz" id="private">Private Quiz<br>
 
 		 <input type="reset" class="cancel" value="Clear">
      <input type="button" value="Create Quiz!" id="next">
@@ -199,7 +193,7 @@
        setMCQ();
        //using constants
        $("#mcq").val(C.DB.QUESTION_TYPE.MCQ);
-       $("#short-answer").val( C.DB.QUESTION_TYPE.SHORT_ANS);
+       $("#short-answer").val(C.DB.QUESTION_TYPE.SHORT_ANS);
        $("#choice1Ans").val(C.MCQ.A);
        $("#choice2Ans").val(C.MCQ.B);
        $("#choice3Ans").val(C.MCQ.C);
@@ -243,8 +237,11 @@
        }
      });
 
-    //add questions
+    //choices in an array
     var choiceArr = [];
+    var createArr = [];
+    var questionArr = [];
+    var questionNo = 1;
 
     function addQuestion() {
       var choice = [];
@@ -260,12 +257,36 @@
       if ($ ('#choice4').val().length != 0) {
           choice.push($('#choice4').val());
       }
+
+
       choice = {
         choice : choice
       }
 
+      create = {
+        nameofQuiz : $("#nameofQuiz").val(),
+        desc : $("#desc").val(),
+        typeOfQuiz : $('input[name="typeOfQuiz"]:checked').val()
+        }
+
+      question = {
+        questionNo : questionNo,
+        prompt : $("#prompt").val(),
+        typeofQuestion : $('input[name="typeofQuestion"]:checked').val(),
+        answer : $('input[name="choiceAns"]:checked').val(),
+        time : $("#time").val(),
+        reward : $("#reward").val(),
+        penalty : $("#penalty").val()
+      }
+
+
+      questionNo++;
       choiceArr.push(choice);
       console.log(choiceArr);
+      createArr.push(create);
+      console.log(createArr);
+      questionArr.push(question);
+      console.log(questionArr);
 
       }
 

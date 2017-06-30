@@ -46,7 +46,6 @@ var server = net.createServer(function(conn){
     console.log("Request recieved from appserver");
     try{
       var inputData = (JSON.parse(input));
-<<<<<<< HEAD
       var data = inputData.data;
       // C = input.C;
       console.log("DB TYPE: " +data.type);
@@ -74,7 +73,6 @@ var server = net.createServer(function(conn){
         }
         case C.DB.SELECT.USER_ACCOUNT : {
           response = await retrieveAccount(data);
-=======
 
       console.log("DB TYPE: " + inputData.data.type);
       switch(inputData.data.type) {
@@ -101,7 +99,6 @@ var server = net.createServer(function(conn){
         }
         case C.DB.SELECT.USER_ACCOUNT : {
           await retrieveAccount(inputData);
->>>>>>> origin/master
           break;
         }
         //ADD MORE CASES HERE
@@ -116,17 +113,14 @@ var server = net.createServer(function(conn){
   });
 
   //Send JSON string to app server
-<<<<<<< HEAD
   async function sendToServer(data) {
     conn.write(JSON.stringify(json));
-=======
   async function sendToServer(response, inputData) {
     console.log("SEND TO SERVERERERERERERE");
     console.log(inputData);
     response.reqNo = inputData.reqNo;
     console.log(response);
     conn.write(JSON.stringify(response));
->>>>>>> origin/master
   }
 
   //==================== After this will be codes that access to physical database ====================
@@ -422,12 +416,9 @@ var server = net.createServer(function(conn){
   }
 
   //Search quizes in database
-<<<<<<< HEAD
   async function searchQuiz(data){
-=======
   async function searchQuiz(inputData){
     var data = inputData.data;
->>>>>>> origin/master
     console.log("SEARCHING");
     await handleDb.handleSearchQuiz(data)
     .then(dataOut => {

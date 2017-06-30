@@ -1,10 +1,17 @@
-{
+const C = {
+
   "MCQ" : {
     "A" : 8,
     "B" : 4,
     "C" : 2,
     "D" : 1
   },
+
+  "TYPE" : {
+    "PUBLIC" : 0,
+    "PRIVATE" : 1
+  },
+
   "SPECIAL" : {
     "SOCKET_DISCONNECT" : 500,
     "HOST_DISCONNECT": 501,
@@ -58,15 +65,19 @@
   "REQ_TYPE" : {
     "JOIN_ROOM": 0,
     "HOST_ROOM": 1,
+
     "CREATE_QUIZ": 10,
     "ADD_QUESTION": 11,
-    "ADD_QUIZ" : 12
+    "ADD_QUIZ" : 12,
+    "DATABASE" : 100
+
   },
   "RES_TYPE" : {
     "JOIN_ROOM_RES": 0,
     "HOST_ROOM_RES": 1,
     "CREATE_QUIZ_RES": 10,
-    "ADD_QUESTION_RES": 11
+    "ADD_QUESTION_RES": 11,
+    "ADD_QUIZ_RES" : 12
   },
   "DB" : {
     "CREATE" : {
