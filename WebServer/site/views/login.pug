@@ -10,9 +10,43 @@ html
       window.clearTimeout(tim);  // cancel the timer on each mousemove/click
       reload();  // and restart it
       }
+    script(src='https://code.jquery.com/jquery-1.11.0.min.js')
+    script.
+        $(function(){
+        $("#login").validate({
+        rules:{
+        username:{
+        required:true,
+        minlength:5
+        },
+        password:{
+        required:true,
+        minlength:8
+        },
+        email:{
+        required:true,
+        email:true
+        }
+        },
+        messages:{
+        username:{
+        required: "Please enter username",
+        minlength:"Your username must consist atleast 5 characters"
+        },
+        password:{
+        required: "Please enter password",
+        minlength:"Your password must consist atleast 8 characters"
+        },
+        email:{
+        required:"Please enter email",
+        email:"Please enter a valid email"
+        },
+        }
+        });
+        });
   body(onmousemove='canceltimer();', onclick='canceltimer();')
 
-    form(onsubmit='/validate-login-room', method='POST', action='/login-room')
+    form#login(onsubmit='/validate-login-room', method='POST', action='/login-room')
       div.form-group
         p username
         input(type='text', name='username', id='username')
@@ -23,3 +57,5 @@ html
 
 
       input(type='submit' value = 'Login')
+    script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/jquery.validate.min.js')
+    script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/additional-methods.min.js')
