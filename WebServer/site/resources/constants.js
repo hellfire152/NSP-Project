@@ -65,7 +65,6 @@ const C = {
   "REQ_TYPE" : {
     "JOIN_ROOM": 0,
     "HOST_ROOM": 1,
-
     "CREATE_QUIZ": 10,
     "ADD_QUESTION": 11,
     "ADD_QUIZ" : 12,

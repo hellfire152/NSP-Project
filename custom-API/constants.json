@@ -5,6 +5,13 @@
     "C" : 2,
     "D" : 1
   },
+
+  "TYPE" : {
+    "PUBLIC" : 0,
+    "PRIVATE" : 1
+  },
+
+  
   "SPECIAL" : {
     "SOCKET_DISCONNECT" : 500,
     "HOST_DISCONNECT": 501,

@@ -12,7 +12,7 @@
 
 <body>
   <div id='createQuiz'>
-<form action="/add-quiz" method='POST'>
+<form action="/create-quiz" method='POST'>
 
 
 <h1>Create a quiz</h1>
@@ -23,47 +23,50 @@
 <label>Description</label>
       <input type="textarea" id="desc" name="desc"><br />
 
-     <input type="radio" value="public" name= "typeOfQuiz" id="public">Public Quiz
- 	   <input type="radio" value="private" name= "typeOfQuiz" id="private">Private Quiz<br>
+<label>Reward</label>
+     <input type="number" id="cReward" name="cReward"><br />
+
+     <input type="radio" name= "typeOfQuiz" id="public" >Public Quiz
+ 	   <input type="radio" name= "typeOfQuiz" id="private">Private Quiz<br>
 
 		 <input type="reset" class="cancel" value="Clear">
      <input type="button" value="Create Quiz!" id="next">
      <br />
 
-<!-- </form> -->
 </div>
+</form>
 
 
 <div id="addQuestion">
-  <!-- <form action="/add-quiz" method='POST'> -->
+  <form action="/add-quiz" method='POST'>
     <h1>Add your question!</h1>
      <label>Prompt</label>
            <input type="text" id="prompt" name="prompt"> <br />
 
      <label>Type</label>
-           <input type="radio" id="mcq" name="typeofQuestion" onclick= setMCQ()>MCQ
-           <input type="radio" id="short-answer" name ="typeofQuestion" onclick= setShort()>Short Answer
+           <input type="radio" id="mcq" name="type" onclick= setMCQ()>MCQ
+           <input type="radio" id="short-answer" name ="type" onclick= setShort()>Short Answer
            <br />
 
 
      <div id="mcqSection">
        <label>Choices</label>
             <input type="textarea" id="choice1" class="choices" name="choices" >
-            <input type="checkbox" id="choice1Ans" name ="choiceAns" />
+            <input type="checkbox" id="choice1Ans" name ="solution" />
             <br />
             <input type="textarea" id="choice2" class="choices" name="choices"disabled='disabled'>
-            <input type="checkbox" id="choice2Ans" name ="choiceAns" />
+            <input type="checkbox" id="choice2Ans" name ="solution" />
             <br />
             <input type="textarea" id="choice3" class="choices" name="choices"disabled='disabled'>
-            <input type="checkbox" id="choice3Ans" name ="choiceAns" />
+            <input type="checkbox" id="choice3Ans" name ="solution" />
             <br />
             <input type="textarea" id="choice4" class="choices" name="choices"disabled='disabled'>
-            <input type="checkbox" id="choice4Ans" name ="choiceAns" />
+            <input type="checkbox" id="choice4Ans" name ="solution" />
             <br />
      </div>
 
      <div id="shortSection">
-       <label>Solution</label>
+       <label>Short Answer</label>
        <input type="text" id="shortAns" name="shortAns"/>
      </div>
 
@@ -71,10 +74,10 @@
 
      <label>Time</label>
            <select id="time" name="time">
-             <option value="5s">5 seconds</option>
-             <option value="10s">10 seconds</option>
-             <option value="15s">15 seconds</option>
-             <option value="20s">20 seconds</option>
+             <option value="5">5 seconds</option>
+             <option value="10">10 seconds</option>
+             <option value="15">15 seconds</option>
+             <option value="20">20 seconds</option>
            </select>
            <br />
 
@@ -87,214 +90,6 @@
      <input type="submit" id="submit" value="Submit">
     </div>
   </form>
-  <script>
-
-    $('#next').click(function(){
-      if( !$('#nameofQuiz').val() ) {
-         alert('Please fill in the name of the quiz!');
-         return false;
-      }
-
-      else if( !$('#desc').val() ) {
-         alert('Please fill in the description!');
-         return false;
-      }
-
-      else if($('input[name=typeOfQuiz]:checked').length<=0)
-      {
-       alert("Please pick a type of quiz!");
-       return false;
-      }
-      else{
-        $("#addQuestion").show();
-        $('#createQuiz').hide();
-      }
-
-      $(document).on('click', 'input[type="checkbox"]', function() {
-          $('input[type="checkbox"]').not(this).prop('checked', false);
-      });
-    });
-
-     function setMCQ(){
-       $("#mcqSection").show();
-       $('#shortSection').hide();
-     }
-
-     function setShort(){
-       $("#mcqSection").hide();
-       $('#shortSection').show();
-     }
-
-     function setDisplay() {
-       $("#addQuestion").hide();
-       $('#createQuiz').show();
-     }
-
-
-     // everything in an array
-     function displayAnswer() {
-       var choice = [];
-
-       choice[0] = $("#choice1").val();
-       choice[1] = $("#choice2").val();
-       choice[2] = $("#choice3").val();
-       choice[3] = $("#choice4").val();
-
-       var choiceArr  = []
-       choice.forEach(function(individualChoice){
-         if(individualChoice !== ""){
-           choiceArr.push(individualChoice);
-         }
-       });
-       var choiceArr = [choice[0] , choice[1], choice[2], choice[3]];
-
-      console.log(choiceArr);
-     }
-
-     function displayChoice1() {
-       if ($ ('#choice1').val() == "") {
-         $("#choice2").empty();
-         $("#choice2").prop('disabled', true);
-       }else {
-         $("#choice2").prop('disabled', false);
-       }
-     }
-
-     function displayChoice2() {
-       if ($ ('#choice2').val() == '') {
-         $("#choice3").empty();
-         $("#choice3").prop('disabled', true);
-       }else {
-         $("#choice3").prop('disabled', false);
-       }
-     }
-
-     function displayChoice3() {
-       if ($('#choice3').val() == '') {
-         $("#choice4").empty();
-         $("#choice4").prop('disabled', true);
-       }else {
-         $("#choice4").prop('disabled', false);
-       }
-     }
-
-     function displayChoice(){
-       displayChoice1();
-       displayChoice2();
-       displayChoice3();
-     }
-
-     $(".choices").on('keydown', function() {
-       displayChoice();
-     });
-
-
-     function defaultSetting(){
-       setMCQ();
-       //using constants
-       $("#mcq").val(C.DB.QUESTION_TYPE.MCQ);
-       $("#short-answer").val(C.DB.QUESTION_TYPE.SHORT_ANS);
-       $("#choice1Ans").val(C.MCQ.A);
-       $("#choice2Ans").val(C.MCQ.B);
-       $("#choice3Ans").val(C.MCQ.C);
-       $("#choice4Ans").val(C.MCQ.D);
-
-     }
-
-    defaultSetting();
-    setDisplay();
-
-     // validations
-   $('#submit').click(function()
-   {
-     if( !$('#prompt').val() ) {
-      alert('Please fill in the prompt!');
-      return false;
-     }
-
-     else if($('input[name=typeofQuestion]:checked').length<=0)
-     {
-       alert("Please pick a type!");
-       return false;
-     }
-
-    if($('#mcq').val() == C.DB.QUESTION_TYPE.MCQ){
-       if($('input[name=choiceAns]:checked').length<=0)
-         {
-            alert("Please pick a check box!");
-            return false;
-         }
-
-         else if( !$('#choice1').val() ) {
-            alert('Please fill in at least 2 choices!');
-            return false;
-         }
-
-         else if( !$('#choice2').val() ) {
-            alert('Please fill in at least 2 choices!');
-            return false;
-         }
-       }
-     });
-
-    //choices in an array
-    var choiceArr = [];
-    var createArr = [];
-    var questionArr = [];
-    var questionNo = 1;
-
-    function addQuestion() {
-      var choice = [];
-      if ($ ('#choice1').val().length != 0) {
-        choice.push($('#choice1').val());
-      }
-      if ($ ('#choice2').val().length != 0) {
-        choice.push($('#choice2').val());
-      }
-      if ($ ('#choice3').val().length != 0) {
-          choice.push($('#choice3').val());
-      }
-      if ($ ('#choice4').val().length != 0) {
-          choice.push($('#choice4').val());
-      }
-
-
-      choice = {
-        choice : choice
-      }
-
-      create = {
-        nameofQuiz : $("#nameofQuiz").val(),
-        desc : $("#desc").val(),
-        typeOfQuiz : $('input[name="typeOfQuiz"]:checked').val()
-        }
-
-      question = {
-        questionNo : questionNo,
-        prompt : $("#prompt").val(),
-        typeofQuestion : $('input[name="typeofQuestion"]:checked').val(),
-        answer : $('input[name="choiceAns"]:checked').val(),
-        time : $("#time").val(),
-        reward : $("#reward").val(),
-        penalty : $("#penalty").val()
-      }
-
-
-      questionNo++;
-      choiceArr.push(choice);
-      console.log(choiceArr);
-      createArr.push(create);
-      console.log(createArr);
-      questionArr.push(question);
-      console.log(questionArr);
-
-      }
-
-
-
-
-
-
-   </script>
+    <script src='/controller/add-quiz.js'></script>
  </body>
  </html>

@@ -85,16 +85,10 @@ async function join_room(data) {
 //Appserver response on port 9090
 async function add_quiz(data) {
   response = {
-    'create quiz' : C.RES_TYPE.CREATE_QUIZ_RES,
-    'nameofQuiz' : data.nameofQuiz,
-    'desc' : data.desc,
-    'typeOfQuiz': data.typeOfQuiz,
-    'add question' : C.RES_TYPE.ADD_QUESTION_RES,
     'prompt' : data.prompt,
-    'typeofQuestion' : data.typeofQuestion,
+    'type' : data.type,
     'choices' : data.choices,
-    'choiceAns' : data.choiceAns,
-    'shortAns' : data.shortAns,
+    'solution' : data.solution,
     'time' : data.time,
     'reward' : data.reward,
     'penalty' :data.penalty

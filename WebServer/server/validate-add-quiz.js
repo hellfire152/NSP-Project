@@ -9,36 +9,16 @@ module.exports = function(cipher, appConn, C) {
   return function(req, res) {
 
     // check name + description not empty, ' ' -> id
-    req.checkBody('nameofQuiz', 'Name of quiz must be specified').notEmpty().isString;
-    req.checkBody('desc', 'Description must be specified').notEmpty().isString;
     req.checkBody('prompt', 'Prompt must be specified').notEmpty().isString;
     req.checkBody('shortAns', 'Solution must be specified').notEmpty().isString;
 
-    req.sanitize('desc').escape();
-    req.sanitize('nameofQuiz').escape();
-    req.sanitize('desc').trim();
-    req.sanitize('nameofQuiz').trim();
     req.sanitize('prompt').escape();
     req.sanitize('shortAns').escape();
     req.sanitize('prompt').trim();
     req.sanitize('shortAns').trim();
 
 
-    var nameofQuiz = req.body.nameofQuiz;
-    var desc = req.body.desc;
-    var reward = req.body.reward;
-    var penalty = req.body.penalty;
-    var typeOfQuiz = req.body.typeOfQuiz;
-    var prompt = req.body.prompt;
-    var typeofQuestion = req.body.typeofQuestion;
-    var choices = req.body.choices;
-    var choiceAns = req.body.choiceAns;
-    var shortAns = req.body.shortAns;
-    var time = req.body.time;
-    var reward = req.body.reward;
-    var penalty = req.body.penalty;
-
-      console.log("DATA: ");
+      console.log("Data: ");
       console.log(req.body);
 
       // cipher.encryptJSON({
@@ -51,18 +31,20 @@ module.exports = function(cipher, appConn, C) {
       //   })
       //   .then(function(cookieData) {
       //   res.cookie('login', cookieData, {"maxAge": 1000*60*60});
-
+      var prompt = req.body.prompt;
+      var type = req.body.type;
+      var choices = req.body.choices;
+      var solution = req.body.solution;
+      var shortAns = req.body.shortAns;
+      var time = req.body.time;
+      var reward = req.body.reward;
+      var penalty = req.body.penalty;
         // res.redirect('/add-question?prompt=' +req.body.prompt);
         appConn.send({
-          'create quiz': C.REQ_TYPE.CREATE_QUIZ,
-          'nameofQuiz' : nameofQuiz,
-          'desc' : desc,
-          'typeOfQuiz' : typeOfQuiz,
-          'add question': C.REQ_TYPE.ADD_QUESTION,
           'prompt' : prompt,
-          'typeofQuestion' : typeofQuestion,
+          'type' : type,
           'choices' : choices,
-          'choiceAns' : choiceAns,
+          'solution' : solution,
           'shortAns' : shortAns,
           'time' : time,
           'reward' : reward,
@@ -70,13 +52,10 @@ module.exports = function(cipher, appConn, C) {
 
         }, (response) => {
           res.render('add-quiz', {
-            'nameofQuiz' : nameofQuiz,
-            'desc' : desc,
-            'typeOfQuiz' : typeOfQuiz,
             'prompt' : prompt,
-            'typeofQuestion' : typeofQuestion,
-            'choiceAns' : choiceAns,
+            'type' : type,
             'choices' : choices,
+            'solution' : solution,
             'shortAns' : shortAns,
             'time' : time,
             'reward' : reward,
