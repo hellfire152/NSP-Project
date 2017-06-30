@@ -24,6 +24,19 @@ module.exports = async function(input) {
       return (await host_room(data));
       break;
     }
+    case C.REQ_TYPE.ACCOUNT_CREATE_STUD: {;
+      return (await account_create_stud(data));
+      break;
+    }
+    case C.REQ_TYPE.ACCOUNT_CREATE_TEACH: {;
+      return (await account_create_teach(data));
+      break;
+    }
+    case C.REQ_TYPE.ACCOUNT_LOGIN:{;
+      console.log("go in pls");
+      return (await account_login(data));
+      break;
+    }
     case C.REQ_TYPE.DATABASE: {
       return (await databaseAccess(data));
       break;
@@ -77,7 +90,54 @@ async function join_room(data) {
     //INVALID LOGIN
   }
 }
+/**
+  Login account
+*/
+async function account_login(data){
+  console.log("hi");
+  response = {
+    'type':C.RES_TYPE.ACCOUNT_LOGGED_IN,
+    'username' :data.username,
+    'email':data.email,
+    'password':data.password
+  };
 
+  return response;
+}
+
+/**
+  Create account for students
+*/
+async function account_create_stud(data){
+  console.log("hi i am a student");
+  console.log(data.email);
+  response = {
+    'type':C.RES_TYPE.ACCOUNT_CREATED_STUD,
+    'username' :data.username,
+    'email':data.email,
+    'password':data.password,
+    'dateOfBirth':data.dateOfBirth,
+    'school':data.school
+  };
+
+  return response;
+}
+/**
+  Create account for teachers
+*/
+async function account_create_teach(data){
+  console.log("hi i am a teacher");
+  console.log(data.email);
+  response = {
+    'type':C.RES_TYPE.ACCOUNT_CREATED_TEACH,
+    'username' :data.username,
+    'email':data.email,
+    'password':data.password,
+    'school':data.school
+  };
+
+  return response;
+}
 /**
   Function that handles the host-room form.
 

@@ -58,11 +58,17 @@
   "REQ_TYPE" : {
     "JOIN_ROOM": 0,
     "HOST_ROOM": 1,
+    "ACCOUNT_CREATE_STUD": 2,
+    "ACCOUNT_CREATE_TEACH":4,
+    "ACCOUNT_LOGIN": 3
     "DATABASE" : 100
   },
   "RES_TYPE" : {
     "JOIN_ROOM_RES": 0,
-    "HOST_ROOM_RES": 1
+    "HOST_ROOM_RES": 1,
+    "ACCOUNT_CREATED_STUD": 2,
+    "ACCOUNT_CREATED_TEACH":4,
+    "ACCOUNT_LOGGED_IN":3
   },
   "DB" : {
     "CREATE" : {
