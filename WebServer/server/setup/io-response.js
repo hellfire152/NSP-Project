@@ -13,7 +13,8 @@ module.exports = async function(input) {
 
   if(response.sendTo === undefined) throw new Error('sendTo value must be defined!');
 
-  if(response.validLogin || (response.validating === undefined)) {
+  if(response.validLogin || !response.validating) {
+    console.log("IO RESPONSE HANDLER");
     if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
       switch(response.roomEvent) {
         case C.ROOM_EVENT.JOIN : {
@@ -50,6 +51,7 @@ module.exports = async function(input) {
       }
       case C.SEND_TO.USER: {
         let t = response.targetId;
+        console.log('SENDING TO USER: ' +response.targetId);
         delete response.targetId;
         sendToUser(response, t);
         break;

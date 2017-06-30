@@ -29,6 +29,42 @@ $('#dbRetrieveQuestion').submit(function(){
   var data = formatData({
     type : C.DB.SELECT.QUESTION,
     quizId : $("#quizId").val(),
+
+$('#dbLoginAccount').submit(function(){
+  var data = formatData({
+    type : C.DB.SELECT.USER_ACCOUNT,
+    user : $("#user").val(),
+    password : $("#loginPassword").val(),
+  });
+
+  send(data);
+  return false;
+});
+
+$('#dbCreateQuiz').click(function(){
+  console.log("CREATING QUIZ");
+  var data = formatData({
+    type :  C.DB.CREATE.QUIZ,
+    quizTitle : $("#quizTitle").val(),
+    visibility : true, //Lazy Set
+    description : $("#quizDescription").val(),
+    quiz_type : "Classic", //lazy Set
+    quiz_rating : 5, //Lazy Set
+    user_id : 1, //Lazy Set
+    question : questionArr,
+    choices : choiceArr
+  });
+
+  console.log(data);
+
+  send(data);
+  return false;
+});
+
+$('#dbRetrieveQuestion').submit(function(){
+  var data = formatData({
+    type : C.DB.SELECT.QUESTION,
+    quizId : $("#quizId").val(),
   });
 
   send(data);
@@ -47,6 +83,8 @@ $('#dbSearchQuiz').submit(function(){
 
 //convenience function for encoding the json for sending
 async function encode(json) {
+  console.log("JSON");
+  console.log(json);
   return JSON.stringify(json);
 }
 

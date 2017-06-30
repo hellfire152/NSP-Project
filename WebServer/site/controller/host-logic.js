@@ -43,19 +43,19 @@ socket.on('receive', function(input) {
           var tag = document.createElement("script");
           switch(response.gamemode) {
             case 0: {
-              tag.src = '/client/game/host/classic.js';
+              tag.src = '/controller/game/host/classic.js';
               break;
             }
             case 1: {
-              tag.src = '/client/game/host/race.js';
+              tag.src = '/controller/game/host/race.js';
               break;
             }
             case 2: {
-              tag.src = 'client/game/host/team-battle.js';
+              tag.src = '/controller/game/host/team-battle.js';
               break;
             }
             case 3: {
-              tag.src = '/client/game/host/tug-of-war.js'
+              tag.src = '/controller/game/host/tug-of-war.js'
               break;
             }
           }

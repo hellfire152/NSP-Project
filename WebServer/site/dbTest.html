@@ -10,6 +10,8 @@
     <div id='dbCreateStudentAccount'>
       <h2>Create student account</h2>
       <form action='/host-room' method='POST'>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="accountCreation"/>
         <label>Name:
           <input type="text" name="name" id="name"/>
         </label>
@@ -37,9 +39,15 @@
     <br>
     <div id='dbLoginAccount'>
       <h2>Login Account</h2>
+
       <form action='/host-room' method='POST'>
         <label>Username:
           <input type="text" name="username" id="user"/>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="accountLogin">
+        <label>Username:
+          <input type="text" name="user" id="user"/>
+
         </label>
         <br>
         <label>Password:
@@ -51,9 +59,67 @@
       </form>
     </div>
     <br>
+
     <div id='dbRetrieveQuestion'>
       <h2>Retrieve Question</h2>
       <form action='/host-room' method='POST'>
+    <div>
+      <h2>Create Question</h2>
+      <div id="quizArea">
+        <label>Quiz title:
+          <input type="text" name ="quizTitle" id="quizTitle">
+        </label>
+        <br>
+        <label>Quiz Description:
+          <textarea name="quizDescription" id ="quizDescription"></textarea>
+        </label>
+        <br>
+        Visibility
+        <label>Yes:
+          <input type = "radio" name="visibility" value=1 id="visible">
+        </label>
+        <label>No:
+          <input type = "radio" name="visibility" value=1 id="notVisible">
+        </label>
+      </div>
+      <h3>ADD QUESTION</h3>
+      <div id="questionArea">
+        <form>
+          <label>Question statement
+            <input type="text" name="prompt" id="prompt">
+          </label>
+          <br>
+          <label>Choice 1
+            <input type="text" name="choice1" id="choice1">
+            <input type="checkbox" name="soloution1" id="solution1" value=8>
+          </label>
+          <br>
+          <label>Choice 2
+            <input type="text" name="choice2" id="choice2">
+            <input type="checkbox" name="soloution2" id="solution2" value=4>
+          </label>
+          <br>
+          <label>Choice 3
+            <input type="text" name="choice3" id="choice3">
+            <input type="checkbox" name="soloution3" id="solution3" value=2>
+          </label>
+          <br>
+          <label>Choice 4
+            <input type="text" name="choice4" id="choice4">
+            <input type="checkbox" name="soloution4" id="solution4" value=1>
+          </label>
+          <br>
+          <input type="reset" value="Add Question" onclick="addQuestion()">
+        </form>
+      </div>
+      <br>
+      <input type="button" value="Save Quiz" id="dbCreateQuiz">
+    </div>
+    <div id='dbRetrieveQuestion'>
+      <h2>Retrieve Question</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="retrieveQuestion">
+
         <label>Quiz ID:
           <input type="text" name="quizId" id="quizId"/>
         </label>
@@ -63,13 +129,17 @@
     <br>
     <div id='dbSearchQuiz'>
       <h2>Search Quiz</h2>
+
       <form action='/host-room' method='POST'>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="searchQuestion">
         <label>Search:
           <input type="text" name="search" id="search"/>
         </label>
         <input type='submit' value='Submit' /><br>
       </form>
     </div>
+
     <!-- <div id='dbSearchQuiz'>
       <h2>Search Quiz</h2>
       <form action='/host-room' method='POST'>
@@ -81,5 +151,60 @@
     </div> -->
     <script src="/controller/databaseFormat.js"></script>
     <script src="/controller/dbTest.js"></script>
+    <script src="/controller/databaseFormat.js"></script>
+    <!-- <script src="/controller/dbTest.js"></script> -->
+    <script>
+      var questionArr = [];
+      var choiceArr = [];
+      var questionNo = 1;
+
+      function addQuestion(){
+        var solution = 0;
+        var choices = [];
+        if(document.getElementById("solution1").checked){
+          solution += parseInt($("#solution1").val());
+        }
+        if(document.getElementById("solution2").checked){
+          solution += parseInt($("#solution2").val());
+        }
+        if(document.getElementById("solution3").checked){
+          solution += parseInt($("#solution3").val());
+        }
+        if(document.getElementById("solution4").checked){
+          solution += parseInt($("#solution4").val());
+        }
+
+        if($("#choice1").val().length != 0){
+          choices.push($("#choice1").val());
+        }
+        if($("#choice2").val().length != 0){
+          choices.push($("#choice2").val());
+        }
+        if($("#choice3").val().length != 0){
+          choices.push($("#choice3").val());
+        }
+        if($("#choice4").val().length != 0){
+          choices.push($("#choice4").val());
+        }
+        question = {
+          type : C.DB.QUESTION_TYPE.MCQ, //Very lazy to do logic and valudation
+          prompt : $("#prompt").val(),
+          solution :solution,
+          question_no : questionNo,
+          time : 30 // Constant
+        }
+        choices = {
+          choices : choiceArr,
+          question_no : questionNo
+        }
+
+        questionArr.push(question);
+        choiceArr.push(choices);
+
+        console.log(questionArr);
+        console.log(choiceArr);
+        questionNo++;
+      }
+    </script>
   </body>
 </html>
