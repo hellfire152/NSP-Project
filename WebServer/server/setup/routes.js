@@ -56,13 +56,25 @@ module.exports = function(data) {
             'type': C.REQ_TYPE.JOIN_ROOM, //JOIN_ROOM
             'id': cookieData.id,
             'pass': cookieData.pass,
-            // 'resNo': resNo,
             'roomNo': roomNo
           }, (response) => {
-            res.render('play', {
-              'roomNo' : response.roomNo,
-              'gamemode': response.gamemode
-            });
+            //TODO::Valid Login
+            let errorMsg;
+            if(response.err) {
+              for(let e of Object.keys(C.ERR)) {
+                if(C.ERR[e] == response.err) {
+                  errorMsg = e;
+                }
+              }
+              res.render('error', {
+                'error' : `Encountered error ${errorMsg}`
+              });
+            } else {
+              res.render('play', {
+                'roomNo' : response.roomNo,
+                'gamemode': response.gamemode
+              });
+            }
           });
         });
     }
@@ -133,6 +145,8 @@ module.exports = function(data) {
 
   app.get('/*', function(req, res){
     //doing this just in case req.params has something defined for some reason
+    console.log("OTHER PATH");
+    console.log("GET FILE: " +req.path.substring(1));
     res.render(req.path.substring(1));
   });
 

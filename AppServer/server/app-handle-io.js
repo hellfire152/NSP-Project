@@ -59,7 +59,7 @@ async function join_room() {
       }
 
       //extra response for the player in question
-      sendToServer(conn, {
+      setTimeout(() => sendToServer(conn, {
         'event': C.EVENT_RES.PLAYER_LIST,
         'playerList': allRooms[data.room].players,
         'sendTo': C.SEND_TO.USER,
@@ -67,7 +67,7 @@ async function join_room() {
         'roomEvent': C.ROOM_EVENT.JOIN,
         'roomNo': data.room,
         'id': data.id
-      });
+      }), 100);
 
       return response;
     } else {
