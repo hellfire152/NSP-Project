@@ -23,7 +23,7 @@ $('#next').click(function(){
       $('input[type="checkbox"]').not(this).prop('checked', false);
   });
 });
-
+//hello
  function setMCQ(){
    $("#mcqSection").show();
    $('#shortSection').hide();
