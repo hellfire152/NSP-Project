@@ -78,9 +78,9 @@ module.exports = function(data) {
 
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
+    console.log("BEFORE ERROR?");
     try {
       let response = JSON.parse(input);
-      console.log("AppServer Response: ");
       console.log(response);
       if(response.special !== undefined){ //handling special stuff
         await handleSpecialResponse({

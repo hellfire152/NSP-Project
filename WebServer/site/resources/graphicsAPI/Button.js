@@ -75,4 +75,12 @@ class Button extends DisplayElement {
   get scale() {
     return this._sprite.scale;
   }
+
+  disable() {
+    this._sprite.interactive = false;
+  }
+
+  enable() {
+    this._sprite.interactive = true;
+  }
 }

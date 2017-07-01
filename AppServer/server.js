@@ -49,6 +49,8 @@ conn.on("end", function() {
 conn.on("data", async function(input) {
   try {
     let data = JSON.parse(input);
+    let reqNo = data.reqNo;
+    delete data.reqNo;  //hide reqNo from logs
     console.log("FROM WEBSERVER"); //Log all data received from the WebServer
     console.log(data);
     //if there's an Error
@@ -78,7 +80,7 @@ conn.on("data", async function(input) {
             'sendToServer': sendToServer,
             'conn': connection
           });
-        } else if (!(data.game === undefined)){  //special
+        } else if (!(data.game === undefined)){  //game stuff
           response = await handleGame({
             'data' : data,
             'C' : C,
@@ -97,8 +99,14 @@ conn.on("data", async function(input) {
         //logging and response
         console.log("AppServer Response: ");
         console.log(response);
-        response.reqNo = data.reqNo;
-        sendToServer(conn, response);
+        response.reqNo = reqNo;
+        //FOR TESTING DATABASE ONLY
+        if(data.type === C.REQ_TYPE.DATABASE){
+          dbConn.send(response, response.reqNo);
+        } else{
+          sendToServer(conn, response);
+        }
+
       } else if(data.password === pass) { //valid password
         console.log("WebServer Validated");
         conn.auth = true;

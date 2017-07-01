@@ -10,22 +10,90 @@ html
       window.clearTimeout(tim);  // cancel the timer on each mousemove/click
       reload();  // and restart it
       }
+    script(src='https://code.jquery.com/jquery-1.11.0.min.js')
+    script.
+      $(function(){
+      $("#register-student").validate({
+      rules:{
+      username:{
+      required:true,
+      minlength:5
+      },
+      password:{
+      required:true,
+      minlength:8
+      },
+      confirmPassword:{
+      required:true,
+      minlength:8,
+      equalTo:"#password"
+      },
+      email:{
+      required:true,
+      email:true
+      },
+      DOB:{
+      required:true,
+      date:true
+      },
+      school:{
+      required:true,
+      minlength:3
+      }
+      },
+      messages:{
+      username:{
+      required: "Please enter username",
+      minlength:"Your username must consist atleast 5 characters"
+      },
+      password:{
+      required: "Please enter password",
+      minlength:"Your password must consist atleast 8 characters"
+      },
+      confirmPassword:{
+      required:"Please enter password",
+      minlength:"Your password must consist atleast 8 characters",
+      equalTo:"Passwords not match"
+      },
+      email:{
+      required:"Please enter email",
+      email:"Please enter a valid email"
+      },
+      DOB:{
+      required:"Please enter your birthdate",
+      date:"Please enter a valid date"
+      },
+      school:{
+      required:"Please enter your school",
+      minlength:"PLease enter a valid school"
+      }
+      }
+      });
+      });
   body(onmousemove='canceltimer();', onclick='canceltimer();')
+    form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
+      input#username(type='text', name='username', placeholder='username', autocomplete="off")
+      br
+      p
+      input#Email.text(type='email', name='email', placeholder='Email', autocomplete="off")
+      br
+      p
+      input#password(type='password', name='password', placeholder='password')
+      br
+      p
+      input#confirmPassword(type='password', name='confirmPassword', placeholder='confirmPassword')
+      br
+      p
+      #dateOfBirth
+        label(for='dateOfBirth', style='float:left; display:inline;')
+          | Date of Birth:
+          input#DOB(style='width:230px;', type='date', name='DOB',min='1990-01-01',max='2011-01-15')
+      p
+      input#school(type='text', name='school', placeholder='school', autocomplete="off")
+      br
+      p
+      input.submit(style='display:inline-block;', type='submit', value='Submit')
+      input.submit(style='display:inline-block;', type='reset', value='Clear')
 
-  form(action='/reg-room', method='post', onsubmit='/validate-register-student')
-    input#username(type='text', name='username', placeholder='username')
-    br
-    input#Email.text(type='email', required='', name='Email', placeholder='Email')
-    br
-    input#password(type='password', required='', name='password', placeholder='password')
-    br
-    input#confirmPassword(type='password', required='', name='confirmPassword', placeholder='confirmPassword')
-    br
-    #dateOfBirth
-      label(for='DOB', style='float:left; display:inline;')
-        | Date of Birth:
-        input#DOB.text(style='width:230px;', required='', type='date', name='DOB')
-    input#school(type='text', required='', name='school', placeholder='school')
-    br
-    input.submit(style='display:inline-block;', type='submit', value='Submit')
-    input.submit(style='display:inline-block;', type='reset', value='Clear')
+  script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/jquery.validate.min.js')
+  script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/additional-methods.min.js')
