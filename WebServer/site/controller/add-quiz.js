@@ -3,7 +3,7 @@ $('#next').click(function(){
      alert('Please fill in the name of the quiz!');
      return false;
   }
-
+//MEME
   else if( !$('#desc').val() ) {
      alert('Please fill in the description!');
      return false;
