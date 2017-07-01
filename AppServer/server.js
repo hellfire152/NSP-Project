@@ -49,6 +49,8 @@ conn.on("end", function() {
 conn.on("data", async function(input) {
   try {
     let data = JSON.parse(input);
+    let reqNo = data.reqNo;
+    delete data.reqNo;  //hide reqNo from logs
     console.log("FROM WEBSERVER"); //Log all data received from the WebServer
     console.log(data);
     //if there's an Error
@@ -65,18 +67,12 @@ conn.on("data", async function(input) {
       let response = {};
       if(conn.auth) { //if already authenticaed
         if(data.type !== undefined) { //data type defined
-          // if(data.type === C.REQ_TYPE.DATABASE){
-          //   conn = dbConn;
-          //   console.log("BEFORE");
-          //   console.log(data.reqNo);
-          //   data.reqNo = setDatabaseResponse(data.reqNo)
-          // }
           response = await handleReq({
             'data' : data,
             'C' : C,
             'allRooms' : allRooms
           });
-        }else if (!(data.event === undefined)){ //event defined -> socket.io stuff
+        } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
           response = await handleIo({
             'data' : data,
             'C' : C,
@@ -84,7 +80,7 @@ conn.on("data", async function(input) {
             'sendToServer': sendToServer,
             'conn': connection
           });
-        } else if (!(data.game === undefined)){  //special
+        } else if (!(data.game === undefined)){  //game stuff
           response = await handleGame({
             'data' : data,
             'C' : C,
@@ -102,10 +98,11 @@ conn.on("data", async function(input) {
         //logging and response
         console.log("AppServer Response: ");
         console.log(response);
-        response.reqNo = data.reqNo;
+        response.reqNo = reqNo;
+        //FOR TESTING DATABASE ONLY
         if(data.type === C.REQ_TYPE.DATABASE){
           dbConn.send(response, response.reqNo);
-        }else{
+        } else{
           sendToServer(conn, response);
         }
 

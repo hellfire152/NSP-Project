@@ -14,12 +14,10 @@
 class AllPlayerRanking extends DisplayElement {
   constructor(resources, playerData, positionData, min) {
     super();
+    this._min = min;
     this._playerRankings = [];
-    for(let i = 0; i < playerData.length; i++) {
-      let playerDisplay = new PlayerRanking(resources, playerData[i], positionData, true);
-      playerDisplay.y = i * (playerDisplay.height + paddingY);
-      this._playerRankings.push(playerDisplay);
-      this._container.addChild(playerDisplay);
+    if(playerData) {
+      this.data = playerData;
     }
   }
 
@@ -29,5 +27,14 @@ class AllPlayerRanking extends DisplayElement {
 
   slideUp() {
 
+  }
+
+  set data(playerData) {
+    for(let i = 0; i < playerData.length; i++) {
+      let playerDisplay = new PlayerRanking(resources, playerData[i], positionData, this._min);
+      playerDisplay.y = i * (playerDisplay.height + paddingY);
+      this._playerRankings.push(playerDisplay);
+      this._container.addChild(playerDisplay);
+    }
   }
 }
