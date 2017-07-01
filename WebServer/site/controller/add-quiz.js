@@ -3,7 +3,7 @@ $('#next').click(function(){
      alert('Please fill in the name of the quiz!');
      return false;
   }
-//MEMEf
+
   else if( !$('#desc').val() ) {
      alert('Please fill in the description!');
      return false;
@@ -174,7 +174,7 @@ $('#submit').click(function()
 
    //TODO: SEND TO SERVER
    var data = {
-     quiz : createArr,
+     quiz : create,
      question : questionArr,
      choices : choiceArr
    }
@@ -189,7 +189,7 @@ $('#submit').click(function()
 
 //choices in an array
 var choiceArr = [];
-var createArr = [];
+var create;
 var questionArr = [];
 var questionNo = 1;
 
@@ -236,7 +236,7 @@ function addQuestion() {
   }
 
   create = {
-    id : $("#nameofQuiz").val(),
+    name : $("#nameofQuiz").val(),
     description : $("#desc").val(),
     public :  checkPublic(),
     reward : $("#cReward").val()
@@ -256,11 +256,11 @@ function addQuestion() {
   questionNo++;
   choiceArr.push(choice);
   console.log(choiceArr);
-  $('#submit').click(function()
-  {
-    createArr.push(create);
-    console.log(createArr);
-  });
+  // $('#submit').click(function()
+  // {
+  //   createArr.push(create);
+  //   console.log(createArr);
+  // });
 
   questionArr.push(question);
   console.log(questionArr);
