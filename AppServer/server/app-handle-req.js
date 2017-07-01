@@ -22,14 +22,12 @@ module.exports = async function(input) {
       return (await host_room(data));
       break;
     }
-<<<<<<< HEAD
 
     case C.REQ_TYPE.ADD_QUIZ: {
       return (await add_quiz(data));
       break;
     }
 
-=======
     case C.REQ_TYPE.ACCOUNT_CREATE_STUD: {;
       return (await account_create_stud(data));
       break;
@@ -43,7 +41,6 @@ module.exports = async function(input) {
       return (await account_login(data));
       break;
     }
->>>>>>> origin/master
     case C.REQ_TYPE.DATABASE: {
       return (await databaseAccess(data));
       break;

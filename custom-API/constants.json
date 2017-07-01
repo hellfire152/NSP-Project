@@ -11,7 +11,7 @@
     "PRIVATE" : 1
   },
 
-  
+
   "SPECIAL" : {
     "SOCKET_DISCONNECT" : 500,
     "HOST_DISCONNECT": 501,
@@ -65,32 +65,26 @@
   "REQ_TYPE" : {
     "JOIN_ROOM": 0,
     "HOST_ROOM": 1,
-<<<<<<< HEAD
 
     "CREATE_QUIZ": 10,
     "ADD_QUESTION": 11,
     "ADD_QUIZ" : 12,
-=======
     "ACCOUNT_CREATE_STUD": 2,
     "ACCOUNT_CREATE_TEACH":4,
-    "ACCOUNT_LOGIN": 3
->>>>>>> origin/master
+    "ACCOUNT_LOGIN": 3,
     "DATABASE" : 100
 
   },
   "RES_TYPE" : {
     "JOIN_ROOM_RES": 0,
     "HOST_ROOM_RES": 1,
-<<<<<<< HEAD
     "CREATE_QUIZ_RES": 10,
     "ADD_QUESTION_RES": 11,
-    "ADD_QUIZ_RES" : 12
+    "ADD_QUIZ_RES" : 12,
 
-=======
     "ACCOUNT_CREATED_STUD": 2,
     "ACCOUNT_CREATED_TEACH":4,
     "ACCOUNT_LOGGED_IN":3
->>>>>>> origin/master
   },
   "DB" : {
     "CREATE" : {
