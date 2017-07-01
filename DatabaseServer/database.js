@@ -74,6 +74,10 @@ var server = net.createServer(function(conn){
           await retrieveAccount(inputData);
           break;
         }
+        case C.DB.UPDATE.PASSWORD : {
+          await updatePassword(inputData);
+          break;
+        }
         //ADD MORE CASES HERE
       }
     }
@@ -91,11 +95,12 @@ var server = net.createServer(function(conn){
 
   //==================== After this will be codes that access to physical database ====================
 
+ // ================================ACCOUNT REALTED SQL ===========================
   //Create user account (student or teacher).
   //data.type should state clearly if it is STUDENT_DETAILS or TEACHER_DETAILS
   async function createAccount(inputData){
     var data = inputData.data;
-    await handleDb.handleCreateAccount(data) //TODO: Will shift handleCreateAccount lower, so it will be faster to check email availability
+    await handleDb.handlePassword(data) //TODO: Will shift handlePassword lower, so it will be faster to check email availability
     .then(dataOut => {
       //Checking email availability
       handleDb.handleEncryption(dataOut.account)
@@ -360,6 +365,91 @@ var server = net.createServer(function(conn){
       console.log(reason);
     });
   }
+
+  //Update password,
+  //New salt will be generated and hash accordingly.
+  //All new data will be encrypted.
+  async function updatePassword(inputData){
+    var data = inputData.data;
+    var query = connection.query("SELECT salt FROM user_account WHERE user_id = " + connection.escape(data.verify.user_id), function(error, result){
+      if(error){
+        console.error('[Error in query]: ' + error);
+        var response = {
+          data : {
+            success : false,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      handleDb.handleDecryption(result)
+      .then(decryptSalt => {
+        data.verify.salt = decryptSalt[0].salt;
+        handleDb.handleHashPass(data)
+        .then(dataOut =>{
+          // console.log(dataOut);
+          delete data.verify.salt;
+          handleDb.handleEncryption(dataOut.verify)
+          .then(dataOutEncrypted => {
+            dataOut.verify = dataOutEncrypted;
+            dataOut.account.user_id = dataOut.verify.user_id;
+            var query = connection.query("SELECT username FROM user_account\
+              WHERE user_id = " + connection.escape(dataOut.verify.user_id) + " AND password_hash = " + connection.escape(dataOut.verify.password_hash), function(error, result){
+              if(error){
+                console.error('[Error in query]: ' + error);
+                var response = {
+                  data : {
+                    success : false,
+                    message : error
+                  }
+                }
+                sendToServer(response, inputData);
+              }
+              if(result.length === 1){
+                handleDb.handlePassword(dataOut)
+                .then(dataAccount => {
+                  handleDb.handleEncryption(dataAccount.account)
+                  .then(dataAccountEncrypt => {
+                    var query = connection.query("UPDATE user_account SET password_hash = " + connection.escape(dataAccountEncrypt.password_hash) + " , salt = " + connection.escape(dataAccountEncrypt.salt) +
+                    " WHERE user_id = " + connection.escape(dataAccountEncrypt.user_id), function(error, result){
+                      if(error){
+                        console.error('[Error in query]: ' + error);
+                        var response = {
+                          data : {
+                            success : false,
+                            message : error
+                          }
+                        }
+                        sendToServer(response, inputData);
+                      }
+                      var response = {
+                        data : {
+                          success : true,
+                          message : "Password updated"
+                        }
+                      }
+                      sendToServer(response, inputData);
+                    });
+                  });
+                });
+              }
+              else {
+                var response = {
+                  data : {
+                    success : false,
+                    message : "Incorrect password"
+                  }
+                }
+                sendToServer(response, inputData);
+              }
+            });
+          });
+        });
+      });
+    });
+  }
+
+//============================ QUIZ RELATED SQL ===========================
 
   //Create quiz and add to database accordinly
   async function createQuiz(inputData){

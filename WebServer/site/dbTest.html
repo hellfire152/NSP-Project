@@ -86,6 +86,27 @@
       </form>
     </div>
     <br>
+    <div id='dbChangePassword'>
+      <h2>Change Password</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updatePassword">
+        <label>User id:
+          <input type="text" name="userId" id="userId"/>
+        </label>
+        <br>
+        <label>Old password:
+          <input type="password" name="oldPassword" id="oldPassword"/>
+        </label>
+        <br>
+        <label>New password:
+          <input type="password" name="newPassword" id="newPassword"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
     <div>
       <h2>Create Question</h2>
       <div id="quizArea">

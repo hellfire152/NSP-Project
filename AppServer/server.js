@@ -141,7 +141,7 @@ dbConn.on('data', function(inputData) {
 });
 
 //Test sample data
-// sendToServer(dbConn, sampleData.createQuiz());
+// sendToServer(dbConn, sampleData.updataPass());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer

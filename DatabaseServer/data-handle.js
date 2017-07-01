@@ -10,8 +10,8 @@ var cipher = require("../custom-API/cipher.js")();
 const C = require("../custom-API/constants.json");
 
 //Input user data password will undergo hashing and salting before storing to database
-async function handleCreateAccount(data){
-  cipher.generateSalt()
+async function handlePassword(data){
+  await cipher.generateSalt()
     .then(saltValue => {
       data.account.salt = saltValue;
     })
@@ -24,9 +24,21 @@ async function handleCreateAccount(data){
     .catch(reason => {
       console.log(reason);
     });
+    return data;
+}
+
+async function handleHashPass(data){
+    cipher.hash(data.verify.password_hash + data.verify.salt)
+      .then(hashed =>{
+        data.verify.password_hash = hashed;
+      })
+      .catch(reason => {
+        console.log(reason);
+      });
 
     return data;
 }
+
 
 async function handleRecieveAccount(data){
   var dataArr = [];
@@ -109,11 +121,12 @@ async function handleDecryption(data){
 
 module.exports = function() {
   return {
-    'handleCreateAccount' : handleCreateAccount,
+    'handlePassword' : handlePassword,
     "handleRecieveAccount" : handleRecieveAccount,
     'handleSearchQuiz' : handleSearchQuiz,
     'handleRecieveQuestion' : handleRecieveQuestion,
     'handleEncryption' : handleEncryption,
-    'handleDecryption' : handleDecryption
+    'handleDecryption' : handleDecryption,
+    'handleHashPass' : handleHashPass
   }
 }

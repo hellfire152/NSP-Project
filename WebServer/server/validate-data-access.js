@@ -76,6 +76,20 @@ module.exports = function(cipher, appConn, C) {
           }
         }
       }
+      else if(req.body.dbType == "updatePassword"){
+        inputData = {
+          data : {
+            type : C.DB.UPDATE.PASSWORD,
+            verify : {
+              user_id : req.body.userId,
+              password_hash : req.body.oldPassword
+            },
+            account : {
+              password_hash : req.body.newPassword
+            }
+          }
+        }
+      }
 
       cipher.encryptJSON(inputData)
         .catch(function (err) {

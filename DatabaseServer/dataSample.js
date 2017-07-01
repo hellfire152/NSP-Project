@@ -70,6 +70,21 @@ module.exports = {
     }
   },
 
+  updataPass : function(){
+    return updatepassword = {
+      data : {
+        type : C.DB.UPDATE.PASSWORD,
+        verify : {
+          user_id : 1,
+          password_hash : "passChanged"
+        },
+        account : {
+          password_hash : "pass"
+        }
+      }
+    }
+  },
+
   //Sample data to create a new quiz
   //questions: is an array
   //choices: is an array
