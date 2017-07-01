@@ -78,6 +78,10 @@ var server = net.createServer(function(conn){
           await updatePassword(inputData);
           break;
         }
+        case C.DB.UPDATE.QUIZ : {
+          await updateQuiz(inputData);
+          break;
+        }
         //ADD MORE CASES HERE
       }
     }
@@ -550,6 +554,45 @@ var server = net.createServer(function(conn){
           //TODO: return error to server
   			}
   	});
+  }
+  async function updateQuiz(inputData){
+    var data = inputData.data.quiz;
+    console.log(data);
+    var queryStatment = "UPDATE quiz SET ";
+    if(data.quiz_title != undefined){
+      queryStatment += "quiz_title = " + connection.escape(data.quiz_title);
+    }
+    if(data.description != undefined){
+      queryStatment += ", description = " + connection.escape(data.description);
+    }
+    if(data.visibility != undefined){
+      queryStatment += ", visibility = " + connection.escape(data.visibility);
+    }
+
+    queryStatment += " WHERE quiz_id = " + connection.escape(data.quiz_id);
+
+    connection.query(queryStatment, function(err, result){
+      if(err){
+        var response = {
+          data : {
+            success : false,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      else{
+        var response = {
+          data : {
+            success : true,
+            message : "Quiz Updated"
+          }
+        }
+        sendToServer(response, inputData);
+      }
+    });
+
+
   }
 
   async function retrieveQuiz(){

@@ -77,7 +77,8 @@
       "USER_ACCOUNT" : 204
     },
     "UPDATE" : {
-      "PASSWORD" : 301
+      "PASSWORD" : 301,
+      "QUIZ" : 302
     },
     "DELETE" : {
 

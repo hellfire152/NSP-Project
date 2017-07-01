@@ -84,6 +84,19 @@ module.exports = {
       }
     }
   },
+  updateQuiz : function(){
+    return updatepassword = {
+      data : {
+        type : C.DB.UPDATE.QUIZ,
+        quiz : {
+          quiz_title : "HELLO",
+          description : "YO",
+          visibility : false,
+          quiz_id : 12
+        }
+      }
+    }
+  },
 
   //Sample data to create a new quiz
   //questions: is an array

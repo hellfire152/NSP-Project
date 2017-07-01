@@ -90,6 +90,19 @@ module.exports = function(cipher, appConn, C) {
           }
         }
       }
+      else if(req.body.dbType == "updateQuiz"){
+        inputData = {
+          data : {
+            type : C.DB.UPDATE.QUIZ,
+            quiz : {
+              quiz_title : req.body.quizTitle,
+              description : req.body.quizDescription,
+              visibility : false,
+              quiz_id : req.body.quizId
+            }
+          }
+        }
+      }
 
       cipher.encryptJSON(inputData)
         .catch(function (err) {

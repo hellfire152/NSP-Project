@@ -181,6 +181,31 @@
         <input type='submit' value='Submit' /><br>
       </form>
     </div>
+    <br>
+    <div id='dbUpdateQuiz'>
+      <h2>Update Quiz</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateQuiz">
+        <label>Quiz ID:
+          <input type="text" name="quizId" id="quizId"/>
+        </label>
+        <br>
+        <label>Quiz Title:
+          <input type="text" name="quizTitle" id="quizTitle"/>
+        </label>
+        <br>
+        <label>Quiz Description:
+          <input type="text" name="quizDescription" id="quizDescription"/>
+        </label>
+        <br>
+        <label>Quiz Visibility:
+          <input type="text" name="quizVisibility" id="quizVisibility"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
     <script src="/controller/databaseFormat.js"></script>
     <!-- <script src="/controller/dbTest.js"></script> -->
     <script>
