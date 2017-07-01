@@ -121,29 +121,70 @@ $('#submit').click(function()
   return false;
  }
 
- // else if($('input[name=type]:checked').length<=0)
- // {
- //   alert("Please pick a type!");
- //   return false;
- // }
+ else if($('input[name=type]:checked').length<=0)
+ {
+   alert("Please pick a type!");
+   return false;
+ }
 
- if($('#mcq').val() == C.DB.QUESTION_TYPE.MCQ){
+ if ($("#mcq").is(":checked")) {
    if($('input[name=solution]:checked').length<=0)
-     {
-        alert("Please pick a check box!");
-        return false;
+       {
+          alert("Please pick a check box!");
+          return false;
+       }
+
+       else if( !$('#choice1').val() ) {
+          alert('Please fill in at least 2 choices!');
+          return false;
+       }
+
+       else if( !$('#choice2').val() ) {
+          alert('Please fill in at least 2 choices!');
+          return false;
+       }
      }
 
-     else if( !$('#choice1').val() ) {
-        alert('Please fill in at least 2 choices!');
-        return false;
+ if ($("#short-answer").is(":checked")) {
+   if(!$('#shortAns').val())
+       {
+          alert("Please fill in a short answer!");
+          return false;
+       }
      }
 
-     else if( !$('#choice2').val() ) {
-        alert('Please fill in at least 2 choices!');
-        return false;
-     }
+
+ // if($('#mcq').val() == C.DB.QUESTION_TYPE.MCQ){
+ //   if($('input[name=solution]:checked').length<=0)
+ //     {
+ //        alert("Please pick a check box!");
+ //        return false;
+ //     }
+ //
+ //     else if( !$('#choice1').val() ) {
+ //        alert('Please fill in at least 2 choices!');
+ //        return false;
+ //     }
+ //
+ //     else if( !$('#choice2').val() ) {
+ //        alert('Please fill in at least 2 choices!');
+ //        return false;
+ //     }
+ //   }
+
+   //TODO: SEND TO SERVER
+   var data = {
+     quiz : createArr,
+     question : questionArr,
+     choices : choiceArr
    }
+
+   var xhr = new XMLHttpRequest();
+   xhr.open("POST", '/add-quiz', true);
+   xhr.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+  //  xhr.send(data);
+   //OR TO STRINGIFY
+   xhr.send(JSON.stringify(data));
  });
 
 //choices in an array
@@ -155,9 +196,9 @@ var questionNo = 1;
 function checkPublic() {
 if ($("#public").is(":checked")) {
    return true;
-} else {
+ } else {
    return false;
-}
+ }
 }
 
 
@@ -176,6 +217,19 @@ function addQuestion() {
       choice.push($('#choice4').val());
   }
 
+  function solution(){
+    if($('input[name="solution"]:checked').val() != undefined){
+      return $('input[name="solution"]:checked').val();
+    }
+    else if ($('input[name="shortAns"]').val() != undefined){
+      return $('input[name="shortAns"]').val();
+    }
+    else {
+      console.log("NO SOLUTION");
+      return null;
+    }
+  }
+
 
   choice = {
     choice : choice
@@ -192,7 +246,7 @@ function addQuestion() {
     questionNo : questionNo,
     prompt : $("#prompt").val(),
     type : $('input[name="type"]:checked').val(),
-    solution : $('input[name="solution"]:checked').val(),
+    solution : solution(),
     time : $("#time").val(),
     reward : $("#reward").val(),
     penalty : $("#penalty").val()
@@ -202,8 +256,12 @@ function addQuestion() {
   questionNo++;
   choiceArr.push(choice);
   console.log(choiceArr);
-  createArr.push(create);
-  console.log(createArr);
+  $('#submit').click(function()
+  {
+    createArr.push(create);
+    console.log(createArr);
+  });
+
   questionArr.push(question);
   console.log(questionArr);
 

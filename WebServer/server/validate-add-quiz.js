@@ -19,7 +19,17 @@ module.exports = function(cipher, appConn, C) {
 
 
       console.log("Data: ");
-      console.log(req.body);
+
+      var inputData = {
+        data : {
+          type : C.DB.CREATE.QUIZ,
+          quiz : req.body.quiz,
+          question : req.body.question,
+          choices : req.body.choices
+        }
+      }
+
+      console.log(inputData);
 
       // cipher.encryptJSON({
       //
@@ -31,35 +41,21 @@ module.exports = function(cipher, appConn, C) {
       //   })
       //   .then(function(cookieData) {
       //   res.cookie('login', cookieData, {"maxAge": 1000*60*60});
-      var prompt = req.body.prompt;
-      var type = req.body.type;
-      var choices = req.body.choices;
-      var solution = req.body.solution;
-      var shortAns = req.body.shortAns;
-      var time = req.body.time;
-      var reward = req.body.reward;
-      var penalty = req.body.penalty;
+      // var prompt = req.body.prompt;
+      // var type = req.body.type;
+      // var choices = req.body.choices;
+      // var solution = req.body.solution;
+      // var shortAns = req.body.shortAns;
+      // var time = req.body.time;
+      // var reward = req.body.reward;
+      // var penalty = req.body.penalty;
         // res.redirect('/add-question?prompt=' +req.body.prompt);
         appConn.send({
-          'prompt' : prompt,
-          'type' : type,
-          'choices' : choices,
-          'solution' : solution,
-          'shortAns' : shortAns,
-          'time' : time,
-          'reward' : reward,
-          'penalty' : penalty
-
+          'type': C.REQ_TYPE.DATABASE, //JOIN_ROOM
+          'data': inputData
         }, (response) => {
           res.render('add-quiz', {
-            'prompt' : prompt,
-            'type' : type,
-            'choices' : choices,
-            'solution' : solution,
-            'shortAns' : shortAns,
-            'time' : time,
-            'reward' : reward,
-            'penalty' : penalty
+
           });
         });
       }

@@ -1,9 +1,7 @@
 /*
   This module is responsible for the most of the communication between the
   AppServer and the WebServer.
-
   This module will have all the code for error handling too
-
   This breaks down into 3 things:
     1. forwarding of user socket.io requests to the AppServer
     2. Handling all data from the AppServer, including
@@ -11,7 +9,7 @@
       2.b Other responses (via other-response.js)
 */
 module.exports = function(data) {
-  //extracting data... from server-setup
+  //extracting data...
   const C = data.C;
   let {dirname, pass, io, pendingResponses, pendingAppResponses, cipher, appConn,
     cookie, socketOfUser, roomOfUser} = data;
