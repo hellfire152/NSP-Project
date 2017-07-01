@@ -166,6 +166,7 @@ module.exports = function(data) {
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
 }
 
+//HELLo
 function sendErrorPage(res, errormsg) {
   res.render('error', {
     'error': errormsg
