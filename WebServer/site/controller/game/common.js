@@ -83,7 +83,13 @@ function swapScene(scene) {
 }
 
 function showTitlesAndAchievements(titlesAndAchievenments) {
-
+  p.titlesAndAchievenments = new PIXI.Container();
+  p.titlesAndAchievenments.addChild(new SpecialShowcase(titlesAndAchievenments, {
+    'width' : WIDTH,
+    'height' : HEIGHT,
+    'paddingX' : 5,
+    'paddingY' : 5
+  }));
 }
 
 function initEndScene() {
