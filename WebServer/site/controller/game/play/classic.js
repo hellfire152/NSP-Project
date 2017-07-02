@@ -21,22 +21,18 @@ function handleGame(response) {
       loadQuestion(response.question);
       break;
     }
-    case C.GAME_RES.RESPONSE_DATA: {
-      
+    case C.GAME_RES.RESPONSE_DATA: { //show the responses
+      let pixiScenes.answering = p;
+      p.barGraph.data = response.data;
+      p.barGraph.visible = true;
+      p.questionDisplay.visible = false;
     }
     case C.GAME_RES.ROUND_END: {
       displayResults(response.roundEndResults);
       break;
     }
     case C.GAME_RES.GAME_END: {
-      clearGameArea();
-      displayGameEnd(response.roundEndResults);
-      break;
-    }
-    case C.GAME_RES.BEGIN_FIRST_QUESTION: {
-      clearBody();
-      loadQuestion(response.question);
-      break;
+      gameEnd(response);
     }
   }
 }
@@ -65,13 +61,52 @@ function loadQuestion(question) {
   swapScene('answering');
 }
 
-function
+function displayResults(roundEndData) {
+  swapScene('ranking');
+  let p = pixiScenes.ranking;
+  p.allPlayerRanking.data = roundEndData;
+}
 
-function swapScene(scene) {
-  for(let scene in pixiScenes) {  //set all scenes not visible
-    if(pixiScenes.hasOwnProperty(scene)) {
-      pixiScenes[scene].visible = false;
+function gameEnd(response) {
+  //shows two scenes, first is the ranking, next the titles/achievements
+  //allows for swapping via buttons
+  let pixiScenes.titlesAndAchievenments = new PIXI.Container();
+  //updating the ranking list
+  displayResults(response.roundEndData);
+  //showing titles and achievements
+  showTitlesAndAchievements(response.titlesAndAchievenments); //in common
+  //initialize rating scene
+  initRatingScene();  //in common
+  //init end scene
+  initEndScene(); //in common
+
+  //defining next and previous page buttons
+  //order: ranking -> titlesAndAchievenments -> rating -> end
+  let next = new Button(allResources['next-button'].textures, WIDTH / 8, () => {
+    if(pixiScenes.currentScene === 'ranking') {
+      previous.enable();
+      swapScene('titlesAndAchievenments');
+    } else if(pixiScenes.currentScene === 'titlesAndAchievenments') {
+      swapScene('rating');
+    } else if(pixiScenes.currentScene === 'rating') {
+      swapScene('end');
+      this.disable();
+    } else {
+      throw new Error(`Cannot go to the next panel, currentScene = ${pixiScenes.currentScene}`);
     }
-  }
-  pixiScenes[scene].visible = true; //set the specified one to be visible
+  }, null);
+  let previous = new Button(allResources['previous-button'].textures, WIDTH / 8, () => {
+    if(pixiScenes.currentScene === 'end') {
+      next.enable();
+      swapScene('rating');
+    } else if(pixiScenes.currentScene === 'rating') {
+      swapScene('titlesAndAchievenments');
+    } else if(pixiScenes.currentScene === 'titlesAndAchievenments') {
+      swapScene('ranking');
+      this.disable();
+    } else {
+      throw new Error(`Cannot go to the next panel, currentScene = ${pixiScenes.currentScene}`);
+    }
+  }, null);
+  swapScene('ranking');
 }

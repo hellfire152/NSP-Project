@@ -39,6 +39,31 @@ async function handleHashPass(data){
     return data;
 }
 
+async function handleDeleteAccount(data){
+  var dataArr = [];
+  var encryptedData = {};
+  dataArr.push(data)
+  await handleDecryption(dataArr)
+  .then(dataDecrypt => {
+    data = dataDecrypt[0];
+    cipher.hash(data.account.password + data.salt)
+    .then(hashed => {
+      data.account.password_hash = hashed;
+      delete data.account.password;
+      delete data.salt;
+    })
+    .catch(reason => {
+      console.log(reason);
+    });
+  })
+  .catch(reason => {
+    console.log(reason);
+  });
+
+  return data;
+}
+
+
 
 async function handleRecieveAccount(data){
   var dataArr = [];
@@ -127,6 +152,7 @@ module.exports = function() {
     'handleRecieveQuestion' : handleRecieveQuestion,
     'handleEncryption' : handleEncryption,
     'handleDecryption' : handleDecryption,
-    'handleHashPass' : handleHashPass
+    'handleHashPass' : handleHashPass,
+    'handleDeleteAccount' : handleDeleteAccount
   }
 }

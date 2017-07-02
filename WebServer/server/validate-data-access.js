@@ -103,6 +103,19 @@ module.exports = function(cipher, appConn, C) {
           }
         }
       }
+      else if(req.body.dbType == "deleteAccount"){
+        inputData = {
+          data : {
+            type : C.DB.DELETE.ACCOUNT,
+            account : {
+              user_id : req.body.userId,
+              username : req.body.username,
+              email : req.body.username,
+              password : req.body.password
+            }
+          }
+        }
+      }
 
       cipher.encryptJSON(inputData)
         .catch(function (err) {

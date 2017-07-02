@@ -12,6 +12,7 @@ module.exports = function(data) {
     cipher = data.cipher,
     appConn = data.appConn,
     queryOfUser = data.queryOfUser;
+    errors=data.error;
   uuid = data.uuid;
   //routing
   //handling requests for .html, controller, css or resource files
@@ -127,6 +128,7 @@ module.exports = function(data) {
     req.session.errors=null;
   });
   app.get('/registerstud', function(req, res){
+    console.log("HEREHE");
     res.render('register-student',{title: 'Register(Student)',success:req.session.success, errors:req.session.errors});
     req.session.errors=null;
   });
@@ -154,9 +156,9 @@ module.exports = function(data) {
   app.post('/data-access', require('../validate-data-access.js')(cipher, appConn, C));
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
-  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn));
-  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn));
-  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn));
+  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn,C));
+  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn,C, errors));
+  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
 }
 
 function sendErrorPage(res, errormsg) {

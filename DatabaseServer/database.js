@@ -82,6 +82,10 @@ var server = net.createServer(function(conn){
           await updateQuiz(inputData);
           break;
         }
+        case C.DB.DELETE.ACCOUNT : {
+          await deleteAccount(inputData);
+          break;
+        }
         //ADD MORE CASES HERE
       }
     }
@@ -450,6 +454,83 @@ var server = net.createServer(function(conn){
           });
         });
       });
+    });
+  }
+
+//DELETE FROM `user_account` WHERE user_id = 10 AND password_hash = '123' AND (email = 'nigel.zch@gmail' OR username = 'te')
+  async function deleteAccount(inputData){
+    var data = inputData.data;
+    var query = connection.query("SELECT salt\
+    FROM user_account\
+    WHERE user_id = " + connection.escape(data.account.user_id), function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      if(result.length === 0){
+        var response = {
+          data : {
+            success : false,
+            message : "No such user id"
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      else{
+        data.salt = result[0].salt;
+        handleDb.handleDeleteAccount(data)
+        .then(dataOut =>{
+            handleDb.handleEncryption(dataOut.account)
+            .then(dataOutEncrypted => {
+              var query = connection.query("DELETE FROM user_account\
+              WHERE user_id = " + connection.escape(dataOutEncrypted.user_id) +
+              " AND (email = " + connection.escape(dataOutEncrypted.email) + " OR username = " + connection.escape(dataOutEncrypted.username) + " )\
+              AND password_hash = " +connection.escape(dataOutEncrypted.password_hash), function(error, result){
+                if(error){
+                  var response = {
+                    data : {
+                      success : false,
+                      message : error
+                    }
+                  }
+                  sendToServer(response, inputData);
+                }
+                if(result.affectedRows === 1){
+                  var response = {
+                    data : {
+                      success : true,
+                      message : "Account deleted successfully"
+                    }
+                  }
+                  sendToServer(response, inputData);
+                }
+                else if(result.affectedRows === 0){
+                  var response = {
+                    data : {
+                      success : false,
+                      message : "Incorrect password, username or email"
+                    }
+                  }
+                  sendToServer(response, inputData);
+                }
+                else {
+                  var response = {
+                    data : {
+                      success : false,
+                      message : "Critical, 2 account been deleted"
+                    }
+                  }
+                  sendToServer(response, inputData);
+                }
+              });
+            });
+        });
+      }
     });
   }
 

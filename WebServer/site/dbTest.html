@@ -107,6 +107,27 @@
       </form>
     </div>
     <br>
+    <div id='dbDeleteAccount'>
+      <h2>Delete Account</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="deleteAccount">
+        <label>User id:
+          <input type="text" name="userId" id="userId"/>
+        </label>
+        <br>
+        <label>Username:
+          <input type="text" name="username" id="username"/>
+        </label>
+        <br>
+        <label>Password:
+          <input type="password" name="password" id="password"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
     <div>
       <h2>Create Question</h2>
       <div id="quizArea">

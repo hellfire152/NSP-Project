@@ -69,7 +69,19 @@ module.exports = {
       }
     }
   },
-
+  deleteAccount : function(){
+    return deleteAccount = {
+      data : {
+        type : C.DB.DELETE.ACCOUNT,
+        account : {
+          user_id : 11,
+          username : "username",
+          email : "email@email.com",
+          password : "pass"
+        }
+      }
+    }
+  },
   updataPass : function(){
     return updatepassword = {
       data : {

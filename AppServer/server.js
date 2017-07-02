@@ -49,6 +49,8 @@ conn.on("end", function() {
 conn.on("data", async function(input) {
   try {
     let data = JSON.parse(input);
+    let reqNo = data.reqNo;
+    delete data.reqNo;  //hide reqNo from logs
     console.log("FROM WEBSERVER"); //Log all data received from the WebServer
     console.log(data);
     //if there's an Error
@@ -64,13 +66,13 @@ conn.on("data", async function(input) {
       console.log(data);
       let response = {};
       if(conn.auth) { //if already authenticaed
-        if(data.type !== undefined) {
+        if(data.type !== undefined) { //data type defined
           response = await handleReq({
             'data' : data,
             'C' : C,
             'allRooms' : allRooms
           });
-        }else if (!(data.event === undefined)){ //event defined -> socket.io stuff
+        } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
           response = await handleIo({
             'data' : data,
             'C' : C,
@@ -78,7 +80,7 @@ conn.on("data", async function(input) {
             'sendToServer': sendToServer,
             'conn': connection
           });
-        } else if (!(data.game === undefined)){  //special
+        } else if (!(data.game === undefined)){  //game stuff
           response = await handleGame({
             'data' : data,
             'C' : C,
@@ -96,10 +98,11 @@ conn.on("data", async function(input) {
         //logging and response
         console.log("AppServer Response: ");
         console.log(response);
-        response.reqNo = data.reqNo;
+        response.reqNo = reqNo;
+        //FOR TESTING DATABASE ONLY
         if(data.type === C.REQ_TYPE.DATABASE){
           dbConn.send(response, response.reqNo);
-        }else{
+        } else{
           sendToServer(conn, response);
         }
 
@@ -141,7 +144,7 @@ dbConn.on('data', function(inputData) {
 });
 
 //Test sample data
-sendToServer(dbConn, sampleData.updateQuiz());
+// sendToServer(dbConn, sampleData.deleteAccount());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer
