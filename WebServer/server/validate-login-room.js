@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-var passwordValidator =require('password-validator');
+var passwordValidator = require('password-validator');
 module.exports =function(cipher, appConn,C){
   return function(req, res){
     // req.checkBody('username','Please enter username').notEmpty();
