@@ -678,13 +678,7 @@ var server = net.createServer(function(conn){
 
 
   }
- /*
- UPDATE quiz_question
- JOIN quiz_question_choices
- ON quiz_question.question_id = quiz_question_choices.question_id
- SET quiz_question.prompt = "HELLO", quiz_question.solution = "YOU", quiz_question.time = "STUPID", quiz_question_choices.choices = "ARR IF CHOICES"
- WHERE quiz_question.question_id = 55
-  */
+
   async function updateQuestion(inputData){
     var data = inputData.data;
     await handleDb.handleEncryption(data.changes)
@@ -708,7 +702,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
-                message : "No such question"
+                message : "Question ID not found"
               }
             }
             sendToServer(response, inputData);
