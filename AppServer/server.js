@@ -95,7 +95,6 @@ conn.on("data", async function(input) {
             'allRooms' : allRooms
           });
         }
-
         //logging and response
         console.log("AppServer Response: ");
         console.log(response);
@@ -127,10 +126,23 @@ server.listen(9090);
 //connection with datbase server
 var dbConn = net.connect(7070);
 
-//Recieve data from database
-dbConn.on('data', function(data) {
-  pendingDatabaseResponses[data.reqNo](data);
+//implementing the send function on the database connection
+dbConn.send = (reqObj, callback) => {
+  let reqNo = uuid();
+  pendingDatabaseResponses[reqNo] = callback;
+  reqObj.reqNo = reqNo;
+  dbConn.write(JSON.stringify(reqObj));
+}
+
+//Recieve data from database and run callback
+dbConn.on('data', function(inputData) {
+  data = JSON.parse(inputData);
+  data.reqNo = pendingDatabaseResponses[data.reqNo];
+  // pendingDatabaseResponses[data.reqNo](data);
+  delete pendingDatabaseResponses[data.reqNo];
+  sendToServer(connection, data);
 });
+
 
 //Test sample data
 sendToServer(dbConn, sampleData.loginStudentAcc());
