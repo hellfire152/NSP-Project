@@ -22,7 +22,7 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.RESPONSE_DATA: { //show the responses
-      let pixiScenes.answering = p;
+      let p = pixiScenes.answering;
       p.barGraph.data = response.data;
       p.barGraph.visible = true;
       p.questionDisplay.visible = false;
@@ -68,7 +68,6 @@ function displayResults(roundEndData) {
 }
 
 function gameEnd(response) {
-  //shows two scenes, first is the ranking, next the titles/achievements
   //allows for swapping via buttons
   let pixiScenes.titlesAndAchievenments = new PIXI.Container();
   //updating the ranking list

@@ -78,7 +78,6 @@ module.exports = function(data) {
 
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
-    console.log("BEFORE ERROR?");
     try {
       let response = JSON.parse(input);
       console.log(response);
@@ -93,7 +92,6 @@ module.exports = function(data) {
         });
       } else {  //others
         if(response.sendTo !== undefined) {
-          console.log("TO IO HANDLER");
           await handleIoResponse({
             'response' : response,
             'io' : io,
@@ -102,9 +100,11 @@ module.exports = function(data) {
             'socketOfUser' : socketOfUser
           });
         }
-        if(pendingAppResponses[response.reqNo].callback)
-          pendingAppResponses[response.reqNo].callback(response);
-        delete pendingAppResponses[response.reqNo];
+        if(pendingAppResponses[response.reqNo]) {
+          if(pendingAppResponses[response.reqNo].callback)
+            pendingAppResponses[response.reqNo].callback(response);
+          delete pendingAppResponses[response.reqNo];
+        }
       }
     } catch (err) {
       console.log(err);

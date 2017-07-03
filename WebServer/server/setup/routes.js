@@ -111,19 +111,6 @@ module.exports = function(data) {
     }
   });
 
-// var passport=require('passport');
-// var flash = require ('connect-flash');
-// app.use(flash());
-// app.use(passport.initialize());
-// app.use(passport.session());
-  //handling login
-  var express=require('express');
-  // var cookieParser=require('cookie-parser');
-  // var bodyParser= require('body-parser');
-  var session = require('express-session');
-  // app.use(bodyParser());
-  // app.use(cookieParser('secret'));
-  app.use(session());
   app.get('/login', function(req, res){
     res.render('login',{title: 'Login',success:req.session.success, errors:req.session.errors});
     req.session.errors=null;
@@ -166,7 +153,6 @@ module.exports = function(data) {
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
 }
 
-//HELLo
 function sendErrorPage(res, errormsg) {
   res.render('error', {
     'error': errormsg

@@ -1,0 +1,22 @@
+{
+  "SPEEDY" : {
+    "title" : "Speedy!",
+    "details" : "Awarded for fastest average response",
+    "icon" : "confident.png"
+  },
+  "CONFUSED" : {
+    "title" : "Confused?!?!",
+    "details" : "Awarded for many incorrect answers",
+    "icon" : "confused.png"
+  },
+  "SLEEPY" : {
+    "title" : "sleeeeeepy....",
+    "details" : "Awarded for the slowest responses",
+    "icon" : "sleepy.png"
+  },
+  "CLIMBER" : {
+    "title" : "Climbing...",
+    "details" : "Awarded for climbing the most positions",
+    "icon" : "comeback.png"
+  }
+}

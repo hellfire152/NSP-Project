@@ -18,7 +18,7 @@ module.exports = async function(input) {
     if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
       switch(response.roomEvent) {
         case C.ROOM_EVENT.JOIN : {
-          console.log("ROOM JOIN RESPONSE ID: " +response.id);
+          console.log(`${response.id} is joining room ${response.roomNo}`);
           try {
             if(socketOfUser[response.id].roomNo === undefined) {  //no not already in room
               socketOfUser[response.id].join(response.roomNo); //socket joins room

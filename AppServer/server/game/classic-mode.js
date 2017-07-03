@@ -25,15 +25,24 @@ module.exports = async function(input) {
       return sendQuestion(currentRoom, question, data);
     }
     case C.GAME.NEXT_ROUND: {
-      currentRoom.questionCounter++;
-      let questions = currentRoom.quiz.questions;
-      //if there are no questions left
-      if(currentRoom.questionCounter >= questions.length) {
-        //TODO::CAULCULATE TITLES
-        console.log("GAME " +data.roomNo +" END");
-        return sendGameEnd(currentRoom.players, data);
-      } else { //next question available
-        return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);
+      if(currentRoom.questionCounter) {
+        currentRoom.questionCounter++;
+        let questions = currentRoom.quiz.questions;
+        //if there are no questions left
+        if(currentRoom.questionCounter >= questions.length) {
+          //TODO::CAULCULATE TITLES
+          console.log("GAME " +data.roomNo +" END");
+          return sendGameEnd(currentRoom.players, data);
+        } else { //next question available
+          return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);
+        }
+      } else {
+        return {
+          'err' : C.ERR.GAME_HAS_NOT_STARTED,
+          'roomNo' : data.roomNo,
+          'targetId' : data.id,
+          'sendTo' : C.SEND_TO.USER
+        }
       }
     }
     case C.GAME.SUBMIT_ANSWER: {

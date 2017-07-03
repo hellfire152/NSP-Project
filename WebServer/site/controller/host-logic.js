@@ -32,11 +32,8 @@ socket.on('receive', function(input) {
           let gameNode = document.getElementById('game');
           gameNode.innerHTML = "";
           let gamemode = document.createElement('h3');
-
-          gamemode.appendChild(document.createTextNode(GAMEMODE_NO_TO_STRING[response.gamemode] + ": Waiting..."));
-
-          gamemode.appendChild(document.createTextNode(C.GAMEMODE[response.gamemode] + ": Waiting..."));
-// >>>>>>> 4b723d1... Merge branch 'nigel' of https://github.com/hellfire152/NSP-Project into nigel
+          gamemode.appendChild(document.createTextNode(
+            `${GAMEMODE_NO_TO_STRING[response.gamemode]} : Waiting...`));
           gameNode.appendChild(gamemode);
 
           //load gamemode's javascript
@@ -141,11 +138,7 @@ function appendToWaitingList(playerId) {
 
 function test_next_round() {
   send({
-
     'game': C.GAME.NEXT_ROUND
-// =======
-
-// >>>>>>> 4b723d1... Merge branch 'nigel' of https://github.com/hellfire152/NSP-Project into nigel
   });
 }
 

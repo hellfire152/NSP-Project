@@ -154,30 +154,13 @@ $('#submit').click(function()
      }
 
 
- // if($('#mcq').val() == C.DB.QUESTION_TYPE.MCQ){
- //   if($('input[name=solution]:checked').length<=0)
- //     {
- //        alert("Please pick a check box!");
- //        return false;
- //     }
- //
- //     else if( !$('#choice1').val() ) {
- //        alert('Please fill in at least 2 choices!');
- //        return false;
- //     }
- //
- //     else if( !$('#choice2').val() ) {
- //        alert('Please fill in at least 2 choices!');
- //        return false;
- //     }
- //   }
-
    //TODO: SEND TO SERVER
    var data = {
      quiz : create,
      question : questionArr,
      choices : choiceArr
    }
+
 
    var xhr = new XMLHttpRequest();
    xhr.open("POST", '/add-quiz', true);
