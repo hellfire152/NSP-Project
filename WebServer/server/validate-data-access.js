@@ -116,6 +116,20 @@ module.exports = function(cipher, appConn, C) {
           }
         }
       }
+      else if(req.body.dbType == "updateQuestion"){
+        inputData = {
+          data : {
+            type : C.DB.UPDATE.QUESTION,
+            changes : {
+              prompt : req.body.prompt,
+              solution : req.body.solution,
+              choices : req.body.choiceArr,
+              time : req.body.time
+            },
+            questionId : req.body.questionId
+          }
+        }
+      }
 
       cipher.encryptJSON(inputData)
         .catch(function (err) {

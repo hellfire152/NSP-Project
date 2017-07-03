@@ -227,6 +227,34 @@
       </form>
     </div>
     <br>
+    <div id='dbUpdateQuestion'>
+      <h2>Update Question</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateQuestion">
+        <label>Question ID:
+          <input type="text" name="questionId" id="questionId"/>
+        </label>
+        <br>
+        <label>Prompt:
+          <input type="text" name="prompt" id="prompt"/>
+        </label>
+        <br>
+        <label>Solution:
+          <input type="text" name="solution" id="solution"/>
+        </label>
+        <br>
+        <label>Time:
+          <input type="text" name="time" id="time"/>
+        </label>
+        <br>
+        <label>Choices:
+          <input type="text" name="choiceArr" id="choiceArr"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
     <script src="/controller/databaseFormat.js"></script>
     <!-- <script src="/controller/dbTest.js"></script> -->
     <script>

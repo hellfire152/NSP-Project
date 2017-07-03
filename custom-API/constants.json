@@ -84,7 +84,8 @@
     },
     "UPDATE" : {
       "PASSWORD" : 301,
-      "QUIZ" : 302
+      "QUIZ" : 302,
+      "QUESTION" : 303
     },
     "DELETE" : {
       "ACCOUNT" : 401

@@ -86,6 +86,10 @@ var server = net.createServer(function(conn){
           await deleteAccount(inputData);
           break;
         }
+        case C.DB.UPDATE.QUESTION : {
+          await updateQuestion(inputData);
+          break;
+        }
         //ADD MORE CASES HERE
       }
     }
@@ -638,7 +642,6 @@ var server = net.createServer(function(conn){
   }
   async function updateQuiz(inputData){
     var data = inputData.data.quiz;
-    console.log(data);
     var queryStatment = "UPDATE quiz SET ";
     if(data.quiz_title != undefined){
       queryStatment += "quiz_title = " + connection.escape(data.quiz_title);
@@ -674,6 +677,62 @@ var server = net.createServer(function(conn){
     });
 
 
+  }
+ /*
+ UPDATE quiz_question
+ JOIN quiz_question_choices
+ ON quiz_question.question_id = quiz_question_choices.question_id
+ SET quiz_question.prompt = "HELLO", quiz_question.solution = "YOU", quiz_question.time = "STUPID", quiz_question_choices.choices = "ARR IF CHOICES"
+ WHERE quiz_question.question_id = 55
+  */
+  async function updateQuestion(inputData){
+    var data = inputData.data;
+    await handleDb.handleEncryption(data.changes)
+    .then(dataChangesOut => {
+      var query = connection.query(
+        "UPDATE quiz_question\
+        JOIN quiz_question_choices\
+        ON quiz_question.question_id = quiz_question_choices.question_id\
+        SET ?\
+        WHERE quiz_question.question_id = " + connection.escape(data.questionId), dataChangesOut, function(err, result){
+          if(err){
+            var response = {
+              data : {
+                success : false,
+                message : err
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          if(result.affectedRows == 0){
+            var response = {
+              data : {
+                success : false,
+                message : "No such question"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          else if(result.affectedRows == 2){
+            var response = {
+              data : {
+                success : true,
+                message : "Question Updated"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          else {
+            var response = {
+              data : {
+                success : false,
+                message : "Something not right"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+        });
+    });
   }
 
   async function retrieveQuiz(){

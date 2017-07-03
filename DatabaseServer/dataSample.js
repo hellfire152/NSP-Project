@@ -205,5 +205,20 @@ module.exports = {
         searchItem : searchItem
       }
     }
+  },
+
+  updateQuestion : function(){
+    return updateQuestion = {
+      data : {
+        type : C.DB.UPDATE.QUESTION,
+        changes : {
+          prompt : "Prompt Changed2",
+          solution : "Solution Changed2",
+          choices : "CHOICES CHANGED",
+          time : " 200000"
+        },
+        questionId : 55
+      }
+    }
   }
 }
