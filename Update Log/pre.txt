@@ -243,3 +243,7 @@ For now, I've got to get all the graphicsAPI stuff running by the time the
 term break ends!
 
 2/7/2017 - Ang Jin Kuan
+Been another 10 days, huh?
+I've been slowly increasing my pace of work. All the graphics classes are done,
+although some are not tested yet. Classic mode's logic is mostly done, only a few
+missing gaps and a whole lot of testing to do.

@@ -37,7 +37,7 @@ socket.on('receive', function(data) {
 
     }
   } else if (response.game !== undefined) {
-    handleGame(response) //defined in the /play folder
+    handleGame(response); //defined in the /play folder
   } else {  //special
     switch(response.special) {
       case C.SPECIAL.SOCKET_DISCONNECT: {

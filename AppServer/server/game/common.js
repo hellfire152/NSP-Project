@@ -5,16 +5,16 @@
 
   Author: Jin Kuan
 */
-
+const T = require('./titles.json');
 /*
  Calculates the score for a correct answer
  The score is boosted by the speed difference from the first correct answer,
  and the answer streak of the player
 */
-function calculateScore(reward, startTime, answerStreak) {
+function calculateScore(reward, startTime, answerTime, answerStreak) {
   //taking the time difference in seconds
-  let timeDiff = (Date.now() - startTime) / 1000;
-  //set minimum
+  let timeDiff = (answerTime - startTime) / 1000;
+  //timeDiff caps at 60
   if(timeDiff > 60) timeDiff = 60;
   //capping answerStreak bonus at 10
   if(answerStreak > 10) answerStreak = 10;
@@ -25,6 +25,34 @@ function calculateScore(reward, startTime, answerStreak) {
 
   //return score after calculation (rounded to int)
   return Math.floor(reward * streakMultiplier * speedMultiplier);
+}
+
+function calculateTitles(currentRoom) {
+  let players = currentRoom.players;
+  let questionsNo = currentRoom.quiz.questions.length;
+
+  //calculating "Speedy!" and "sleepy..."
+  let fastestPlayer, fastestTime = Number.MAX_VALUE, slowestPlayer, slowestTime = 0;
+  //get the fastest and the slowest
+  for(let player of players) {
+    if(player.title === undefined) {
+      if(player.answerTime) {
+        let ansTime = player.answerTime / questionsNo;
+        if(ansTime < fastestTime) {
+          fastestTime = ansTime;
+          fastestPlayer = player;
+        }
+        if(ansTime > slowestTime) {
+          slowestTime = ansTime;
+          slowestPlayer = player;
+        }
+      }
+    }
+  }
+  fastestPlayer.title = T.SPEEDY;
+  slowestPlayer.title = T.SLEEPY;
+
+  //TODO::CALCULATE MORE TITLES
 }
 
 function removeSolution(question) {
@@ -59,7 +87,7 @@ function setAllAnswered(players) {
 function playersObjectToArray(players) {
   let playersArr = [];
   Object.keys(players).forEach(player => {  //iterate over all players
-    let playerData = Object.assign(playerData, player); //copy player data
+    let playerData = Object.assign(playerData, players[player]); //copy player data
     playerData.player = player; //add the player id inside
     playersArr.push(playerData);
   });
@@ -121,9 +149,14 @@ function handleScoring(input) {
       currentRoom.timeStart = Date.now();
     }
     currentPlayer.answerStreak++;
+
+    let answerTime = Date.now();  //track answering time
+    if(currentPlayer.answerTime === undefined)  currentPlayer.answerTime = 0;
+    currentPlayer.answerTime += answerTime;
+
     //calculate and store score
     currentRoom.players[data.id].score += calculateScore(
-      reward, currentRoom.timeStart, currentPlayer.answerStreak
+      reward, currentRoom.timeStart, answerTime, currentPlayer.answerStreak
     );
     //increment correctAnswer count
     currentRoom.players[data.id].correctAnswers++;
@@ -168,5 +201,7 @@ module.exports = {
   'checkCorrectAnswer': checkCorrectAnswer,
   'getReward': getReward,
   'getPenalty': getPenalty,
-  'playersObjectToArray': playersObjectToArray
+  'playersObjectToArray': playersObjectToArray,
+  'removeSolution' : removeSolution,
+  'getResponseData' : getResponseData
 };

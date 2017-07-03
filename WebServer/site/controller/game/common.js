@@ -13,6 +13,8 @@ var app = new PIXI.Application({
   'width': WIDTH,
   'height': HEIGHT
 });
+//for swapping between scenes
+var pixiScenes = {};
 var allResources;
 app.loader  //load all
   .add('yellow-button', '/resources/graphics/buttons/yellow-button.json')
@@ -27,30 +29,30 @@ app.loader  //load all
   .add('topbar-background', '/resources/graphics/ui/topbar-background.png')
   .load((loader, resources) => {
     allResources = resources;
-    //     //initialize all the various scenes
-    //     let p = pixiScenes;
-    //     p.answering = new PIXI.Container();
-    //     p.getReady = new PIXI.Container();
-    //     p.ranking = new PIXI.Container();
-    //
-    //     //setting up the various scenes...
-    //     p.getReady.addChild(new PIXI.Text('Get Ready!'));
-    //
-    //     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
-    //     let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
-    //     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
-    //       HEIGHT - mcqButtonHandler.height - topBar.height);
-    //     let answerResponses = new BarGraph(resources, null, {
-    //       'width' : WIDTH,
-    //       'height' : HEIGHT - topBar.height - mcqButtonHandler.height,
-    //       'paddingX' : 20,
-    //       'paddingY' : 20
-    //     });
-    //     p.answering.addChild(topBar, questionDisplay, mcqButtonHandler);
+    //initialize all the various scenes
+    let p = pixiScenes;
+    p.answering = new PIXI.Container();
+    p.getReady = new PIXI.Container();
+    p.ranking = new PIXI.Container();
+
+    //setting up the various scenes...
+    p.getReady.addChild(new PIXI.Text('Get Ready!'));
+
+    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
+    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
+    let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
+      HEIGHT - mcqButtonHandler.height - topBar.height);
+    let answerResponses = new BarGraph(resources, null, {
+      'width' : WIDTH,
+      'height' : HEIGHT - topBar.height - mcqButtonHandler.height,
+      'paddingX' : 20,
+      'paddingY' : 20
+    });
+    p.answering.barGraph = answerResponses;
+    p.answering.questionDisplay = questionDisplay;
+    p.answering.addChild(topBar, questionDisplay, mcqButtonHandler);
   });
 
-//for swapping between scenes
-var pixiScenes = {};
 
 //loading screen, just text at the moment
 //var loading = new LoadingBar(9, WIDTH - 100);
@@ -111,13 +113,13 @@ function initRatingScene() {
   like.on('pointertap', () => {
     send({
       'game' : C.GAME.RATING,
-      'rating' : 0;
+      'rating' : 0
     });
   });
   dislike.on('pointertap', () => {
     send({
       'game' : C.GAME.RATING,
-      'rating' : 1;
+      'rating' : 1
     });
   });
   //positioning
