@@ -142,8 +142,6 @@ var server = net.createServer(function(conn){
   });
 
   //Send JSON string to app server
-  async function sendToServer(data) {
-    conn.write(JSON.stringify(json));
   async function sendToServer(response, inputData) {
     response.reqNo = inputData.reqNo;
     conn.write(JSON.stringify(response));
@@ -958,7 +956,6 @@ var server = net.createServer(function(conn){
   }
 
   //Search quizes in database
-  async function searchQuiz(data){
   async function searchQuiz(inputData){
     var data = inputData.data;
     await handleDb.handleSearchQuiz(data)

@@ -14,7 +14,7 @@ module.exports = function(cipher, appConn, C) {
       //TODO::Handle errors
     } else {
       var inputData;
-
+      console.log("HERE");
       console.log(req.body);
       console.log("REQ.TYPE: " + req.body.dbType);
       if(req.body.dbType == "retrieveQuestion"){
