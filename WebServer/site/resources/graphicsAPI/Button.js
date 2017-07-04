@@ -31,7 +31,7 @@ class Button extends DisplayElement {
     //setting onClick
     s.on('pointertap', (() => {
       return function() {
-        onclick(args);
+        this.onClick(args);
       }
     })());
 
@@ -64,6 +64,14 @@ class Button extends DisplayElement {
     this._sprite.on('pointertap', fn);
   }
 
+  disable() {
+    this._sprite.interactive = false;
+  }
+
+  enable() {
+    this._sprite.interactive = true;
+  }
+
   set text(t) {
     this._text.text = t;
   }
@@ -76,11 +84,4 @@ class Button extends DisplayElement {
     return this._sprite.scale;
   }
 
-  disable() {
-    this._sprite.interactive = false;
-  }
-
-  enable() {
-    this._sprite.interactive = true;
-  }
 }

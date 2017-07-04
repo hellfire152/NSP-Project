@@ -9,7 +9,7 @@ class DisplayElement {
   constructor() {
     this._container = new PIXI.Container();
   }
-
+  
   set x(a) {
     this._container.x = a;
   }

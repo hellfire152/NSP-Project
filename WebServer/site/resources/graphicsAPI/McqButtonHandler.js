@@ -43,11 +43,11 @@ class McqButtonHandler extends DisplayElement {
       }));
 
     //create a container to hold the buttons
-    this._container = new PIXI.Sprite(resources['button-background'].texture);
+    this._background = new PIXI.Sprite(resources['button-background'].texture);
 
     //add all buttons to the container
     for(let button of this._buttons) {
-      this._container.addChild(button.sprite);
+      this._background.addChild(button.view);
     }
     //saving the original scale for later animation resets
     this._originalScale = [this._buttons[0].scale.x, this._buttons[0].scale.y];
@@ -71,6 +71,7 @@ class McqButtonHandler extends DisplayElement {
       'MIDDLE_LEFT': [xOffset + paddingX, bHeight + paddingY],
       'MIDDLE_RIGHT': [xOffset + bWidth + paddingX, bHeight + paddingY]
     }
+    this._container.addChild(this._background);
     this.setNoOfChoices(noOfChoices);
   }
 
@@ -183,8 +184,8 @@ class McqButtonHandler extends DisplayElement {
   */
   reset() {
     //scale and filter
-    for(let button in this._buttons) {
-      ([button.scale.x, button.scale.y] = this._originalScale);
+    for(let button of this._buttons) {
+      ([button.view.scale.x, button.view.scale.y] = this._originalScale);
       button.filters = null;
     }
     //positioning
@@ -197,7 +198,7 @@ class McqButtonHandler extends DisplayElement {
 
   set choices(choicesArr) {
     for(let i = 0; i < choicesArr.length; i++) {
-      this._buttons[i].text = answersArr[i];
+      this._buttons[i].text = choicesArr[i];
     }
   }
 }

@@ -56,28 +56,13 @@ app.loader  //load all
     p.answering.shortAnswerTextField = shortAnswerTextField;
     p.answering.barGraph = answerResponses;
     p.answering.questionDisplay = questionDisplay;
-    p.answering.addChild(topBar, questionDisplay, mcqButtonHandler);
+    p.answering.addChild(
+      topBar.view, questionDisplay.view, mcqButtonHandler.view);
 
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
 
     app.stage.addChild(p.getReady, p.answering, p.ranking);
   });
-
-
-//loading screen, just text at the moment
-//var loading = new LoadingBar(9, WIDTH - 100);
-
-//adding the loading bar to the stage
-//app.stage.addChild(loading.sprite);
-// app.loader.onLoad.add(() => {
-//   loading.increment();
-// });
-// //on load completion
-// app.loader.onComplete.add(() => {
-//   loading.sprite.visible = false; //hide loading screen
-//   loading = null; //leaving it to the garbage collector to deal with
-//   app.stage.addChild(new PIXI.Text('Get Ready!')); //show getReady screen, prepare for start signal...
-// });
 
 //Helper functions
 function swapScene(scene) {
@@ -95,6 +80,7 @@ function swapScene(scene) {
 }
 
 function showTitlesAndAchievements(titlesAndAchievenments) {
+  let p = pixiScenes;
   p.titlesAndAchievenments = new PIXI.Container();
   p.titlesAndAchievenments.addChild(new SpecialShowcase(titlesAndAchievenments, {
     'width' : WIDTH,
@@ -105,6 +91,7 @@ function showTitlesAndAchievements(titlesAndAchievenments) {
 }
 
 function initEndScene() {
+  let p = pixiScenes;
   p.end = new PIXI.Container();
   //shows one text with 'end' only
   let endText = new PIXI.Text('End');
@@ -116,6 +103,7 @@ function initEndScene() {
 }
 
 function initRatingScene() {
+  let p = pixiScenes;
   p.rating = new PIXI.Container();
   let like = new PIXI.Sprite(allResources['like'].texture);
   let dislike = new PIXI.Sprite(allResources['dislike'].texture);
