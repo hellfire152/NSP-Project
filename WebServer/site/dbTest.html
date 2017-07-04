@@ -9,7 +9,6 @@
     <h1>Database Testing</h1>
     <div id='dbCreateStudentAccount'>
       <h2>Create student account</h2>
-      <form action='/host-room' method='POST'>
       <form action='/data-access' method='POST'>
         <input type="hidden" name="dbType" value="createStudentAcc"/>
         <label>Name:
@@ -72,15 +71,10 @@
     <br>
     <div id='dbLoginAccount'>
       <h2>Login Account</h2>
-
-      <form action='/host-room' method='POST'>
-        <label>Username:
-          <input type="text" name="username" id="user"/>
       <form action='/data-access' method='POST'>
         <input type="hidden" name="dbType" value="accountLogin">
         <label>Username:
           <input type="text" name="user" id="user"/>
-
         </label>
         <br>
         <label>Password:
@@ -297,8 +291,6 @@
     <br>
     <div id='dbSearchQuiz'>
       <h2>Search Quiz</h2>
-
-      <form action='/host-room' method='POST'>
       <form action='/data-access' method='POST'>
         <input type="hidden" name="dbType" value="searchQuestion">
         <label>Search:
@@ -384,10 +376,6 @@
       </form>
     </div>
     <br>
-    <script src="/controller/databaseFormat.js"></script>
-    <script src="/controller/dbTest.js"></script>
-    <script src="/controller/databaseFormat.js"></script>
-    <!-- <script src="/controller/dbTest.js"></script> -->
     <script>
       var xhr = new XMLHttpRequest();
       var questionArr = [];
