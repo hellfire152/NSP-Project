@@ -25,6 +25,22 @@ $('#dbLoginAccount').submit(function(){
   return false;
 });
 
+$('#dbRetrieveQuestion').submit(function(){
+  var data = formatData({
+    type : C.DB.SELECT.QUESTION,
+    quizId : $("#quizId").val(),
+
+$('#dbLoginAccount').submit(function(){
+  var data = formatData({
+    type : C.DB.SELECT.USER_ACCOUNT,
+    user : $("#user").val(),
+    password : $("#loginPassword").val(),
+  });
+
+  send(data);
+  return false;
+});
+
 $('#dbCreateQuiz').click(function(){
   console.log("CREATING QUIZ");
   var data = formatData({

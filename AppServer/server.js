@@ -63,7 +63,7 @@ conn.on("data", async function(input) {
       if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
         throw new Error("WebServer unauthenticated, missing password");
       }
-      console.log(data);
+
       let response = {};
       if(conn.auth) { //if already authenticaed
         if(data.type !== undefined) { //data type defined
@@ -143,8 +143,9 @@ dbConn.on('data', function(inputData) {
   sendToServer(connection, data);
 });
 
+
 //Test sample data
-// sendToServer(dbConn, sampleData.studentAcc());
+sendToServer(dbConn, sampleData.loginStudentAcc());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer

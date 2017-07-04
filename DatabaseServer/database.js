@@ -46,6 +46,33 @@ var server = net.createServer(function(conn){
     console.log("Request recieved from appserver");
     try{
       var inputData = (JSON.parse(input));
+      var data = inputData.data;
+      // C = input.C;
+      console.log("DB TYPE: " +data.type);
+      switch(data.type) {
+        case C.DB.CREATE.STUDENT_ACC :
+        case C.DB.CREATE.TEACHER_ACC : {
+          response = await createAccount(data);
+          break;
+        }
+        case C.DB.CREATE.QUIZ : {
+          response = await createQuiz(data);
+          break;
+        }
+        case C.DB.SELECT.ALL_QUIZ : {
+          response = await retrieveAllQuiz();
+          break
+        }
+        case C.DB.SELECT.QUESTION : {
+          response = await retrieveQuestions(data.quizId); //quizId of the data
+          break;
+        }
+        case C.DB.SELECT.SEARCH_QUIZ : {
+          response = await searchQuiz(data);
+          break;
+        }
+        case C.DB.SELECT.USER_ACCOUNT : {
+          response = await retrieveAccount(data);
 
       console.log("DB TYPE: " + inputData.data.type);
       switch(inputData.data.type) {
@@ -76,6 +103,8 @@ var server = net.createServer(function(conn){
         }
         //ADD MORE CASES HERE
       }
+      response.reqNo = data.reqNo;
+      sendToServer(response);
     }
     catch (err) {
       console.log(err);
@@ -84,6 +113,8 @@ var server = net.createServer(function(conn){
   });
 
   //Send JSON string to app server
+  async function sendToServer(data) {
+    conn.write(JSON.stringify(json));
   async function sendToServer(response, inputData) {
     console.log("SEND TO SERVERERERERERERE");
     console.log(inputData);
@@ -385,6 +416,7 @@ var server = net.createServer(function(conn){
   }
 
   //Search quizes in database
+  async function searchQuiz(data){
   async function searchQuiz(inputData){
     var data = inputData.data;
     console.log("SEARCHING");

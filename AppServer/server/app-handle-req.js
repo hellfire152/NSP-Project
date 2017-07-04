@@ -1,9 +1,7 @@
 /*
   This module includes functions related to the server requests that
   are NOT socket.io.
-
   All of them are handling HTTP POST requests (currectly).
-
   Author: Jin Kuan
 */
 var C, allRooms;
@@ -24,6 +22,12 @@ module.exports = async function(input) {
       return (await host_room(data));
       break;
     }
+
+    case C.REQ_TYPE.ADD_QUIZ: {
+      return (await add_quiz(data));
+      break;
+    }
+
     case C.REQ_TYPE.ACCOUNT_CREATE_STUD: {;
       return (await account_create_stud(data));
       break;
@@ -41,7 +45,7 @@ module.exports = async function(input) {
       return (await databaseAccess(data));
       break;
     }
-    //ADD MORE CASES HERE
+
   }
 }
 
@@ -105,6 +109,20 @@ async function account_login(data){
   return response;
 }
 
+//Appserver response on port 9090
+async function add_quiz(data) {
+  response = {
+    'prompt' : data.prompt,
+    'type' : data.type,
+    'choices' : data.choices,
+    'solution' : data.solution,
+    'time' : data.time,
+    'reward' : data.reward,
+    'penalty' :data.penalty
+  };
+  return response;
+}
+
 /**
   Create account for students
 */
@@ -140,7 +158,6 @@ async function account_create_teach(data){
 }
 /**
   Function that handles the host-room form.
-
   The only thing this does is check the cookie for a valid login,
   socket.io will take the rest, including generating a room number.
 */

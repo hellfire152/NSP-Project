@@ -9,6 +9,7 @@
     <h1>Database Testing</h1>
     <div id='dbCreateStudentAccount'>
       <h2>Create student account</h2>
+      <form action='/host-room' method='POST'>
       <form action='/data-access' method='POST'>
         <input type="hidden" name="dbType" value="accountCreation"/>
         <label>Name:
@@ -38,10 +39,15 @@
     <br>
     <div id='dbLoginAccount'>
       <h2>Login Account</h2>
+
+      <form action='/host-room' method='POST'>
+        <label>Username:
+          <input type="text" name="username" id="user"/>
       <form action='/data-access' method='POST'>
         <input type="hidden" name="dbType" value="accountLogin">
         <label>Username:
           <input type="text" name="user" id="user"/>
+
         </label>
         <br>
         <label>Password:
@@ -53,6 +59,10 @@
       </form>
     </div>
     <br>
+
+    <div id='dbRetrieveQuestion'>
+      <h2>Retrieve Question</h2>
+      <form action='/host-room' method='POST'>
     <div>
       <h2>Create Question</h2>
       <div id="quizArea">
@@ -109,6 +119,7 @@
       <h2>Retrieve Question</h2>
       <form action='/data-access' method='POST'>
         <input type="hidden" name="dbType" value="retrieveQuestion">
+
         <label>Quiz ID:
           <input type="text" name="quizId" id="quizId"/>
         </label>
@@ -118,6 +129,8 @@
     <br>
     <div id='dbSearchQuiz'>
       <h2>Search Quiz</h2>
+
+      <form action='/host-room' method='POST'>
       <form action='/data-access' method='POST'>
         <input type="hidden" name="dbType" value="searchQuestion">
         <label>Search:
@@ -126,6 +139,18 @@
         <input type='submit' value='Submit' /><br>
       </form>
     </div>
+
+    <!-- <div id='dbSearchQuiz'>
+      <h2>Search Quiz</h2>
+      <form action='/host-room' method='POST'>
+        <label>Search:
+          <input type="text" name="search" id="search"/>
+        </label>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div> -->
+    <script src="/controller/databaseFormat.js"></script>
+    <script src="/controller/dbTest.js"></script>
     <script src="/controller/databaseFormat.js"></script>
     <!-- <script src="/controller/dbTest.js"></script> -->
     <script>

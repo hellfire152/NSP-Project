@@ -1,10 +1,17 @@
 const C = {
+
   "MCQ" : {
     "A" : 8,
     "B" : 4,
     "C" : 2,
     "D" : 1
   },
+
+  "TYPE" : {
+    "PUBLIC" : 0,
+    "PRIVATE" : 1
+  },
+
   "SPECIAL" : {
     "SOCKET_DISCONNECT" : 500,
     "HOST_DISCONNECT": 501,
@@ -45,6 +52,7 @@ const C = {
     "CONFIRM_TEAM_NO" : 18,
     "RESPONSE_DATA" : 19,
     "GET_READY" : 20
+
   },
   "GAMEMODE" : {
     "CLASSIC": 0,
@@ -59,17 +67,31 @@ const C = {
   "REQ_TYPE" : {
     "JOIN_ROOM": 0,
     "HOST_ROOM": 1,
+
+    "CREATE_QUIZ": 10,
+    "ADD_QUESTION": 11,
+    "ADD_QUIZ" : 12,
+    "DATABASE" : 100,
+
     "ACCOUNT_CREATE_STUD": 2,
     "ACCOUNT_CREATE_TEACH":4,
     "ACCOUNT_LOGIN": 3,
     "DATABASE" : 100
+
   },
   "RES_TYPE" : {
     "JOIN_ROOM_RES": 0,
     "HOST_ROOM_RES": 1,
+
+
+    "CREATE_QUIZ_RES": 10,
+    "ADD_QUESTION_RES": 11,
+    "ADD_QUIZ_RES" : 12,
     "ACCOUNT_CREATED_STUD": 2,
+
     "ACCOUNT_CREATED_TEACH":4,
     "ACCOUNT_LOGGED_IN":3
+
   },
   "DB" : {
     "CREATE" : {
@@ -110,6 +132,7 @@ const C = {
 
     "ALREADY_ANSWERED": 1500,
     "GAME_HAS_NOT_STARTED" : 1501,
+
 
     "DB_NO_RESULT" : 2000,
     "DB_EMAIL_TAKEN" : 2001

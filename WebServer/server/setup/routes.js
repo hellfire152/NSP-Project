@@ -4,6 +4,8 @@
   Author: Jin Kuan
 */
 let uuid;
+var express = require('express');
+var nodemailer = require('nodemailer');
 module.exports = function(data) {
 
   const C = data.C;
@@ -12,6 +14,7 @@ module.exports = function(data) {
     cipher = data.cipher,
     appConn = data.appConn,
     queryOfUser = data.queryOfUser;
+    uuid = data.uuid;
     errors=data.error;
   uuid = data.uuid;
   //routing
@@ -143,8 +146,9 @@ module.exports = function(data) {
   app.post('/data-access', require('../validate-data-access.js')(cipher, appConn, C));
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
-  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn,C));
-  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn,C, errors));
+  app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
+  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C));
+  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C, errors));
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
 }
 
