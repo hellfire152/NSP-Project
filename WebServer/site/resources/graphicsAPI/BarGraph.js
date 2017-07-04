@@ -5,7 +5,8 @@
   data consists of 2 arrays, labels and values.
   Author: Jin Kuan
 */
-//var colors = [0x]
+//colors constant for the bar graph bars
+const COLORS = [0x0061ff, 0x6a00ff, 0xff3593, 0xff0000, 0xff6600, 0xfff200, 0x59ff00, 0x00ff90];
 class BarGraph extends DisplayElement {
   constructor(resources, data, positionData) {
     super();
@@ -37,16 +38,16 @@ class BarGraph extends DisplayElement {
   }
 
   set data(d) {
-    for (let i = 0; i < this._container.children.length; i--) {
+    for (let i = 0; i < this._container.children.length; i++) {
       this._container.removeChild(this._container.children[i]); //remove all bars
     }
     //add one bar for each label and value
-    barWidth = (this._width - this._paddingX * (d.labels.length - 1)) / d.labels.length;
+    let barWidth = (this._width - this._paddingX * (d.labels.length - 1)) / d.labels.length;
     for(let i = 0, colorIndex = 0; i < d.labels.length; i++) {
       let bar = new BarGraphBar({
         'label' : d.labels[i],
         'value' : d.values[i],
-        'color' : colors[colorIndex],
+        'color' : COLORS[colorIndex],
         'width' : barWidth,
         'maxHeight' : this._maxHeight,
         'padding' : this._paddingY

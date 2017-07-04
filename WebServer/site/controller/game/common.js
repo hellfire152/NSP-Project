@@ -64,6 +64,7 @@ app.loader  //load all
       answerResponses.visible = questionDisplay.visible = false;
 
     //so that the elements are accessible to other functions
+    p.topBar = topBar;
     p.answering.mcqButtonHandler = mcqButtonHandler;
     p.answering.shortAnswerTextField = shortAnswerTextField;
     p.answering.barGraph = answerResponses;

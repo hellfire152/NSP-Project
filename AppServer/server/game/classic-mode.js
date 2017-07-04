@@ -76,13 +76,18 @@ module.exports = async function(input) {
           'currentPlayer': currentPlayer
         });
 
+        //tracking variables
         currentPlayer.answered = true;
         currentRoom.answerCount++;
 
-        if(currentRoom.answerCount == currentRoom.playerCount) {
-          //stop the auto round end on timer end
+        //once all players answer...
+        if(currentRoom.answerCount >= currentRoom.playerCount) {
+          //stop the auto round end
           clearTimeout(currentRoom.timer);
-          return sendRoundEnd(currentRoom, data, currentRoom.answers);
+          console.log(
+            `ROOM ${data.roomNo} ALL ANSWERED FOR QUESTION ${currentRoom.questionCounter}`);
+          common.setAllAnswered(currentRoom.players);
+          return common.getResponseData(currentRoom, data);
         } else {
           //send response for host
           return {
@@ -134,9 +139,10 @@ function sendQuestion(currentRoom, question, data) {
   common.setAllUnanswered(currentRoom.players);
   //set timer
   currentRoom.timer = setTimeout(() => {
+    console.log(`ROOM ${data.roomNo} RAN OUT OF TIME`);
     common.setAllAnswered(currentRoom.players);
     sendToServer(conn,
-      common.getResponseData(currentRoom)
+      common.getResponseData(currentRoom, data)
     );
   }, question.time * 1000);
 

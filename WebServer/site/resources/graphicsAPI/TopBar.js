@@ -28,6 +28,7 @@ class TopBar extends DisplayElement {
     p.score.anchor.set(1, 0);
 
     this.updateCorrect(0, 0);
+    this._container.addChild(this._background);
     this._container.addChild(p.name);
     this._container.addChild(p.correctAnswers);
     this._container.addChild(p.score);

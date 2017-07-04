@@ -16,16 +16,24 @@ function handleGame(response) {
       document.body.innerHTML = ''; //clear the html body
       document.body.appendChild(app.renderer.view); //add the game view
       swapScene('getReady');
+      break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
       loadQuestion(response.question);
       break;
     }
     case C.GAME_RES.RESPONSE_DATA: { //show the responses
+      console.log("RESPONSE GET");
       let p = pixiScenes.answering;
-      p.barGraph.data = response.data;
+      //show responseData on bar graph
+      p.barGraph.data = response.responseData;
       p.barGraph.visible = true;
       p.questionDisplay.visible = false;
+
+      //update topBar
+      let scoreData = response.playerData[name];
+      pixiScenes.topBar.updateCorrect(scoreData.correctAnswers, scoreData.score);
+      break;
     }
     case C.GAME_RES.ROUND_END: {
       displayResults(response.roundEndResults);
@@ -33,12 +41,21 @@ function handleGame(response) {
     }
     case C.GAME_RES.GAME_END: {
       gameEnd(response);
+      break;
+    }
+    //ADD MORE CASES HERE
+    default: {
+      console.log(`GAME_RES value is ${response.game}, not a preset case!`);
     }
   }
 }
 
 function loadQuestion(question) {
   let p = pixiScenes.answering;
+
+  //display the prompt
+  p.questionDisplay.text = question.prompt;
+  p.questionDisplay.visible = true;
 
   let timerEnd; //callback for when timer ends
   //set both not visible (just in case)

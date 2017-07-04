@@ -16,12 +16,14 @@
 */
 //initializes a socket.io connection
 var socket = io();
+var name;
 socket.on('receive', function(data) {
   var response = JSON.parse(data);
   console.log(response);
   if(response.event !== undefined) {
     switch(response.event) {
       case C.EVENT_RES.PLAYER_LIST: {
+        name = response.id;
         Object.keys(response.playerList).forEach(playerId => {
           console.log(playerId);
           //generate a new li for each player

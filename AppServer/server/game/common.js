@@ -6,6 +6,7 @@
   Author: Jin Kuan
 */
 const T = require('./titles.json');
+const C = require('../../../custom-API/constants.json');
 /*
  Calculates the score for a correct answer
  The score is boosted by the speed difference from the first correct answer,
@@ -124,12 +125,36 @@ function checkCorrectAnswer(question, answer) {
 /*
   Returns an object representing the response data of that round
 */
-function getResponseData(currentRoom) {
+function getResponseData(currentRoom, data) {
   let question = currentRoom.quiz.questions[currentRoom.questionCounter];
-  let solution = question.solution;
+  //formatting data for the bar graph
+  let responseData = {};
+  responseData.labels = [];
+  responseData.values = [];
+  for(let label in currentRoom.answers) {
+    if(currentRoom.answers.hasOwnProperty(label)) {
+      responseData.labels.push(label);
+      responseData.values.push(currentRoom.answers[label]);
+    }
+  }
+  //sending score
+  let scoreData = {};
+  for(let player in currentRoom.players) {
+    if(currentRoom.players.hasOwnProperty(player)) {
+      scoreData[player] = {
+        'score' : currentRoom.players[player].score,
+        'correctAnswers' : currentRoom.players[player].correctAnswers
+      }
+    }
+  }
   return {
+    'game' : C.GAME_RES.RESPONSE_DATA,
     'question' : question,
-    'solution' : solution
+    'solution' : question.solution,
+    'sendTo' : C.SEND_TO.ROOM,
+    'responseData' : responseData,
+    'scoreData' : scoreData,
+    'roomNo' : data.roomNo
   }
 }
 /*
@@ -155,13 +180,15 @@ function handleScoring(input) {
     currentPlayer.answerTime += answerTime;
 
     //calculate and store score
-    currentRoom.players[data.id].score += calculateScore(
+    currentPlayer.score += calculateScore(
       reward, currentRoom.timeStart, answerTime, currentPlayer.answerStreak
     );
     //increment correctAnswer count
-    currentRoom.players[data.id].correctAnswers++;
+    currentPlayer.correctAnswers++;
   } else {  //wrong answer
     currentPlayer.score -= getPenalty(currentRoom.quiz, question);
+    //reser answer streak
+    currentPlayer.answerStreak = 0;
   }
 }
 

@@ -67,8 +67,6 @@ module.exports = function(data) {
         //TODO: Need to find a better solution
         data.password = pass //Temp solution
 
-        console.log("WebServer to AppServer Data:");
-        console.log(data);
         appConn.send(data, null);
       } catch (err) {
         console.log(err);
