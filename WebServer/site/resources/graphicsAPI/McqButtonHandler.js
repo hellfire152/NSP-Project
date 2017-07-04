@@ -52,7 +52,7 @@ class McqButtonHandler extends DisplayElement {
       this._background.addChild(button.view);
     }
     //saving the original scale for later animation resets
-    this._originalScale = [this._buttons[0].scale.x, this._buttons[0].scale.y];
+    this._originalSize = [this._buttons[0].width, this._buttons[0].height];
 
     //positioning
     //calculating positions
@@ -190,7 +190,7 @@ class McqButtonHandler extends DisplayElement {
   reset() {
     //scale and filter
     for(let button of this._buttons) {
-      ([button.view.scale.x, button.view.scale.y] = this._originalScale);
+      ([button.width, button.height] = this._originalSize);
       button.filters = null;
     }
     //positioning

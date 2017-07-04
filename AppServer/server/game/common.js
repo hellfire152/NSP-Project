@@ -87,7 +87,7 @@ function setAllAnswered(players) {
 function playersObjectToArray(players) {
   let playersArr = [];
   Object.keys(players).forEach(player => {  //iterate over all players
-    let playerData = Object.assign(playerData, players[player]); //copy player data
+    let playerData = Object.assign({}, players[player]); //copy player data
     playerData.player = player; //add the player id inside
     playersArr.push(playerData);
   });
@@ -203,5 +203,6 @@ module.exports = {
   'getPenalty': getPenalty,
   'playersObjectToArray': playersObjectToArray,
   'removeSolution' : removeSolution,
-  'getResponseData' : getResponseData
+  'getResponseData' : getResponseData,
+  'handleScoring' : handleScoring
 };

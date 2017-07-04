@@ -25,8 +25,6 @@ module.exports = async function(input) {
       //send next question 5 seconds after get ready
       setTimeout(() => {
         let q = sendQuestion(currentRoom, question, data);
-        console.log(q);
-        console.log(data);
         sendToServer(conn, q);
       }, 5000);
 

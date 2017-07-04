@@ -1,3 +1,4 @@
+'use strict';
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
 // const WIDTH = 800;

@@ -4,6 +4,7 @@
 
   Author: Jin Kuan
 */
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 //game area dimensions
 const WIDTH   = 800,
       HEIGHT  = 600;
@@ -38,7 +39,7 @@ app.loader  //load all
     //setting up the various scenes...
     p.getReady.addChild(new PIXI.Text('Get Ready!'));
 
-    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH / 3, 4);
+    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
     let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
     let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
@@ -49,15 +50,27 @@ app.loader  //load all
       'paddingX' : 20,
       'paddingY' : 20
     });
+
+    //positioning and sizing
+    mcqButtonHandler.y = shortAnswerTextField.y
+      = HEIGHT - mcqButtonHandler.height;
+    shortAnswerTextField.height = mcqButtonHandler.height;
+    questionDisplay.y = answerResponses.y = topBar.height;
+    questionDisplay.height = answerResponses.height
+      = HEIGHT - mcqButtonHandler.height - topBar.height;
+
     //set all not visible
     mcqButtonHandler.visible = shortAnswerTextField.visible =
       answerResponses.visible = questionDisplay.visible = false;
+
+    //so that the elements are accessible to other functions
     p.answering.mcqButtonHandler = mcqButtonHandler;
     p.answering.shortAnswerTextField = shortAnswerTextField;
     p.answering.barGraph = answerResponses;
     p.answering.questionDisplay = questionDisplay;
     p.answering.addChild(
-      topBar.view, questionDisplay.view, mcqButtonHandler.view);
+      topBar.view, questionDisplay.view, answerResponses.view,
+      mcqButtonHandler.view, shortAnswerTextField.view);
 
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
 
