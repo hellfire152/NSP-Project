@@ -43,7 +43,8 @@ app.loader  //load all
     //setting up the various scenes...
     p.getReady.addChild(new PIXI.Text('Get Ready!'));
 
-    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
+    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH / 3, 4);
+    let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
     let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
       HEIGHT - mcqButtonHandler.height - topBar.height);
@@ -53,14 +54,18 @@ app.loader  //load all
       'paddingX' : 20,
       'paddingY' : 20
     });
+    //set all not visible
+    mcqButtonHandler.visible = shortAnswerTextField.visible =
+      answerResponses.visible = questionDisplay.visible = false;
+    p.answering.mcqButtonHandler = mcqButtonHandler;
+    p.answering.shortAnswerTextField = shortAnswerTextField;
     p.answering.barGraph = answerResponses;
     p.answering.questionDisplay = questionDisplay;
-    p.answering.addChild(topBar, questionDisplay, mcqButtonHandler);
-  });
+    p.answering.addChild(
+      topBar.view, questionDisplay.view, mcqButtonHandler.view);
 
+    p.getReady.visible = p.answering.visible = p.ranking.visible = false;
 
-//loading screen, just text at the moment
-//var loading = new LoadingBar(9, WIDTH - 100);
 
 //adding the loading bar to the stage
 app.stage.addChild(loading.sprite);
@@ -135,6 +140,10 @@ function displayResults(roundEndResults) {
 //   app.stage.addChild(new PIXI.Text('Get Ready!')); //show getReady screen, prepare for start signal...
 // });
 
+    app.stage.addChild(p.getReady, p.answering, p.ranking);
+  });
+
+
 
 //loading the stuff
 // app.loader
@@ -186,6 +195,7 @@ function swapScene(scene) {
 }
 
 function showTitlesAndAchievements(titlesAndAchievenments) {
+  let p = pixiScenes;
   p.titlesAndAchievenments = new PIXI.Container();
   p.titlesAndAchievenments.addChild(new SpecialShowcase(titlesAndAchievenments, {
     'width' : WIDTH,
@@ -196,6 +206,7 @@ function showTitlesAndAchievements(titlesAndAchievenments) {
 }
 
 function initEndScene() {
+  let p = pixiScenes;
   p.end = new PIXI.Container();
   //shows one text with 'end' only
   let endText = new PIXI.Text('End');
@@ -207,6 +218,7 @@ function initEndScene() {
 }
 
 function initRatingScene() {
+  let p = pixiScenes;
   p.rating = new PIXI.Container();
   let like = new PIXI.Sprite(allResources['like'].texture);
   let dislike = new PIXI.Sprite(allResources['dislike'].texture);

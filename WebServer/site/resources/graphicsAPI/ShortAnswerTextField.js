@@ -22,7 +22,7 @@ class ShortAnswerTextField extends DisplayElement{
     });
     this._text.anchor.set(0.5,0.5);
     this._text.x = this._container.width / 2;
-    this._text.y = this._container.
+    this._text.y = this._container.height / 2;
     this._container.addChild(this._text);
 
     //listen for typing

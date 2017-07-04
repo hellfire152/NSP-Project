@@ -43,11 +43,13 @@ class McqButtonHandler extends DisplayElement {
       }));
 
     //create a container to hold the buttons
-    this._container = new PIXI.Sprite(resources['button-background'].texture);
+    this._background = new PIXI.Sprite(resources['button-background'].texture);
+    this._background.width = width;
+    this._container.addChild(this._background);
 
     //add all buttons to the container
     for(let button of this._buttons) {
-      this._container.addChild(button.sprite);
+      this._background.addChild(button.view);
     }
     //saving the original scale for later animation resets
     this._originalScale = [this._buttons[0].scale.x, this._buttons[0].scale.y];
@@ -55,21 +57,25 @@ class McqButtonHandler extends DisplayElement {
     //positioning
     //calculating positions
     let b = this._buttons,
-      xOffset = b[0].width / 2,
-      yOffset = b[0].height / 2,
       bWidth = b[0].width,
       bHeight = b[0].height,
-      paddingY = (this._container.height - bHeight * 2) / 3,
-      paddingX = (this._container.width - bWidth * 2) / 3;
+      paddingX = 10,
+      paddingY = 15;
+    const LEFT = bWidth / 2 + paddingX,
+      RIGHT = bWidth * 1.5 + paddingX * 2,
+      MIDDLE_X = paddingX * 1.5 + bWidth,
+      TOP = bHeight / 2 + paddingY,
+      BOTTOM = bHeight * 1.5 + paddingY * 2,
+      MIDDLE_Y = paddingY * 1.5 + bHeight;
 
     this.POSITIONS = {
-      'TOP_LEFT': [xOffset + paddingX, yOffset + paddingY],
-      'TOP_RIGHT': [xOffset + bWidth + paddingX * 2, yOffset + paddingY],
-      'BOTTOM_LEFT': [xOffset + paddingX, yOffset + bHeight + paddingY * 2],
-      'BOTTOM_RIGHT': [xOffset + bWidth + paddingX * 2, yOffset + bHeight + paddingY * 2],
-      'BOTTOM_MIDDLE': [bWidth + paddingX, yOffset + bHeight + paddingY * 2],
-      'MIDDLE_LEFT': [xOffset + paddingX, bHeight + paddingY],
-      'MIDDLE_RIGHT': [xOffset + bWidth + paddingX, bHeight + paddingY]
+      'TOP_LEFT': [LEFT, TOP],
+      'TOP_RIGHT': [RIGHT, TOP],
+      'BOTTOM_LEFT': [LEFT, BOTTOM],
+      'BOTTOM_RIGHT': [RIGHT, BOTTOM],
+      'BOTTOM_MIDDLE': [MIDDLE_X, BOTTOM],
+      'MIDDLE_LEFT': [LEFT, MIDDLE_Y],
+      'MIDDLE_RIGHT': [RIGHT, MIDDLE_Y]
     }
     this.setNoOfChoices(noOfChoices);
   }
@@ -183,8 +189,8 @@ class McqButtonHandler extends DisplayElement {
   */
   reset() {
     //scale and filter
-    for(let button in this._buttons) {
-      ([button.scale.x, button.scale.y] = this._originalScale);
+    for(let button of this._buttons) {
+      ([button.view.scale.x, button.view.scale.y] = this._originalScale);
       button.filters = null;
     }
     //positioning
@@ -197,7 +203,7 @@ class McqButtonHandler extends DisplayElement {
 
   set choices(choicesArr) {
     for(let i = 0; i < choicesArr.length; i++) {
-      this._buttons[i].text = answersArr[i];
+      this._buttons[i].text = choicesArr[i];
     }
   }
 }

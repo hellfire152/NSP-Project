@@ -50,7 +50,8 @@
     "PLAYER_FINISH": 16,
     "TEAM_CHOSEN": 17,
     "CONFIRM_TEAM_NO" : 18,
-    "RESPONSE_DATA" : 19
+    "RESPONSE_DATA" : 19,
+    "GET_READY" : 20
   },
   "GAMEMODE" : {
     "CLASSIC": 0,
