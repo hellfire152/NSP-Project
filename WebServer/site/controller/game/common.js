@@ -4,6 +4,7 @@
 
   Author: Jin Kuan
 */
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 //game area dimensions
 const WIDTH   = 800,
       HEIGHT  = 600;
@@ -39,6 +40,7 @@ app.loader  //load all
     p.getReady.addChild(new PIXI.Text('Get Ready!'));
 
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
+    let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
     let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
       HEIGHT - mcqButtonHandler.height - topBar.height);
@@ -48,26 +50,32 @@ app.loader  //load all
       'paddingX' : 20,
       'paddingY' : 20
     });
+
+    //positioning and sizing
+    mcqButtonHandler.y = shortAnswerTextField.y
+      = HEIGHT - mcqButtonHandler.height;
+    shortAnswerTextField.height = mcqButtonHandler.height;
+    questionDisplay.y = answerResponses.y = topBar.height;
+    questionDisplay.height = answerResponses.height
+      = HEIGHT - mcqButtonHandler.height - topBar.height;
+
+    //set all not visible
+    mcqButtonHandler.visible = shortAnswerTextField.visible =
+      answerResponses.visible = questionDisplay.visible = false;
+
+    //so that the elements are accessible to other functions
+    p.answering.mcqButtonHandler = mcqButtonHandler;
+    p.answering.shortAnswerTextField = shortAnswerTextField;
     p.answering.barGraph = answerResponses;
     p.answering.questionDisplay = questionDisplay;
-    p.answering.addChild(topBar, questionDisplay, mcqButtonHandler);
+    p.answering.addChild(
+      topBar.view, questionDisplay.view, answerResponses.view,
+      mcqButtonHandler.view, shortAnswerTextField.view);
+
+    p.getReady.visible = p.answering.visible = p.ranking.visible = false;
+
+    app.stage.addChild(p.getReady, p.answering, p.ranking);
   });
-
-
-//loading screen, just text at the moment
-//var loading = new LoadingBar(9, WIDTH - 100);
-
-//adding the loading bar to the stage
-//app.stage.addChild(loading.sprite);
-// app.loader.onLoad.add(() => {
-//   loading.increment();
-// });
-// //on load completion
-// app.loader.onComplete.add(() => {
-//   loading.sprite.visible = false; //hide loading screen
-//   loading = null; //leaving it to the garbage collector to deal with
-//   app.stage.addChild(new PIXI.Text('Get Ready!')); //show getReady screen, prepare for start signal...
-// });
 
 //Helper functions
 function swapScene(scene) {
@@ -85,6 +93,7 @@ function swapScene(scene) {
 }
 
 function showTitlesAndAchievements(titlesAndAchievenments) {
+  let p = pixiScenes;
   p.titlesAndAchievenments = new PIXI.Container();
   p.titlesAndAchievenments.addChild(new SpecialShowcase(titlesAndAchievenments, {
     'width' : WIDTH,
@@ -95,6 +104,7 @@ function showTitlesAndAchievements(titlesAndAchievenments) {
 }
 
 function initEndScene() {
+  let p = pixiScenes;
   p.end = new PIXI.Container();
   //shows one text with 'end' only
   let endText = new PIXI.Text('End');
@@ -106,6 +116,7 @@ function initEndScene() {
 }
 
 function initRatingScene() {
+  let p = pixiScenes;
   p.rating = new PIXI.Container();
   let like = new PIXI.Sprite(allResources['like'].texture);
   let dislike = new PIXI.Sprite(allResources['dislike'].texture);

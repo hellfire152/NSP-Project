@@ -11,6 +11,9 @@ module.exports = async function(input) {
   socketObj = io.sockets.sockets;
   socketOfUser = input.socketOfUser;
 
+  //remove the reqNo as it's not needed here
+  delete response.reqNo;
+
   if(response.sendTo === undefined) throw new Error('sendTo value must be defined!');
 
   if(response.validLogin || !response.validating) {

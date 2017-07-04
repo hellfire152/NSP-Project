@@ -42,7 +42,6 @@ var https_options = {
 
 //setting up the server + socket.io listening
 var server = https.createServer(https_options, app);
-server.listen(8080);
 var io = require('socket.io').listen(server);
 
 //connection with app server
@@ -67,5 +66,6 @@ require("./server-setup.js")({
   // "sessionHandler" : sessionHandler
 });
 
-//confimation message
+//start listening
+server.listen(8080);
 console.log("Listening on port 8080...");

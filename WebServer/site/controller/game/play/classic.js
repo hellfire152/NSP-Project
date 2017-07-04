@@ -69,7 +69,7 @@ function displayResults(roundEndData) {
 
 function gameEnd(response) {
   //allows for swapping via buttons
-  let pixiScenes.titlesAndAchievenments = new PIXI.Container();
+  pixiScenes.titlesAndAchievenments = new PIXI.Container();
   //updating the ranking list
   displayResults(response.roundEndData);
   //showing titles and achievements
