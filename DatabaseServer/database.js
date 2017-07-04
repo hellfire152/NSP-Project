@@ -46,8 +46,6 @@ var server = net.createServer(function(conn){
     console.log("Request recieved from appserver");
     try{
       var inputData = (JSON.parse(input));
-
-      console.log(inputData);
       console.log("DB TYPE: " + inputData.data.type);
       switch(inputData.data.type) {
         case C.DB.CREATE.STUDENT_ACC :
@@ -108,7 +106,7 @@ var server = net.createServer(function(conn){
           break;
         }
         case C.DB.UPDATE.STUDENT_CATEGORY : {
-          await updateSchool(inputData);
+          await updateStudentCategory(inputData);
           break;
         }
         case C.DB.UPDATE.ORGANISATION : {
@@ -617,6 +615,7 @@ var server = net.createServer(function(conn){
 
   async function updateStudentCategory(inputData){
     var data = inputData.data;
+    console.log("HELLO");
     console.log(data);
     handleDb.handleEncryption(data)
     .then(dataOut => {
@@ -647,7 +646,7 @@ var server = net.createServer(function(conn){
     handleDb.handleEncryption(data)
     .then(dataOut => {
       var query = connection.query("UPDATE teacher_details SET organisation = " + connection.escape(dataOut.organisation) +
-      "WHERE student_id = " + connection.escape(dataOut.teacher_id), function(error, result){
+      "WHERE teacher_id = " + connection.escape(dataOut.teacher_id), function(error, result){
         if(error){
           var response = {
             data : {

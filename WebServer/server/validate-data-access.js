@@ -9,12 +9,13 @@ module.exports = function(cipher, appConn, C) {
   return function(req, res) {
 
     //TODO: Data validation
-    console.log(req.body.data);
     var errors = req.validationErrors();
     if(errors) {
       //TODO::Handle errors
     } else {
       var inputData;
+
+      console.log(req.body);
       console.log("REQ.TYPE: " + req.body.dbType);
       if(req.body.dbType == "retrieveQuestion"){
         inputData = {
@@ -171,7 +172,7 @@ module.exports = function(cipher, appConn, C) {
           data : {
             type : C.DB.UPDATE.STUDENT_CATEGORY,
             student_category : req.body.studentCategory,
-            student_id : req.body.userId
+            student_id : req.body.studentId
           }
         }
       }
@@ -180,11 +181,12 @@ module.exports = function(cipher, appConn, C) {
           data : {
             type : C.DB.UPDATE.ORGANISATION,
             organisation : req.body.organisation,
-            teacher_id : req.body.userId
+            teacher_id : req.body.teacherId
           }
         }
       }
 
+      console.log(inputData);
 
       cipher.encryptJSON(inputData)
         .catch(function (err) {
