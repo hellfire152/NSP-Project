@@ -86,7 +86,12 @@
       "PASSWORD" : 301,
       "QUIZ" : 302,
       "QUESTION" : 303,
-      "USER_ACCOUNT" : 304
+      "ABOUT_ME" : 304,
+      "USERNAME" : 305,
+      "NAME" : 306,
+      "SCHOOL" : 307,
+      "ORGANISATION" : 308,
+      "STUDENT_CATEGORY" : 309 
     },
     "DELETE" : {
       "ACCOUNT" : 401

@@ -47,6 +47,7 @@ var server = net.createServer(function(conn){
     try{
       var inputData = (JSON.parse(input));
 
+      console.log(inputData);
       console.log("DB TYPE: " + inputData.data.type);
       switch(inputData.data.type) {
         case C.DB.CREATE.STUDENT_ACC :
@@ -90,8 +91,28 @@ var server = net.createServer(function(conn){
           await updateQuestion(inputData);
           break;
         }
-        case C.DB.UPDATE.USER_ACCOUNT : {
-          await updateUserAccount(inputData);
+        case C.DB.UPDATE.USERNAME : {
+          await updateUsername(inputData);
+          break;
+        }
+        case C.DB.UPDATE.NAME : {
+          await updateName(inputData);
+          break;
+        }
+        case C.DB.UPDATE.ABOUT_ME : {
+          await updateAboutMe(inputData);
+          break;
+        }
+        case C.DB.UPDATE.SCHOOL : {
+          await updateSchool(inputData);
+          break;
+        }
+        case C.DB.UPDATE.STUDENT_CATEGORY : {
+          await updateSchool(inputData);
+          break;
+        }
+        case C.DB.UPDATE.ORGANISATION : {
+          await updateOrganisation(inputData);
           break;
         }
         //ADD MORE CASES HERE
@@ -465,10 +486,65 @@ var server = net.createServer(function(conn){
     });
   }
 
-  async function updateUserAccount(inputData){
+  async function updateName(inputData){
     data = inputData.data;
+    handleDb.handleEncryption(data)
+    .then(dataOut => {
+      var query = connection.query("UPDATE user_account SET name = " + connection.escape(dataOut.name) +
+      "WHERE user_id = " + connection.escape(dataOut.user_id), function(error, result){
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        var response = {
+          data : {
+            success : true,
+            message : "Name updated"
+          }
+        }
+        sendToServer(response, inputData);
+      });
+    });
+  }
+
+  async function updateAboutMe(inputData){
+    data = inputData.data;
+    console.log(data);
+    handleDb.handleEncryption(data)
+    .then(dataOut => {
+      var query = connection.query("UPDATE user_account SET about_me = " + connection.escape(dataOut.about_me) +
+      "WHERE user_id = " + connection.escape(dataOut.user_id), function(error, result){
+        console.log("COMPLETED");
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        var response = {
+          data : {
+            success : true,
+            message : "About me updated"
+          }
+        }
+        sendToServer(response, inputData);
+      });
+    });
+  }
+
+  async function updateUsername(inputData){
+    data = inputData.data;
+
     var query = connection.query("SELECT username FROM user_account\
-    WHERE username = " + connection.escape(data.changes.username), function(error, result){
+    WHERE username = " + connection.escape(data.username), function(error, result){
       if(error){
         var response = {
           data : {
@@ -479,7 +555,7 @@ var server = net.createServer(function(conn){
         sendToServer(response, inputData);
       }
       if(result.length == 0){
-        var query = connection.query("UPDATE user_account SET username = " + connection.escape(data.changes.username)+
+        var query = connection.query("UPDATE user_account SET username = " + connection.escape(data.username)+
         "WHERE user_id = " + connection.escape(data.user_id), function(error, result){
           if(error){
             var response = {
@@ -511,52 +587,87 @@ var server = net.createServer(function(conn){
         sendToServer(response, inputData);
       }
     });
-    //
-    // var query2 = connection.query("UPDATE user_account SET name = " + connection.escape(data.changes.name) +
-    // "WHERE user_id = " + connection.escape(data.user_id), function(error, result){
-    //   if(error){
-    //     console.log(error);
-    //     nameUpdated = false;
-    //   }
-    //   else{
-    //     console.log("HE::P");
-    //     nameUpdated = true;
-    //   }
-    // });
-    //
-    // var message = "";
-    // var success = true;
-    // console.log(usernameUpdated);
-    // console.log(nameUpdated);
-    // if(!usernameUpdated){
-    //   message += "username have been taken"
-    //   success = false;
-    // }
-    // else{
-    //   message += "username updated";
-    // }
-    //
-    // if(!nameUpdated){
-    //   message += " & name update fail";
-    //   success = false;
-    // }
-    // else{
-    //   message += " & name updated"
-    // }
-    //
-    //
-    // var response = {
-    //   data : {
-    //     success : success,
-    //     message : message
-    //   }
-    // }
-    //   // sendToServer(response, inputData);
-    // console.log(response);
   }
 
+  async function updateSchool(inputData){
+    var data = inputData.data;
+    handleDb.handleEncryption(data)
+    .then(dataOut => {
+      var query = connection.query("UPDATE student_details SET school = " + connection.escape(dataOut.school) +
+      "WHERE student_id = " + connection.escape(dataOut.student_id), function(error, result){
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        var response = {
+          data : {
+            success : true,
+            message : "School updated"
+          }
+        }
+        sendToServer(response, inputData);
+      });
+    });
+  }
 
-//DELETE FROM `user_account` WHERE user_id = 10 AND password_hash = '123' AND (email = 'nigel.zch@gmail' OR username = 'te')
+  async function updateStudentCategory(inputData){
+    var data = inputData.data;
+    console.log(data);
+    handleDb.handleEncryption(data)
+    .then(dataOut => {
+      var query = connection.query("UPDATE student_details SET student_category = " + connection.escape(dataOut.student_category) +
+      "WHERE student_id = " + connection.escape(dataOut.student_id), function(error, result){
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        var response = {
+          data : {
+            success : true,
+            message : "Student Category updated"
+          }
+        }
+        sendToServer(response, inputData);
+      });
+    });
+  }
+
+  async function updateOrganisation(inputData){
+    var data = inputData.data;
+    handleDb.handleEncryption(data)
+    .then(dataOut => {
+      var query = connection.query("UPDATE teacher_details SET organisation = " + connection.escape(dataOut.organisation) +
+      "WHERE student_id = " + connection.escape(dataOut.teacher_id), function(error, result){
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        var response = {
+          data : {
+            success : true,
+            message : "Organisataion updated"
+          }
+        }
+        sendToServer(response, inputData);
+      });
+    });
+  }
+
   async function deleteAccount(inputData){
     var data = inputData.data;
     var query = connection.query("SELECT salt\
@@ -770,8 +881,6 @@ var server = net.createServer(function(conn){
         sendToServer(response, inputData);
       }
     });
-
-
   }
 
   async function updateQuestion(inputData){

@@ -86,6 +86,102 @@
       </form>
     </div>
     <br>
+    <div id='dbUpdateUsername'>
+      <h2>Update Username</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateUsername">
+        <label>User Id:
+          <input type="text" name="userId" id="userId"/>
+        </label>
+        <br>
+        <label>Username:
+          <input type="text" name="username" id="username"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateName'>
+      <h2>Update Name</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateName">
+        <label>User Id:
+          <input type="text" name="userId" id="userId"/>
+        </label>
+        <br>
+        <label>Name:
+          <input type="text" name="name" id="name"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateAboutMe'>
+      <h2>Update About Me</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateAboutMe">
+        <label>User Id:
+          <input type="text" name="userId" id="userId"/>
+        </label>
+        <br>
+        <label>About Me Details:
+          <input type="text" name="aboutMe" id="aboutMe"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateSchool'>
+      <h2>Update School</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateSchool">
+        <label>Student Id:
+          <input type="text" name="studentId" id="studentId"/>
+        </label>
+        <br>
+        <label>School:
+          <input type="text" name="school" id="school"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateStudentCategory'>
+      <h2>Update Student Category</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateStudentCategory">
+        <label>Student Id:
+          <input type="text" name="studentId" id="studentId"/>
+        </label>
+        <br>
+        <label>Student Category:
+          <input type="text" name="schoolCategory" id="schoolCategory"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateOrganisation'>
+      <h2>Update Organisation</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateOrganisation">
+        <label>Teacher Id:
+          <input type="text" name="teacherId" id="teacherId"/>
+        </label>
+        <br>
+        <label>Organisation:
+          <input type="text" name="organisation" id="organisation"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
     <div id='dbChangePassword'>
       <h2>Change Password</h2>
       <form action='/data-access' method='POST'>

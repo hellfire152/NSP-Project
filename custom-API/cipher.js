@@ -257,6 +257,14 @@ async function allow(key){
      return true;
      break;
    }
+   case "about_me" : {
+     return true;
+     break;
+   }
+   case "student_category" : {
+     return true;
+     break;
+   }
   //Remove encryption of username to provide search user functionaliy
   //  case "username" : {
   //    return true;

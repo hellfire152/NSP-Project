@@ -130,6 +130,61 @@ module.exports = function(cipher, appConn, C) {
           }
         }
       }
+      else if(req.body.dbType == "updateUsername"){
+        inputData = {
+          data : {
+            type : C.DB.UPDATE.USERNAME,
+            username : req.body.username,
+            user_id : req.body.userId
+          }
+        }
+      }
+      else if(req.body.dbType == "updateName"){
+        inputData = {
+          data : {
+            type : C.DB.UPDATE.NAME,
+            name : req.body.name,
+            user_id : req.body.userId
+          }
+        }
+      }
+      else if(req.body.dbType == "updateAboutMe"){
+        inputData = {
+          data : {
+            type : C.DB.UPDATE.ABOUT_ME,
+            about_me : req.body.aboutMe,
+            user_id : req.body.userId
+          }
+        }
+      }
+      else if(req.body.dbType == "updateSchool"){
+        inputData = {
+          data : {
+            type : C.DB.UPDATE.SCHOOL,
+            school : req.body.school,
+            student_id : req.body.userId
+          }
+        }
+      }
+      else if(req.body.dbType == "updateStudentCategory"){
+        inputData = {
+          data : {
+            type : C.DB.UPDATE.STUDENT_CATEGORY,
+            student_category : req.body.studentCategory,
+            student_id : req.body.userId
+          }
+        }
+      }
+      else if(req.body.dbType == "updateOrganisation"){
+        inputData = {
+          data : {
+            type : C.DB.UPDATE.ORGANISATION,
+            organisation : req.body.organisation,
+            teacher_id : req.body.userId
+          }
+        }
+      }
+
 
       cipher.encryptJSON(inputData)
         .catch(function (err) {
