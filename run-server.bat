@@ -14,10 +14,10 @@ goto end
 :start
 cd ./DatabaseServer
 start node ./database.js %pass%
-timeout 1
+::timeout 1
 cd ../AppServer
 start node ./server.js %pass%
-timeout 1
+::timeout 1
 cd ../WebServer
 start node ./server.js %pass%
 

@@ -220,5 +220,18 @@ module.exports = {
         questionId : 55
       }
     }
+  },
+  updateAccount : function(){
+    return updateProfile = {
+      data : {
+        type : C.DB.UPDATE.USER_ACCOUNT,
+        changes : {
+          username : "nigelhao2",
+          // email : "email@email.com",
+          name : "new name"
+        },
+        user_id : 8
+      }
+    }
   }
 }

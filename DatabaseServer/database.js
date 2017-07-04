@@ -90,6 +90,10 @@ var server = net.createServer(function(conn){
           await updateQuestion(inputData);
           break;
         }
+        case C.DB.UPDATE.USER_ACCOUNT : {
+          await updateUserAccount(inputData);
+          break;
+        }
         //ADD MORE CASES HERE
       }
     }
@@ -460,6 +464,97 @@ var server = net.createServer(function(conn){
       });
     });
   }
+
+  async function updateUserAccount(inputData){
+    data = inputData.data;
+    var query = connection.query("SELECT username FROM user_account\
+    WHERE username = " + connection.escape(data.changes.username), function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      if(result.length == 0){
+        var query = connection.query("UPDATE user_account SET username = " + connection.escape(data.changes.username)+
+        "WHERE user_id = " + connection.escape(data.user_id), function(error, result){
+          if(error){
+            var response = {
+              data : {
+                success : false,
+                message : error
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          else{
+            var response = {
+              data : {
+                success : true,
+                message : "Username updated"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+        })
+      }
+      else{
+        var response = {
+          data : {
+            success : false,
+            message : "Username taken"
+          }
+        }
+        sendToServer(response, inputData);
+      }
+    });
+    //
+    // var query2 = connection.query("UPDATE user_account SET name = " + connection.escape(data.changes.name) +
+    // "WHERE user_id = " + connection.escape(data.user_id), function(error, result){
+    //   if(error){
+    //     console.log(error);
+    //     nameUpdated = false;
+    //   }
+    //   else{
+    //     console.log("HE::P");
+    //     nameUpdated = true;
+    //   }
+    // });
+    //
+    // var message = "";
+    // var success = true;
+    // console.log(usernameUpdated);
+    // console.log(nameUpdated);
+    // if(!usernameUpdated){
+    //   message += "username have been taken"
+    //   success = false;
+    // }
+    // else{
+    //   message += "username updated";
+    // }
+    //
+    // if(!nameUpdated){
+    //   message += " & name update fail";
+    //   success = false;
+    // }
+    // else{
+    //   message += " & name updated"
+    // }
+    //
+    //
+    // var response = {
+    //   data : {
+    //     success : success,
+    //     message : message
+    //   }
+    // }
+    //   // sendToServer(response, inputData);
+    // console.log(response);
+  }
+
 
 //DELETE FROM `user_account` WHERE user_id = 10 AND password_hash = '123' AND (email = 'nigel.zch@gmail' OR username = 'te')
   async function deleteAccount(inputData){
