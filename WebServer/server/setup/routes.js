@@ -147,11 +147,8 @@ module.exports = function(data) {
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
   app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
-  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn));
-  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn));
-  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn));
-  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn,C));
-  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn,C, errors));
+  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C));
+  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C, errors));
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
 }
 

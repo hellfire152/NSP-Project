@@ -1,7 +1,8 @@
 const uuid = require('uuid');
 var passwordValidator = require('password-validator');
-module.exports =function(cipher, appConn,C){
+module.exports = function(cipher, appConn, C) {
   return function(req, res){
+    console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
     //
     // req.checkBody('email','Please enter email').notEmpty();
@@ -41,25 +42,23 @@ module.exports =function(cipher, appConn,C){
           const nodemailer = require('nodemailer');
           const xoauth2 = require('xoauth2');
 
-          const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-              type: 'OAuth2',
+          var transporter = nodemailer.createTransport({
+              service: 'gmail',
+              auth: {
+                  xoauth2: xoauth2.createXOAuth2Generator({
                       user: 'chloeangsl@gmail.com',
                       clientId: '856574075841-dn1nobjm59p0vrhmvcel4sf4djb6sath.apps.googleusercontent.com',
                       clientSecret: 'i_T_RN-K_p7PsDbAwJXFNXRJ',
-                      refreshToken: '1/YdLr4VCeXaULG0FRc7Yy8CXOYHl4aqskk0HtFjF812o',
-                      accessToken: 'ya29.Glt8BP-WPobF9_zn5pWyfK6XJVYTM9lG1Dz81tsa9PghizLtlNcnHtv4bav5KxfBnTjNHUNT-NPn0qdF0Kb5-OW5Khj4tYNQsUF19WvMpuedGUf8tT5LiSp0rb-T'
-                  }
-              })
+                      refreshToken: '1/3f97hE7yCmipAtuPcu1iu4EhF3kSmzYicMXiamYMjXY'
+                  })
+              }
+          })
 
           var mailOptions = {
-              from: 'The admin <chloeangsl@gmail.com>',
-              to: req.body.email,
-              subject: 'Test',
-              text: 'Hello! You have created an account with the following details of: Username: '+req.body.username+ ' Email: '+req.body.email+ ''
-              // html: <p> 'Hello! You have created an account with the following details of: Name: '+req.body.name+ ' Email: '+req.body.email+ ''</p>
-
+              from: 'My Name <chloeangsl@gmail.com>',
+              to: 'chloeangsl@gmail.com',
+              subject: 'testing my verification',
+              text: 'Hello World!!'
           }
 
           transporter.sendMail(mailOptions, function (err, res) {
@@ -69,6 +68,7 @@ module.exports =function(cipher, appConn,C){
                   console.log('Email Sent');
               }
           })
+
           console.log(error);
           console.log("pass");
           console.log("HOST FORM DATA: ");
@@ -84,6 +84,7 @@ module.exports =function(cipher, appConn,C){
             .then(function(cookieData) {
             res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
             // res.redirect('/login?room=' +req.body.usename);
+            console.log(`C CONSTANT OBJECT: ${C}`);
             appConn.send({
               'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'username' :username,

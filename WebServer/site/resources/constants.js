@@ -50,9 +50,6 @@ const C = {
     "PLAYER_FINISH": 16,
     "TEAM_CHOSEN": 17,
     "CONFIRM_TEAM_NO" : 18,
-
-    "RESPONSE_DATA" : 19
-
     "RESPONSE_DATA" : 19,
     "GET_READY" : 20
 
@@ -78,9 +75,6 @@ const C = {
 
     "ACCOUNT_CREATE_STUD": 2,
     "ACCOUNT_CREATE_TEACH":4,
-
-    "ACCOUNT_LOGIN":3
-
     "ACCOUNT_LOGIN": 3,
     "DATABASE" : 100
 
@@ -93,9 +87,6 @@ const C = {
     "CREATE_QUIZ_RES": 10,
     "ADD_QUESTION_RES": 11,
     "ADD_QUIZ_RES" : 12,
-
-    "ACCOUNT_CREATED-STUD": 2,
-
     "ACCOUNT_CREATED_STUD": 2,
 
     "ACCOUNT_CREATED_TEACH":4,
