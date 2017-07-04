@@ -185,6 +185,22 @@ module.exports = function(cipher, appConn, C) {
           }
         }
       }
+      else if(req.body.dbType == "deleteQuiz"){
+        inputData = {
+          data : {
+            type : C.DB.DELETE.QUIZ,
+            quiz_id : req.body.quizId,
+          }
+        }
+      }
+      else if(req.body.dbType == "deleteQuestion"){
+        inputData = {
+          data : {
+            type : C.DB.DELETE.QUESTION,
+            question_id : req.body.questionId
+          }
+        }
+      }
 
       console.log(inputData);
 

@@ -62,7 +62,7 @@ var server = net.createServer(function(conn){
           break;
         }
         case C.DB.SELECT.QUESTION : {
-          await retrieveQuestions(inputData); //quizId of the data
+          await retrieveQuestions(inputData);
           break;
         }
         case C.DB.SELECT.SEARCH_QUIZ : {
@@ -112,6 +112,23 @@ var server = net.createServer(function(conn){
         case C.DB.UPDATE.ORGANISATION : {
           await updateOrganisation(inputData);
           break;
+        }
+        case C.DB.DELETE.QUIZ : {
+          await deleteQuiz(inputData);
+          break;
+        }
+        case C.DB.DELETE.QUESTION : {
+          await deleteQuestion(inputData);
+          break;
+        }
+        default : {
+          var response = {
+            data : {
+              success : false,
+              message : "Not one of the cases"
+            }
+          }
+          sendToServer(response, inputData);
         }
         //ADD MORE CASES HERE
       }
@@ -1013,6 +1030,50 @@ var server = net.createServer(function(conn){
           sendToServer(response, inputData);
   			}
   	});
+  }
+
+  async function deleteQuiz(inputData){
+    var data = inputData.data;
+    var query = connection.query("DELETE FROM quiz WHERE quiz_id = " + connection.escape(data.quiz_id), function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      var response = {
+        data : {
+          success : true,
+          message : "Quiz deleted successfully"
+        }
+      }
+      sendToServer(response, inputData);
+    });
+  }
+
+  async function deleteQuestion(inputData){
+    var data = inputData.data;
+    var query = connection.query("DELETE FROM quiz_question WHERE question_id = " + connection.escape(data.question_id), function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      var response = {
+        data : {
+          success : true,
+          message : "Question deleted successfully"
+        }
+      }
+      sendToServer(response, inputData);
+    });
   }
 
   async function createLogQuiz(data){

@@ -92,10 +92,12 @@
       "NAME" : 306,
       "SCHOOL" : 307,
       "ORGANISATION" : 308,
-      "STUDENT_CATEGORY" : 309 
+      "STUDENT_CATEGORY" : 309
     },
     "DELETE" : {
-      "ACCOUNT" : 401
+      "ACCOUNT" : 401,
+      "QUIZ" : 402,
+      "QUESTION" : 403
     },
     "QUESTION_TYPE" : {
       "MCQ" : 0,

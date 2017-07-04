@@ -351,6 +351,30 @@
       </form>
     </div>
     <br>
+    <div id='dbDeleteQuiz'>
+      <h2>Delete Quiz</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="deleteQuiz">
+        <label>Quiz Id:
+          <input type="text" name="quizId" id="quizId"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbDeleteQuestion'>
+      <h2>Delete Question</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="deleteQuestion">
+        <label>Question Id:
+          <input type="text" name="questionId" id="questionId"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
     <script src="/controller/databaseFormat.js"></script>
     <!-- <script src="/controller/dbTest.js"></script> -->
     <script>
