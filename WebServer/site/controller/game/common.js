@@ -60,9 +60,7 @@ app.loader  //load all
     mcqButtonHandler.y = shortAnswerTextField.y
       = HEIGHT - mcqButtonHandler.height;
     shortAnswerTextField.height = mcqButtonHandler.height;
-    questionDisplay.y = answerResponses.y = topBar.height;
-    questionDisplay.height = answerResponses.height
-      = HEIGHT - mcqButtonHandler.height - topBar.height;
+    questionDisplay.y = answerResponses.y = barGraph.y = topBar.height;
 
     //set all not visible
     mcqButtonHandler.visible = shortAnswerTextField.visible =
@@ -78,6 +76,7 @@ app.loader  //load all
       topBar.view, questionDisplay.view, answerResponses.view,
       mcqButtonHandler.view, shortAnswerTextField.view);
 
+    //set all scenes not visible
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
 
 

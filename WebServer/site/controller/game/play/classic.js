@@ -31,7 +31,7 @@ function handleGame(response) {
       p.questionDisplay.visible = false;
 
       //update topBar
-      let scoreData = response.playerData[name];
+      let scoreData = response.scoreData[name];
       pixiScenes.topBar.updateCorrect(scoreData.correctAnswers, scoreData.score);
       break;
     }

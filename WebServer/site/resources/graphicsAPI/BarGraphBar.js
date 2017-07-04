@@ -18,23 +18,25 @@ class BarGraphBar extends DisplayElement {
     //drawing the bar
     //calculating height
     let height = maxHeight * value / maxValue;
-    p.bar = new PIXI.Graphics()
+
+    let bar = new PIXI.Graphics()
       .beginFill(0xFFFFFF)  //white
       .drawRect(0, 0, width, height)
       .endFill();
-    p.bar.tint = color //doing it this way in case the color needs to change later
+    bar.tint = color //doing it this way in case the color needs to change later
+    p.bar = new PIXI.Container();
+    p.bar.addChild(bar); //work around to graphics not having the anchor property
 
     //initializing text
     p.label = new PIXI.Text(label);
     p.value = new PIXI.Text(value);
 
     //positioning
-    p.bar.anchor.set(0.5, 1);
     p.label.anchor.set(0.5, 0);
     p.value.anchor.set(0.5, 1);
-    p.bar.y = -padding;
-    p.label.y = padding;
-    p.value.y = -p.bar.height - padding * 2;
+    p.label.y = padding + bar.height;
+    p.value.y = -p.bar.height - padding;
+    p.value.x = bar.width / 2; //center text on bar
 
     //adding to container
     this._container.addChild(p.value, p.bar, p.label);

@@ -55,7 +55,7 @@ class BarGraph extends DisplayElement {
       bar.x = i * this._paddingX;
       this._bars.push(bar);
       //add to container
-      this._container.addChild(bar);
+      this._container.addChild(bar.view);
     }
   }
 }
