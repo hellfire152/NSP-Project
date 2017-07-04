@@ -4,6 +4,8 @@
   Author: Jin Kuan
 */
 let uuid;
+var express = require('express');
+var nodemailer = require('nodemailer');
 module.exports = function(data) {
 
   const C = data.C;

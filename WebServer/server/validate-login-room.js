@@ -38,6 +38,37 @@ module.exports =function(cipher, appConn,C){
 
       if (passwordCheck){
         if(!error){
+          const nodemailer = require('nodemailer');
+          const xoauth2 = require('xoauth2');
+
+          const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              type: 'OAuth2',
+                      user: 'chloeangsl@gmail.com',
+                      clientId: '856574075841-dn1nobjm59p0vrhmvcel4sf4djb6sath.apps.googleusercontent.com',
+                      clientSecret: 'i_T_RN-K_p7PsDbAwJXFNXRJ',
+                      refreshToken: '1/YdLr4VCeXaULG0FRc7Yy8CXOYHl4aqskk0HtFjF812o',
+                      accessToken: 'ya29.Glt8BP-WPobF9_zn5pWyfK6XJVYTM9lG1Dz81tsa9PghizLtlNcnHtv4bav5KxfBnTjNHUNT-NPn0qdF0Kb5-OW5Khj4tYNQsUF19WvMpuedGUf8tT5LiSp0rb-T'
+                  }
+              })
+
+          var mailOptions = {
+              from: 'The admin <chloeangsl@gmail.com>',
+              to: req.body.email,
+              subject: 'Test',
+              text: 'Hello! You have created an account with the following details of: Username: '+req.body.username+ ' Email: '+req.body.email+ ''
+              // html: <p> 'Hello! You have created an account with the following details of: Name: '+req.body.name+ ' Email: '+req.body.email+ ''</p>
+
+          }
+
+          transporter.sendMail(mailOptions, function (err, res) {
+              if(err){
+                  console.log('Error');
+              } else {
+                  console.log('Email Sent');
+              }
+          })
           console.log(error);
           console.log("pass");
           console.log("HOST FORM DATA: ");
