@@ -100,17 +100,27 @@
       "USER_ACCOUNT" : 204
     },
     "UPDATE" : {
-
+      "PASSWORD" : 301,
+      "QUIZ" : 302,
+      "QUESTION" : 303,
+      "ABOUT_ME" : 304,
+      "USERNAME" : 305,
+      "NAME" : 306,
+      "SCHOOL" : 307,
+      "ORGANISATION" : 308,
+      "STUDENT_CATEGORY" : 309
     },
     "DELETE" : {
-
+      "ACCOUNT" : 401,
+      "QUIZ" : 402,
+      "QUESTION" : 403
     },
     "QUESTION_TYPE" : {
       "MCQ" : 0,
       "SHORT_ANS" : 1
     },
-    "OTHERS" : {
-      "TEST" : 601
+    "RESPONSE" : {
+      "SUCCESSFUL" : 601
     }
   },
   "ERR" : {

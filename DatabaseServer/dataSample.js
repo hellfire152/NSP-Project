@@ -69,6 +69,46 @@ module.exports = {
       }
     }
   },
+  deleteAccount : function(){
+    return deleteAccount = {
+      data : {
+        type : C.DB.DELETE.ACCOUNT,
+        account : {
+          user_id : 11,
+          username : "username",
+          email : "email@email.com",
+          password : "pass"
+        }
+      }
+    }
+  },
+  updataPass : function(){
+    return updatepassword = {
+      data : {
+        type : C.DB.UPDATE.PASSWORD,
+        verify : {
+          user_id : 1,
+          password_hash : "passChanged"
+        },
+        account : {
+          password_hash : "pass"
+        }
+      }
+    }
+  },
+  updateQuiz : function(){
+    return updatepassword = {
+      data : {
+        type : C.DB.UPDATE.QUIZ,
+        quiz : {
+          quiz_title : "HELLO",
+          description : "YO",
+          visibility : false,
+          quiz_id : 12
+        }
+      }
+    }
+  },
 
   //Sample data to create a new quiz
   //questions: is an array
@@ -78,9 +118,9 @@ module.exports = {
       data : {
         type : C.DB.CREATE.QUIZ,
         quiz : {
-          quiz_title : "quiz title",
+          quiz_title : "Know your product",
           visibility : true,
-          description : "quiz description",
+          description : "About new technology",
           quiz_type : "Classic",
           quiz_rating : 5,
           user_id : 1
@@ -163,6 +203,34 @@ module.exports = {
       data : {
         type : C.DB.SELECT.SEARCH_QUIZ,
         searchItem : searchItem
+      }
+    }
+  },
+
+  updateQuestion : function(){
+    return updateQuestion = {
+      data : {
+        type : C.DB.UPDATE.QUESTION,
+        changes : {
+          prompt : "Prompt Changed2",
+          solution : "Solution Changed2",
+          choices : "CHOICES CHANGED",
+          time : " 200000"
+        },
+        questionId : 55
+      }
+    }
+  },
+  updateAccount : function(){
+    return updateProfile = {
+      data : {
+        type : C.DB.UPDATE.USER_ACCOUNT,
+        changes : {
+          username : "nigelhao2",
+          // email : "email@email.com",
+          name : "new name"
+        },
+        user_id : 8
       }
     }
   }

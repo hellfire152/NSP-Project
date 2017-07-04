@@ -141,8 +141,7 @@ async function decryptDbData(cipherText) {
   return plainText;
 }
 
-// //By using Convert every single character to ascii character code to obtain numeric value
-// async function encode(plainText){
+//By using Convert every single character to ascii character code to obtain numeric value
 //Converts every single character their respective character code
 function _encode(plainText){
   var encodedValue = [];
@@ -258,10 +257,19 @@ async function allow(key){
      return true;
      break;
    }
-   case "username" : {
+   case "about_me" : {
      return true;
      break;
    }
+   case "student_category" : {
+     return true;
+     break;
+   }
+  //Remove encryption of username to provide search user functionaliy
+  //  case "username" : {
+  //    return true;
+  //    break;
+  //  }
    case "name" : {
      return true;
      break;

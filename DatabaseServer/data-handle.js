@@ -10,8 +10,8 @@ var cipher = require("../custom-API/cipher.js")();
 const C = require("../custom-API/constants.json");
 
 //Input user data password will undergo hashing and salting before storing to database
-async function handleCreateAccount(data){
-  cipher.generateSalt()
+async function handlePassword(data){
+  await cipher.generateSalt()
     .then(saltValue => {
       data.account.salt = saltValue;
     })
@@ -24,9 +24,46 @@ async function handleCreateAccount(data){
     .catch(reason => {
       console.log(reason);
     });
+    return data;
+}
+
+async function handleHashPass(data){
+    cipher.hash(data.verify.password_hash + data.verify.salt)
+      .then(hashed =>{
+        data.verify.password_hash = hashed;
+      })
+      .catch(reason => {
+        console.log(reason);
+      });
 
     return data;
 }
+
+async function handleDeleteAccount(data){
+  var dataArr = [];
+  var encryptedData = {};
+  dataArr.push(data)
+  await handleDecryption(dataArr)
+  .then(dataDecrypt => {
+    data = dataDecrypt[0];
+    cipher.hash(data.account.password + data.salt)
+    .then(hashed => {
+      data.account.password_hash = hashed;
+      delete data.account.password;
+      delete data.salt;
+    })
+    .catch(reason => {
+      console.log(reason);
+    });
+  })
+  .catch(reason => {
+    console.log(reason);
+  });
+
+  return data;
+}
+
+
 
 async function handleRecieveAccount(data){
   var dataArr = [];
@@ -54,7 +91,6 @@ async function handleRecieveAccount(data){
 
 //Seperate the words in a string of text, and the store each individual word in an array.
 async function handleSearchQuiz(searchItem){
-  console.log(searchItem);
   var searchArr = [];
   var word = "";
   for(i=0 ; i<searchItem.searchItem.length ; i++){
@@ -110,11 +146,13 @@ async function handleDecryption(data){
 
 module.exports = function() {
   return {
-    'handleCreateAccount' : handleCreateAccount,
+    'handlePassword' : handlePassword,
     "handleRecieveAccount" : handleRecieveAccount,
     'handleSearchQuiz' : handleSearchQuiz,
     'handleRecieveQuestion' : handleRecieveQuestion,
     'handleEncryption' : handleEncryption,
-    'handleDecryption' : handleDecryption
+    'handleDecryption' : handleDecryption,
+    'handleHashPass' : handleHashPass,
+    'handleDeleteAccount' : handleDeleteAccount
   }
 }
