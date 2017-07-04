@@ -54,7 +54,7 @@ class Button extends DisplayElement {
 
   //scales the button's size, stops at a set width
   scaleToWidth(width) {
-    let scaleFactor = width / this.sprite.width;
+    let scaleFactor = width / this._sprite.width;
     this.scale.x = scaleFactor;
     this.scale.y = scaleFactor;
   }

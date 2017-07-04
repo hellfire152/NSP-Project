@@ -39,6 +39,7 @@ app.loader  //load all
     p.getReady.addChild(new PIXI.Text('Get Ready!'));
 
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
+    let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
     let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
       HEIGHT - mcqButtonHandler.height - topBar.height);
@@ -48,9 +49,18 @@ app.loader  //load all
       'paddingX' : 20,
       'paddingY' : 20
     });
+    //set all not visible
+    mcqButtonHandler.visible = shortAnswerTextField.visible =
+      answerResponses.visible = questionDisplay.visible = false;
+    p.answering.mcqButtonHandler = mcqButtonHandler;
+    p.answering.shortAnswerTextField = shortAnswerTextField;
     p.answering.barGraph = answerResponses;
     p.answering.questionDisplay = questionDisplay;
     p.answering.addChild(topBar, questionDisplay, mcqButtonHandler);
+
+    p.getReady.visible = p.answering.visible = p.ranking.visible = false;
+
+    app.stage.addChild(p.getReady, p.answering, p.ranking);
   });
 
 

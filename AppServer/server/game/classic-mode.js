@@ -25,7 +25,7 @@ module.exports = async function(input) {
       return sendQuestion(currentRoom, question, data);
     }
     case C.GAME.NEXT_ROUND: {
-      if(currentRoom.questionCounter) {
+      if(currentRoom.questionCounter === undefined) {
         currentRoom.questionCounter++;
         let questions = currentRoom.quiz.questions;
         //if there are no questions left
