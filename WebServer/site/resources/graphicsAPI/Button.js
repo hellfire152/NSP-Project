@@ -28,12 +28,12 @@ class Button extends DisplayElement {
     s.on('pointerupoutside', () => {
       s.texture = this._textures["default.png"];
     });
-    //setting onClick
     s.on('pointertap', (() => {
       return function() {
-        this.onClick(args);
+        onclick(args);
       }
     })());
+
 
     //setting text
     this._text = new PIXI.Text('');
@@ -44,9 +44,10 @@ class Button extends DisplayElement {
 
     this._sprite = s;
 
-    //expose contianer
+    //add to contianer
     this._container.addChild(s);
     this._container.addChild(this._text);
+
 
     //set width
     this.scaleToWidth(width);
@@ -57,11 +58,6 @@ class Button extends DisplayElement {
     let scaleFactor = width / this._sprite.width;
     this.scale.x = scaleFactor;
     this.scale.y = scaleFactor;
-  }
-
-  //set onclick of the button
-  onClick(fn) {
-    this._sprite.on('pointertap', fn);
   }
 
   disable() {

@@ -7,8 +7,14 @@
   Author: Jin Kuan
 */
 class Car extends DisplayElement {
-  constructor(textures, width) {
+  constructor(resources, width) {
     super();
+    let textures = {
+      'car-body' : resources['car-body'].texture,
+      'car-driving' : resources['car-driving'].textures,
+      'engine-fireup' : resources['engine-fireup'].textures,
+      'engine-firing' : resources['engine-firing'].textures
+    };
     this._textures = textures;
     //initializing various variables that will be used
     this._ticker = new PIXI.ticker.Ticker();
@@ -49,12 +55,12 @@ class Car extends DisplayElement {
     this._engine.y = 2;
 
     //add to container
-    this.container.addChild(this._carBody);
-    this.container.addChild(this._engine);
+    this._container.addChild(this._carBody);
+    this._container.addChild(this._engine);
 
     //setting variables for scaling
-    this._originalWidth = this.container.width;
-    this._originalHeight = this.container.height;
+    this._originalWidth = this._container.width;
+    this._originalHeight = this._container.height;
 
     this.scaleToWidth(width);
   }
@@ -147,8 +153,8 @@ class Car extends DisplayElement {
 
   scaleToWidth(width) {
     let scaleFactor = width / this._originalWidth;
-    this.container.scale.x = scaleFactor;
-    this.container.scale.y = scaleFactor;
+    this._container.scale.x = scaleFactor;
+    this._container.scale.y = scaleFactor;
   }
 
   //private function for the starting acceleration animation

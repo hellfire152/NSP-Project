@@ -22,7 +22,20 @@ module.exports = async function(input) {
       //store answer resutls
       currentRoom.answers = {};
 
-      return sendQuestion(currentRoom, question, data);
+      //send next question 5 seconds after get ready
+      setTimeout(() => {
+        let q = sendQuestion(currentRoom, question, data);
+        console.log(q);
+        console.log(data);
+        sendToServer(conn, q);
+      }, 5000);
+
+      //send the get ready signal...
+      return {
+        'game' : C.GAME_RES.GET_READY,
+        'roomNo' : data.roomNo,
+        'sendTo' : C.SEND_TO.ROOM
+      }
     }
     case C.GAME.NEXT_ROUND: {
       if(currentRoom.questionCounter === undefined) {

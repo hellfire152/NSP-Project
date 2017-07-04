@@ -38,7 +38,7 @@ app.loader  //load all
     //setting up the various scenes...
     p.getReady.addChild(new PIXI.Text('Get Ready!'));
 
-    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
+    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH / 3, 4);
     let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
     let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
