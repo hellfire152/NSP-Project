@@ -4,8 +4,12 @@
   Author: Jin Kuan
 */
 let uuid;
+
+var checkMultipleOnSameMachine = require('./prevent_multiple_session.js');
+
 var express = require('express');
 var nodemailer = require('nodemailer');
+
 module.exports = function(data) {
 
   const C = data.C;
@@ -17,6 +21,9 @@ module.exports = function(data) {
     uuid = data.uuid;
     errors=data.error;
   uuid = data.uuid;
+
+  //middleware
+  app.use('*', checkMultipleOnSameMachine);
   //routing
   //handling requests for .html, controller, css or resource files
   app.get('((/resources|/controller|/css)*)|*.html|/favicon.ico', function(req, res) {
