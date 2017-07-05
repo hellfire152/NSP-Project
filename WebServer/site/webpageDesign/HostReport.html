@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title></title>
+
 	<!-- Bootstrap CSS File -->
     <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -9,21 +10,15 @@
     <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
     <!-- Material StyleSheet -->
-    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/materialize.css" media="screen,projection" />
 
-    <link rel="stylesheet" type="text/css" href="css/mainstyle.css">
     <link rel="stylesheet" type="text/css" href="css/report.css">
 
-     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-      .table{
-        border-collapse: collapse;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/mainstyle.css">
 </head>
-<body onload = "displayClientCompletedQuestion()">
+<body onload="displayHostedQuestion()">
 
-	<nav>
+<nav>
     <div class="nav-wrapper">
       <a href="#" class="brand-logo"><img src="img/logo.png" class = "logo"></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
@@ -54,14 +49,13 @@
                 &nbsp;
             </div>
             <div class="col-md-6">
-                <h6><span class="gameType live" id = "type">D</span><span name="quiz-name" id = 'quiz-name'>Ministries of Singapore</span></h6>
-                <p id="date">June 17th, 04:09pm </p>
-                <p id = "days"></p>
+                <h6><span class="gameType live">C</span><span name="quiz-name" id = "quiz-name">Ministries of Singapore (Host)</span></h6>
+                <p id="date">June 17th, 04:09pm <span id=days>(4 days ago)</span></p>
 
             </div>
-            <div class="col-md-4 action-div">
-                <button class="action"><i class="material-icons">print</i></button>
-                <button class="action"><i class="material-icons">file_download</i> Excel</button>
+            <div class="col-md-4">
+                <button class="action">Print</button>
+                <button class="action">Download Excel</button>
             </div>
             <div class="col-md-1">
                 &nbsp;
@@ -81,7 +75,7 @@
 
             <div class="col-md-2">
                 <div class="data">
-                    <h2 id = "question-no">13</h2>
+                    <h2 id = "question_no">13</h2>
                     <p>Questions</p>
                 </div>
             </div>
@@ -98,35 +92,26 @@
         </div>
   </div>
 
-  
-
-  
-
-  <blockquote>
-    Questions
-  </blockquote>
   <div class="container-fluid">
   	<div class="row">
-  	<form method = "get">
-  		<input type="submit" value = "Download" onclick="download()" />
-  	</form>
-  	 
-
-          <div class="col m1">
-    &nbsp;
-  </div>
-  <div class="col s12 m10">
-    <ul class="collapsible" data-collapsible="accordion">
+  	
+  		<div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a class="active" href="#test1">Questions</a></li>
+        <li class="tab col s3"><a href="#test2">Players</a></li>
       </ul>
+    </div>
+    <div id="test1" class="col s12"> 
+      <ul class="collapsible" data-collapsible="accordion">
+      </ul>
+    </div>
+    <div id="test2" class="col s12">Test 2</div>
   </div>
-  <div class="col m1">
-    &nbsp;
+  </div>
   </div>
 
-          </div>
-      </div>
 
-   <footer class="page-footer">
+<footer class="page-footer">
           <div class="container">
             <div class="row">
               <div class="col l6 s12">
@@ -164,20 +149,10 @@
             </div>
           </div>
         </footer>
-  
-  
- 
-
-	
-
-	<script src="lib/jquery/jquery.min.js"></script>
+<script src="lib/jquery/jquery.min.js"></script>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
-    <script type="text/javascript" src = 'js/client-quiz.js'></script>
-    <script type="text/javascript" src="js/xlsx.core.min.js"></script>
-<script type="text/javascript" src="js/excelplus-2.5.min.js"></script>
-   <!--<script type="text/javascript" src = "js/displayReport.js"></script>-->
-  
+    <script type="text/javascript" src = "js/client-quiz.js"></script>
     <script type="text/javascript">
     	var acc = document.getElementsByClassName("accordion");
 var i;
@@ -214,10 +189,6 @@ $(document).ready(function() {
             })(jQuery);
 
         });
-
-$('.collapse').on('show.bs.collapse', function () {
-    $('.collapse.in').collapse('hide');
-});
     </script>
 </body>
 </html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Network Security Project
+	</title>
+
+
+	  <!-- Bootstrap CSS File -->
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+     <!-- Font Awesome Stylesheet File -->
+ 	<link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Material StyleSheet -->
+     <link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
+
+    <!-- Animate Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="css/animate.css">
+
+    <link rel="stylesheet" type="text/css" href="css/mainstyle.css" title = "Default" id = "default-style">
+    <link rel="stylesheet alternate" type="text/css" href="css/darkstyle.css" title = "Dark" id="dark-style">
+
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+     <script type="text/javascript">
+       var theme_style = localStorage && localStorage.getItem('theme_style');
+        if(theme_style){
+           document.write(theme_style);
+        }
+     </script>
+</head>
+<body onload = "set_style_from_cookie()">
+	<!-- Hidden Header -->
+			<div class="header-hidden collapse">
+				<div class="header-hidden-inner container">
+					<div class="row">
+						<div class="col-md-3">
+							<h5>
+								About Us,
+							</h5>
+							<p>Socrative is your classroom app for fun, effective classroom engagement. No matter where or how you teach ....
+							</p>
+							<a href="about.html" class = "btn btn-more"><i class = "fa fa-plus"></i> Read More</a>
+						</div>
+
+						<div class="col-md-3">
+							&nbsp;
+						</div>
+
+						<div class="col-md-6">
+							<h5>
+								Choose A Theme
+							</h5>
+							<div class="switcher" id = "switcher">
+								<div class="cols">
+									<br>
+									<a href="#benches" class = "background benches active" title = "Benches"> Benches</a>
+									<a href="#boots" class = "background boots" title = "Boots">Boots</a>
+									<a href="#buildings" class="background buildings " title="Buildings">Buildings</a>
+									<a href="#city" class="background city " title="City">City</a> <a href="#metro" class="background metro " title="Metro">Metro</a> 
+								</div>
+								<div class="cols">
+									Colours:
+									<br>
+									<a href="#orange" class="colour orange active" title="Orange" onclick = "switch_style('Default');return false;" name = "theme">Orange</a>
+									  <a href="#green" class="colour green " title="Green" name = "theme" onclick = "switch_style('Dark');return false;">Green</a> <a href="#blue" class="colour blue" title="Blue">Blue</a> <a href="#lavender" class="colour lavender " title="Lavender">Lavender</a> 
+								</div>
+							</div>
+
+							<p>
+								<small>Selection is not persistent</small>
+							</p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+<nav>
+    <div class="nav-wrapper">
+      <a href="home.html" class="brand-logo"><img src="img/logo.png" class = "logo"/></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+    		<li><a href="#">Join Quiz</a></li>
+        <li><a href="#">Login</a></li>
+        <li><a class="btn btn-primary btn-hh-trigger" role="button" data-toggle="collapse" data-target=".header-hidden">Open</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+
+  
+
+<div class="hero">
+    <div class="hero-wrapper" layout="row" layout-align="center center">
+
+      <div layout="column">
+        <span>Learning Has Just Started</span>
+
+          <div class="form__field">
+            <label for = "game-pin">Game Pin</label>
+          <input type="textbox" id = "game-pin">
+          </div>
+          
+          <a class="waves-effect waves-light btn createAccount" style = "margin-top:20px;">Enter</a>
+
+          <div class="HomeHero__aquaOval fadeInRight"></div>
+          <div class="HomeHero__purpleOval fadeInUp"></div>
+          <div class="HomeHero__blueOval fadeInLeft"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="why">
+    <div class="section-wrapper" layout="row" layout-align="center center">
+
+      <div class="row" style = "text-align: center;">
+          
+         <h4 class = "center why-title">Why Quizzit?</h4>
+      </div>
+
+      <div class="row">
+        <div class="col-md-1">
+          &nbsp;
+        </div>
+        <div class="col-md-10 detail-container">
+          <div class = "why-div">
+            <h5>Fun For Everyone</h4>
+            <img src="img/text330.png" width = "180px;">
+            <p class = "medium-small grey-text">Profile, leaderboard, theming and music! We're always working on new ways to keep things interesting</p>
+          </div>
+          <div class="why-div">
+            <h5>Create quiz in minutes!</h4>
+            <img src="img/g12.png" width = "120px;">
+            <p class = "medium-small grey-text">Our Create Quiz UI is simple enough to allow you to create quizzes between minutes!</p>
+          </div>
+
+          <div class="why-div">
+            <h5>Presentable Data</h4>
+            <img src="img/MIXCGHJ42.png" width = "180px;">
+            <p class = "medium-small grey-text">Teachers provided with detailed details of participating students data, and of course there's an option for excel generating too!</p>
+          </div>
+        </div>
+        <div class="col-md-1">
+          &nbsp;
+        </div>
+      </div>
+      </div>
+    </div>
+
+<img class="icon icons8-Eye" width="48" height="48" src="data:image/png;base64,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">
+
+  <div class="container-fluid time">
+  	
+  	<h4>How does it work?</h4>
+    <hr>
+  	<div class="row">
+                <div class="col-lg-12">
+                  
+                    <ul class="timeline">
+                        <li>
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="img/g2196.png" alt="">
+                            </div>
+                            <div class="timeline-panel fadeInLeft">
+                                <div class="timeline-heading">
+                                    
+                                    <h5 class="subheading">Search Or Create</h5>
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted">Find amazing quizzes made by other users, or create your own quizzes and share them with others</p>
+                                </div>
+                            </div>
+                        </li>
+                     
+                        <li class="timeline-inverted">
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="img/g2362.png" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h5 class="subheading">Choose Between 2 Game Categories</h5>
+                                    
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted">Start an exciting game with others by choosing either of our 2 game categories, Classic mode and Dash mode. Choose between MCQ Questions or Short Answers to up the difficulties of the game</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="img/8-People-copy.ai.png" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h5 class="subheading">Play!</h5>
+                                    
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted">Everybody plays together, Gamfication elements like avatars, leaderboard add to the fun! Review your work in the end</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="timeline-inverted">
+                            <div class="timeline-image">
+                                <img class="img-circle img-responsive" src="img/g1074.png" alt="">
+                            </div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h5 class="subheading">Analyze</h5>
+                              
+                                </div>
+                                <div class="timeline-body">
+                                    <p class="text-muted">use our detailed class and student-level reports to understand where your students need help on</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="timeline-inverted">
+                            <div class="timeline-image">
+                                <h5 class="subheading"><br>Join In</h5>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+  </div>
+
+
+  
+  <div class="container-fluid aboutUs">
+	<div class="row">
+  		<div class="col-md-1">
+  			&nbsp;
+  		</div>
+  		<div class="col-md-6">
+  			<h4>Quizzit! helps you learn faster</h4>
+        <p class = "medium-small grey-text">We are committed to providing a flexible, scalable and powerful platform to help you learn with velocity</p>
+  		</div>
+      <div class="col-md-4">
+        <a class="waves-effect waves-light btn black createAccount">Create Free Account <i class="material-icons">fast_forward</i></a>
+      </div>
+      <div class="col-md-1">
+        &nbsp;
+      </div>
+  	</div>
+
+    <div class="row">
+      <div class="col-md-1">
+        &nbsp;
+      </div>
+      <div class="col-md-3">
+        <i class="material-icons http">https</i>
+        <h5 class = "http-title">Secure access to learning</h5>
+        <p class = "medium-small grey-text">Quizzit! is powered by sophisicated security algorithms to protect our services and databases, to ensure high quality of learning is provided</p>
+      </div>
+      <div class="col-md-3">
+        <i class="material-icons insight">remove_red_eye</i>
+         <h5 class = "insight">Immediate insight to students records</h5>
+         <p class = "medium-small grey-text">Teachers assess students with prepared activities and use auto-populated test results to determine best approach for effective learning</p>
+      </div>
+      <div class="col-md-4">
+        &nbsp;
+      </div>
+      <div class="col-md-1">
+        &nbsp;
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-1">
+        &nbsp;
+      </div>
+      <div class="col-md-3">
+        <i class="material-icons fastconnect">fast_forward</i>
+        <h5 class = "fastconnect">Fast connection to learning</h5>
+        <p class = "medium-small grey-text">We have built the most efficient tools out there and are wholly committed to continuing to iterate on efficiency and ease-of-use.</p>
+      </div>
+      <div class="col-md-3">
+        <i class="material-icons simple">code</i>
+         <h5 class = "simple">Fast and Simple UI</h5>
+         <p class = "medium-small grey-text">Quizzit! is powered by Materializecss and BootstrapCSS! 3 Clicks is more than sufficient to get to where you want!</p>
+      </div>
+    </div>
+    <div class="col-md-4 changeTheme">
+      &nbsp;
+    </div>
+  	
+  </div>
+
+  
+
+<div class="section slanted">
+    <div class="row">
+      <div class="col-md-1">
+        &nbsp;
+      </div>
+      <div class="col-md-10">
+        <blockquote>
+          FAQ
+        </blockquote>
+      </div>
+      <div class="col-md-1">
+        &nbsp;
+      </div>
+    </div> 
+</div>
+
+  <div class="container-fluid faq">
+
+  	<div class="row">
+  		<div class="col-md-2">
+  			&nbsp;
+  		</div>
+  		<div class="col-md-10">
+  			<ul class="collapsible popout" data-collapsible="accordion" style = "position: absolute;z-index: 999;width:800px;margin:auto">
+			    <li>
+			      <div class="collapsible-header">Q: Is it free?</div>
+			      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+			    </li>
+			    <li>
+			      <div class="collapsible-header">Q: Do You need to create an account?</div>
+			      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+			    </li>
+			    <li>
+			      <div class="collapsible-header">Q: Can i share my quiz with others?</div>
+			      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+			    </li>
+			    <li>
+			      <div class="collapsible-header">Q: What browsers are supported?</div>
+			      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+			    </li>
+			    <li>
+			      <div class="collapsible-header">Q: How many free clients am i allowed to host on a free account?</div>
+			      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+			    </li>
+			</ul>
+  		</div>
+
+     
+  	</div>
+
+    <div class="row">
+      <div class="col-md-2">
+        &nbsp;
+      </div>
+      <div class="col-md-10">
+        &nbsp;
+      </div>
+    </div>
+  </div>
+
+   <footer class="page-footer">
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+                <h5 class="white-text">Quizzit! Inc</h5>
+                <p class="grey-text text-lighten-4">Get things done within minutes</p>
+               
+                  <div class="chip">
+                    <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                     Facebook
+                  </div>
+                    <div class="chip">
+                      <i class="fa fa-twitter-square" aria-hidden="true"></i>
+                      Twitter
+                    </div>
+                    <div class="chip">
+                      <i class="fa fa-instagram" aria-hidden="true"></i>
+                      Instagram
+                    </div>
+              </div>
+              <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Hyperlinks</h5>
+                <ul>
+                  <li><a class="grey-text text-lighten-3" href="#!">Join Room</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Login</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Create Account</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Support</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+            © 2017 All Rights Reserved
+            <a class="grey-text text-lighten-4 right" href="#!">Terms of Use</a>
+            </div>
+          </div>
+        </footer>
+
+  <!-- Required JavaScript Libraries -->
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script type="text/javascript">
+    	
+    //Initialize Image
+     $(document).ready(function(){
+      $('.parallax').parallax();
+    });
+
+     $('.form__field input').focusout(function(){
+    if( !$(this).val().length == "" ) {
+      $(this).addClass('filled');
+    } else if($(this).val.length == ""){
+      $(this).removeClass('filled');
+    }
+});
+
+$('.form__field textarea').focusout(function(){
+    if( !$(this).val().length == "" ) {
+      $(this).addClass('filled');
+    } else if($(this).val.length == ""){
+      $(this).removeClass('filled');
+    }
+});
+
+
+	// Input Lock
+$('textarea').blur(function () {
+    $('#hire textarea').each(function () {
+        $this = $(this);
+        if ( this.value != '' ) {
+          $this.addClass('focused');
+          $('textarea + label + span').css({'opacity': 1});
+        }
+        else {
+          $this.removeClass('focused');
+          $('textarea + label + span').css({'opacity': 0});
+        }
+    });
+});
+
+$('#hire .field:first-child input').blur(function () {
+    $('#hire .field:first-child input').each(function () {
+        $this = $(this);
+        if ( this.value != '' ) {
+          $this.addClass('focused');
+          $('.field:first-child input + label + span').css({'opacity': 1});
+        }
+        else {
+          $this.removeClass('focused');
+          $('.field:first-child input + label + span').css({'opacity': 0});
+        }
+    });
+});
+
+$('#hire .field:nth-child(2) input').blur(function () {
+    $('#hire .field:nth-child(2) input').each(function () {
+        $this = $(this);
+        if ( this.value != '' ) {
+          $this.addClass('focused');
+          $('.field:nth-child(2) input + label + span').css({'opacity': 1});
+        }
+        else {
+          $this.removeClass('focused');
+          $('.field:nth-child(2) input + label + span').css({'opacity': 0});
+        }
+    });
+});
+
+$('.form__field input').focusout(function(){
+    if( !$(this).val().length == "" ) {
+      $(this).addClass('filled');
+    } else if($(this).val.length == ""){
+      $(this).removeClass('filled');
+    }
+});
+
+$('.form__field textarea').focusout(function(){
+    if( !$(this).val().length == "" ) {
+      $(this).addClass('filled');
+    } else if($(this).val.length == ""){
+      $(this).removeClass('filled');
+    }
+});
+
+
+  $(document).ready(function(){
+    $('.collapsible').collapsible();
+  });
+
+  
+
+  // *** TO BE CUSTOMISED ***
+
+var style_cookie_name = "style" ;
+var style_cookie_duration = 30 ;
+var style_domain = "https://localhost:8080" ;
+
+// *** END OF CUSTOMISABLE SECTION ***
+// You do not need to customise anything below this line
+
+function switch_style ( css_title )
+{
+// You may use this script on your site free of charge provided
+// you do not remove this notice or the URL below. Script from
+// https://www.thesitewizard.com/javascripts/change-style-sheets.shtml
+  var i, link_tag ;
+  for (i = 0, link_tag = document.getElementsByTagName("link") ;
+    i < link_tag.length ; i++ ) {
+    if ((link_tag[i].rel.indexOf( "stylesheet" ) != -1) &&
+      link_tag[i].title) {
+      link_tag[i].disabled = true ;
+      if (link_tag[i].title == css_title) {
+        link_tag[i].disabled = false ;
+      }
+    }
+    set_cookie( style_cookie_name, css_title,
+      style_cookie_duration, style_domain );
+  }
+}
+function set_style_from_cookie()
+{
+  var css_title = get_cookie( style_cookie_name );
+  if (css_title.length) {
+    switch_style( css_title );
+  }
+}
+function set_cookie ( cookie_name, cookie_value,
+    lifespan_in_days, valid_domain )
+{
+    // https://www.thesitewizard.com/javascripts/cookies.shtml
+    var domain_string = valid_domain ?
+                       ("; domain=" + valid_domain) : '' ;
+    document.cookie = cookie_name +
+                       "=" + encodeURIComponent( cookie_value ) +
+                       "; max-age=" + 60 * 60 *
+                       24 * lifespan_in_days +
+                       "; path=/" + domain_string ;
+}
+function get_cookie ( cookie_name )
+{
+    // https://www.thesitewizard.com/javascripts/cookies.shtml
+    var cookie_string = document.cookie ;
+    if (cookie_string.length != 0) {
+        var cookie_value = cookie_string.match (
+                        '(^|;)[\s]*' +
+                        cookie_name +
+                        '=([^;]*)' );
+        return decodeURIComponent ( cookie_value[2] ) ;
+    }
+    return '' ;
+}
+
+
+  </script>
+
+</body>
+</html>
