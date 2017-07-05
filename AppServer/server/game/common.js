@@ -89,9 +89,10 @@ function playersObjectToArray(players) {
   let playersArr = [];
   Object.keys(players).forEach(player => {  //iterate over all players
     let playerData = Object.assign({}, players[player]); //copy player data
-    playerData.player = player; //add the player id inside
+    playerData.name = player; //add the player id inside
     playersArr.push(playerData);
   });
+  return playersArr;
 }
 
 /*
@@ -195,7 +196,7 @@ function handleScoring(input) {
 
     let answerTime = Date.now();  //track answering time
     if(currentPlayer.answerTime === undefined)  currentPlayer.answerTime = 0;
-    currentPlayer.answerTime += answerTime;
+    currentPlayer.answerTime += answerTime - currentRoom.timeStart;
 
     //calculate and store score
     currentPlayer.score += calculateScore(

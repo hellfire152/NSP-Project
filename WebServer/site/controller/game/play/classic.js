@@ -19,8 +19,9 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
-      barGraph.visible = false;
-      questionDisplay.visible = true;
+      let p = pixiScenes.answering;
+      p.answerResponses.visible = false;
+      p.questionDisplay.visible = true;
       loadQuestion(response.question);
       swapScene('answering');
       break;
@@ -29,7 +30,7 @@ function handleGame(response) {
       console.log("RESPONSE GET");
       let p = pixiScenes.answering;
       //show responseData on bar graph
-      p.barGraph.data = response.responseData;
+      p.answerResponses.data = response.responseData;
       p.answerResponses.visible = true;
       p.questionDisplay.visible = false;
 
@@ -40,7 +41,7 @@ function handleGame(response) {
     }
     case C.GAME_RES.ROUND_END: {
       let p = pixiScenes.ranking;
-      p.allPlayerRanking.data = roundEndData;
+      p.allPlayerRanking.data = response.roundEndResults;
       swapScene('ranking');
       break;
     }

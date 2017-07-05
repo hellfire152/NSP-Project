@@ -36,13 +36,37 @@ app.loader  //load all
     p.answering = new PIXI.Container();
     p.getReady = new PIXI.Container();
     p.ranking = new PIXI.Container();
+    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
 
     //setting up the various scenes...
-    p.getReady.addChild(new PIXI.Text('Get Ready!'));
+    //getReady scene
+    let getReadyBackground = new PIXI.Graphics()
+      .beginFill(0xFFFFFF)
+      .drawRect(0, 0, 300, 200)
+      .endFill();
+    getReadyBackground.x = (WIDTH - getReadyBackground.width) / 2;
+    getReadyBackground.y = (HEIGHT - getReadyBackground.height) / 2;
+    let getReadyText = new PIXI.Text('Get Ready!');
+    getReadyText.anchor.set(0.5, 0.5);
+    ([getReadyText.x, getReadyText.y] = [WIDTH / 2, HEIGHT / 2]);
+    p.getReady.addChild(getReadyBackground, getReadyText);
 
+    //ranking scene
+    p.ranking.allPlayerRanking = new AllPlayerRanking(resources, null, {
+      'width' : WIDTH,
+      'height' : HEIGHT - topBar.height,
+      'paddingX' : 40,
+      'paddingY' : 20,
+      'minHeight' : 50
+    }, false);
+    //positioning
+    p.ranking.allPlayerRanking.y = topBar.height;
+    //adding to scene
+    p.ranking.addChild(p.ranking.allPlayerRanking.view);
+
+    //answering scene
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
     let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
-    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
       HEIGHT - mcqButtonHandler.height - topBar.height);
     let answerResponses = new BarGraph(resources, null, {
@@ -51,17 +75,14 @@ app.loader  //load all
       'paddingX' : 20,
       'paddingY' : 20
     });
-
     //positioning and sizing
     mcqButtonHandler.y = shortAnswerTextField.y
       = HEIGHT - mcqButtonHandler.height;
     shortAnswerTextField.height = mcqButtonHandler.height;
-    questionDisplay.y = answerResponses.y = topBar.height;
-
+    questionDisplay.y = answerResponses.y = answerResponses.y = topBar.height;
     //set all not visible
     mcqButtonHandler.visible = shortAnswerTextField.visible =
       answerResponses.visible = questionDisplay.visible = false;
-
     //so that the elements are accessible to other functions
     p.topBar = topBar;
     p.answering.mcqButtonHandler = mcqButtonHandler;
@@ -74,9 +95,9 @@ app.loader  //load all
 
     //set all scenes not visible
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
+    //add scenes to stage
     app.stage.addChild(p.getReady, p.answering, p.ranking);
   });
-
 //Helper functions
 function swapScene(scene) {
   if(pixiScenes[scene]) { //scene exists
