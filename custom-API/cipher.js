@@ -5,6 +5,7 @@
     algorithm: <any algorithm> (default: aes256)
     iv: <iv (if applicable)> (default: 5dZoC41JFwmLQMYo)
   })
+  
   All of the above options are optional
 
   All methods return a Promise Object, so, to use it, write
