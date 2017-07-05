@@ -4,22 +4,81 @@
 
   Author: Jin Kuan
 */
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 //game area dimensions
 const WIDTH   = 800,
       HEIGHT  = 600;
 
 //for the stage, renderer and loader.
 var app = new PIXI.Application({
-  'width': width,
-  'height': height
+  'width': WIDTH,
+  'height': HEIGHT
 });
-app.stage = false;
+//for swapping between scenes
+var pixiScenes = {};
+var allResources;
+app.loader  //load all
+  .add('yellow-button', '/resources/graphics/buttons/yellow-button.json')
+  .add('blue-button', '/resources/graphics/buttons/blue-button.json')
+  .add('green-button', '/resources/graphics/buttons/green-button.json')
+  .add('red-button', '/resources/graphics/buttons/red-button.json')
+  .add('car-body', '/resources/graphics/car/base.png')
+  .add('car-driving', '/resources/graphics/car/driving.json')
+  .add('engine-fireup', '/resources/graphics/car/engine/fire.json')
+  .add('engine-firing', '/resources/graphics/car/engine/firing.json')
+  .add('button-background', '/resources/graphics/ui/button-background.png')
+  .add('topbar-background', '/resources/graphics/ui/topbar-background.png'))
+  .load(loader, resources) {
 
-//for easier access to all textures
-var pixiElements = {};
+  }
 
-//loading screen, just text at the moment
-var loading = new LoadingBar(9, WIDTH - 100);
+  .add('topbar-background', '/resources/graphics/ui/topbar-background.png')
+  .load((loader, resources) => {
+    allResources = resources;
+    //initialize all the various scenes
+    let p = pixiScenes;
+    p.answering = new PIXI.Container();
+    p.getReady = new PIXI.Container();
+    p.ranking = new PIXI.Container();
+
+    //setting up the various scenes...
+    p.getReady.addChild(new PIXI.Text('Get Ready!'));
+
+    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
+    let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
+    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
+    let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
+      HEIGHT - mcqButtonHandler.height - topBar.height);
+    let answerResponses = new BarGraph(resources, null, {
+      'width' : WIDTH,
+      'height' : HEIGHT - topBar.height - mcqButtonHandler.height,
+      'paddingX' : 20,
+      'paddingY' : 20
+    });
+
+    //positioning and sizing
+    mcqButtonHandler.y = shortAnswerTextField.y
+      = HEIGHT - mcqButtonHandler.height;
+    shortAnswerTextField.height = mcqButtonHandler.height;
+    questionDisplay.y = answerResponses.y = barGraph.y = topBar.height;
+
+    //set all not visible
+    mcqButtonHandler.visible = shortAnswerTextField.visible =
+      answerResponses.visible = questionDisplay.visible = false;
+
+    //so that the elements are accessible to other functions
+    p.topBar = topBar;
+    p.answering.mcqButtonHandler = mcqButtonHandler;
+    p.answering.shortAnswerTextField = shortAnswerTextField;
+    p.answering.barGraph = answerResponses;
+    p.answering.questionDisplay = questionDisplay;
+    p.answering.addChild(
+      topBar.view, questionDisplay.view, answerResponses.view,
+      mcqButtonHandler.view, shortAnswerTextField.view);
+
+    //set all scenes not visible
+    p.getReady.visible = p.answering.visible = p.ranking.visible = false;
+
 
 //adding the loading bar to the stage
 app.stage.addChild(loading.sprite);
@@ -30,7 +89,7 @@ app.loader.onLoad.add(() => {
 app.loader.onComplete.add(() => {
   loading.sprite.visible = false; //hide loading screen
   loading = null; //leaving it to the garbage collector to deal with
-  pixiElements.ui.visible = true; //show game ui
+  app.stage.addChild(new PIXI.Text('Get Ready!')); //show getReady screen, prepare for start signal...
 });
 
 //loading the stuff
@@ -45,69 +104,162 @@ app.loader
   .add('engine-fireup', 'resources/graphics/car/engine/fire.json')
   .add('engine-firing', 'resources/graphics/car/engine/firing.json')
   .load((loader, resources) => {
-    //initialize and positioning elements
-    let buttonContainer = new PIXI.Container();
+    //initialize all the various scenes
+    let p = pixiScenes;
+    p.answering = new PIXI.Container();
+    p.getReady = new PIXI.Container();
+    p.ranking = new PIXI.Container();
 
-    //initializing the ui
-    let ui = new PIXI.Container();
-    ui.visible = false;
+    //setting up the various scenes...
+    //getReady scene
+    p.getReady.addChild(new PIXI.Text('Get Ready!'));
 
-    //top bar
-    let topBar = new TopBar(WIDTH, 'TEST');
-    pixiElements.topBar = topBar;
-    //middle
-    let middle = new PIXI.Container();
-    middle.y = topBar.y;
-
-    //buttons
-    let yellowButton = new Button(resources['yellow-button'].textures,
-      WIDTH / 2 - 25, send, 8);
-    let greenButton = new Button(resources['green-button'].textures,
-      WIDTH / 2 - 25, send, 4);
-    let blueButton = new Button(resources['blue-button'].textures,
-      WIDTH / 2 - 25, send, 2);
-    let redButton = new Button(resources['red-button'].textures,
-      WIDTH / 2 - 25, send, 1);
-
-    //setting the positioning of buttons
-    yellowButton.x = 5; //yellow -> top left
-    yellowButton.y = 5;
-    greenButton.x = yellowButton.width + 10;
-    greenButton.y = y;//green -> top right
-    blueButton.x = 5;//blue -> bottom left
-    blueButton.y = yellowButton.height + 5;
-    redButton.x = yellowButton.width + 10;//red -> buttom right
-    redButton.y = yellowButton.height + 5;
-
-    //adding buttons to the container
-    //adding background first
-    buttonContainer.addChild(new PIXI.Sprite(resources['button-background'].texture));
-    buttonContainer.addChild(yellowButton);
-    buttonContainer.addChild(greenButton);
-    buttonContainer.addChild(blueButton);
-    buttonContainer.addChild(redButton);
-
-    //positioning the buttonContainer
-    buttonContainer.y = HEIGHT - buttonContainer.height;
-
-    //adding to easy access object
-    pixiElements.topBar = topBar;
-    pixiElements.middle = middle;
-    pixiElements.buttonContainer = buttonContainer;
-    pixiElements.ui = ui;
-
-    //adding to the ui
-    ui.addChild(topBar.sprite);
-    ui.addChild(middle);
-    ui.addChild(buttonContainer);
-
-    //add to the stage
-    app.stage.addChild(ui);
+    //answering scene
+    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
+    let shortAnswerTextField = new shortAnswerTextField(WIDTH, HEIGHT);
+    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
+    let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
+      HEIGHT - mcqButtonHandler.height - topBar.height);
+    let responseData = new BarGraph(resources, null, {
+      'width' : WIDTH,
+      'height' : HEIGHT - topBar.height - mcqButtonHandler.height,
+      'paddingX' : 20,
+      'paddingY' : 20
+    });
+    //positioning
+    questionDisplay.y = topBar.height;
+    mcqButtonHandler.anchor.set(0, 1);
+    shortAnswerTextField.anchor.set(0, 1);
+    mcqButtonHandler.y = shortAnswerTextField.y = HEIGHT;
+    mcqButtonHandler.visible = shortAnswerTextField.visible = false; //do not show yet
+    //adding to scene
+    p.answering.mcqButtonHandler = mcqButtonHandler;
+    p.answering.topBar = topBar;
+    p.answering.responseData = responseData;
+    p.answering.addChild(topBar, questionDisplay, mcqButtonHandler);
   });
 
-//hide waiting room and show PIXI game screen
-startGame(question) {
-  //hideWaitingRoom();
-  document.body.appendChild(app.renderer.view);
-  nextQuestion(question);
+function displayResults(roundEndResults) {
+
+}
+//app.stage.addChild(loading.sprite);
+// app.loader.onLoad.add(() => {
+//   loading.increment();
+// });
+// //on load completion
+// app.loader.onComplete.add(() => {
+//   loading.sprite.visible = false; //hide loading screen
+//   loading = null; //leaving it to the garbage collector to deal with
+//   app.stage.addChild(new PIXI.Text('Get Ready!')); //show getReady screen, prepare for start signal...
+// });
+
+    app.stage.addChild(p.getReady, p.answering, p.ranking);
+  });
+
+
+
+//loading the stuff
+// app.loader
+//   .add('button-background', 'resources/graphics/ui/button-background.png')
+//   .add('yellow-button', 'resources/graphics/buttons/yellow-button.json')
+//   .add('blue-button', 'resources/graphics/buttons/blue-button.json')
+//   .add('green-button', 'resources/graphics/buttons/green-button.json')
+//   .add('red-button', 'resources/graphics/buttons/red-button.json')
+//   .add('car-body', 'resources/graphics/car/base.png')
+//   .add('car-driving', 'resources/graphics/car/driving.json')
+//   .add('engine-fireup', 'resources/graphics/car/engine/fire.json')
+//   .add('engine-firing', 'resources/graphics/car/engine/firing.json')
+//   .load((loader, resources) => {
+//     //initialize all the various scenes
+//     let p = pixiScenes;
+//     p.answering = new PIXI.Container();
+//     p.getReady = new PIXI.Container();
+//     p.ranking = new PIXI.Container();
+//
+//     //setting up the various scenes...
+//     p.getReady.addChild(new PIXI.Text('Get Ready!'));
+//
+//     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
+//     let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
+//     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
+//       HEIGHT - mcqButtonHandler.height - topBar.height);
+//     let answerResponses = new BarGraph(resources, null, {
+//       'width' : WIDTH,
+//       'height' : HEIGHT - topBar.height - mcqButtonHandler.height,
+//       'paddingX' : 20,
+//       'paddingY' : 20
+//     });
+//     p.answering.addChild(topBar, questionDisplay, mcqButtonHandler);
+//   });
+
+//Helper functions
+function swapScene(scene) {
+  if(pixiScenes[scene]) { //scene exists
+    pixiScenes.currentScene = scene; //update flag
+    for(let s in pixiScenes) {  //set all scenes not visible
+      if(pixiScenes.hasOwnProperty(s)) {
+        pixiScenes[s].visible = false;
+      }
+    }
+    pixiScenes[scene].visible = true; //set the specified one to be visible
+  } else {
+    throw new Error(`Scene ${scene} does not exist!`);
+  }
+}
+
+function showTitlesAndAchievements(titlesAndAchievenments) {
+  let p = pixiScenes;
+  p.titlesAndAchievenments = new PIXI.Container();
+  p.titlesAndAchievenments.addChild(new SpecialShowcase(titlesAndAchievenments, {
+    'width' : WIDTH,
+    'height' : HEIGHT,
+    'paddingX' : 5,
+    'paddingY' : 5
+  }));
+}
+
+function initEndScene() {
+  let p = pixiScenes;
+  p.end = new PIXI.Container();
+  //shows one text with 'end' only
+  let endText = new PIXI.Text('End');
+  //positioning
+  endText.anchor.set(0.5,0.5);
+  endText.x = WIDTH / 2;
+  endText.y = HEIGHT / 2;
+  p.end.addChild(endText);
+}
+
+function initRatingScene() {
+  let p = pixiScenes;
+  p.rating = new PIXI.Container();
+  let like = new PIXI.Sprite(allResources['like'].texture);
+  let dislike = new PIXI.Sprite(allResources['dislike'].texture);
+  like.interactive = dislike.interactive = true;
+  like.on('pointertap', () => {
+    send({
+      'game' : C.GAME.RATING,
+      'rating' : 0
+    });
+  });
+  dislike.on('pointertap', () => {
+    send({
+      'game' : C.GAME.RATING,
+      'rating' : 1
+    });
+  });
+  //positioning
+  like.anchor.set(0.5,0.5);
+  dislike.anchor.set(0.5,0.5);
+  like.x = WIDTH / 2 - 100;
+  dislike.x = WIDTH / 2 - 100;
+  like.y = dislike.y = HEIGHT / 2;
+
+  //add to Container
+  p.rating.addChild(like, dislike);
+}
+
+function displayResults(roundEndResults) {
+  p.ranking.data = roundEndResults;
+  swapScene('ranking');
 }

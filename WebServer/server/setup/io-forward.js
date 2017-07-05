@@ -1,9 +1,7 @@
 /*
   This module is responsible for the most of the communication between the
   AppServer and the WebServer.
-
   This module will have all the code for error handling too
-
   This breaks down into 3 things:
     1. forwarding of user socket.io requests to the AppServer
     2. Handling all data from the AppServer, including
@@ -24,6 +22,15 @@ module.exports = function(data) {
   //send stuff from user to game server
   io.on('connection', async function(socket){
     //get login cookie first
+    socket.on('disconnect', () => {
+      console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
+      delete socketOfUser[socket.userId];
+      appConn.send({
+        'special': C.SPECIAL.SOCKET_DISCONNECT,
+        'id': socket.userId,
+        'roomNo' : socket.roomNo
+      }, null);
+    });
     try {
       let loginCookie =  await getLoginCookieS(socket, cipher, cookie);
       console.log("SOCKET IO CONNECTION INITIATED BY");
@@ -40,12 +47,6 @@ module.exports = function(data) {
       socket.disconnect();
     }
 
-
-    /*
-    Client Side
-    socket.emit('send' JSON.stringify({name:nigel, age:19});
-
-     */
     //adding listeners
     console.log("Request received: " +socket.id);
     socket.on('send', async function(input){ //from user
@@ -61,8 +62,9 @@ module.exports = function(data) {
         data.id = socket.userId;  //add userId to the sent data
         data.roomNo = socket.roomNo; //add roomNo (if applicable)
 
-        console.log("WebServer to AppServer Data:");
-        console.log(data);
+        //TODO: Need to find a better solution
+        data.password = pass //Temp solution
+
         appConn.send(data, null);
       } catch (err) {
         console.log(err);
@@ -70,22 +72,13 @@ module.exports = function(data) {
         socket.emit('err', input);
       }
     });
-    socket.on('disconnect', () => {
-      console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
-      delete socketOfUser[socket.userId];
-      appConn.send({
-        'special': C.SPECIAL.SOCKET_DISCONNECT,
-        'id': socket.userId,
-        'roomNo' : socket.roomNo
-      }, null);
-    });
   });
 
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
-    console.log("BEFORE ERROR?");
     try {
       let response = JSON.parse(input);
+      console.log("APPSERVER RESPONSE: ");
       console.log(response);
       if(response.special !== undefined){ //handling special stuff
         await handleSpecialResponse({
@@ -96,17 +89,21 @@ module.exports = function(data) {
           'socketObj' : io.sockets.sockets,
           'socketOfUser' : socketOfUser
         });
-      } else if(response.reqNo){  //others
-        pendingAppResponses[response.reqNo].callback(response);
-        delete pendingAppResponses[response.reqNo];
-      } else { //socket.io stuff
-        handleIoResponse({
-          'response' : response,
-          'io' : io,
-          'C' : C,
-          'socketObj' : io.sockets.sockets,
-          'socketOfUser' : socketOfUser
-        });
+      } else {  //others
+        if(response.sendTo !== undefined) {
+          await handleIoResponse({
+            'response' : response,
+            'io' : io,
+            'C' : C,
+            'socketObj' : io.sockets.sockets,
+            'socketOfUser' : socketOfUser
+          });
+        }
+        if(pendingAppResponses[response.reqNo]) {
+          if(pendingAppResponses[response.reqNo].callback)
+            pendingAppResponses[response.reqNo].callback(response);
+          delete pendingAppResponses[response.reqNo];
+        }
       }
     } catch (err) {
       console.log(err);
@@ -125,15 +122,4 @@ async function getLoginCookieS(socket, cipher, cookie) {
   console.log("decryptedLoginCookie");
   console.log(cookieData);
   return cookieData;
-}
-
-function sendErrorPage(data) {
-  try { //res/req errors
-    data.pendingResponses[data.response.resNo].render('error', {
-      'error': data.errormsg
-    });
-    delete data.pendingResponses[data.response.resNo];
-  } catch (err) { //socket.io
-    data.socketObj[data.response.socketId].emit('err', ""+response.id + " is already in the room!");
-  }
 }

@@ -31,6 +31,7 @@ module.exports = async function(input) {
       break;
     }
     case C.ERR.ROOM_DOES_NOT_EXIST: {
+      console.log(response);
       sendError(false, 'Room ' +response.roomNo + ' does not exist!');
       break;
     }
@@ -49,6 +50,8 @@ module.exports = async function(input) {
 
       break;
     }
+
+
     //ADD MORE CASES HERE
     default: {
       console.log("AppServer to WebServer ERR value is " +response.err +" not a preset case!");
@@ -57,6 +60,8 @@ module.exports = async function(input) {
 }
 
 function sendError(socketError, errormsg) {
+  console.log(socketOfUser);
+  console.log(response.id);
   if(socketError) {
     socketObj[socketOfUser[response.id]].emit('err', errormsg);
   } else {

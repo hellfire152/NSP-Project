@@ -1,7 +1,8 @@
 const uuid = require('uuid');
-var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn,C){
+var passwordValidator = require('password-validator');
+module.exports = function(cipher, appConn, C) {
   return function(req, res){
+    console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
     //
     // req.checkBody('email','Please enter email').notEmpty();
@@ -38,6 +39,36 @@ module.exports =function(cipher, appConn,C){
 
       if (passwordCheck){
         if(!error){
+          const nodemailer = require('nodemailer');
+          const xoauth2 = require('xoauth2');
+
+          var transporter = nodemailer.createTransport({
+              service: 'gmail',
+              auth: {
+                  xoauth2: xoauth2.createXOAuth2Generator({
+                      user: 'chloeangsl@gmail.com',
+                      clientId: '856574075841-dn1nobjm59p0vrhmvcel4sf4djb6sath.apps.googleusercontent.com',
+                      clientSecret: 'i_T_RN-K_p7PsDbAwJXFNXRJ',
+                      refreshToken: '1/3f97hE7yCmipAtuPcu1iu4EhF3kSmzYicMXiamYMjXY'
+                  })
+              }
+          })
+
+          var mailOptions = {
+              from: 'My Name <chloeangsl@gmail.com>',
+              to: 'chloeangsl@gmail.com',
+              subject: 'testing my verification',
+              text: 'Hello World!!'
+          }
+
+          transporter.sendMail(mailOptions, function (err, res) {
+              if(err){
+                  console.log('Error');
+              } else {
+                  console.log('Email Sent');
+              }
+          })
+
           console.log(error);
           console.log("pass");
           console.log("HOST FORM DATA: ");
@@ -53,6 +84,7 @@ module.exports =function(cipher, appConn,C){
             .then(function(cookieData) {
             res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
             // res.redirect('/login?room=' +req.body.usename);
+            console.log(`C CONSTANT OBJECT: ${C}`);
             appConn.send({
               'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'username' :username,

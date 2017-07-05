@@ -12,76 +12,117 @@ console.log('PLAY: Loaded: classic gamemode handler!');
 function handleGame(response) {
   console.log('PLAY: Handling game response!');
   switch(response.game) {
+    case C.GAME_RES.GET_READY: {
+      document.body.innerHTML = ''; //clear the html body
+      document.body.appendChild(app.renderer.view); //add the game view
+      swapScene('getReady');
+      break;
+    }
     case C.GAME_RES.NEXT_QUESTION: {
-      if(firstQuestion) {
-        clearBody();
-        firstQuestion = false;
-      }
-      clearGameArea();
-      showQuestion(response.question)
+      loadQuestion(response.question);
+      break;
+    }
+    case C.GAME_RES.RESPONSE_DATA: { //show the responses
+      console.log("RESPONSE GET");
+      let p = pixiScenes.answering;
+      //show responseData on bar graph
+      p.barGraph.data = response.responseData;
+      p.barGraph.visible = true;
+      p.questionDisplay.visible = false;
+
+      //update topBar
+      let scoreData = response.scoreData[name];
+      pixiScenes.topBar.updateCorrect(scoreData.correctAnswers, scoreData.score);
       break;
     }
     case C.GAME_RES.ROUND_END: {
-      clearGameArea();
       displayResults(response.roundEndResults);
       break;
     }
     case C.GAME_RES.GAME_END: {
-      clearGameArea();
-      displayGameEnd(response.roundEndResults);
+      gameEnd(response);
       break;
     }
-    case C.GAME_RES.BEGIN_FIRST_QUESTION: {
-      clearBody();
-      loadQuestion(response.question);
-      break;
+    //ADD MORE CASES HERE
+    default: {
+      console.log(`GAME_RES value is ${response.game}, not a preset case!`);
     }
   }
 }
 
 function loadQuestion(question) {
-  //create div for question
-  let questionDiv = document.createElement('div');
-  questionDiv.id = 'question';
+  let p = pixiScenes.answering;
 
-  //create h3 node for the question prompt
-  let promptNode = document.createElement('h3');
-  promptNode.appendChild(document.createTextNode(question.prompt));
+  //display the prompt
+  p.questionDisplay.text = question.prompt;
+  p.questionDisplay.visible = true;
 
-  let ansNode = document.createElement('div');
-  ansNode.id = 'ans';
-
-  if(question.type == 0) { //if MCQ question
-    console.log("QUESTION HANDLER: MCQ");
-    //create MCQ buttons
-    let buttonArr = [];
-    for(let i = 0; i < 4; i++) {
-      let button = document.createElement('button');
-      button.id = 'MCQ-' + C.MCQ_LETTERS[i];
-      button.onclick = (function() {
-        return function() {
-          submitAnswer(0, C.MCQ_LETTERS[i]); //setting the proper onclick function
-        }
-      })();
-      button.appendChild(document.createTextNode(question.choices[i]));
-      ansNode.appendChild(button);
-    }
-  } else {  //short answer question
-    //create textfiedl
-    //let textField =
+  let timerEnd; //callback for when timer ends
+  //set both not visible (just in case)
+  p.mcqButtonHandler.visible = p.shortAnswerTextField.visible = false;
+  if(question.type == 0) { //mcq question
+    p.mcqButtonHandler.reset();
+    p.mcqButtonHandler.visible = true;
+    p.mcqButtonHandler.setNoOfChoices(question.choices.length);
+    p.mcqButtonHandler.choices = question.choices;
+    p.mcqButtonHandler.enableAll();
+    timerEnd = () => {p.mcqButtonHandler.disableAll()};
+  } else {  //short answer
+    p.shortAnswerTextField.reset();
+    p.shortAnswerTextField.enable();
+    p.shortAnswerTextField.visible = true;
+    timerEnd = () => {p.shortAnswerTextField.disable()};
   }
-  questionDiv.appendChild(promptNode);
-  questionDiv.appendChild(ansNode);
-  document.getElementById('game').appendChild(questionDiv);
+  p.questionDisplay.text = question.prompt;
+  setTimeout(timerEnd, question.time * 1000);
+  swapScene('answering');
 }
 
-function submitAnswer(type, ans) {
-  send({
-    'game': C.GAME.SUBMIT_ANSWER,
-    'answer': (type == 0)? C.MCQ[ans] : ans
-  });
-  //disable all buttons
-  document.getElementById('ans').childNodes.forEach(button => {
-    button.disabled = true;
-  });
+function displayResults(roundEndData) {
+  swapScene('ranking');
+  let p = pixiScenes.ranking;
+  p.allPlayerRanking.data = roundEndData;
+}
+
+function gameEnd(response) {
+  //allows for swapping via buttons
+  pixiScenes.titlesAndAchievenments = new PIXI.Container();
+  //updating the ranking list
+  displayResults(response.roundEndData);
+  //showing titles and achievements
+  showTitlesAndAchievements(response.titlesAndAchievenments); //in common
+  //initialize rating scene
+  initRatingScene();  //in common
+  //init end scene
+  initEndScene(); //in common
+
+  //defining next and previous page buttons
+  //order: ranking -> titlesAndAchievenments -> rating -> end
+  let next = new Button(allResources['next-button'].textures, WIDTH / 8, () => {
+    if(pixiScenes.currentScene === 'ranking') {
+      previous.enable();
+      swapScene('titlesAndAchievenments');
+    } else if(pixiScenes.currentScene === 'titlesAndAchievenments') {
+      swapScene('rating');
+    } else if(pixiScenes.currentScene === 'rating') {
+      swapScene('end');
+      this.disable();
+    } else {
+      throw new Error(`Cannot go to the next panel, currentScene = ${pixiScenes.currentScene}`);
+    }
+  }, null);
+  let previous = new Button(allResources['previous-button'].textures, WIDTH / 8, () => {
+    if(pixiScenes.currentScene === 'end') {
+      next.enable();
+      swapScene('rating');
+    } else if(pixiScenes.currentScene === 'rating') {
+      swapScene('titlesAndAchievenments');
+    } else if(pixiScenes.currentScene === 'titlesAndAchievenments') {
+      swapScene('ranking');
+      this.disable();
+    } else {
+      throw new Error(`Cannot go to the next panel, currentScene = ${pixiScenes.currentScene}`);
+    }
+  }, null);
+  swapScene('ranking');
 }

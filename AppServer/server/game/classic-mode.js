@@ -22,18 +22,38 @@ module.exports = async function(input) {
       //store answer resutls
       currentRoom.answers = {};
 
-      return sendQuestion(currentRoom, question, data);
+      //send next question 5 seconds after get ready
+      setTimeout(() => {
+        let q = sendQuestion(currentRoom, question, data);
+        sendToServer(conn, q);
+      }, 5000);
+
+      //send the get ready signal...
+      return {
+        'game' : C.GAME_RES.GET_READY,
+        'roomNo' : data.roomNo,
+        'sendTo' : C.SEND_TO.ROOM
+      }
     }
     case C.GAME.NEXT_ROUND: {
-      currentRoom.questionCounter++;
-      let questions = currentRoom.quiz.questions;
-      //if there are no questions left
-      if(currentRoom.questionCounter >= questions.length) {
-        //TODO::CAULCULATE TITLES
-        console.log("GAME " +data.roomNo +" END");
-        return sendGameEnd(currentRoom.players, data);
-      } else { //next question available
-        return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);
+      if(currentRoom.questionCounter === undefined) {
+        currentRoom.questionCounter++;
+        let questions = currentRoom.quiz.questions;
+        //if there are no questions left
+        if(currentRoom.questionCounter >= questions.length) {
+          //TODO::CAULCULATE TITLES
+          console.log("GAME " +data.roomNo +" END");
+          return sendGameEnd(currentRoom.players, data);
+        } else { //next question available
+          return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);
+        }
+      } else {
+        return {
+          'err' : C.ERR.GAME_HAS_NOT_STARTED,
+          'roomNo' : data.roomNo,
+          'targetId' : data.id,
+          'sendTo' : C.SEND_TO.USER
+        }
       }
     }
     case C.GAME.SUBMIT_ANSWER: {
@@ -55,14 +75,19 @@ module.exports = async function(input) {
           'currentRoom': currentRoom,
           'currentPlayer': currentPlayer
         });
-        
+
+        //tracking variables
         currentPlayer.answered = true;
         currentRoom.answerCount++;
 
-        if(currentRoom.answerCount == currentRoom.playerCount) {
-          //stop the auto round end on timer end
+        //once all players answer...
+        if(currentRoom.answerCount >= currentRoom.playerCount) {
+          //stop the auto round end
           clearTimeout(currentRoom.timer);
-          return sendRoundEnd(currentRoom, data, currentRoom.answers);
+          console.log(
+            `ROOM ${data.roomNo} ALL ANSWERED FOR QUESTION ${currentRoom.questionCounter}`);
+          common.setAllAnswered(currentRoom.players);
+          return common.getResponseData(currentRoom, data);
         } else {
           //send response for host
           return {
@@ -114,9 +139,10 @@ function sendQuestion(currentRoom, question, data) {
   common.setAllUnanswered(currentRoom.players);
   //set timer
   currentRoom.timer = setTimeout(() => {
+    console.log(`ROOM ${data.roomNo} RAN OUT OF TIME`);
     common.setAllAnswered(currentRoom.players);
     sendToServer(conn,
-      sendRoundEnd(currentRoom, data, currentRoom.answers, question.solution)
+      common.getResponseData(currentRoom, data)
     );
   }, question.time * 1000);
 

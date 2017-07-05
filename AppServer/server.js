@@ -49,6 +49,8 @@ conn.on("end", function() {
 conn.on("data", async function(input) {
   try {
     let data = JSON.parse(input);
+    let reqNo = data.reqNo;
+    delete data.reqNo;  //hide reqNo from logs
     console.log("FROM WEBSERVER"); //Log all data received from the WebServer
     console.log(data);
     //if there's an Error
@@ -78,7 +80,7 @@ conn.on("data", async function(input) {
             'sendToServer': sendToServer,
             'conn': connection
           });
-        } else if (!(data.game === undefined)){  //special
+        } else if (!(data.game === undefined)){  //game stuff
           response = await handleGame({
             'data' : data,
             'C' : C,
@@ -93,12 +95,17 @@ conn.on("data", async function(input) {
             'allRooms' : allRooms
           });
         }
-
         //logging and response
         console.log("AppServer Response: ");
         console.log(response);
-        response.reqNo = data.reqNo;
-        sendToServer(conn, response);
+        response.reqNo = reqNo;
+        //FOR TESTING DATABASE ONLY
+        if(data.type === C.REQ_TYPE.DATABASE){
+          dbConn.send(response, response.reqNo);
+        } else{
+          sendToServer(conn, response);
+        }
+
       } else if(data.password === pass) { //valid password
         console.log("WebServer Validated");
         conn.auth = true;
@@ -119,13 +126,26 @@ server.listen(9090);
 //connection with datbase server
 var dbConn = net.connect(7070);
 
-//Recieve data from database
-dbConn.on('data', function(data) {
-  pendingDatabaseResponses[data.reqNo](data);
+//implementing the send function on the database connection
+dbConn.send = (reqObj, callback) => {
+  let reqNo = uuid();
+  pendingDatabaseResponses[reqNo] = callback;
+  reqObj.reqNo = reqNo;
+  dbConn.write(JSON.stringify(reqObj));
+}
+
+//Recieve data from database and run callback
+dbConn.on('data', function(inputData) {
+  data = JSON.parse(inputData);
+  data.reqNo = pendingDatabaseResponses[data.reqNo];
+  // pendingDatabaseResponses[data.reqNo](data);
+  delete pendingDatabaseResponses[data.reqNo];
+  sendToServer(connection, data);
 });
 
+
 //Test sample data
-sendToServer(dbConn, sampleData.loginStudentAcc());
+// sendToServer(dbConn, sampleData.updateAccount());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer

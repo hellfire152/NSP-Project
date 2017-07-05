@@ -3,7 +3,7 @@
   with the PIXI stuff launches.
 
   This file also contains the socket.io setup
-  
+
   Sequence of events (initialization):
   1. A socket.io instance is created, sends EVENT.INIT_ROOM
   2. WebServer gets cookieData, forwards all to AppServer
@@ -16,12 +16,14 @@
 */
 //initializes a socket.io connection
 var socket = io();
+var name;
 socket.on('receive', function(data) {
   var response = JSON.parse(data);
   console.log(response);
   if(response.event !== undefined) {
     switch(response.event) {
       case C.EVENT_RES.PLAYER_LIST: {
+        name = response.id;
         Object.keys(response.playerList).forEach(playerId => {
           console.log(playerId);
           //generate a new li for each player
@@ -37,7 +39,7 @@ socket.on('receive', function(data) {
 
     }
   } else if (response.game !== undefined) {
-    handleGame(response) //defined in the /play folder
+    handleGame(response); //defined in the /play folder
   } else {  //special
     switch(response.special) {
       case C.SPECIAL.SOCKET_DISCONNECT: {

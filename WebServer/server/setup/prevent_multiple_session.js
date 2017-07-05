@@ -15,4 +15,5 @@ module.exports = function checkMultipleOnSameMachine(req, res, next) {
   //ELSE (no other session exists)
     //store into the object
     //call --> next();
+    next();
 }

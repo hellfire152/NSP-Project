@@ -7,6 +7,7 @@
 const uuid = require('uuid');
 module.exports = function(cipher, appConn) {
   return function(req, res) {
+    console.log("===Validate-Join-Room.js");
     req.checkBody('id', 'Username must be specified').notEmpty();
     req.checkBody('pass', 'Password must be specified').notEmpty();
     req.checkBody('room', 'Room ID must be specified').notEmpty();
@@ -19,7 +20,6 @@ module.exports = function(cipher, appConn) {
     req.sanitize('room').trim();
 
     var errors = req.validationErrors();
-
     if(errors) {
       //TODO::Handle errors
     } else {

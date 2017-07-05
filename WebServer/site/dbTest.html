@@ -6,15 +6,465 @@
     <script src="https://code.jquery.com/jquery-latest.js"></script> <!--HTTPS -->
   </head>
   <body>
-    <div id='dbRetrieveQuiz'>
-      <h1>Database Testing</h1>
-      <form action='/host-room' method='POST'>
+    <h1>Database Testing</h1>
+    <div id='dbCreateStudentAccount'>
+      <h2>Create student account</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="createStudentAcc"/>
+        <label>Name:
+          <input type="text" name="name" id="name"/>
+        </label>
+        <br>
+        <label>Username:
+          <input type="text" name="username" id="username"/>
+        </label>
+        <br>
+        <label>Email:
+          <input type="text" name="email" id="email"/>
+        </label>
+        <br>
+        <label>Password:
+          <input type="password" name="password" id="password"/>
+        </label>
+        <br>
+        <label>School:
+          <input type="text" name="school" id="school"/>
+        </label>
+        <br>
+        <label>DOB:
+          <input type="date" name="dob" id="dob"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbCreateTeacherAccount'>
+      <h2>Create teacher account</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="createTeacherAcc"/>
+        <label>Name:
+          <input type="text" name="name" id="name"/>
+        </label>
+        <br>
+        <label>Username:
+          <input type="text" name="username" id="username"/>
+        </label>
+        <br>
+        <label>Email:
+          <input type="text" name="email" id="email"/>
+        </label>
+        <br>
+        <label>Password:
+          <input type="password" name="password" id="password"/>
+        </label>
+        <br>
+        <label>Organisation:
+          <input type="text" name="organisation" id="organisation"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbLoginAccount'>
+      <h2>Login Account</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="accountLogin">
+        <label>Username:
+          <input type="text" name="user" id="user"/>
+        </label>
+        <br>
+        <label>Password:
+          <input type="password" name="password" id="loginPassword"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateUsername'>
+      <h2>Update Username</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateUsername">
+        <label>User Id:
+          <input type="text" name="userId" id="userId"/>
+        </label>
+        <br>
+        <label>Username:
+          <input type="text" name="username" id="username"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateName'>
+      <h2>Update Name</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateName">
+        <label>User Id:
+          <input type="text" name="userId" id="userId"/>
+        </label>
+        <br>
+        <label>Name:
+          <input type="text" name="name" id="name"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateAboutMe'>
+      <h2>Update About Me</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateAboutMe">
+        <label>User Id:
+          <input type="text" name="userId" id="userId"/>
+        </label>
+        <br>
+        <label>About Me Details:
+          <input type="text" name="aboutMe" id="aboutMe"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateSchool'>
+      <h2>Update School</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateSchool">
+        <label>Student Id:
+          <input type="text" name="studentId" id="studentId"/>
+        </label>
+        <br>
+        <label>School:
+          <input type="text" name="school" id="school"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateStudentCategory'>
+      <h2>Update Student Category</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateStudentCategory">
+        <label>Student Id:
+          <input type="text" name="studentId" id="studentId"/>
+        </label>
+        <br>
+        <label>Student Category:
+          <input type="text" name="studentCategory" id="studentCategory"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateOrganisation'>
+      <h2>Update Organisation</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateOrganisation">
+        <label>Teacher Id:
+          <input type="text" name="teacherId" id="teacherId"/>
+        </label>
+        <br>
+        <label>Organisation:
+          <input type="text" name="organisation" id="organisation"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbChangePassword'>
+      <h2>Change Password</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updatePassword">
+        <label>User id:
+          <input type="text" name="userId" id="userId"/>
+        </label>
+        <br>
+        <label>Old password:
+          <input type="password" name="oldPassword" id="oldPassword"/>
+        </label>
+        <br>
+        <label>New password:
+          <input type="password" name="newPassword" id="newPassword"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbDeleteAccount'>
+      <h2>Delete Account</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="deleteAccount">
+        <label>User id:
+          <input type="text" name="userId" id="userId"/>
+        </label>
+        <br>
+        <label>Username:
+          <input type="text" name="username" id="username"/>
+        </label>
+        <br>
+        <label>Password:
+          <input type="password" name="password" id="password"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div>
+      <h2>Create Question</h2>
+      <div id="quizArea">
+        <input type="hidden" name="quizCreation" id="quizCreation" value="quizCreation"/>
+        <label>Quiz title:
+          <input type="text" name ="quizTitle" id="quizTitle">
+        </label>
+        <br>
+        <label>Quiz Description:
+          <textarea name="quizDescription" id ="quizDescription"></textarea>
+        </label>
+        <br>
+        Visibility
+        <label>Yes:
+          <input type = "radio" name="visibility" value=1 id="visible">
+        </label>
+        <label>No:
+          <input type = "radio" name="visibility" value=1 id="notVisible">
+        </label>
+      </div>
+      <h3>ADD QUESTION</h3>
+      <div id="questionArea">
+        <form>
+          <label>Question statement
+            <input type="text" name="prompt" id="prompt">
+          </label>
+          <br>
+          <label>Choice 1
+            <input type="text" name="choice1" id="choice1">
+            <input type="checkbox" name="soloution1" id="solution1" value=8>
+          </label>
+          <br>
+          <label>Choice 2
+            <input type="text" name="choice2" id="choice2">
+            <input type="checkbox" name="soloution2" id="solution2" value=4>
+          </label>
+          <br>
+          <label>Choice 3
+            <input type="text" name="choice3" id="choice3">
+            <input type="checkbox" name="soloution3" id="solution3" value=2>
+          </label>
+          <br>
+          <label>Choice 4
+            <input type="text" name="choice4" id="choice4">
+            <input type="checkbox" name="soloution4" id="solution4" value=1>
+          </label>
+          <br>
+          <input type="reset" value="Add Question" onclick="addQuestion()">
+        </form>
+      </div>
+      <br>
+      <input type="button" value="Save Quiz" id="dbCreateQuiz" onclick="submitQuiz()">
+    </div>
+    <div id='dbRetrieveQuestion'>
+      <h2>Retrieve Question</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="retrieveQuestion">
+
         <label>Quiz ID:
           <input type="text" name="quizId" id="quizId"/>
         </label>
         <input type='submit' value='Submit' /><br>
       </form>
     </div>
-    <script src="/controller/dbTest.js"></script>
+    <br>
+    <div id='dbSearchQuiz'>
+      <h2>Search Quiz</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="searchQuestion">
+        <label>Search:
+          <input type="text" name="search" id="search"/>
+        </label>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateQuiz'>
+      <h2>Update Quiz</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateQuiz">
+        <label>Quiz ID:
+          <input type="text" name="quizId" id="quizId"/>
+        </label>
+        <br>
+        <label>Quiz Title:
+          <input type="text" name="quizTitle" id="quizTitle"/>
+        </label>
+        <br>
+        <label>Quiz Description:
+          <input type="text" name="quizDescription" id="quizDescription"/>
+        </label>
+        <br>
+        <label>Quiz Visibility:
+          <input type="text" name="quizVisibility" id="quizVisibility"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbUpdateQuestion'>
+      <h2>Update Question</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="updateQuestion">
+        <label>Question ID:
+          <input type="text" name="questionId" id="questionId"/>
+        </label>
+        <br>
+        <label>Prompt:
+          <input type="text" name="prompt" id="prompt"/>
+        </label>
+        <br>
+        <label>Solution:
+          <input type="text" name="solution" id="solution"/>
+        </label>
+        <br>
+        <label>Time:
+          <input type="text" name="time" id="time"/>
+        </label>
+        <br>
+        <label>Choices:
+          <input type="text" name="choiceArr" id="choiceArr"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbDeleteQuiz'>
+      <h2>Delete Quiz</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="deleteQuiz">
+        <label>Quiz Id:
+          <input type="text" name="quizId" id="quizId"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbDeleteQuestion'>
+      <h2>Delete Question</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="deleteQuestion">
+        <label>Question Id:
+          <input type="text" name="questionId" id="questionId"/>
+        </label>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <script>
+      var xhr = new XMLHttpRequest();
+      var questionArr = [];
+      var choiceArr = [];
+      var questionNo = 1;
+
+      function addQuestion(){
+        var solution = 0;
+        var choices = [];
+        if(document.getElementById("solution1").checked){
+          solution += parseInt($("#solution1").val());
+        }
+        if(document.getElementById("solution2").checked){
+          solution += parseInt($("#solution2").val());
+        }
+        if(document.getElementById("solution3").checked){
+          solution += parseInt($("#solution3").val());
+        }
+        if(document.getElementById("solution4").checked){
+          solution += parseInt($("#solution4").val());
+        }
+
+        if($("#choice1").val().length != 0){
+          choices.push($("#choice1").val());
+        }
+        if($("#choice2").val().length != 0){
+          choices.push($("#choice2").val());
+        }
+        if($("#choice3").val().length != 0){
+          choices.push($("#choice3").val());
+        }
+        if($("#choice4").val().length != 0){
+          choices.push($("#choice4").val());
+        }
+        question = {
+          type : C.DB.QUESTION_TYPE.MCQ, //Very lazy to do logic and valudation
+          prompt : $("#prompt").val(),
+          solution :solution,
+          question_no : questionNo,
+          time : 30 // Constant
+        }
+        choicesObj = {
+          choices : choices,
+          question_no : questionNo
+        }
+
+        questionArr.push(question);
+        choiceArr.push(choicesObj);
+
+        console.log(questionArr);
+        console.log(choiceArr);
+        questionNo++;
+      }
+
+      function formatQuiz(){
+        return {
+          dbType : $("#quizCreation").val(),
+          quiz_title : $("#quizTitle").val(),
+          visibility : true, //Lazy set
+          description : $("#quizDescription").val(),
+          quiz_type : "Classic",
+          quiz_rating : 5,
+          user_id : 1,
+          question : questionArr,
+          choices : choiceArr
+        }
+      }
+
+      function submitQuiz(){
+        console.log(formatQuiz());
+        xhr.open("POST", '/data-access', true);
+
+        //Send the proper header information along with the request
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        // xhr.onreadystatechange = function() {//Call a function when the state changes.
+        //     if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+        //         // Request finished. Do processing here.
+        //     }
+        // }
+        // xhr.send(formatQuiz());
+        // xhr.send('string');
+        // xhr.send(new Blob());
+        // xhr.send(new Int8Array());
+        var data = formatQuiz();
+        console.log(data);
+        xhr.send(JSON.stringify(data));
+        // xhr.send(document);
+    }
+    </script>
   </body>
 </html>
