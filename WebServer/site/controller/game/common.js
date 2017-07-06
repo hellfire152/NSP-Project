@@ -37,8 +37,15 @@ app.loader  //load all
     p.ranking = new PIXI.Container();
 
     //setting up the various scenes...
+    //getReady scene
     p.getReady.addChild(new PIXI.Text('Get Ready!'));
-
+    //ranking scene
+    p.ranking.allPlayerRanking = new AllPlayerRanking(resources, null, {
+      'width' : WIDTH,
+      'height' : HEIGHT - p.topBar.height,
+      'paddingX' : 50,
+      'paddingY' : 30
+    }, true);
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
     let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
     let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
