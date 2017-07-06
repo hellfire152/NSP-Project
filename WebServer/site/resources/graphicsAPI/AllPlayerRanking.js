@@ -16,6 +16,8 @@ class AllPlayerRanking extends DisplayElement {
     super();
     this._min = min;
     this._playerRankings = [];
+    this._positionData = positionData;
+    this._resources = resources;
     if(playerData) {
       this.data = playerData;
     }
@@ -30,11 +32,23 @@ class AllPlayerRanking extends DisplayElement {
   }
 
   set data(playerData) {
+    let pd = this._positionData;
+    let indivDisplayHeight = pd.height / playerData.length;
+    if(indivDisplayHeight < pd.minHeight) {
+      indivDisplayHeight = pd.height / pd.minHeight;
+    }
     for(let i = 0; i < playerData.length; i++) {
-      let playerDisplay = new PlayerRanking(resources, playerData[i], positionData, this._min);
-      playerDisplay.y = i * (playerDisplay.height + paddingY);
+      let playerDisplay = new PlayerRanking(
+        this._resources, playerData[i], {
+          'width' : pd.width - pd.paddingX,
+          'height': indivDisplayHeight,
+          'paddingX' : pd.paddingX,
+          'paddingY' : pd.paddingY
+        }, this._min);
+      playerDisplay.y = i * (playerDisplay.height + pd.paddingY);
+      playerDisplay.x = pd.paddingX;
       this._playerRankings.push(playerDisplay);
-      this._container.addChild(playerDisplay);
+      this._container.addChild(playerDisplay.view);
     }
   }
 }

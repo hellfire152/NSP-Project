@@ -27,11 +27,6 @@ app.loader  //load all
   .add('engine-fireup', '/resources/graphics/car/engine/fire.json')
   .add('engine-firing', '/resources/graphics/car/engine/firing.json')
   .add('button-background', '/resources/graphics/ui/button-background.png')
-  .add('topbar-background', '/resources/graphics/ui/topbar-background.png'))
-  .load(loader, resources) {
-
-  }
-
   .add('topbar-background', '/resources/graphics/ui/topbar-background.png')
   .load((loader, resources) => {
     allResources = resources;
@@ -78,20 +73,7 @@ app.loader  //load all
 
     //set all scenes not visible
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
-
-
-//adding the loading bar to the stage
-app.stage.addChild(loading.sprite);
-app.loader.onLoad.add(() => {
-  loading.increment();
-});
-//on load completion
-app.loader.onComplete.add(() => {
-  loading.sprite.visible = false; //hide loading screen
-  loading = null; //leaving it to the garbage collector to deal with
-  app.stage.addChild(new PIXI.Text('Get Ready!')); //show getReady screen, prepare for start signal...
-});
-
+  });
 //Helper functions
 function swapScene(scene) {
   if(pixiScenes[scene]) { //scene exists

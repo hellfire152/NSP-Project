@@ -17,10 +17,6 @@ class PlayerRanking extends DisplayElement {
         0, 0, width, positionData.height)
       .endFill();
     if(!min) {
-      //creating a background first...
-      let background = new PIXI.Sprite('/resources/graphics/ui/player-ranking-background');
-      background.width = positionData.width;
-      background.height = positionData.height;
       //in case I need to access this later
       this._data = data;
 
@@ -83,7 +79,7 @@ class PlayerRanking extends DisplayElement {
       score.x += positionData.paddingX;
       rank.x += positionData.paddingX;
 
-      this._container.addChild(rank, name, score);
+      this._container.addChild(background, rank, name, score);
     }
   }
 

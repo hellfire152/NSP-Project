@@ -105,6 +105,7 @@ app.loader  //load all
   .add('engine-firing', '/resources/graphics/car/engine/firing.json')
   .add('button-background', '/resources/graphics/ui/button-background.png')
   .add('topbar-background', '/resources/graphics/ui/topbar-background.png')
+  .add('answer-streak-icon', '/resources/images/answer-streak-icon.png')
   .load((loader, resources) => {
     allResources = resources;
     //initialize all the various scenes
@@ -113,26 +114,14 @@ app.loader  //load all
     p.getReady = new PIXI.Container();
     p.ranking = new PIXI.Container();
 
-    //setting up the various scenes...
-    p.getReady.addChild(new PIXI.Text('Get Ready!'));
-
-    let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
-    let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
-    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
-    let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
-      HEIGHT - mcqButtonHandler.height - topBar.height);
-    let answerResponses = new BarGraph(resources, null, {
+    let apr = new AllPlayerRanking(resources, aprTestData, {
       'width' : WIDTH,
       'height' : HEIGHT - 100,
-      'minHeight' : 20,
       'paddingX' : 50,
-      'paddingY' : 10
-    }, false);
+      'paddingY' : 30
+    },true);
 
-    p.getReady.visible = p.answering.visible = p.ranking.visible = false;
-
-    app.stage.addChild(p.getReady, p.answering, p.ranking);
-    p.answering.visible = true;
+    app.stage.addChild(apr.view);
   });
 
 window.onload = () => {

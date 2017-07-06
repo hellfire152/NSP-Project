@@ -147,6 +147,10 @@ function getResponseData(currentRoom, data) {
       }
     }
   }
+
+  //clear response data
+  currentRoom.answers = {};
+
   return {
     'game' : C.GAME_RES.RESPONSE_DATA,
     'question' : question,
@@ -185,10 +189,14 @@ function handleScoring(input) {
     );
     //increment correctAnswer count
     currentPlayer.correctAnswers++;
+    //set another tracking variable for correct in that round
+    currentPlayer.roundCorrect = true;
   } else {  //wrong answer
     currentPlayer.score -= getPenalty(currentRoom.quiz, question);
-    //reser answer streak
+    //reset answer streak
     currentPlayer.answerStreak = 0;
+    //set another tracking variable for correct in that round
+    currentPlayer.roundCorrect = true;
   }
 }
 
