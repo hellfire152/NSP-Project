@@ -9,12 +9,11 @@
 class PlayerRanking extends DisplayElement {
   constructor(resources, data, positionData, min) {
     super();
-    //creating a background first
-    let background = new PIXI.Graphics()
-      .beginFill(0xbcfdff)
-      .drawRect(0, 0, positionData.width, positionData.height)
-      .endFill();
     if(!min) {
+      //creating a background first...
+      let background = new PIXI.Sprite('/resources/graphics/ui/player-ranking-background');
+      background.width = positionData.width;
+      background.height = positionData.height;
       //in case I need to access this later
       this._data = data;
 
@@ -24,7 +23,7 @@ class PlayerRanking extends DisplayElement {
       let score = new PIXI.Text(data.score);
       let rank = new PIXI.Text(data.rank);
       let correctAnswers = new PIXI.Text(data.correctAnswers + '/' + data.totalQuestions);
-      let answerStreakIcon = new PIXI.Sprite(resources['answer-streak-icon'].texture);
+      let answerStreakIcon = new PIXI.Sprite('/resources/graphics/answerStreakIcon');
       let answerStreakText = new PIXI.Text(data.answerStreak)
       //render answerStreakText in the middle of answerStreakIcon
       answerStreakIcon.anchor.set(0.5, 0.5);
@@ -63,13 +62,9 @@ class PlayerRanking extends DisplayElement {
 
       //positioning (rank -> name -> score)
       name.x = rank.width + positionData.paddingX;
-      score.x = name.x + name.width + positionData.paddingX;
-      //padding
-      name.y += positionData.paddingY;
-      score.y += positionData.paddingY;
-      ran
+      score.width = name.x + name.width + positionData.paddingX;
 
-      this._container.addChild(background, rank, name, score);
+      this._container.addChild(rank, name, score);
     }
   }
 

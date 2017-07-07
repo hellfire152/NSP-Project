@@ -1,74 +1,194 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title></title>
-	<!-- Bootstrap CSS File -->
-    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
+<head>
+    <title>
+
+    </title>
+
+    <!-- Bootstrap CSS File -->
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Main Stylesheet File -->
+    <link rel="stylesheet" type="text/css" href="css/LoginForm.css">
     <!-- Font Awesome Stylesheet File -->
     <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
-    <!-- Material StyleSheet -->
-    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
 
-    <link rel="stylesheet" type="text/css" href="css/mainstyle.css">
-    <link rel="stylesheet" type="text/css" href="css/report.css">
+    <!-- Animate Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="css/animate.css">
 
-     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-      .table{
-        border-collapse: collapse;
-      }
-    </style>
+    <!-- Main Stylesheet File -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <!--Your custom colour override - predefined colours are: colour-blue.css, colour-green.css, colour-lavander.css, orange is default-->
+    <link href="#" id="colour-scheme" rel="stylesheet">
 </head>
-<body onload = "displayClientCompletedQuestion()">
 
-	<nav>
-    <div class="nav-wrapper">
-      <a href="#" class="brand-logo"><img src="img/logo.png" class = "logo"></a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="#"><i class="fa fa-plus-square-o"></i> Create</a></li>
-        <li><a href = "#"><i class = "fa fa-graduation-cap"></i> Quiz</a><li>
-        <li class = "active"><a href="#"><i class="fa fa-user" aria-hidden="true"></i> Profile</a></li>
-        <li><a href="#">Join Quiz</a></li>
-        <li><a class="btn btn-primary btn-hh-trigger" role="button" data-toggle="collapse" data-target=".header-hidden">Open</a></li>
-      </ul>
+<body class="page-elements">
+    <!--Change the background class to alter background image, options are: benches, boots, buildings, city, metro -->
+    <div id="background-wrapper" class="benches" data-stellar-background-ratio="0.8">
+
+        <div id="navigation" class="wrapper">
+
+            <!-- Hidden Header -->
+            <div class="header-hidden collapse">
+                <div class="header-hidden-inner container">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h3>
+                                About Bryan,
+                            </h3>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                            </p>
+                            <a href="about.html" class="btn btn-more"><i class = "fa fa-plus"></i> Read More</a>
+                        </div>
+
+                        <div class="col-md-3">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-md-6">
+                            <h3>
+                                Choose A Theme
+                            </h3>
+                            <div class="switcher">
+                                <div class="cols">
+                                    <br>
+                                    <a href="#benches" class="background benches active" title="Benches"> Benches</a>
+                                    <a href="#boots" class="background boots" title="Boots">Boots</a>
+                                    <a href="#buildings" class="background buildings " title="Buildings">Buildings</a>
+                                    <a href="#city" class="background city " title="City">City</a> <a href="#metro" class="background metro " title="Metro">Metro</a>
+                                </div>
+                                <div class="cols">
+                                    Colours:
+                                    <br>
+                                    <a href="#orange" class="colour orange active" title="Orange">Orange</a>
+                                    <a href="#green" class="colour green " title="Green">Green</a> <a href="#blue" class="colour blue" title="Blue">Blue</a> <a href="#lavender" class="colour lavender " title="Lavender">Lavender</a>
+                                </div>
+                            </div>
+
+                            <p>
+                                <small>Selection is not persistent</small>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header & Logo -->
+            <div class="header">
+                <div class="header-inner container">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <a href="LoginIndex.html" class="navbar-brand" title="Home">
+                                <h1 class="hidden">
+                                    <img src="img/logo.png" alt="Logo">
+                                </h1>
+                            </a>
+
+                            <div class="navbar-slogan">
+                                Make it happen
+                            </div>
+                        </div>
+
+                        <!--Right side of Header -->
+
+                        <div class="col-md-4">
+
+                            <!-- Login & Register -->
+
+                            <ul class="list-inline user-menu pull-right">
+                                <li class="hidden-xs">
+                                    <i class="fa fa-edit text-primary"></i>
+                                    <a href="register.html" class="text-uppercase">Register</a>
+                                </li>
+                                <li class="hidden-xs">
+                                    <i class="fa fa-sign-in text-primary"></i>
+                                    <a href="login.html" class="text-uppercase">Login</a>
+                                </li>
+
+                                <li>
+                                    <a class="btn btn-primary btn-hh-trigger" role="button" data-toggle="collapse" data-target=".header-hidden">Open</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="navbar navbar-default holder">
+
+                    <!--Mobile Hamburger -->
+
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false"><span class = "sr-only">Toggle Navigation</span><span class = "icon-bar"></span><span class = "icon-bar"></span><span class="icon-bar"></span></button>
+
+                    <div class="navbar-text social-media social-media-inline pull-right">
+                        <!--@todo: replace with company social media details-->
+                        <a href="#"><i class="fa fa-twitter"></i></a>
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="#"><i class="fa fa-linkedin"></i></a>
+                        <a href="#"><i class="fa fa-google-plus"></i></a>
+                    </div>
+
+                    <!-- Everything in this div is collapsed in mobile-->
+                    <!-- @todo link up all href -->
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav" id="main-menu">
+                            <li>
+                                <a href="#"><i class="fa fa-plus-square-o"></i> Create</a>
+                            </li>
+                            <li>
+                                <a href="#"><i class = "fa fa-graduation-cap"></i> Quiz</a>
+                            </li>
+                            <li>
+                                <a href="#">Notification</a>
+                            </li>
+                            <li>
+                                <a href="#">Join Quiz</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <!--/.navbar-collapse -->
+                </div>
+            </div>
+        </div>
     </div>
-  </nav>
 
-  <div class="container-fluid statistics">
-  	<div class="row">
-  		<div class="col-md-1">
-  			&nbsp;
-  		</div>
-  		<div class="col-md-10">
-  			<h5>Reports</h5>
-  		</div>
-  		<div class="col-md-1">
-  			&nbsp;
-  		</div>
-  	</div>
-
-  	<div class="row">
-  		<div class="col-md-1">
+    <div class="container-fluid" style="background-color:#2C3E50;color:white;">
+        <div class="row">
+            <div class="col-md-1">
                 &nbsp;
             </div>
-            <div class="col-md-6">
-                <h6><span class="gameType live" id = "type">D</span><span name="quiz-name" id = 'quiz-name'>Ministries of Singapore</span></h6>
-                <p id="date">June 17th, 04:09pm </p>
-                <p id = "days"></p>
-
-            </div>
-            <div class="col-md-4 action-div">
-                <button class="action"><i class="material-icons">print</i></button>
-                <button class="action"><i class="material-icons">file_download</i> Excel</button>
+            <div class="col-md-10">
+                <h5>Reports</h5>
             </div>
             <div class="col-md-1">
                 &nbsp;
             </div>
-  	</div>
+        </div>
 
-  	<div class="row">
+        <div class="row">
+            <div class="col-md-1">
+                &nbsp;
+            </div>
+            <div class="col-md-6">
+                <h6><span class="gameType live">C</span><span name="quiz-name">Ministries of Singapore</span></h6>
+                <p id="date">June 17th, 04:09pm <span id=d ays>(4 days ago)</span></p>
+
+            </div>
+            <div class="col-md-4">
+                <button class="action">Print</button>
+                <button class="action">Download Excel</button>
+            </div>
+            <div class="col-md-1">
+                &nbsp;
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-md-5">
                 &nbsp;
             </div>
@@ -81,7 +201,7 @@
 
             <div class="col-md-2">
                 <div class="data">
-                    <h2 id = "question-no">13</h2>
+                    <h2>13</h2>
                     <p>Questions</p>
                 </div>
             </div>
@@ -96,105 +216,53 @@
                 &nbsp;
             </div>
         </div>
-  </div>
+    </div>
 
-  
+    <div class="container-fluid">
 
-  
+        <input type="button" value="generate" onclick="generateQuizQuestion()" />
+        <div class="row">
+            <div class="tab">
 
-  <blockquote>
-    Questions
-  </blockquote>
-  <div class="container-fluid">
-  	<div class="row">
-  	<form method = "get">
-  		<input type="submit" value = "Download" onclick="download()" />
-  	</form>
-  	 
-
-          <div class="col m1">
-    &nbsp;
-  </div>
-  <div class="col s12 m10">
-    <ul class="collapsible" data-collapsible="accordion">
-      </ul>
-  </div>
-  <div class="col m1">
-    &nbsp;
-  </div>
-
-          </div>
-      </div>
-
-   <footer class="page-footer">
-          <div class="container">
-            <div class="row">
-              <div class="col l6 s12">
-                <h5 class="white-text">Quizzit! Inc</h5>
-                <p class="grey-text text-lighten-4">Get things done within minutes</p>
-               
-                  <div class="chip">
-                    <i class="fa fa-facebook-official" aria-hidden="true"></i>
-                     Facebook
-                  </div>
-                    <div class="chip">
-                      <i class="fa fa-twitter-square" aria-hidden="true"></i>
-                      Twitter
-                    </div>
-                    <div class="chip">
-                      <i class="fa fa-instagram" aria-hidden="true"></i>
-                      Instagram
-                    </div>
-              </div>
-              <div class="col l4 offset-l2 s12">
-                <h5 class="white-text">Hyperlinks</h5>
-                <ul>
-                  <li><a class="grey-text text-lighten-3" href="#!">Join Room</a></li>
-                  <li><a class="grey-text text-lighten-3" href="#!">Login</a></li>
-                  <li><a class="grey-text text-lighten-3" href="#!">Create Account</a></li>
-                  <li><a class="grey-text text-lighten-3" href="#!">Support</a></li>
+                <ul class="tabs">
+                    <li><a href="#">Questions</a></li>
+                    <li><a href="#">Players</a></li>
                 </ul>
-              </div>
-            </div>
-          </div>
-          <div class="footer-copyright">
-            <div class="container">
-            © 2017 All Rights Reserved
-            <a class="grey-text text-lighten-4 right" href="#!">Terms of Use</a>
-            </div>
-          </div>
-        </footer>
-  
-  
- 
 
-	
+                <div class="tab_content">
+                    <div class="tabs_item">
+                        <button class="accordion">Section 1</button>
+                        <div class="panel">
+                            <p>Lorem ipsum...</p>
+                        </div>
 
-	<script src="lib/jquery/jquery.min.js"></script>
+                        <button class="accordion">Section 2</button>
+                        <div class="panel">
+                            <p>Lorem ipsum...</p>
+                        </div>
+
+                        <button class="accordion">Section 3</button>
+                        <div class="panel">
+                            <p>Lorem ipsum...</p>
+                        </div>
+                    </div>
+                    <div class="tabs_item">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="lib/jquery/jquery.min.js"></script>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
-    <script type="text/javascript" src = 'js/client-quiz.js'></script>
-    <script type="text/javascript" src="js/xlsx.core.min.js"></script>
-<script type="text/javascript" src="js/excelplus-2.5.min.js"></script>
-   <!--<script type="text/javascript" src = "js/displayReport.js"></script>-->
-  
+    <script src="../js/client-quiz.js"></script>
+
     <script type="text/javascript">
-    	var acc = document.getElementsByClassName("accordion");
-var i;
-
-for (i = 0; i < acc.length; i++) {
-  acc[i].onclick = function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.maxHeight){
-      panel.style.maxHeight = null;
-    } else {
-      panel.style.maxHeight = panel.scrollHeight + "px";
-    } 
-  }
-}
-
-$(document).ready(function() {
+        $(document).ready(function() {
 
             (function($) {
                 $('.tab ul.tabs').addClass('active').find('> li:eq(0)').addClass('current');
@@ -215,9 +283,27 @@ $(document).ready(function() {
 
         });
 
-$('.collapse').on('show.bs.collapse', function () {
-    $('.collapse.in').collapse('hide');
-});
+        $(document).ready(function() {
+            $('.collapsible').collapsible();
+        });
+    </script>
+
+    <script>
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+            acc[i].onclick = function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            }
+        }
     </script>
 </body>
+
 </html>

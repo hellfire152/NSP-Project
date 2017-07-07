@@ -1,93 +1,205 @@
-.statistics{
-	background:url("../img/reportbackground.jpg") center center fixed;
-    background-size: cover;
-    background-repeat: no-repeat;
-	color:white;
-	height:350px;
-}
-.statistics h5{
-    color:#4B1248;
-}
-.statistics h6, p{
-    color:#544C5A;
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
-.collapsible-header{
-    background: -webkit-linear-gradient(left,#FFAC62, #FF8BEA);
-    border:none;
-}
-.collapsible-body{
-    background: -webkit-linear-gradient(left, #EECDA3 , #EF629F);
- 	/* Style the buttons that are used to open and close the accordion panel */
-}
-.data{
-    color:#FFF;
-}
-.tabs .tabs a{
-    color: #4B1248;
-}
-tabs .tab a:hover,.tabs .tab a.active {
-    color:#4B1248;
-}
-.tabs .indicator {
-    background-color:#4B1248;
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: #50555a;
+  background-color:#337AB7;
+  padding: 100px 20px;
 }
 
-button.accordion {
-    background-color: #eee;
-    color: #444;
-    cursor: pointer;
-    padding: 18px;
-    width: 100%;
-    text-align: left;
-    border: none;
-    outline: none;
-    transition: 0.4s;
+nav {
+  z-index: 9;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
 }
 
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-button.accordion.active, button.accordion:hover {
-    background-color: #ddd;
+.bg-color {
+  background-color: #46a1de;
+  transition-duration: .5s;
 }
 
-div.panel {
-    padding: 0 18px;
-    background-color: white;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.2s ease-out;
+.text-color {
+  color: #46a1de;
+  transition-duration: .5s;
 }
 
-button.accordion:after {
-    content: '\02795'; /* Unicode character for "plus" sign (+) */
-    font-size: 13px;
-    color: #777;
-    float: right;
-    margin-left: 5px;
+footer {
+  padding: 40px 0;
+  text-align: center;
+  opacity: .33;
+  color: white;
 }
 
-button.accordion.active:after {
-    content: "\2796"; /* Unicode character for "minus" sign (-) */
-}
-.action-div{
-    display:block;
-    margin:auto;
-
-}
-.action{
-    background-color: transparent;
-    border:1px solid #4B1248;
-    border-radius: 5px;
-    color:#4B1248;
-    margin:auto;
-    width:120px;
-    height:35px;
-    display:block;
-    margin-top:10px;
+.wrapper {
+  min-width: 600px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.action:hover{
-    transition: 0.4s;
-    background-color: #4B1248;
-    color:white;
+.tabs {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  -webkit-transform: translateY(5px);
+  transform: translateY(5px);
+}
+.tabs > li {
+  transition-duration: .25s;
+  display: table-cell;
+  list-style: none;
+  text-align: center;
+  padding: 20px 20px 25px 20px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  color: white;
+}
+.tabs > li:before {
+  z-index: -1;
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 120%;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  -webkit-transform: translateY(100%);
+  transform: translateY(100%);
+  transition-duration: .25s;
+  border-radius: 5px 5px 0 0;
+}
+.tabs > li:hover:before {
+  -webkit-transform: translateY(70%);
+  transform: translateY(70%);
+}
+.tabs > li.active {
+  color: #50555a;
+}
+.tabs > li.active:before {
+  transition-duration: .5s;
+  background-color: white;
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+}
+
+.tab__content {
+  background-color: white;
+  position: relative;
+  width: 100%;
+  border-radius: 5px;
+}
+.tab__content > li {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  list-style: none;
+}
+.tab__content > li .content__wrapper {
+  text-align: center;
+  border-radius: 5px;
+  width: 100%;
+  padding: 45px 40px 40px 40px;
+  background-color: white;
+}
+
+.content__wrapper h2 {
+  width: 100%;
+  text-align: center;
+  padding-bottom: 20px;
+  font-weight: 300;
+}
+.content__wrapper img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.colors {
+  text-align: center;
+  padding-top: 20px;
+}
+.colors > li {
+  list-style: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border-bottom: 5px solid rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  margin: 0 10px;
+  cursor: pointer;
+  transition-duration: .2s;
+  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+.colors > li:hover {
+  -webkit-transform: scale(1.2);
+  transform: scale(1.2);
+  border-bottom: 10px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+}
+.colors > li.active-color {
+  -webkit-transform: scale(1.2) translateY(-10px);
+  transform: scale(1.2) translateY(-10px);
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+  border-bottom: 20px solid rgba(0, 0, 0, 0.15);
+}
+.colors > li:nth-child(1) {
+  background-color: #2ecc71;
+}
+.colors > li:nth-child(2) {
+  background-color: #D64A4B;
+}
+.colors > li:nth-child(3) {
+  background-color: #8e44ad;
+}
+.colors > li:nth-child(4) {
+  background-color: #46a1de;
+}
+.colors > li:nth-child(5) {
+  background-color: #bdc3c7;
+}
+.quizBox{
+  width:900px;
+  border:1px solid red;
+  background:#2E6DA4;
+  color:white;
+  height:45px;
+  padding:10px 0 10px 0px;
+  margin:auto;
+}
+.quizBox span{
+  margin-right:70px;
+}
+.quizBox h2{
+  margin-top:10px;
+}
+
+.quizzes{
+  width:90px;
+  height:50px;
+  border:none;
+  margin:auto;
+}
+.quizzes:hover{
+  background-color: #fff;
+   transition: 0.4s;
+   cursor:pointer;
+}
+table{
+ 
+  background:#ECF0F1;
+  width:900px;
+  margin:auto;
+ 
 }

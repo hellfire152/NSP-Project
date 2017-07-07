@@ -7,37 +7,42 @@
     <!-- Bootstrap CSS File -->
     <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- Main Stylesheet File -->
-    <link rel="stylesheet" type="text/css" href="css/Profile.css">
+    <link rel="stylesheet" type="text/css" href="css/LoginForm.css">
     <!-- Font Awesome Stylesheet File -->
     <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- Material StyleSheet -->
-    <link type="text/css" rel="stylesheet" href="css/materialize.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
 
     <!-- Animate Stylesheet -->
     <link rel="stylesheet" type="text/css" href="css/animate.css">
 
     <!-- Main Stylesheet File -->
-    <link href="css/mainstyle.css" rel="stylesheet">
-
-
+    <link href="css/style.css" rel="stylesheet">
 
     <!--Your custom colour override - predefined colours are: colour-blue.css, colour-green.css, colour-lavander.css, orange is default-->
     <link href="#" id="colour-scheme" rel="stylesheet">
-     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-   
-
 </head>
 
-<body onload = "displayProfile()">
-    <!-- Hidden Header -->
+<body class="page-elements">
+    <!--Change the background class to alter background image, options are: benches, boots, buildings, city, metro -->
+    <div id="background-wrapper" class="benches" data-stellar-background-ratio="0.8">
+
+        <div id="navigation" class="wrapper">
+
+            <!-- Hidden Header -->
             <div class="header-hidden collapse">
                 <div class="header-hidden-inner container">
                     <div class="row">
                         <div class="col-md-3">
-                           &nbsp;
+                            <h3>
+                                About Bryan,
+                            </h3>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                            </p>
+                            <a href="about.html" class="btn btn-more"><i class = "fa fa-plus"></i> Read More</a>
                         </div>
 
                         <div class="col-md-3">
@@ -51,16 +56,16 @@
                             <div class="switcher">
                                 <div class="cols">
                                     <br>
-                                    <a href="#benches" class = "background benches active" title = "Benches"> Benches</a>
-                                    <a href="#boots" class = "background boots" title = "Boots">Boots</a>
+                                    <a href="#benches" class="background benches active" title="Benches"> Benches</a>
+                                    <a href="#boots" class="background boots" title="Boots">Boots</a>
                                     <a href="#buildings" class="background buildings " title="Buildings">Buildings</a>
-                                    <a href="#city" class="background city " title="City">City</a> <a href="#metro" class="background metro " title="Metro">Metro</a> 
+                                    <a href="#city" class="background city " title="City">City</a> <a href="#metro" class="background metro " title="Metro">Metro</a>
                                 </div>
                                 <div class="cols">
                                     Colours:
                                     <br>
                                     <a href="#orange" class="colour orange active" title="Orange">Orange</a>
-                                      <a href="#green" class="colour green " title="Green">Green</a> <a href="#blue" class="colour blue" title="Blue">Blue</a> <a href="#lavender" class="colour lavender " title="Lavender">Lavender</a> 
+                                    <a href="#green" class="colour green " title="Green">Green</a> <a href="#blue" class="colour blue" title="Blue">Blue</a> <a href="#lavender" class="colour lavender " title="Lavender">Lavender</a>
                                 </div>
                             </div>
 
@@ -72,137 +77,103 @@
                     </div>
                 </div>
             </div>
-<nav>
-    <div class="nav-wrapper">
-      <a href="#" class="brand-logo"><img src="img/logo.png" class = "logo"></a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="#"><i class="fa fa-plus-square-o"></i> Create</a></li>
-        <li><a href = "#"><i class = "fa fa-graduation-cap"></i> Quiz</a><li>
-        <li class = "active"><a href="#"><i class="fa fa-user" aria-hidden="true"></i> Profile</a></li>
-        <li><a href="#">Join Quiz</a></li>
-        <li><a class="btn btn-primary btn-hh-trigger" role="button" data-toggle="collapse" data-target=".header-hidden">Open</a></li>
-      </ul>
+
+            <!-- Header & Logo -->
+            <div class="header">
+                <div class="header-inner container">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <a href="LoginIndex.html" class="navbar-brand" title="Home">
+                                <h1 class="hidden">
+                                    <img src="img/logo.png" alt="Logo">
+                                </h1>
+                            </a>
+
+                            <div class="navbar-slogan">
+                                Make it happen
+                            </div>
+                        </div>
+
+                        <!--Right side of Header -->
+
+                        <div class="col-md-4">
+
+                            <!-- Login & Register -->
+
+                            <ul class="list-inline user-menu pull-right">
+                                <li class="hidden-xs">
+                                    <i class="fa fa-edit text-primary"></i>
+                                    <a href="register.html" class="text-uppercase">Register</a>
+                                </li>
+                                <li class="hidden-xs">
+                                    <i class="fa fa-sign-in text-primary"></i>
+                                    <a href="login.html" class="text-uppercase">Login</a>
+                                </li>
+
+                                <li>
+                                    <a class="btn btn-primary btn-hh-trigger" role="button" data-toggle="collapse" data-target=".header-hidden">Open</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="navbar navbar-default holder">
+
+                    <!--Mobile Hamburger -->
+
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false"><span class = "sr-only">Toggle Navigation</span><span class = "icon-bar"></span><span class = "icon-bar"></span><span class="icon-bar"></span></button>
+
+                    <div class="navbar-text social-media social-media-inline pull-right">
+                        <!--@todo: replace with company social media details-->
+                        <a href="#"><i class="fa fa-twitter"></i></a>
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="#"><i class="fa fa-linkedin"></i></a>
+                        <a href="#"><i class="fa fa-google-plus"></i></a>
+                    </div>
+
+                    <!-- Everything in this div is collapsed in mobile-->
+                    <!-- @todo link up all href -->
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav" id="main-menu">
+                            <li>
+                                <a href="#"><i class="fa fa-plus-square-o"></i> Create</a>
+                            </li>
+                            <li>
+                                <a href="#"><i class = "fa fa-graduation-cap"></i> Quiz</a>
+                            </li>
+                            <li>
+                                <a href="#">Notification</a>
+                            </li>
+                            <li>
+                                <a href="#">Join Quiz</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <!--/.navbar-collapse -->
+                </div>
+            </div>
+        </div>
     </div>
-  </nav>
 
+    <div class="tab">
 
-  <div class="container-fluid profile-area">
-      <div class="section">
-          
-          <div class="card profile-card">
-            <div class="card-image waves-effect waves-block waves-light">
-              <img class="activator" src="img/bio_background.jpg">
-            </div>
-            <div class="card-content">
-                <div class="profile-pic">
-                    <img src="img/profilePic.jpg" class = "circle responsive-img z-depth-4">
-                </div>
-
-                <div class="row">
-
-                    <div class="col s3 offset-s2">
-                        <h4 class="card-title grey-text text-darken-4" id = "name">Bryan Tan</h4>
-                        <p class="medium-small grey-text" id = "email">Test</p>
-                    </div>
-                    <div class="col s2 center-align">
-                        <h4 class="card-title grey-text text-darken-4">
-                            University
-                        </h4>
-                        <p class="medium-small grey-text">Category</p>
-                    </div>
-                    <div class="col s2 center-align">
-                        <h4 class = "card-title grey-text text-darken-4" id = "numOfQuiz">
-                            5
-                        </h4>
-                        <p class="medium-small grey-text">
-                            Completed Quizzes
-                        </p>
-
-                    </div>
-                    <div class="col s2 center-align">
-                        <h4 class = "card-title grey-text text-darken-4">
-                            30/6/2017
-                        </h4>
-                        <p class="medium-small grey-text">
-                            Account dated
-                        </p>
-                    </div>
-                    <div class="col s1 right-align">
-                        <a class="btn-floating activator waves-effect waves-light darken-2 right">
-                             <i class="material-icons">person_outline</i>
-                        </a>
-                    </div>
-                </div>
-            
-            </div>
-            <div class="card-reveal">
-              <span class="card-title grey-text text-darken-4">My Profile<i class="material-icons right">close</i></span>
-              <p>User ID: <span id = "user_id"></span></p>
-              <p>User Name: <span id = "user_name"></span></p>
-              <p>Email Address: <span id="email"></span></p>
-              <p>School: <span id="school"></span></p>
-              <p>Date Of Birth: <span id="DOB"></span></p>
-              <p>Organisation: <span id="organisation"></span></p>
-
-            </div>
-          </div>
-      </div>
-  </div>
-
-  <div class="row">
-      <div id="sidebar" class = "col s12 m4">
-          <div class="card aboutMe deep-purple">
-              <div class="card-content white-text">
-                  <span class="card-title">About Me! </span>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                 </p>
-              </div>
-          </div>
-
-          <ul id="profile-page-about-details" class="collection z-depth-1">
-                  
-                  <li class="collection-item">
-                    <div class="row">
-                      <div class="col s5 grey-text darken-1"><i class="material-icons">assessment</i>Skills</div>
-                      <div class="col s7 grey-text text-darken-4 right-align">HTML, CSS</div>
-                    </div>
-                  </li>
-                  
-                  <li class="collection-item">
-                    <div class="row">
-                      <div class="col s5 grey-text darken-1"><i class="material-icons">cake</i> Birth date</div>
-                      <div class="col s7 grey-text text-darken-4 right-align"><span id="DOB">29-12-1998</span></div>
-                    </div>
-                  </li>
-                </ul>
-
-        
-
-                 <div class="card center-align">
-                  <div class="card-content cyan white-text">
-                      <p class="card-stats-title"><i class="mdi-editor-attach-money"></i>Completed Quiz</p>
-                      <h4 class="card-stats-number" id = "complete_quiz"></h4>
-                      <p class="card-stats-compare"><i class="material-icons">arrow_drop_up</i> 70% <span class="purple-text text-lighten-5">last month</span>
-                      </p>
-                  </div>
-                  <div class="card-action cyan darken-2">
-                      <div id="sales-compositebar"></div>
-                  </div>
-                </div>
-      </div>
-
-      <div class="col s12 m8" id = "main-div">
-        <ul class="tabs indigo accent-2 text-white">
-            <li class="tab col s3"><a href="#test1" class="active">Completed Quizzes</a></li>
-            <li class="tab col s3"><a href="#test2">Hosted Quizzes</a></li>
-            <li class="tab col s3"><a href="#test4">Overall Stats</a></li>
+        <ul class="tabs">
+            <li><a href="#">Completed Quizzes</a></li>
+            <li><a href="#">Hosted Quizzes</a></li>
+            <li><a href="#">Overall Stats</a></li>
         </ul>
-      </div>
+        <!-- / tabs -->
 
-      <div id="test1" class="col s12 m8">
-        <table class="entity" id="testTable">
+        <input type="button" onclick="tableToExcel('testTable')" value="Export" class="btn waves-effect waves-light view-btn" style="float:right;margin-right:20px;" />
+
+        <div class="tab_content">
+
+            <div class="tabs_item">
+                <table class="entity" id="testTable">
                     <tbody>
                         <tr class="data-table">
                             <td>
@@ -215,7 +186,7 @@
                                 Date Of Quiz
                             </td>
                             <td>
-                                Total Rating
+                                Total Players
                             </td>
                             <td>
 
@@ -238,47 +209,20 @@
                             <td class="btn-cell">
                                 <a href="#" class="edit-btn"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                                 <a href="#" class="download-btn"><span>
-                            <i class="fa fa-download" aria-hidden="true"></i>
-                        </span></a>
+							<i class="fa fa-download" aria-hidden="true"></i>
+						</span></a>
                                 <a href="#" class="trash-btn"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 
                                 <button class="btn waves-effect waves-light view-btn" type="submit" name="action">View
-                        
-                        </button>
+    					
+						</button>
                             </td>
                         </tr>
 
 
-                        
-                    </tbody>
-
-                </table>
-    </div>
-
-
-    <div id="test2" class="col s12 m8">
-        <table class="entity" id="tableToExcel">
-                    <tbody>
-                        <tr class="data-table">
-                            <td>
-                                Type
-                            </td>
-                            <td>
-                                Quiz Name
-                            </td>
-                            <td>
-                                Date Of Quiz
-                            </td>
-                            <td>
-                                Total Rating
-                            </td>
-                            <td>
-
-                            </td>
-                        </tr>
                         <tr class="records">
                             <td>
-                               C
+                                <span class="gameType live">C</span>
                             </td>
                             <td>
                                 <span class="quiz-name">Ministries of Singapore</span>
@@ -293,63 +237,189 @@
                             <td class="btn-cell">
                                 <a href="#" class="edit-btn"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                                 <a href="#" class="download-btn"><span>
-                            <i class="fa fa-download" aria-hidden="true"></i>
-                        </span></a>
+							<i class="fa fa-download" aria-hidden="true"></i>
+						</span></a>
                                 <a href="#" class="trash-btn"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 
                                 <button class="btn waves-effect waves-light view-btn" type="submit" name="action">View
-                        
-                        </button>
+    					
+						</button>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+            <!-- / tabs_item -->
+
+
+            <div class="tabs_item">
+                <table class="entity" id="tableToExcel">
+                    <tbody>
+                        <tr class="data-table">
+                            <td>
+                                Type
+                            </td>
+                            <td>
+                                Quiz Name
+                            </td>
+                            <td>
+                                Date Of Quiz
+                            </td>
+                            <td>
+                                Total Players
+                            </td>
+                            <td>
+
+                            </td>
+                        </tr>
+                        <tr class="records">
+                            <td>
+                                <span class="gameType live">C</span>
+                            </td>
+                            <td>
+                                <span class="quiz-name">Ministries of Singapore</span>
+                            </td>
+                            <td>
+                                <span class="quiz-date">1 day ago</span>
+                            </td>
+                            <td>
+                                <span class="total-players">1</span>
+                            </td>
+
+                            <td class="btn-cell">
+                                <a href="#" class="edit-btn"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                <a href="#" class="download-btn"><span>
+							<i class="fa fa-download" aria-hidden="true"></i>
+						</span></a>
+                                <a href="#" class="trash-btn"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+
+                                <button class="btn waves-effect waves-light view-btn" type="submit" name="action">View
+    					
+						</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-    </div>
+            </div>
+            <!-- / tabs_item -->
 
-    <div id="test4" class="col s12 m8">
-        <div id="canvas-holder" style="width:40%">
-            <canvas id="chart-area" />
+            <div class="tabs_item">
+                <div class="ui">
+                    <div class="ui_box">
+                        <div class="ui_box__inner">
+                            <h2>
+                                Achievement
+                            </h2>
+                            <p>Overview of your achievement</p>
+                            <div class="stat">
+                                <span>58%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress_bar"></div>
+                            </div>
+                            <p>Highest achievement</p>
+                        </div>
+                        <div class="drop">
+                            <p>Take a closer look</p>
+                            <div class="arrow"></div>
+                        </div>
+                    </div>
+                    <div class="ui_box">
+                        <div class="ui_box__inner">
+                            <h2>
+                                Quiz by type
+                            </h2>
+                            <p></p>
+
+                            <div class="stat_left">
+                                <ul>
+                                    <li>
+                                        Private
+                                    </li>
+                                    <li>
+                                        Public
+                                    </li>
+
+                                </ul>
+                            </div>
+                            <div class="progress_graph">
+                                <div class="progress_graph__bar--1"></div>
+                                <div class="progress_graph__bar--2"></div>
+                                <div class="progress_graph__bar--3"></div>
+                                <div class="progress_graph__bar--4"></div>
+                            </div>
+                            <p>Lorem ipsum dolor sit amet. Some more super groovy information.</p>
+                        </div>
+                        <div class="drop">
+                            <p>Take a closer look</p>
+                            <div class="arrow"></div>
+                        </div>
+                    </div>
+                    <div class="ui_box">
+                        <div class="ui_box__inner">
+                            <h2>
+                                Quiz Created
+                            </h2>
+                            <p>Lorem ipsum dolor sit amet</p>
+                            <div class="stat">
+                                <span>200</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress_bar--two"></div>
+                            </div>
+                            <p></p>
+                        </div>
+                        <div class="drop">
+                            <p>Take a closer look</p>
+                            <div class="arrow"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- / tabs_item -->
+
         </div>
-       
+        <!-- / tab_content -->
     </div>
-        
-    
-        <!-- / tabs -->
-  </div>
-
-
-        
-          <div class="fixed-action-btn vertical">
-    <a class="btn-floating btn-large red">
-      <i class="large material-icons">mode_edit</i>
-    </a>
-    <ul>
-      <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
-      <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
-      <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
-      <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
-    </ul>
-  </div>
-
-        
+    <!-- / tab -->
 
 
     <script src="lib/jquery/jquery.min.js"></script>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
-    <script type="text/javascript" src = "js/client-quiz.js"></script>
-    <script type="text/javascript" src = "js/Chart.js"></script>
-    
+
 
     <script type="text/javascript">
-    
+        $(document).ready(function() {
+
+            (function($) {
+                $('.tab ul.tabs').addClass('active').find('> li:eq(0)').addClass('current');
+
+                $('.tab ul.tabs li a').click(function(g) {
+                    var tab = $(this).closest('.tab'),
+                        index = $(this).closest('li').index();
+
+                    tab.find('ul.tabs > li').removeClass('current');
+                    $(this).closest('li').addClass('current');
+
+                    tab.find('.tab_content').find('div.tabs_item').not('div.tabs_item:eq(' + index + ')').slideUp();
+                    tab.find('.tab_content').find('div.tabs_item:eq(' + index + ')').slideDown();
+
+                    g.preventDefault();
+                });
+            })(jQuery);
+
+        });
 
 
 
-       
+
+        mdc.ripple.MDCRipple.attachTo(document.querySelector('.mdc-button'));
     </script>
 
-    
+    <script src="js/exportQuiz.js">
+    </script>
 </body>
 
 </html>
