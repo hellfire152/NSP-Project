@@ -19,10 +19,7 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
-      barGraph.visible = false;
-      questionDisplay.visible = true;
       loadQuestion(response.question);
-      swapScene('answering');
       break;
     }
     case C.GAME_RES.RESPONSE_DATA: { //show the responses
@@ -39,9 +36,7 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.ROUND_END: {
-      let p = pixiScenes.ranking;
-      p.allPlayerRanking.data = roundEndData;
-      swapScene('ranking');
+      displayResults(response.roundEndResults);
       break;
     }
     case C.GAME_RES.GAME_END: {
@@ -59,7 +54,7 @@ function loadQuestion(question) {
   let p = pixiScenes.answering;
 
   //display the prompt
-  p.questionDisplay.setPrompt(question.prompt, question.time);
+  p.questionDisplay.text = question.prompt;
   p.questionDisplay.visible = true;
 
   let timerEnd; //callback for when timer ends
@@ -80,6 +75,13 @@ function loadQuestion(question) {
   }
   p.questionDisplay.text = question.prompt;
   setTimeout(timerEnd, question.time * 1000);
+  swapScene('answering');
+}
+
+function displayResults(roundEndData) {
+  swapScene('ranking');
+  let p = pixiScenes.ranking;
+  p.allPlayerRanking.data = roundEndData;
 }
 
 function gameEnd(response) {
