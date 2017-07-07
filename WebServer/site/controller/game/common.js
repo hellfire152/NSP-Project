@@ -28,6 +28,7 @@ app.loader  //load all
   .add('engine-firing', '/resources/graphics/car/engine/firing.json')
   .add('button-background', '/resources/graphics/ui/button-background.png')
   .add('topbar-background', '/resources/graphics/ui/topbar-background.png')
+  .add('answer-streak-icon', '/resources/images/answer-streak-icon.png')
   .load((loader, resources) => {
     allResources = resources;
     //initialize all the various scenes
@@ -65,7 +66,7 @@ app.loader  //load all
     p.topBar = topBar;
     p.answering.mcqButtonHandler = mcqButtonHandler;
     p.answering.shortAnswerTextField = shortAnswerTextField;
-    p.answering.barGraph = answerResponses;
+    p.answering.answerResponses = answerResponses;
     p.answering.questionDisplay = questionDisplay;
     p.answering.addChild(
       topBar.view, questionDisplay.view, answerResponses.view,
@@ -112,6 +113,7 @@ function initEndScene() {
   endText.x = WIDTH / 2;
   endText.y = HEIGHT / 2;
   p.end.addChild(endText);
+  app.stage.addChild(p.end);
 }
 
 function initRatingScene() {
@@ -141,6 +143,7 @@ function initRatingScene() {
 
   //add to Container
   p.rating.addChild(like, dislike);
+  app.stage.addChild(p.rating);
 }
 
 function displayResults(roundEndResults) {

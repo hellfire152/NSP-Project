@@ -22,7 +22,7 @@ class QuestionDisplay extends DisplayElement {
     //initializing timer text element
     this._timer = new PIXI.Text('', this._fontStyle);
     this._timer.anchor.set(1, 0.5);
-    this.timer.x = width - paddingX;  //last element from the right
+    this._timer.x = width - paddingX;  //last element from the right
 
     this._background = new PIXI.Graphics();
     this._background  //draw a white square for a background

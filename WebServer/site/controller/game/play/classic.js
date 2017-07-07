@@ -30,7 +30,7 @@ function handleGame(response) {
       let p = pixiScenes.answering;
       //show responseData on bar graph
       p.barGraph.data = response.responseData;
-      p.barGraph.visible = true;
+      p.answerResponses.visible = true;
       p.questionDisplay.visible = false;
 
       //update topBar
