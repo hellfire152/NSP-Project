@@ -19,10 +19,6 @@ class QuestionDisplay extends DisplayElement {
     //initializing the PIXI text object
     this._text = new PIXI.Text('', this._fontStyle);
     this._text.anchor.set(0.5, 0.5);
-    //initializing timer text element
-    this._timer = new PIXI.Text('', this._fontStyle);
-    this._timer.anchor.set(1, 0.5);
-    this.timer.x = width - paddingX;  //last element from the right
 
     this._background = new PIXI.Graphics();
     this._background  //draw a white square for a background
@@ -70,17 +66,8 @@ class QuestionDisplay extends DisplayElement {
     this._text.y = this._background.height / 2;
   }
 
-  setPrompt(t, timer) {
+  set text(t) {
     this._text.text = t;
-    let time = timer;
-    this._timer.text = timer;
-    let timerFunction = setInterval(() => {
-      if(!(--time < 1)) { //countdown to 1
-        this._timer.text = time;
-      } else {  //timer stops at 1
-        clearInterval(timerFunction);
-      }
-    }, 1000);
     this.resize();
   }
 }

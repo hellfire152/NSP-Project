@@ -27,6 +27,11 @@ app.loader  //load all
   .add('engine-fireup', '/resources/graphics/car/engine/fire.json')
   .add('engine-firing', '/resources/graphics/car/engine/firing.json')
   .add('button-background', '/resources/graphics/ui/button-background.png')
+  .add('topbar-background', '/resources/graphics/ui/topbar-background.png'))
+  .load(loader, resources) {
+
+  }
+
   .add('topbar-background', '/resources/graphics/ui/topbar-background.png')
   .load((loader, resources) => {
     allResources = resources;
