@@ -22,28 +22,34 @@ let aprTestData = [
     'score': 1000,
     'correctAnswers': 3,
     'answerStreak': 2,
-    'roundCorrect': true
+    'roundCorrect': true,
+    'totalQuestions' : 23,
+    'rank' : 1
   },
   {
     'name': 'hellfire152',
     'score': 1000,
     'correctAnswers': 3,
     'answerStreak': 2,
-    'roundCorrect': true
+    'roundCorrect': true,
+    'totalQuestions' : 23,
+        'rank' : 1
   },
   {
     'name': 'hellfire152',
     'score': 1000,
     'correctAnswers': 3,
     'answerStreak': 2,
-    'roundCorrect': true
+    'roundCorrect': true,
+        'rank' : 1
   },
   {
     'name': 'hellfire152',
     'score': 1000,
     'correctAnswers': 3,
     'answerStreak': 2,
-    'roundCorrect': true
+    'roundCorrect': true,
+        'rank' : 1
   }
 ]
 app.loader  //load all
@@ -64,9 +70,10 @@ app.loader  //load all
     let apr = new AllPlayerRanking(resources, aprTestData, {
       'width' : WIDTH,
       'height' : HEIGHT - 100,
+      'minHeight' : 20,
       'paddingX' : 50,
-      'paddingY' : 30
-    },true);
+      'paddingY' : 10
+    }, false);
 
     app.stage.addChild(apr.view);
   });

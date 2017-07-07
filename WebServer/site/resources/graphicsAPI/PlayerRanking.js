@@ -10,9 +10,11 @@ class PlayerRanking extends DisplayElement {
   constructor(resources, data, positionData, min) {
     super();
     //creating a background first
+    let width = positionData.width - positionData.paddingX * 2;
     let background = new PIXI.Graphics()
       .beginFill(0xbcfdff)
-      .drawRect(0, 0, positionData.width, positionData.height)
+      .drawRect(
+        0, 0, width, positionData.height)
       .endFill();
     if(!min) {
       //in case I need to access this later
@@ -25,11 +27,8 @@ class PlayerRanking extends DisplayElement {
       let rank = new PIXI.Text(data.rank);
       let correctAnswers = new PIXI.Text(data.correctAnswers + '/' + data.totalQuestions);
       let answerStreakIcon = new PIXI.Sprite(resources['answer-streak-icon'].texture);
-      let answerStreakText = new PIXI.Text(data.answerStreak)
-      //render answerStreakText in the middle of answerStreakIcon
-      answerStreakIcon.anchor.set(0.5, 0.5);
-      answerStreakText.anchor.set(0.5, 0.5);
-      answerStreakIcon.addChild(answerStreakText);
+      answerStreakIcon.width = answerStreakIcon.height = 40;
+      let answerStreakText = new PIXI.Text(data.answerStreak);
 
       //positioning
       let paddingX = positionData.paddingX,
@@ -37,25 +36,32 @@ class PlayerRanking extends DisplayElement {
       //profilePic is the first from the left...
       //([profilePic.x, profilePix.y] = [paddingX, paddingY]);
       //name is after that, takes the first half of the element
-      name.x = (profilePic)? profilePic.width + paddingX * 3 :
-        (data.width - paddingX * 2) / 3;
+      let profilePic = null; //FOR TESTING ONLY
+      name.x = (profilePic)? profilePic.width + paddingX * 2:
+        50 + paddingX;
       name.y = paddingY;
       //score is the rightmost on the top row
       score.anchor.set(1, 0);
-      score.x = data.width - paddingX;
+      score.x = width - paddingX;
       score.y = paddingY;
       //correct answers positioned on the bottom row, right side
+      let bottomRow = positionData.height - paddingY;
       correctAnswers.anchor.set(1,1);
-      correctAnswers.x = data.width - paddingX;
-      correctAnswers.y = paddingY;
+      correctAnswers.x = width - paddingX;
+      correctAnswers.y = bottomRow;
       //answerStreak on the bottom row, to the left of correctAnswers
       answerStreakIcon.anchor.set(1,1);
-      answerStreakIcon.y = paddingY;
-      answerStreakIcon.x = paddingX * 3 + correctAnswers.width;
+      answerStreakText.anchor.set(1,1);
+      answerStreakIcon.x = answerStreakText.x = paddingX * 2 + correctAnswers.width;
+      answerStreakIcon.y = answerStreakText.y = bottomRow;
+      answerStreakText.x += paddingX;
 
       //add all to container
       this._container.addChild(background,
-        /*profilePic,*/ name, score, correctAnswers, answerStreakIcon);
+        name, score, correctAnswers, answerStreakIcon, answerStreakText);
+      if(profilePic){
+        this._container.addChild(profilePic);
+      }
     } else {
       let rank = new PIXI.Text(`#${data.rank}`);
       let name = new PIXI.Text(data.name);
@@ -64,10 +70,14 @@ class PlayerRanking extends DisplayElement {
       //positioning (rank -> name -> score)
       name.x = rank.width + positionData.paddingX;
       score.x = name.x + name.width + positionData.paddingX;
-      //padding
+      //paddingY
       name.y += positionData.paddingY;
       score.y += positionData.paddingY;
-      ran
+      rank.y += positionData.paddingY;
+      //paddingX
+      name.x += positionData.paddingX;
+      score.x += positionData.paddingX;
+      rank.x += positionData.paddingX;
 
       this._container.addChild(background, rank, name, score);
     }
