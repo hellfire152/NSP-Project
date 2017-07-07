@@ -16,6 +16,36 @@ var app = new PIXI.Application({
 //for swapping between scenes
 var pixiScenes = {};
 var allResources;
+let aprTestData = [
+  {
+    'name': 'hellfire152',
+    'score': 1000,
+    'correctAnswers': 3,
+    'answerStreak': 2,
+    'roundCorrect': true
+  },
+  {
+    'name': 'hellfire152',
+    'score': 1000,
+    'correctAnswers': 3,
+    'answerStreak': 2,
+    'roundCorrect': true
+  },
+  {
+    'name': 'hellfire152',
+    'score': 1000,
+    'correctAnswers': 3,
+    'answerStreak': 2,
+    'roundCorrect': true
+  },
+  {
+    'name': 'hellfire152',
+    'score': 1000,
+    'correctAnswers': 3,
+    'answerStreak': 2,
+    'roundCorrect': true
+  }
+]
 app.loader  //load all
   .add('yellow-button', '/resources/graphics/buttons/yellow-button.json')
   .add('blue-button', '/resources/graphics/buttons/blue-button.json')
@@ -27,22 +57,18 @@ app.loader  //load all
   .add('engine-firing', '/resources/graphics/car/engine/firing.json')
   .add('button-background', '/resources/graphics/ui/button-background.png')
   .add('topbar-background', '/resources/graphics/ui/topbar-background.png')
+  .add('answer-streak-icon', '/resources/images/answer-streak-icon.png')
   .load((loader, resources) => {
     allResources = resources;
 
-    let barGraph = new BarGraph(resources, {
-      'labels' : ['a', 'b', 'c', 'd'],
-      'values' : [3, 5, 6, 7]
-    }, {
-      'width' : WIDTH - 300,
-      'height' : HEIGHT / 2,
-      'paddingX' : 20,
-      'paddingY' : 20
-    });
-    barGraph.x = (WIDTH - barGraph.width) / 2;
-    barGraph.y = HEIGHT / 3;
+    let apr = new AllPlayerRanking(resources, aprTestData, {
+      'width' : WIDTH,
+      'height' : HEIGHT - 100,
+      'paddingX' : 50,
+      'paddingY' : 30
+    },true);
 
-    app.stage.addChild(barGraph.view);
+    app.stage.addChild(apr.view);
   });
 
 window.onload = () => {

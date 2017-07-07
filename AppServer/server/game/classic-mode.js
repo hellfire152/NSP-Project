@@ -3,12 +3,13 @@
 
   Author: Jin Kuan
 */
-var data, C, allRooms, sendToServer, conn;
-var currentRoom, currentPlayer;
+var common = require('./common.js');
+var C, sendToServer, conn;
 module.exports = async function(input) {
-  ({data, C, allRooms, conn, sendToServer} = input);
-  currentRoom = allRooms[data.roomNo];
-  currentPlayer = currentRoom.players[data.id];
+  let {data, allRooms} = input;
+  ({C, conn, sendToServer} = input);
+  let currentRoom = allRooms[data.roomNo];
+  let currentPlayer = currentRoom.players[data.id];
 
   console.log("CLASSIC-MODE HANDLER");
   console.log(currentRoom);
@@ -36,23 +37,34 @@ module.exports = async function(input) {
       }
     }
     case C.GAME.NEXT_ROUND: {
-      if(currentRoom.questionCounter === undefined) {
-        currentRoom.questionCounter++;
-        let questions = currentRoom.quiz.questions;
-        //if there are no questions left
-        if(currentRoom.questionCounter >= questions.length) {
-          //TODO::CAULCULATE TITLES
-          console.log("GAME " +data.roomNo +" END");
-          return sendGameEnd(currentRoom.players, data);
-        } else { //next question available
-          return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);
+      if(currentRoom.summarySent) { //first next press, send summary screen
+        currentRoom.summarySent = false;
+        if(currentRoom.questionCounter !== undefined) {
+          currentRoom.questionCounter++;
+          let questions = currentRoom.quiz.questions;
+          //if there are no questions left
+          if(currentRoom.questionCounter >= questions.length) {
+            //TODO::CAULCULATE TITLES
+            console.log("GAME " +data.roomNo +" END");
+            return sendGameEnd(currentRoom.players, data);
+          } else { //next question available
+            return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);
+          }
+        } else {
+          return {
+            'err' : C.ERR.GAME_HAS_NOT_STARTED,
+            'roomNo' : data.roomNo,
+            'targetId' : data.id,
+            'sendTo' : C.SEND_TO.USER
+          }
         }
-      } else {
+      } else { //next next press, send the next question (start new round)
+        currentRoom.summarySent = true;
         return {
-          'err' : C.ERR.GAME_HAS_NOT_STARTED,
-          'roomNo' : data.roomNo,
-          'targetId' : data.id,
-          'sendTo' : C.SEND_TO.USER
+          'game' : C.GAME_RES.ROUND_END,
+          'roundEndResults' : common.roundEndResults(currentRoom.players, true),
+          'sendTo' : C.SEND_TO.ROOM,
+          'roomNo' : data.roomNo
         }
       }
     }
@@ -166,4 +178,3 @@ function sendGameEnd(players, data) {
 
   return gameEndResults;
 }
-var common = require('./common.js');

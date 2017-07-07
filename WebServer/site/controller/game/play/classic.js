@@ -19,6 +19,8 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
+      barGraph.visible = false;
+      questionDisplay.visible = true;
       loadQuestion(response.question);
       break;
     }
@@ -54,7 +56,7 @@ function loadQuestion(question) {
   let p = pixiScenes.answering;
 
   //display the prompt
-  p.questionDisplay.text = question.prompt;
+  p.questionDisplay.setPrompt(question.prompt, question.time);
   p.questionDisplay.visible = true;
 
   let timerEnd; //callback for when timer ends
