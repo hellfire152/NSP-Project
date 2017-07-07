@@ -25,6 +25,7 @@ class BarGraphBar extends DisplayElement {
       .endFill();
     bar.tint = color //doing it this way in case the color needs to change later
     p.bar = new PIXI.Container();
+    p.bar.width = width;
     p.bar.addChild(bar); //work around to graphics not having the anchor property
 
     //initializing text

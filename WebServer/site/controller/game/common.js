@@ -55,7 +55,7 @@ app.loader  //load all
     mcqButtonHandler.y = shortAnswerTextField.y
       = HEIGHT - mcqButtonHandler.height;
     shortAnswerTextField.height = mcqButtonHandler.height;
-    questionDisplay.y = answerResponses.y = barGraph.y = topBar.height;
+    questionDisplay.y = answerResponses.y = topBar.height;
 
     //set all not visible
     mcqButtonHandler.visible = shortAnswerTextField.visible =
@@ -73,7 +73,9 @@ app.loader  //load all
 
     //set all scenes not visible
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
+    app.stage.addChild(p.getReady, p.answering, p.ranking);
   });
+
 //Helper functions
 function swapScene(scene) {
   if(pixiScenes[scene]) { //scene exists

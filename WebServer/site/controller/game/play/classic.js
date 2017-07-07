@@ -19,6 +19,8 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
+      barGraph.visible = false;
+      questionDisplay.visible = true;
       loadQuestion(response.question);
       swapScene('answering');
       break;

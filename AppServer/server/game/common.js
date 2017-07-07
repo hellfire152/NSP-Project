@@ -124,6 +124,7 @@ function checkCorrectAnswer(question, answer) {
 
 /*
   Returns an object representing the response data of that round
+  Also clears the response data of the current round
 */
 function getResponseData(currentRoom, data) {
   let question = currentRoom.quiz.questions[currentRoom.questionCounter];
@@ -131,10 +132,23 @@ function getResponseData(currentRoom, data) {
   let responseData = {};
   responseData.labels = [];
   responseData.values = [];
-  for(let label in currentRoom.answers) {
-    if(currentRoom.answers.hasOwnProperty(label)) {
+  if(question.type == 0) {  //MCQ type
+    let solution = 8;
+    for(let label of question.choices) {
       responseData.labels.push(label);
-      responseData.values.push(currentRoom.answers[label]);
+      if(currentRoom.answers[solution]) {
+        responseData.values.push(currentRoom.answers[solution]);
+      } else {
+        responseData.values.push(0);
+      }
+      solution /= 2;
+    }
+  } else {  //short answer type
+    for(let label in currentRoom.answers) {
+      if(currentRoom.answers.hasOwnProperty(label)) {
+        responseData.labels.push(label);
+        responseData.values.push(currentRoom.answers[label]);
+      }
     }
   }
   //sending score

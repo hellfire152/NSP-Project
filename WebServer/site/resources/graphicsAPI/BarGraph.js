@@ -6,7 +6,8 @@
   Author: Jin Kuan
 */
 //colors constant for the bar graph bars
-const COLORS = [0x0061ff, 0x6a00ff, 0xff3593, 0xff0000, 0xff6600, 0xfff200, 0x59ff00, 0x00ff90];
+//first four colors are yellow, green, red, blue, following the MCQ buttons
+const COLORS = [0xfffa00, 0x10ff00, 0x0031ad, 0xff0000, 0x07ff97, 0xff9307, 0xb200ff, 0xff60a8];
 class BarGraph extends DisplayElement {
   constructor(resources, data, positionData) {
     super();
