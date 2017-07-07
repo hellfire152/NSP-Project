@@ -247,7 +247,3 @@ Been another 10 days, huh?
 I've been slowly increasing my pace of work. All the graphics classes are done,
 although some are not tested yet. Classic mode's logic is mostly done, only a few
 missing gaps and a whole lot of testing to do.
-
-There's really not much to say though, progress is kinda slow.
-I'm still in the midst of testing all my graphics classes, the rest are doing their
-own thing, so I can't really write much.
