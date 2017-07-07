@@ -37,15 +37,8 @@ app.loader  //load all
     p.ranking = new PIXI.Container();
 
     //setting up the various scenes...
-    //getReady scene
     p.getReady.addChild(new PIXI.Text('Get Ready!'));
-    //ranking scene
-    p.ranking.allPlayerRanking = new AllPlayerRanking(resources, null, {
-      'width' : WIDTH,
-      'height' : HEIGHT - p.topBar.height,
-      'paddingX' : 50,
-      'paddingY' : 30
-    }, true);
+
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
     let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
     let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
@@ -62,7 +55,7 @@ app.loader  //load all
     mcqButtonHandler.y = shortAnswerTextField.y
       = HEIGHT - mcqButtonHandler.height;
     shortAnswerTextField.height = mcqButtonHandler.height;
-    questionDisplay.y = answerResponses.y = topBar.height;
+    questionDisplay.y = answerResponses.y = barGraph.y = topBar.height;
 
     //set all not visible
     mcqButtonHandler.visible = shortAnswerTextField.visible =
@@ -80,8 +73,19 @@ app.loader  //load all
 
     //set all scenes not visible
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
-    app.stage.addChild(p.getReady, p.answering, p.ranking);
-  });
+
+
+//adding the loading bar to the stage
+app.stage.addChild(loading.sprite);
+app.loader.onLoad.add(() => {
+  loading.increment();
+});
+//on load completion
+app.loader.onComplete.add(() => {
+  loading.sprite.visible = false; //hide loading screen
+  loading = null; //leaving it to the garbage collector to deal with
+  app.stage.addChild(new PIXI.Text('Get Ready!')); //show getReady screen, prepare for start signal...
+});
 
 //Helper functions
 function swapScene(scene) {
