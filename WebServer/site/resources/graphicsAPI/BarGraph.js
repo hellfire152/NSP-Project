@@ -40,20 +40,32 @@ class BarGraph extends DisplayElement {
 
   set data(d) {
     for (let i = 0; i < this._container.children.length; i++) {
-      this._container.removeChild(this._container.children[i]); //remove all bars
+      this._container.removeChild(this._container.children[i]); //remove all children
     }
+    this._container.addChild(this._background); //add back the background
     //add one bar for each label and value
     let barWidth = (this._width - this._paddingX * (d.labels.length - 1)) / d.labels.length;
-    for(let i = 0, colorIndex = 0; i < d.labels.length; i++) {
+    //search for the highestValue in the value
+    let highestValue = 0;
+    for(let value of d.values) {
+      if(value > highestValue)
+        highestValue = value;
+    }
+    for(let i = 0, colorIndex = 0; i < d.labels.length; i++, colorIndex++) {
+      console.log(
+        `GENERATING BAR WITH label ${d.labels[i]} and value ${d.values[i]} and color ${COLORS[colorIndex]}`);
       let bar = new BarGraphBar({
         'label' : d.labels[i],
         'value' : d.values[i],
         'color' : COLORS[colorIndex],
         'width' : barWidth,
-        'maxHeight' : this._maxHeight,
+        'maxHeight' : this._maxHeight - this._paddingY * 3 - 15,
+        'maxValue' : highestValue,
         'padding' : this._paddingY
       });
-      bar.x = i * this._paddingX;
+      //shift back all the bars
+      bar.y += this._maxHeight + this._paddingX;
+      bar.x = i * bar.width + this._paddingX;
       this._bars.push(bar);
       //add to container
       this._container.addChild(bar.view);
