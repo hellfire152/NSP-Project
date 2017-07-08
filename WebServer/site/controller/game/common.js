@@ -27,12 +27,8 @@ app.loader  //load all
   .add('engine-fireup', '/resources/graphics/car/engine/fire.json')
   .add('engine-firing', '/resources/graphics/car/engine/firing.json')
   .add('button-background', '/resources/graphics/ui/button-background.png')
-  .add('topbar-background', '/resources/graphics/ui/topbar-background.png'))
-  .load(loader, resources) {
-
-  }
-
   .add('topbar-background', '/resources/graphics/ui/topbar-background.png')
+  .add('answer-streak-icon', '/resources/images/answer-streak-icon.png')
   .load((loader, resources) => {
     allResources = resources;
     //initialize all the various scenes
@@ -40,13 +36,37 @@ app.loader  //load all
     p.answering = new PIXI.Container();
     p.getReady = new PIXI.Container();
     p.ranking = new PIXI.Container();
+    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
 
     //setting up the various scenes...
-    p.getReady.addChild(new PIXI.Text('Get Ready!'));
+    //getReady scene
+    let getReadyBackground = new PIXI.Graphics()
+      .beginFill(0xFFFFFF)
+      .drawRect(0, 0, 300, 200)
+      .endFill();
+    getReadyBackground.x = (WIDTH - getReadyBackground.width) / 2;
+    getReadyBackground.y = (HEIGHT - getReadyBackground.height) / 2;
+    let getReadyText = new PIXI.Text('Get Ready!');
+    getReadyText.anchor.set(0.5, 0.5);
+    ([getReadyText.x, getReadyText.y] = [WIDTH / 2, HEIGHT / 2]);
+    p.getReady.addChild(getReadyBackground, getReadyText);
 
+    //ranking scene
+    p.ranking.allPlayerRanking = new AllPlayerRanking(resources, null, {
+      'width' : WIDTH,
+      'height' : HEIGHT - topBar.height,
+      'paddingX' : 40,
+      'paddingY' : 20,
+      'minHeight' : 50
+    }, false);
+    //positioning
+    p.ranking.allPlayerRanking.y = topBar.height;
+    //adding to scene
+    p.ranking.addChild(p.ranking.allPlayerRanking.view);
+
+    //answering scene
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
     let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
-    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
       HEIGHT - mcqButtonHandler.height - topBar.height);
     let answerResponses = new BarGraph(resources, null, {
@@ -55,22 +75,19 @@ app.loader  //load all
       'paddingX' : 20,
       'paddingY' : 20
     });
-
     //positioning and sizing
     mcqButtonHandler.y = shortAnswerTextField.y
       = HEIGHT - mcqButtonHandler.height;
     shortAnswerTextField.height = mcqButtonHandler.height;
-    questionDisplay.y = answerResponses.y = barGraph.y = topBar.height;
-
+    questionDisplay.y = answerResponses.y = answerResponses.y = topBar.height;
     //set all not visible
     mcqButtonHandler.visible = shortAnswerTextField.visible =
       answerResponses.visible = questionDisplay.visible = false;
-
     //so that the elements are accessible to other functions
     p.topBar = topBar;
     p.answering.mcqButtonHandler = mcqButtonHandler;
     p.answering.shortAnswerTextField = shortAnswerTextField;
-    p.answering.barGraph = answerResponses;
+    p.answering.answerResponses = answerResponses;
     p.answering.questionDisplay = questionDisplay;
     p.answering.addChild(
       topBar.view, questionDisplay.view, answerResponses.view,
@@ -78,20 +95,9 @@ app.loader  //load all
 
     //set all scenes not visible
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
-
-
-//adding the loading bar to the stage
-app.stage.addChild(loading.sprite);
-app.loader.onLoad.add(() => {
-  loading.increment();
-});
-//on load completion
-app.loader.onComplete.add(() => {
-  loading.sprite.visible = false; //hide loading screen
-  loading = null; //leaving it to the garbage collector to deal with
-  app.stage.addChild(new PIXI.Text('Get Ready!')); //show getReady screen, prepare for start signal...
-});
-
+    //add scenes to stage
+    app.stage.addChild(p.getReady, p.answering, p.ranking);
+  });
 //Helper functions
 function swapScene(scene) {
   if(pixiScenes[scene]) { //scene exists
@@ -128,6 +134,7 @@ function initEndScene() {
   endText.x = WIDTH / 2;
   endText.y = HEIGHT / 2;
   p.end.addChild(endText);
+  app.stage.addChild(p.end);
 }
 
 function initRatingScene() {
@@ -157,6 +164,7 @@ function initRatingScene() {
 
   //add to Container
   p.rating.addChild(like, dislike);
+  app.stage.addChild(p.rating);
 }
 
 function displayResults(roundEndResults) {

@@ -21,23 +21,27 @@ class McqButtonHandler extends DisplayElement {
     //use textures to create buttons
     this._buttons = [];
     //buttons
+    let onclick = (args) => {
+      send(args);
+      pixiScenes.answering.mcqButtonHandler.disableAll();
+    };
     this._buttons.push(new Button(resources['yellow-button'].textures,
-      buttonWidth, send, {
+      buttonWidth, onclick, {
         'game': C.GAME.SUBMIT_ANSWER,
         'answer' : 8
       }));
     this._buttons.push(new Button(resources['green-button'].textures,
-      buttonWidth, send, {
+      buttonWidth, onclick, {
         'game': C.GAME.SUBMIT_ANSWER,
         'answer' : 4
       }));
     this._buttons.push(new Button(resources['blue-button'].textures,
-      buttonWidth, send, {
+      buttonWidth, onclick, {
         'game': C.GAME.SUBMIT_ANSWER,
         'answer' : 2
       }));
     this._buttons.push(new Button(resources['red-button'].textures,
-      buttonWidth, send, {
+      buttonWidth, onclick, {
         'game': C.GAME.SUBMIT_ANSWER,
         'answer' : 1
       }));
@@ -137,6 +141,7 @@ class McqButtonHandler extends DisplayElement {
     for(let button of this._buttons) {
       button.interactive = false;
     }
+    this.darkenAllExcept(-1); //darken all
   }
 
   enableAll() {
@@ -145,10 +150,8 @@ class McqButtonHandler extends DisplayElement {
     }
   }
 
-  //darken all excerpt the chosen one
+  //darken all except the chosen one
   darkenAllExcept(index) {
-    this.disableAll();
-
     //filter to darken
     let darkenFilter = new PIXI.filters.ColorMatrixFilter();
     darkenFilter.brightness = 0.3;

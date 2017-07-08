@@ -11,21 +11,25 @@ class TopBar extends DisplayElement {
     //initializing variables
     this._width = width;
     this._height = height;
-    this._background = new PIXI.Sprite(resources['topbar-background'].texture);
-    this._background.width = width;
-    this._background.height = height;
+    this._background = new PIXI.Graphics()
+      .beginFill(0xFFFFFF)
+      .drawRect(0, 0, width, height)
+      .endFill();
 
-    this._name = 0;
     this._pixiElements = {};
 
     //initializing display elements
     let p = this._pixiElements;
     p.name = new PIXI.Text(name);
-    p.name.x = 5;
     p.correctAnswers = new PIXI.Text('');
     p.correctAnswers.anchor.set(1, 0);
     p.score = new PIXI.Text('');
     p.score.anchor.set(1, 0);
+
+    //positioning
+    p.name.x = 5;
+    p.score.x = width - 10;
+    p.correctAnswers.x = width - p.score.width - 20;
 
     this.updateCorrect(0, 0);
     this._container.addChild(this._background);

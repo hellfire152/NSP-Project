@@ -89,9 +89,10 @@ function playersObjectToArray(players) {
   let playersArr = [];
   Object.keys(players).forEach(player => {  //iterate over all players
     let playerData = Object.assign({}, players[player]); //copy player data
-    playerData.player = player; //add the player id inside
+    playerData.name = player; //add the player id inside
     playersArr.push(playerData);
   });
+  return playersArr;
 }
 
 /*
@@ -124,6 +125,7 @@ function checkCorrectAnswer(question, answer) {
 
 /*
   Returns an object representing the response data of that round
+  Also clears the response data of the current round
 */
 function getResponseData(currentRoom, data) {
   let question = currentRoom.quiz.questions[currentRoom.questionCounter];
@@ -131,10 +133,23 @@ function getResponseData(currentRoom, data) {
   let responseData = {};
   responseData.labels = [];
   responseData.values = [];
-  for(let label in currentRoom.answers) {
-    if(currentRoom.answers.hasOwnProperty(label)) {
+  if(question.type == 0) {  //MCQ type
+    let solution = 8;
+    for(let label of question.choices) {
       responseData.labels.push(label);
-      responseData.values.push(currentRoom.answers[label]);
+      if(currentRoom.answers[solution]) {
+        responseData.values.push(currentRoom.answers[solution]);
+      } else {
+        responseData.values.push(0);
+      }
+      solution /= 2;
+    }
+  } else {  //short answer type
+    for(let label in currentRoom.answers) {
+      if(currentRoom.answers.hasOwnProperty(label)) {
+        responseData.labels.push(label);
+        responseData.values.push(currentRoom.answers[label]);
+      }
     }
   }
   //sending score
@@ -147,6 +162,10 @@ function getResponseData(currentRoom, data) {
       }
     }
   }
+
+  //clear response data
+  currentRoom.answers = {};
+
   return {
     'game' : C.GAME_RES.RESPONSE_DATA,
     'question' : question,
@@ -177,7 +196,7 @@ function handleScoring(input) {
 
     let answerTime = Date.now();  //track answering time
     if(currentPlayer.answerTime === undefined)  currentPlayer.answerTime = 0;
-    currentPlayer.answerTime += answerTime;
+    currentPlayer.answerTime += answerTime - currentRoom.timeStart;
 
     //calculate and store score
     currentPlayer.score += calculateScore(
@@ -185,10 +204,14 @@ function handleScoring(input) {
     );
     //increment correctAnswer count
     currentPlayer.correctAnswers++;
+    //set another tracking variable for correct in that round
+    currentPlayer.roundCorrect = true;
   } else {  //wrong answer
     currentPlayer.score -= getPenalty(currentRoom.quiz, question);
-    //reser answer streak
+    //reset answer streak
     currentPlayer.answerStreak = 0;
+    //set another tracking variable for correct in that round
+    currentPlayer.roundCorrect = true;
   }
 }
 

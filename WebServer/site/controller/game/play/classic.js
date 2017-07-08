@@ -19,6 +19,9 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
+      let p = pixiScenes.answering;
+      p.answerResponses.visible = false;
+      p.questionDisplay.visible = true;
       loadQuestion(response.question);
       swapScene('answering');
       break;
@@ -27,8 +30,8 @@ function handleGame(response) {
       console.log("RESPONSE GET");
       let p = pixiScenes.answering;
       //show responseData on bar graph
-      p.barGraph.data = response.responseData;
-      p.barGraph.visible = true;
+      p.answerResponses.data = response.responseData;
+      p.answerResponses.visible = true;
       p.questionDisplay.visible = false;
 
       //update topBar
@@ -38,7 +41,7 @@ function handleGame(response) {
     }
     case C.GAME_RES.ROUND_END: {
       let p = pixiScenes.ranking;
-      p.allPlayerRanking.data = roundEndData;
+      p.allPlayerRanking.data = response.roundEndResults;
       swapScene('ranking');
       break;
     }
@@ -57,7 +60,7 @@ function loadQuestion(question) {
   let p = pixiScenes.answering;
 
   //display the prompt
-  p.questionDisplay.text = question.prompt;
+  p.questionDisplay.setPrompt(question.prompt, question.time);
   p.questionDisplay.visible = true;
 
   let timerEnd; //callback for when timer ends
