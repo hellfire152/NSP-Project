@@ -58,6 +58,42 @@ var app = new PIXI.Application({
 //for swapping between scenes
 var pixiScenes = {};
 var allResources;
+let aprTestData = [
+  {
+    'name': 'hellfire152',
+    'score': 1000,
+    'correctAnswers': 3,
+    'answerStreak': 2,
+    'roundCorrect': true,
+    'totalQuestions' : 23,
+    'rank' : 1
+  },
+  {
+    'name': 'hellfire152',
+    'score': 1000,
+    'correctAnswers': 3,
+    'answerStreak': 2,
+    'roundCorrect': true,
+    'totalQuestions' : 23,
+        'rank' : 1
+  },
+  {
+    'name': 'hellfire152',
+    'score': 1000,
+    'correctAnswers': 3,
+    'answerStreak': 2,
+    'roundCorrect': true,
+        'rank' : 1
+  },
+  {
+    'name': 'hellfire152',
+    'score': 1000,
+    'correctAnswers': 3,
+    'answerStreak': 2,
+    'roundCorrect': true,
+        'rank' : 1
+  }
+]
 app.loader  //load all
   .add('yellow-button', '/resources/graphics/buttons/yellow-button.json')
   .add('blue-button', '/resources/graphics/buttons/blue-button.json')
@@ -87,19 +123,11 @@ app.loader  //load all
       HEIGHT - mcqButtonHandler.height - topBar.height);
     let answerResponses = new BarGraph(resources, null, {
       'width' : WIDTH,
-      'height' : HEIGHT - topBar.height - mcqButtonHandler.height,
-      'paddingX' : 20,
-      'paddingY' : 20
-    });
-    //set all not visible
-    mcqButtonHandler.visible = shortAnswerTextField.visible =
-      answerResponses.visible = questionDisplay.visible = true;
-    p.answering.mcqButtonHandler = mcqButtonHandler;
-    p.answering.shortAnswerTextField = shortAnswerTextField;
-    p.answering.barGraph = answerResponses;
-    p.answering.questionDisplay = questionDisplay;
-    p.answering.addChild(
-      topBar.view, questionDisplay.view, mcqButtonHandler.view);
+      'height' : HEIGHT - 100,
+      'minHeight' : 20,
+      'paddingX' : 50,
+      'paddingY' : 10
+    }, false);
 
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
 

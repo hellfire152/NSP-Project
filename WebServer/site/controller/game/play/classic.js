@@ -20,6 +20,7 @@ function handleGame(response) {
     }
     case C.GAME_RES.NEXT_QUESTION: {
       loadQuestion(response.question);
+      swapScene('answering');
       break;
     }
     case C.GAME_RES.RESPONSE_DATA: { //show the responses
@@ -36,7 +37,9 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.ROUND_END: {
-      displayResults(response.roundEndResults);
+      let p = pixiScenes.ranking;
+      p.allPlayerRanking.data = roundEndData;
+      swapScene('ranking');
       break;
     }
     case C.GAME_RES.GAME_END: {
@@ -75,13 +78,6 @@ function loadQuestion(question) {
   }
   p.questionDisplay.text = question.prompt;
   setTimeout(timerEnd, question.time * 1000);
-  swapScene('answering');
-}
-
-function displayResults(roundEndData) {
-  swapScene('ranking');
-  let p = pixiScenes.ranking;
-  p.allPlayerRanking.data = roundEndData;
 }
 
 function gameEnd(response) {
