@@ -10,7 +10,7 @@ module.exports = async function(input) {
     case C.GAME.START: {
       //prevent others from joining the room
       currentRoom.joinable = false;
-      currentRoom.completedPlayers = 0;
+      currentRoom.completedPlayers = [];
 
       //get the first question
       let question = currentRoom.quiz.questions[0];
@@ -24,41 +24,49 @@ module.exports = async function(input) {
         }
       }
 
-      //send the first question to all players
-      // let question = currentRoom.quiz.questions[0];
-      return {
-        'game': C.GAME_RES.NEXT_QUESTION,
-        'question': common.removeSolution(question),
-        'sendTo': C.SEND_TO.ROOM,
-        'roomNo': data.roomNo
-      }
+      //send first question 5 seconds after get ready
+      setTimeout(() => {
+        let q = sendQuestion(currentRoom, question, data);
+        sendToServer(conn, q);
+      }, 5000);
 
-      //send the game start response to the host
-      sendToServer({
-        'game' : C.GAME_RES.START,
-        'playerList' : common.playersObjectToArray(currentRoom.players)
-      });
+      //send the get ready signal...
+      return {
+        'game' : C.GAME_RES.GET_READY,
+        'roomNo' : data.roomNo,
+        'sendTo' : C.SEND_TO.ROOM,
+        'totalQuestions' : currentRoom.quiz.questions.length
+      }
     }
     case C.GAME.SUBMIT_ANSWER: {
       if(currentPlayer.answerable) {
         let question = currentRoom.quiz.questions[currentPlayer.questionCounter];
 
-        if(common.checkCorrectAnswer(question, data.answer)) {
+        let check = common.handleScoring({
+          'data' : data,
+          'currentRoom' : currentRoom,
+          'currentPlayer' : currentPlayer
+        });
+
+        if(check.correct) {
           currentPlayer.answerable = true;  //just in case
           currentPlayer.questionCounter++;
 
           //finished the last question
           if(currentPlayer.questionCounter >= currentRoom.quiz.questions.length) {
-            currentRoom.completedPlayers++;
+            currentPlayer.answerable = false; //do not process answer submits anymore
+            currentRoom.completedPlayers.push(data.id);
             if(currentRoom.completedPlayers >= currentRoom.playerCount) {
               return {  //if all players completed
                 'game': C.GAME_RES.GAME_END,
+                'completedPlayers' : currentRoom.completedPlayers,
                 'sendTo': C.SEND_TO.ROOM,
                 'roomNo': data.roomNo
               }
             } else {  //send player finish event
               sendToServer({
                 'game': C.GAME_RES.PLAYER_FINISH,
+                'completedPlayers' : currentRoom.completedPlayers,
                 'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
                 'sourceId': data.id,
                 'roomNo': data.roomNo,
@@ -66,8 +74,15 @@ module.exports = async function(input) {
               });
             }
 
-            return {//send finish message to player
+            return {  //send finish message to player
               'game': C.GAME_RES.ROUND_END,
+              'scoreData' : {
+                'score' : currentPlayer.score,
+                'time' : currentPlayer.answerTime
+              },
+              'completedPlayers' : currentRoom.completedPlayers,
+              'remainingPlayers' : Object.keys(currentRoom.players).length
+                - currentRoom.completedPlayers.length,
               'sendTo': C.SEND_TO.USER,
               'targetId': data.id
             }
@@ -78,12 +93,14 @@ module.exports = async function(input) {
               'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
               'roomNo': data.roomNo,
               'id': data.id,
+              'questionNo' : currentPlayer.questionCounter + 1,
               'sourceId': data.id,
               'roomNo': data.roomNo
             });
 
             return {  //send next question to player
               'game': C.GAME_RES.NEXT_QUESTION,
+              'score' : check.score,
               'sendTo': C.SEND_TO.USER,
               'targetId': data.id,
               'question': common.removeSolution(
@@ -102,7 +119,6 @@ module.exports = async function(input) {
           }
         }
       } else {  //cannot answer
-
         return {
           'err': C.ERR.CANNOT_ANSWER,
           'sendTo': C.SEND_TO.USER,

@@ -178,13 +178,18 @@ function getResponseData(currentRoom, data) {
 }
 /*
   Handles checking the answer, and calculating the score appropriately
+
+  Returns an object, with properties:
+    correct : boolean,
+    score : int
 */
 function handleScoring(input) {
   let {data, currentRoom, currentPlayer} = input;
   let question = currentRoom.quiz.questions[currentRoom.questionCounter];
 
   //calculating score
-  if(checkCorrectAnswer(question, data.answer)) {
+  let correct = checkCorrectAnswer(question, data.answer);
+  if(correct) {
     //getting question reward value
     let reward = getReward(currentRoom.quiz, question);
 
@@ -212,6 +217,10 @@ function handleScoring(input) {
     currentPlayer.answerStreak = 0;
     //set another tracking variable for correct in that round
     currentPlayer.roundCorrect = true;
+  }
+  return {
+    'correct' : correct,
+    'score' : currentPlayer.score
   }
 }
 

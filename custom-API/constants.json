@@ -10,7 +10,13 @@
     "PUBLIC" : 0,
     "PRIVATE" : 1
   },
-
+  "AUTH" : {
+    "REQUEST_PUBLIC_KEY" : 0,
+    "PUBLIC_KEY" : 1,
+    "CHALLENGE_STRING" : 2,
+    "ENCRYPTED_CHALLENGE" : 3,
+    "AUTHENTICATED" : 4
+  },
 
   "SPECIAL" : {
     "SOCKET_DISCONNECT" : 500,

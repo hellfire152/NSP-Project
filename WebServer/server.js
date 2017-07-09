@@ -30,6 +30,7 @@ var app = express();
 var https = require('https');
 var fs = require('fs');
 var net = require('net');
+var crypto = require('crypto');
 var cookieParser = require('cookie-parser');
 var cipher = require('../custom-API/cipher.js')();
 var key = fs.readFileSync('./cert/server.key');
@@ -46,7 +47,21 @@ var io = require('socket.io').listen(server);
 
 //connection with app server
 var appConn = net.connect(9090);
+//handling app responses
+var pendingAppResponses = {};
+appConn.send = (reqObj, callback) => {
+  let reqNo = uuid();
+  reqObj.reqNo = reqNo;
 
+  pendingAppResponses[reqNo] = {};
+  if(callback !== null)
+    pendingAppResponses[reqNo].callback = callback;
+
+  console.log("TO APPSERVER:");
+  console.log(reqObj);
+  appConn.write(JSON.stringify(reqObj));
+  return reqNo; //just in case
+};
 // // shared session handler
 // var SessionHandler = require('../custom-API/session-handler.js');
 // var sessionHandler = new SessionHandler();
@@ -63,7 +78,7 @@ require("./server-setup.js")({
   "cookieParser": cookieParser,
   "cipher": cipher,
   "COOKIE_KEY": COOKIE_KEY,
-  // "sessionHandler" : sessionHandler
+  "pendingAppResponses" : pendingAppResponses
 });
 
 //start listening

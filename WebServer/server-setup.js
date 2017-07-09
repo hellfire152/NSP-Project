@@ -26,6 +26,7 @@ module.exports = function(data) {
   var express = data.express
   var net = data.net;
   var cookieParser = data.cookieParser;
+  var pendingAppResponses = data.pendingAppResponses;
   const COOKIE_KEY = data.COOKIE_KEY;
 
   //express-session stuff
@@ -41,22 +42,6 @@ module.exports = function(data) {
 
   //enables my use of socket.handshake.session
   io.use(ios(session));
-
-  //handling app responses
-  pendingAppResponses = {};
-  appConn.send = (reqObj, callback) => {
-    let reqNo = uuid();
-    reqObj.reqNo = reqNo;
-
-    pendingAppResponses[reqNo] = {};
-    if(callback !== null)
-      pendingAppResponses[reqNo].callback = callback;
-
-    console.log("TO APPSERVER:");
-    console.log(reqObj);
-    appConn.write(JSON.stringify(reqObj));
-    return reqNo; //just in case
-  };
 
   //template engine used
   app.set('view engine', 'pug');

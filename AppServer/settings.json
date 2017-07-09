@@ -1,0 +1,16 @@
+{
+  "password" : "password",
+  "WebServer" : {
+    "ip" : "localhost",
+    "port" : 8080
+  },
+  "Database" : {
+    "ip" : "localhost",
+    "port" : 7070
+  },
+  "keys" : {
+    "public" : "./keys/Database-public.key",
+    "private" : "./keys/Database-private.key"
+  },
+  "constants" : "../custom-API/constants.json"
+}

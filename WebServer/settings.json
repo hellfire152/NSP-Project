@@ -1,0 +1,12 @@
+{
+  "password" : "password",
+  "AppServer" : {
+    "ip" : "localhost",
+    "port" : 9090
+  },
+  "keys" : {
+    "public" : "./keys/WebServer-public.key",
+    "private" : "./keys/WebServer-private.key"
+  },
+  "constants" : "../custom-API/constants.json"
+}

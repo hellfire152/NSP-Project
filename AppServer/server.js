@@ -15,109 +15,112 @@ process.on('uncaughtException', function (err) {
   console.log(err);
 });
 
-const C = require('../custom-API/constants.json');
-var sampleData = require('../DatabaseServer/dataSample.js'); //Sample data for database testing.
 
-//Check for password's existence
-var pass = process.argv[2];
-if(pass === undefined) {
-throw new Error("Usage: ./run-server.bat <password>");
+//Check for setting obejct's existence
+var settings = process.argv[2];
+if(settings === undefined) {
+throw new Error("Usage: ./run-server.bat <path to settings>");
 process.exit(1);
 }
 
+//initialize settings object
+const S = require(process.argv[2]);
+const C = require(S.constants);
+var sampleData = require('../DatabaseServer/dataSample.js'); //Sample data for database testing.
 var net = require('net');
 var uuid = require('uuid');
 
 var allRooms = {};
 var pendingDatabaseResponses = {};
 
-//setting up of the logic server
-var connection;
+var rsaVerified = true; //TRUE FOR TESTING ONLY
 var server = net.createServer(function (conn) {
-console.log("Logic: Server Start");
-connection = conn;
-// If connection is closed
-conn.on("end", function() {
+  conn.status = C.AUTH.PUBLIC_KEY;
+  console.log("Logic: Server Start");
+  // If connection is closed
+  conn.on("end", function() {
     console.log('Server: Logic disconnected');
-    // Close the server
-    server.close();
-    // End the process
-    process.exit(0);
-});
+  });
 
-// Handle data from client
-conn.on("data", async function(input) {
-  try {
-    let data = JSON.parse(input);
-    let reqNo = data.reqNo;
-    delete data.reqNo;  //hide reqNo from logs
-    console.log("FROM WEBSERVER"); //Log all data received from the WebServer
-    console.log(data);
-    //if there's an Error
-    if (data.err) {
-      console.log("ERROR RECEIVED, CODE: " + data.err);
-      switch(data.err) {
-        //handle errors
+  // Handle data from client
+  conn.on("data", async function(input) {
+    if(!rsaVerified) {
+      switch(conn.status) {
+        conn.write(C.AUTH.REQUEST_PUBLIC_KEY); //REQUEST RSA PUBLIC KEY
       }
     } else {
-      if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
-        throw new Error("WebServer unauthenticated, missing password");
-      }
-
-      let response = {};
-      if(conn.auth) { //if already authenticaed
-        if(data.type !== undefined) { //data type defined
-          response = await handleReq({
-            'data' : data,
-            'C' : C,
-            'allRooms' : allRooms
-          });
-        } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
-          response = await handleIo({
-            'data' : data,
-            'C' : C,
-            'allRooms' : allRooms,
-            'sendToServer': sendToServer,
-            'conn': connection
-          });
-        } else if (!(data.game === undefined)){  //game stuff
-          response = await handleGame({
-            'data' : data,
-            'C' : C,
-            'allRooms' : allRooms,
-            'conn': connection,
-            'sendToServer': sendToServer
-          });
+      try {
+        let data = JSON.parse(input);
+        let reqNo = data.reqNo;
+        delete data.reqNo;  //hide reqNo from logs
+        console.log("FROM WEBSERVER"); //Log all data received from the WebServer
+        console.log(data);
+        //if there's an Error
+        if (data.err) {
+          console.log("ERROR RECEIVED, CODE: " + data.err);
+          switch(data.err) {
+            //handle errors
+          }
         } else {
-          response = await handleSpecial({  //special
-            'data' : data,
-            'C' : C,
-            'allRooms' : allRooms
-          });
-        }
-        //logging and response
-        console.log("AppServer Response: ");
-        console.log(response);
-        response.reqNo = reqNo;
-        //FOR TESTING DATABASE ONLY
-        if(data.type === C.REQ_TYPE.DATABASE){
-          dbConn.send(response, response.reqNo);
-        } else{
-          sendToServer(conn, response);
-        }
+          if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
+            throw new Error("WebServer unauthenticated, missing password");
+          }
 
-      } else if(data.password === pass) { //valid password
-        console.log("WebServer Validated");
-        conn.auth = true;
-      } else { //data sent without authorization
-        conn.destroy(); //destroy connection
+          let response = {};
+          if(conn.auth) { //if already authenticaed
+            if(data.type !== undefined) { //data type defined
+              response = await handleReq({
+                'data' : data,
+                'C' : C,
+                'allRooms' : allRooms
+              });
+            } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
+              response = await handleIo({
+                'data' : data,
+                'C' : C,
+                'allRooms' : allRooms,
+                'sendToServer': sendToServer,
+                'conn': conn
+              });
+            } else if (!(data.game === undefined)){  //game stuff
+              response = await handleGame({
+                'data' : data,
+                'C' : C,
+                'allRooms' : allRooms,
+                'conn': conn,
+                'sendToServer': sendToServer
+              });
+            } else {
+              response = await handleSpecial({  //special
+                'data' : data,
+                'C' : C,
+                'allRooms' : allRooms
+              });
+            }
+            //logging and response
+            console.log("AppServer Response: ");
+            console.log(response);
+            response.reqNo = reqNo;
+            //FOR TESTING DATABASE ONLY
+            if(data.type === C.REQ_TYPE.DATABASE){
+              dbConn.send(response, response.reqNo);
+            } else{
+              sendToServer(conn, response);
+            }
+
+          } else if(data.password === pass) { //valid password
+            console.log("WebServer Validated");
+            conn.auth = true;
+          } else { //data sent without authorization
+            conn.destroy(); //destroy connection
+          }
+        }
+      } catch (err) {
+        console.log(err);
+        console.log('WebServer to AppServer input Error!');
       }
     }
-  } catch (err) {
-    console.log(err);
-    console.log('WebServer to AppServer input Error!');
-  }
-});
+  });
 });
 
 console.log("Listening on port 9090...");
@@ -154,15 +157,6 @@ will be easy to add in
 */
 async function sendToServer(conn, json) {
   conn.write(JSON.stringify(json));
-}
-
-/*
-  sets the database response,
-*/
-function setDatabaseResponse(callback) {
-  let reqNo = uuid();
-  pendingDatabaseResponses[reqNo] = callback;
-  return reqNo;
 }
 
 var handleIo = require('./server/app-handle-io.js');
