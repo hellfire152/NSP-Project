@@ -1,16 +1,18 @@
 {
-  "password" : "password",
-  "WebServer" : {
-    "ip" : "localhost",
-    "port" : 8080
+  "WEBSERVER" : {
+    "PASSWORD" : "password",
+    "IP" : "localhost",
+    "PORT" : 8080,
+    "KEY_LIFE" : 3600000
   },
-  "Database" : {
-    "ip" : "localhost",
-    "port" : 7070
+  "DATABASE" : {
+    "IP" : "localhost",
+    "PORT" : 7070
   },
-  "keys" : {
-    "public" : "./keys/Database-public.key",
-    "private" : "./keys/Database-private.key"
+  "KEYS" : {
+    "PUBLIC" : "./keys/AppServer-public.key",
+    "PRIVATE" : "./keys/AppServer-private.key"
   },
-  "constants" : "../custom-API/constants.json"
+  "CONSTANTS" : "../custom-API/constants.json",
+  "CIPHER" : "../custom-API/cipher.js"
 }

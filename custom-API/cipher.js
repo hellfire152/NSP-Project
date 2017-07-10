@@ -1,11 +1,13 @@
 /**
   Cipher module for the project
   Usage: require(<path to this module>)({
-    password: <password> (default: aVaTyAzkOqweA)
+    password: <password>
     algorithm: <any algorithm> (default: aes256)
-    iv: <iv (if applicable)> (default: 5dZoC41JFwmLQMYo)
+    iv: <iv (if applicable)>
   })
   All of the above options are optional
+  var c = new Cipher(options);
+  c.encrypt('ABC').then((cipher) => {<whatever you want>})
 
   All methods return a Promise Object, so, to use it, write
   var encrypted = cipher.encrypt('test');
@@ -18,56 +20,155 @@
   IV will be constantly change to the first 16 character of the previous
   cipher text block.
 
-  Author: Jin Kuan
-  Secondary Author: Nigel
+  Primary Author: Nigel
+  Secondary Author: Jin Kuan (rewrote to javascript class)
 */
+//built-in API used
 var crypto = require('crypto');
 
-//DEFAULT VALUES
-var algorithm = "aes256";
-var password = "aVaTyAzkOqweA";
-var iv = "5dZoC41JFwmLQMYo";
-var plainTextBlockSize = 16; //plain text block size (16-31) can change if needed.
-var cipherTextBlockSize = 64;
+class Cipher {
+  constructor(options) {
+    //extracting data from options
+    if(!options.iv) throw new Error('IV not defined!');
+    this._password = (options.password)? options.password : '';
+    this._algorithm = (options.algorithm)? options.algorithm : 'aes256';
+    this._iv = (options.iv)? options.iv : '';
 
-//Encrypt data using IV and AES via CBC algorithm
-async function encrypt(plain){
-  var subIv = _newIv(iv);
-  var encodedPlain = _encode(plain);
-  var cipherText = "";
-  for(let encodedBlock of encodedPlain){
-    var encodedBlockWithIv = _xor(encodedBlock, subIv);
-    var decodedBlockWithIv = _decode(encodedBlockWithIv);
-    var cipherBlock = _encryptBlock(decodedBlockWithIv);
-    subIv = _newIv(cipherBlock);
-    cipherText += cipherBlock;
+    //fixed block sizes
+    this._plainTextBlockSize = 16;  //(16 to 31), can change if needed
+    this._cipherTextBlockSize = 64;
   }
 
-  //console.log("[Encryption complete]");
-  return cipherText;
-}
+  //encrypt data using IV and AES-CBC
+  async encrypt(plain) {
+    var subIv = _newIv(this._iv);
+    var encodedPlain = _encode(plain, this._plainTextBlockSize);
+    var cipherText = "";
+    for(let encodedBlock of encodedPlain){
+      var encodedBlockWithIv = _xor(encodedBlock, subIv);
+      var decodedBlockWithIv = _decode(encodedBlockWithIv);
+      var cipherBlock = _encryptBlock(decodedBlockWithIv, this._algorithm, this._password);
+      subIv = _newIv(cipherBlock);
+      cipherText += cipherBlock;
+    }
 
-//Decrypt data using IV and AES via CBC algorithm
-async function decrypt(cipher){
-  var plainText = "";
-  var cipherTextBlock = _splitCipherBlock(cipher);
-  var subIv = _newIv(iv);
-  for(let cipherBlock of cipherTextBlock){
-    var cipherBlockWithIv = _decryptBlock(cipherBlock);
-    var encodedBlockWithIv = _encode(cipherBlockWithIv);
-    var encodedBlock = _xor(encodedBlockWithIv[0], subIv);
-    var plainTextBlock = _decode(encodedBlock);
-    subIv = _newIv(cipherBlock);
-    plainText += plainTextBlock;
+    //console.log("[Encryption complete]");
+    return cipherText;
   }
-  console.log("[Decryption complete]");
-  return plainText;
+
+  //Decrypt data using IV and AES via CBC algorithm
+  async decrypt(cipher){
+    var plainText = "";
+    var cipherTextBlock = _splitCipherBlock(cipher);
+    var subIv = _newIv(this._iv);
+    for(let cipherBlock of cipherTextBlock){
+      var cipherBlockWithIv = _decryptBlock(cipherBlock, this._algorithm, this._password);
+      var encodedBlockWithIv = _encode(cipherBlockWithIv, this._plainTextBlockSize);
+      var encodedBlock = _xor(encodedBlockWithIv[0], subIv);
+      var plainTextBlock = _decode(encodedBlock);
+      subIv = _newIv(cipherBlock);
+      plainText += plainTextBlock;
+    }
+    return plainText;
+  }
+
+  /*
+    Takes in a JSON for the argument, automatically stringifies and encrypts it
+
+    This will most likely be the more used function.
+  */
+  async encryptJSON(plain) {
+    try {
+      return await this.encrypt(JSON.stringify(plain));
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  /*
+    Takes in ciphertext for the argument, automatically turns it into the decrypted JSON
+
+    This will most likely be the more used function.
+  */
+  async decryptJSON(cipher) {
+    try {
+      return JSON.parse(await this.decrypt(cipher));
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  //Encrypt all data in the object
+  async encryptDbData(plain) {
+    for (var key in plain) {
+      if (plain.hasOwnProperty(key)) {
+        if(await _allow (key)){
+          plain[key] = await this.encrypt(plain[key]);
+        }
+      }
+    }
+    return plain;
+  }
+
+  //Decrypt all data in the object
+  async decryptDbData(cipherText) {
+    var plainText = [];
+    for(let cipher of cipherText){
+      for (let key in cipher) {
+        if (cipher.hasOwnProperty(key)) {
+          if(await _allow (key)){
+            if(cipher[key] !== null){
+              cipher[key] = await this.decrypt(cipher[key]);
+            }
+          }
+        }
+        var cipherArr = cipher;
+      }
+      plainText.push(cipherArr);
+    }
+    return plainText;
+  }
+
+  //Hash value with SHA256
+  hash(input) {
+    var hash =  crypto.createHash('SHA256').update(input).digest('base64');
+    return hash;
+  }
+  //Generate new salt value for newly created account
+  generateSalt(){
+    var saltValue = crypto.randomBytes(32).toString('base64');
+    return saltValue;
+  }
+
+  rsaEncrypt(key) {
+    var buffer = new Buffer(toEncrypt);
+    var encrypted = crypto.publicEncrypt(key, buffer);
+    return encrypted.toString("base64");
+  }
+
+  rsaDecrypt(key) {
+    var buffer = new Buffer(toDecrypt, "base64");
+    var decrypted = crypto.privateDecrypt(key, buffer);
+    return decrypted.toString("utf8");
+  }
+
+  set password(p) {
+    this._password = p;
+  }
+
+  set iv(p) {
+    this._iv = p;
+  }
+
+  set algorithm(a) {
+    this._algorithm = a;
+  }
 }
 
 /*
   Encrypts the data. Simple enough
 */
-function _encryptBlock(plain) {
+function _encryptBlock(plain, algorithm, password) {
   var cipher = crypto.createCipher(algorithm,password);
   var encrypted = cipher.update(plain,'utf8','hex')
   encrypted += cipher.final('hex');
@@ -77,73 +178,16 @@ function _encryptBlock(plain) {
 /*
   Decrypts the data. Who would've thought
 */
-function _decryptBlock(cipher) {
+function _decryptBlock(cipher, algorithm, password) {
   var decipher = crypto.createDecipher(algorithm,password);
   var dec = decipher.update(cipher, 'hex', 'utf8');
   dec += decipher.final('utf8');
   return dec;
 }
 
-/*
-  Takes in a JSON for the argument, automatically stringifies and encrypts it
-
-  This will most likely be the more used function.
-*/
-async function encryptJSON(plain) {
-  try {
-    return await encrypt(JSON.stringify(plain));
-  } catch (err) {
-    throw new Error(err);
-  }
-}
-
-/*
-  Takes in ciphertext for the argument, automatically turns it into the decrypted JSON
-
-  This will most likely be the more used function.
-*/
-async function decryptJSON(cipher) {
-  try {
-    return JSON.parse(await decrypt(cipher));
-  } catch (err) {
-    throw new Error(err);
-  }
-}
-
-//Encrypt all data in the object
-async function encryptDbData(plain) {
-  for (var key in plain) {
-    if (plain.hasOwnProperty(key)) {
-      if(await allow (key)){
-        plain[key] = await encrypt(plain[key]);
-      }
-    }
-  }
-  return plain;
-}
-
-//Decrypt all data in the object
-async function decryptDbData(cipherText) {
-  var plainText = [];
-  for(let cipher of cipherText){
-    for (let key in cipher) {
-      if (cipher.hasOwnProperty(key)) {
-        if(await allow (key)){
-          if(cipher[key] !== null){
-            cipher[key] = await decrypt(cipher[key]);
-          }
-        }
-      }
-      var cipherArr = cipher;
-    }
-    plainText.push(cipherArr);
-  }
-  return plainText;
-}
-
 //By using Convert every single character to ascii character code to obtain numeric value
 //Converts every single character their respective character code
-function _encode(plainText){
+function _encode(plainText, plainTextBlockSize){
   var encodedValue = [];
   var i = 0;
   loop1:
@@ -207,95 +251,11 @@ function _splitCipherBlock(cipher){
   return block;
 }
 
-//Hash value with SHA256
-async function hash(input) {
-  var hash =  crypto.createHash('SHA256').update(input).digest('base64');
-  return hash;
-}
-//Generate new salt value for newly created account
-async function generateSalt(){
-  var saltValue = crypto.randomBytes(32).toString('base64');
-  return saltValue;
-}
-
 //Data with the column name stated below will be encrypted
-async function allow(key){
- switch(key){
-   case "prompt" : {
-     return true;
-     break;
-   }
-   case "solution" : {
-     return true;
-     break;
-   }
-   case "choices" : {
-     return true;
-     break;
-   }
-   case "password_hash" : {
-     return true;
-     break;
-   }
-   case "dbPass" : {
-     return true;
-     break;
-   }
-   case "salt" : {
-     return true;
-     break;
-   }
-   case "school" : {
-     return true;
-     break;
-   }
-   case "organisation" : {
-     return true;
-     break;
-   }
-   case "email" : {
-     return true;
-     break;
-   }
-   case "about_me" : {
-     return true;
-     break;
-   }
-   case "student_category" : {
-     return true;
-     break;
-   }
-  //Remove encryption of username to provide search user functionaliy
-  //  case "username" : {
-  //    return true;
-  //    break;
-  //  }
-   case "name" : {
-     return true;
-     break;
-   }
-   default : {
-     return false;
-     break;
-   }
- }
+var allowedValues = ["prompt", "solution", "choices", "password_hash", "dbPass",
+  "salt", "school", "organisation", "email", "about_me", "student_category"];
+function _allow(key){
+  return (allowedValues.indexOf(key) >= 0)? true : false;
 }
 
-module.exports = function(options) {
-  if(!(options === undefined)) {  //setting options (if used)
-    if (!(options.password === undefined)) password = options.password;
-    if (!(options.iv === undefined)) iv = options.iv;
-  }
-
-  return {
-    "encrypt": encrypt,
-    "decrypt": decrypt,
-    "encryptJSON": encryptJSON,
-    "decryptJSON": decryptJSON,
-    "encryptDbData" : encryptDbData,
-    "decryptDbData" : decryptDbData,
-    "hash": hash,
-    "iv": iv,
-    "generateSalt" : generateSalt
-  }
-}
+module.exports = Cipher;

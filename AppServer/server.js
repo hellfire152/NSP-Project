@@ -25,17 +25,25 @@ process.exit(1);
 
 //initialize settings object
 const S = require(process.argv[2]);
-const C = require(S.constants);
+const C = require(S.CONSTANTS);
 var sampleData = require('../DatabaseServer/dataSample.js'); //Sample data for database testing.
 var net = require('net');
 var uuid = require('uuid');
+var cipher = require(S.CIPHER)();
+var fs = require('fs');
 
 var allRooms = {};
 var pendingDatabaseResponses = {};
 
-var rsaVerified = true; //TRUE FOR TESTING ONLY
-var server = net.createServer(function (conn) {
-  conn.status = C.AUTH.PUBLIC_KEY;
+//getting the RSA keys
+const KEYS = {
+  'PUBLIC' : fs.readFileSync(S.KEYS.PUBLIC, "utf8"),
+  'PRIVATE' : fs.readFileSync(S.KEYS.PRIVATE, "utf8")
+};
+
+var server = net.createServer(function (conn) { //WebServer will connect to this server
+  conn.rsaVerified = false;
+  conn.status = C.AUTH.REQUEST_PUBLIC_KEY;
   console.log("Logic: Server Start");
   // If connection is closed
   conn.on("end", function() {
@@ -44,10 +52,52 @@ var server = net.createServer(function (conn) {
 
   // Handle data from client
   conn.on("data", async function(input) {
-    if(!rsaVerified) {
+    if(conn.status != C.AUTH.AUTHENTICATED) { //not authenticated yet
       switch(conn.status) {
-        conn.write(C.AUTH.REQUEST_PUBLIC_KEY); //REQUEST RSA PUBLIC KEY
-      }
+        case C.AUTH.REQUEST_CONNECTION : { //input is public key
+          try {
+            //send a json, with this server's public key and the challenge
+            conn.publicKey = input;
+            conn.cipher = require(S.CIPHER)({
+              'password' : S.WEBSERVER.PASSWORD
+            });
+            conn.challengeString = uuid();
+            conn.write(rsaEncrypt(JSON.stringify({
+              'publicKey' : KEYS.PUBLIC,
+              'challengeString' : conn.challengeString
+            }), conn.publicKey));
+            conn.status = C.AUTH.ENCRYPTED_CHALLENGE;
+          } catch (e){
+            console.log(e);
+            conn.destroy();
+          }
+          break;
+        }
+        case C.AUTH.ENCRYPTED_CHALLENGE : {
+          try {
+            if(conn.challengeString ==
+              conn.cipher.decrypt(rsaDecrypt(input, KEYS.PRIVATE))) {
+              //generate session key from password
+              conn.password = generateSessionKey(password);
+              conn.cipher = require(cipher)({
+                'password' : conn.password
+              });
+              setTimeout(() => { //regenerate session key from
+                conn.password = generateSessionKey(conn.password);
+                conn.cipher = require(cipher)({
+                  'password' : conn.password
+                });
+              }, S.WEBSERVER.KEY_LIFE);
+
+              conn.status = C.AUTH.AUTHENTICATED;
+              conn.write(rsaEncrypt(C.AUTH.AUTHENTICATED, KEYS.PUBLIC));
+            }
+            break;
+          } catch (e) {
+            console.log(e);
+            conn.destroy();
+          }
+        }
     } else {
       try {
         let data = JSON.parse(input);
@@ -163,3 +213,13 @@ var handleIo = require('./server/app-handle-io.js');
 var handleReq = require('./server/app-handle-req.js');
 var handleGame = require('./server/app-handle-game.js')
 var handleSpecial = require('./server/app-handle-special.js');
+
+
+function encode(obj, cipher) {
+  try {
+    cipher.encrypt(JSON.stringify(obj));
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}

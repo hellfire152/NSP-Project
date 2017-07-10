@@ -11,11 +11,10 @@
     "PRIVATE" : 1
   },
   "AUTH" : {
-    "REQUEST_PUBLIC_KEY" : 0,
-    "PUBLIC_KEY" : 1,
-    "CHALLENGE_STRING" : 2,
-    "ENCRYPTED_CHALLENGE" : 3,
-    "AUTHENTICATED" : 4
+    "REQUEST_CONNECTION" : 0,
+    "CHALLENGE_STRING" : 1,
+    "ENCRYPTED_CHALLENGE" : 2,
+    "AUTHENTICATED" : 3
   },
 
   "SPECIAL" : {
