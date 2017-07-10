@@ -12,18 +12,15 @@ module.exports = function(cipher, appConn, C) {
     // req.checkBody('password','Invalid password').isLength({min:8});
     // console.log("hi");
     var username = req.body.username;
-    var email = req.body.email;
     var password = req.body.password;
 
         req.sanitize('username').escape();
-        req.sanitize('email').escape();
         req.sanitize('password').escape();
         req.sanitize('username').trim();
-        req.sanitize('email').trim();
         req.sanitize('password').trim();
 
     console.log(username);
-    if (username!="" && email!="" && password!=""){
+    if (username!=""  && password!=""){
       var schema = new passwordValidator();
       schema
       .is().min(8)
@@ -73,33 +70,41 @@ module.exports = function(cipher, appConn, C) {
           console.log("pass");
           console.log("HOST FORM DATA: ");
           console.log(req.body);
-          cipher.encryptJSON({
-            "username": req.body.username,
-            "email":req.body.email,
-            "password": req.body.password
-          })
-            .catch(function (err) {
-              throw new Error('Error parsing JSON!');
-            })
-            .then(function(cookieData) {
-            res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
+          // cipher.encryptJSON({
+          //   "username": req.body.username,
+          //   "password": req.body.password
+          // })
+          //   .catch(function (err) {
+          //     throw new Error('Error parsing JSON!');
+          //   })
+            // .then(function(cookieData) {
+            // res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
             // res.redirect('/login?room=' +req.body.usename);
             console.log(`C CONSTANT OBJECT: ${C}`);
             appConn.send({
-              'type':C.REQ_TYPE.ACCOUNT_LOGIN,
-              'username' :username,
-              'email':email,
-              'password':password
+              // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+              'type':C.REQ_TYPE.DATABASE,
+
+              'data': inputData={
+                      data : {
+                        type : C.DB.SELECT.USER_ACCOUNT,
+                        account : {
+                          username : req.body.username,
+                          password : req.body.password
+                        }
+                      }
+              }
+              // 'username' :username,
+              // 'password':password
 
             }, (response) => {
               console.log("HELLO");
               res.render('login',{
                 'username':response.username,
-                'email':response.email,
                 'password':response.password
               });
             });
-          });
+          // });
         }
         else{
 
@@ -132,9 +137,7 @@ module.exports = function(cipher, appConn, C) {
         if(password==""){
           console.log("Please enter your password");
         }
-        if(email==""){
-          console.log("Please enter your email");
-        }
+
         console.log("never fill in all");
 
         res.redirect('/login');
