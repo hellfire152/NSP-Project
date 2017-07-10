@@ -118,9 +118,7 @@ module.exports =function(cipher, appConn, C){
         return;
 
     }
-console.log("hi");
 
-console.log("HELLO BACK NING")
 
 
   }
