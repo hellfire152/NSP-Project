@@ -46,6 +46,7 @@ var server = net.createServer(function(conn){
     console.log("Request recieved from appserver");
     try{
       var inputData = (JSON.parse(input));
+      console.log(inputData.data);
       console.log("DB TYPE: " + inputData.data.type);
       switch(inputData.data.type) {
         case C.DB.CREATE.STUDENT_ACC :
@@ -278,6 +279,7 @@ var server = net.createServer(function(conn){
             }
             sendToServer(response, inputData);
           }
+          console.log(query);
           if(result.length > 0){
               dataAccount.userId = result[0].user_id;
               dataAccount.salt = result[0].salt;

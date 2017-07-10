@@ -15,6 +15,10 @@ html
         $(function(){
         $("#register-teacher").validate({
         rules:{
+        name:{
+        required:true,
+        minlength:5
+        },
         username:{
         required:true,
         minlength:5
@@ -65,6 +69,8 @@ html
 body(onmousemove='canceltimer();', onclick='canceltimer();')
 
     form#register-teacher(action='/reg-room-teach', method='post', onsubmit='/validate-register-teacher')
+      input#name(type='text', name='name', placeholder='name', autocomplete="off")
+      br
       input#username(type='text', name='username', placeholder='username', autocomplete="off")
       br
       input#Email.text(type='email',  name='email', placeholder='Email', autocomplete="off")

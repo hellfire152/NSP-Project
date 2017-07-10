@@ -2,6 +2,8 @@ html
   head
     title Login
     script.
+      var data = !{JSON.stringify(data)}
+      console.log(data)
       var tim = 0;
       function reload () {
       tim = setTimeout("location.reload(true);",60000);   // 1 minute

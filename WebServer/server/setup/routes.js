@@ -120,19 +120,24 @@ module.exports = function(data) {
     }
   });
 
-  app.get('/login', function(req, res){
-    res.render('login',{title: 'Login',success:req.session.success, errors:req.session.errors});
-    req.session.errors=null;
-  });
-  app.get('/registerstud', function(req, res){
-    console.log("HEREHE");
-    res.render('register-student',{title: 'Register(Student)',success:req.session.success, errors:req.session.errors});
-    req.session.errors=null;
-  });
-  app.get('/registerteach', function(req, res){
-    res.render('register-teacher',{title: 'Register(Teacher)',success:req.session.success, errors:req.session.errors});
-    req.session.errors=null;
-  });
+  // app.get('/login', function(req, res){
+  //   console.log("RESPONSE");
+  //   console.log(res);
+  //   res.render('login',{
+  //     title : 'Login',
+  //     data : res
+  //   });
+  //   req.session.errors=null;
+  // });
+  // app.get('/registerstud', function(req, res){
+  //   console.log("HEREHE");
+  //   res.render('register-student',{title: 'Register(Student)',success:req.session.success, errors:req.session.errors});
+  //   req.session.errors=null;
+  // });
+  // app.get('/registerteach', function(req, res){
+  //   res.render('register-teacher',{title: 'Register(Teacher)',success:req.session.success, errors:req.session.errors});
+  //   req.session.errors=null;
+  // });
   //handling all other
   /*TESTING*/
   app.get('/test', function(req, res) {

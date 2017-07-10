@@ -84,15 +84,12 @@ module.exports = function(cipher, appConn, C) {
             appConn.send({
               // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'type':C.REQ_TYPE.DATABASE,
-
-              'data': inputData={
-                      data : {
-                        type : C.DB.SELECT.USER_ACCOUNT,
-                        account : {
-                          username : req.body.username,
-                          password : req.body.password
-                        }
-                      }
+              'data': {
+                type : C.DB.SELECT.USER_ACCOUNT,
+                account : {
+                  username : req.body.username,
+                  password : req.body.password
+                }
               }
               // 'username' :username,
               // 'password':password
@@ -100,8 +97,7 @@ module.exports = function(cipher, appConn, C) {
             }, (response) => {
               console.log("HELLO");
               res.render('login',{
-                'username':response.username,
-                'password':response.password
+                data: response.data
               });
             });
           // });
