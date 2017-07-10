@@ -29,7 +29,6 @@ var crypto = require('crypto');
 class Cipher {
   constructor(options) {
     //extracting data from options
-    if(!options.iv) throw new Error('IV not defined!');
     this._password = (options.password)? options.password : '';
     this._algorithm = (options.algorithm)? options.algorithm : 'aes256';
     this._iv = (options.iv)? options.iv : '';
@@ -41,6 +40,7 @@ class Cipher {
 
   //encrypt data using IV and AES-CBC
   async encrypt(plain) {
+    if(this._iv === undefined) throw new Error("No IV defined!");
     var subIv = _newIv(this._iv);
     var encodedPlain = _encode(plain, this._plainTextBlockSize);
     var cipherText = "";
@@ -58,6 +58,7 @@ class Cipher {
 
   //Decrypt data using IV and AES via CBC algorithm
   async decrypt(cipher){
+    if(this._iv === undefined) throw new Error("No IV defined!");
     var plainText = "";
     var cipherTextBlock = _splitCipherBlock(cipher);
     var subIv = _newIv(this._iv);
@@ -140,13 +141,13 @@ class Cipher {
     return saltValue;
   }
 
-  rsaEncrypt(key) {
+  rsaEncrypt(toEncrypt, key) {
     var buffer = new Buffer(toEncrypt);
     var encrypted = crypto.publicEncrypt(key, buffer);
     return encrypted.toString("base64");
   }
 
-  rsaDecrypt(key) {
+  rsaDecrypt(toDecrypt, key) {
     var buffer = new Buffer(toDecrypt, "base64");
     var decrypted = crypto.privateDecrypt(key, buffer);
     return decrypted.toString("utf8");

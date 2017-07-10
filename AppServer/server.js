@@ -24,12 +24,13 @@ process.exit(1);
 }
 
 //initialize settings object
-const S = require(process.argv[2]);
+const S = require(settings);
 const C = require(S.CONSTANTS);
 var sampleData = require('../DatabaseServer/dataSample.js'); //Sample data for database testing.
 var net = require('net');
 var uuid = require('uuid');
-var cipher = require(S.CIPHER)();
+var Cipher = require(S.CIPHER);
+var crypto = require('crypto');
 var fs = require('fs');
 
 var allRooms = {};
@@ -42,8 +43,11 @@ const KEYS = {
 };
 
 var server = net.createServer(function (conn) { //WebServer will connect to this server
-  conn.rsaVerified = false;
-  conn.status = C.AUTH.REQUEST_PUBLIC_KEY;
+  conn.status = C.AUTH.REQUEST_CONNECTION;
+  conn.cipher = new Cipher({
+    'password' : S.WEBSERVER.PASSWORD,
+    'iv' : S.WEBSERVER.INITIAL_IV
+  });
   console.log("Logic: Server Start");
   // If connection is closed
   conn.on("end", function() {
@@ -52,20 +56,40 @@ var server = net.createServer(function (conn) { //WebServer will connect to this
 
   // Handle data from client
   conn.on("data", async function(input) {
+    let data, encryption;
+    if(conn.status != C.AUTH.AUTHENTICATED) {
+      if(conn.status == C.AUTH.REQUEST_CONNECTION) {
+        console.log("CONNECTION REQUESTED");
+        data = JSON.parse(input);
+      } else {
+        console.log(conn.status);
+        data = JSON.parse(conn.cipher.rsaDecrypt(input, KEYS.PRIVATE));
+      }
+    } else data = JSON.parse(await conn.cipher.decrypt(input));
+
+    let reqNo = data.reqNo;
+    delete data.reqNo;  //hide reqNo from logs
+    console.log("FROM WEBSERVER"); //Log all data received from the WebServer
+    console.log(data);
+    let response = {};
+
     if(conn.status != C.AUTH.AUTHENTICATED) { //not authenticated yet
+      encryption = 'rsa';
+      /**AUTHENTICATION PROCESS**/
       switch(conn.status) {
         case C.AUTH.REQUEST_CONNECTION : { //input is public key
           try {
             //send a json, with this server's public key and the challenge
-            conn.publicKey = input;
-            conn.cipher = require(S.CIPHER)({
-              'password' : S.WEBSERVER.PASSWORD
+            conn.publicKey = data.publicKey;
+            conn.cipher = new Cipher({
+              'password' : S.WEBSERVER.PASSWORD,
+              'iv' : S.WEBSERVER.INITIAL_IV
             });
             conn.challengeString = uuid();
-            conn.write(rsaEncrypt(JSON.stringify({
-              'publicKey' : KEYS.PUBLIC,
-              'challengeString' : conn.challengeString
-            }), conn.publicKey));
+            encryption = 'none';
+            response = {
+              'publicKey' : KEYS.PUBLIC
+            };
             conn.status = C.AUTH.ENCRYPTED_CHALLENGE;
           } catch (e){
             console.log(e);
@@ -73,24 +97,30 @@ var server = net.createServer(function (conn) { //WebServer will connect to this
           }
           break;
         }
-        case C.AUTH.ENCRYPTED_CHALLENGE : {
+        case C.AUTH.ENCRYPTED_CHALLENGE : { //sending the challenge string
           try {
+            console.log("ENCRYPTED_CHALLENGE DATA:");
+            console.log(data);
             if(conn.challengeString ==
-              conn.cipher.decrypt(rsaDecrypt(input, KEYS.PRIVATE))) {
-              //generate session key from password
-              conn.password = generateSessionKey(password);
-              conn.cipher = require(cipher)({
-                'password' : conn.password
-              });
-              setTimeout(() => { //regenerate session key from
-                conn.password = generateSessionKey(conn.password);
-                conn.cipher = require(cipher)({
-                  'password' : conn.password
-                });
-              }, S.WEBSERVER.KEY_LIFE);
+              await conn.cipher.decrypt(rsaDecrypt(data.encryptedChallenge, KEYS.PRIVATE))) {
+              //no need for the challenge string anymore...
+              delete conn.challengeString;
 
-              conn.status = C.AUTH.AUTHENTICATED;
-              conn.write(rsaEncrypt(C.AUTH.AUTHENTICATED, KEYS.PUBLIC));
+              //generate key using diffie-hellman
+              conn.dh = crypto.createDiffieHellman(S.DH_KEY_LENGTH);
+              conn.dhKey = dh.generateKeys();
+
+              response = {
+                'initialIv' : S.WEBSERVER.INITIAL_IV,
+                'prime' : dh.getPrime(),
+                'generator' : dh.getGenerator(),
+                'key' : conn.dhKey
+              };
+
+              conn.status = C.AUTH.KEY_NEGOTIATION;
+            } else {
+              console.log("AppServer: WebServer password invalid!");
+              conn.destroy();
             }
             break;
           } catch (e) {
@@ -98,78 +128,72 @@ var server = net.createServer(function (conn) { //WebServer will connect to this
             conn.destroy();
           }
         }
+        case C.AUTH.KEY_NEGOTIATION : { //input is the diffie-hellman public key
+          try {
+            let key = data.dhPublic;
+            conn.secret = conn.dh.computeSecret(key).toString('base64');
+
+            conn.cipher.password = conn.secret;
+            response = {
+              'auth' : true
+            };
+
+            conn.status = C.AUTH.AUTHENTICATED;
+          } catch (e) {
+            console.log(e);
+          }
+          break;
+        }
+      }
     } else {
       try {
-        let data = JSON.parse(input);
-        let reqNo = data.reqNo;
-        delete data.reqNo;  //hide reqNo from logs
-        console.log("FROM WEBSERVER"); //Log all data received from the WebServer
-        console.log(data);
         //if there's an Error
         if (data.err) {
           console.log("ERROR RECEIVED, CODE: " + data.err);
           switch(data.err) {
             //handle errors
           }
+        }
+        if(data.type !== undefined) { //data type defined
+          response = await handleReq({
+              'data' : data,
+              'C' : C,
+              'allRooms' : allRooms
+            });
+        } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
+          response = await handleIo({
+            'data' : data,
+            'C' : C,
+            'allRooms' : allRooms,
+            'sendToServer': sendToServer,
+            'conn': conn
+          });
+        } else if (!(data.game === undefined)){  //game stuff
+          response = await handleGame({
+            'data' : data,
+            'C' : C,
+            'allRooms' : allRooms,
+            'conn': conn,
+            'sendToServer': sendToServer
+          });
         } else {
-          if(conn.auth === undefined && data.password === undefined) { //not authenticated, no password
-            throw new Error("WebServer unauthenticated, missing password");
-          }
-
-          let response = {};
-          if(conn.auth) { //if already authenticaed
-            if(data.type !== undefined) { //data type defined
-              response = await handleReq({
-                'data' : data,
-                'C' : C,
-                'allRooms' : allRooms
-              });
-            } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
-              response = await handleIo({
-                'data' : data,
-                'C' : C,
-                'allRooms' : allRooms,
-                'sendToServer': sendToServer,
-                'conn': conn
-              });
-            } else if (!(data.game === undefined)){  //game stuff
-              response = await handleGame({
-                'data' : data,
-                'C' : C,
-                'allRooms' : allRooms,
-                'conn': conn,
-                'sendToServer': sendToServer
-              });
-            } else {
-              response = await handleSpecial({  //special
-                'data' : data,
-                'C' : C,
-                'allRooms' : allRooms
-              });
-            }
-            //logging and response
-            console.log("AppServer Response: ");
-            console.log(response);
-            response.reqNo = reqNo;
-            //FOR TESTING DATABASE ONLY
-            if(data.type === C.REQ_TYPE.DATABASE){
-              dbConn.send(response, response.reqNo);
-            } else{
-              sendToServer(conn, response);
-            }
-
-          } else if(data.password === pass) { //valid password
-            console.log("WebServer Validated");
-            conn.auth = true;
-          } else { //data sent without authorization
-            conn.destroy(); //destroy connection
-          }
+          response = await handleSpecial({  //special
+            'data' : data,
+            'C' : C,
+            'allRooms' : allRooms
+          });
         }
       } catch (err) {
         console.log(err);
         console.log('WebServer to AppServer input Error!');
       }
     }
+
+    //logging and response
+    console.log("AppServer Response: ");
+    console.log(response);
+    response.reqNo = reqNo;
+    sendToServer(conn, response, encryption);
   });
 });
 
@@ -201,25 +225,23 @@ dbConn.on('data', function(inputData) {
 // sendToServer(dbConn, sampleData.updateAccount());
 
 /*
-Function that encodes the data in a proper format and sends it to the WebServer
-This is a convenience function, so that future implementations of encryption/whatever
-will be easy to add in
+  Function that encodes the data in a proper format and sends it to the WebServer
+  This is a convenience function, so that future implementations of encryption/whatever
+  will be easy to add in
 */
-async function sendToServer(conn, json) {
-  conn.write(JSON.stringify(json));
+function sendToServer(conn, json, rsa) {
+  if(rsa) {
+    console.log(`WRITING ${json}`);
+    conn.write(conn.cipher.rsaEncrypt(JSON.stringify(json), conn.publicKey));
+  } else {
+    conn.cipher.encrypt(JSON.stringify(json))
+      .then((data) => {
+        conn.write(data);
+      });
+  }
 }
 
 var handleIo = require('./server/app-handle-io.js');
 var handleReq = require('./server/app-handle-req.js');
 var handleGame = require('./server/app-handle-game.js')
 var handleSpecial = require('./server/app-handle-special.js');
-
-
-function encode(obj, cipher) {
-  try {
-    cipher.encrypt(JSON.stringify(obj));
-  } catch (e) {
-    console.log(e);
-    return null;
-  }
-}

@@ -1,6 +1,7 @@
 {
   "WEBSERVER" : {
     "PASSWORD" : "password",
+    "INITIAL_IV" : "iv",
     "IP" : "localhost",
     "PORT" : 8080,
     "KEY_LIFE" : 3600000
@@ -14,5 +15,6 @@
     "PRIVATE" : "./keys/AppServer-private.key"
   },
   "CONSTANTS" : "../custom-API/constants.json",
-  "CIPHER" : "../custom-API/cipher.js"
+  "CIPHER" : "../custom-API/cipher.js",
+  "DH_KEY_LENGTH" : 4096
 }

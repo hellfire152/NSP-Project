@@ -17,8 +17,12 @@
      console.log(err);
  });
 
-//getting the password
-var pass = process.argv[2];
+ //Check for setting obejct's existence
+ var settings = process.argv[2];
+ if(settings === undefined) {
+   throw new Error("Usage: ./run-server.bat <path to settings>");
+   process.exit(1);
+ }
 
 //Shared SessionHandler
 // var SessionHandler = require('../custom-API/session-handler.js');
@@ -32,55 +36,112 @@ var fs = require('fs');
 var net = require('net');
 var crypto = require('crypto');
 var cookieParser = require('cookie-parser');
-var cipher = require('../custom-API/cipher.js')();
 var key = fs.readFileSync('./cert/server.key');
 var cert = fs.readFileSync('./cert/server.crt');
-//https nonsense, have yet to set it up properly
-var https_options = {
-    key: key,
-    cert: cert
+var uuid = require('uuid');
+
+const S = require(settings);
+const C = require(S.CONSTANTS);
+
+var Cipher = require(S.CIPHER);
+
+//getting the RSA keys
+const KEYS = {
+  'PUBLIC' : fs.readFileSync(S.KEYS.PUBLIC, "utf8"),
+  'PRIVATE' : fs.readFileSync(S.KEYS.PRIVATE, "utf8")
 };
 
-//setting up the server + socket.io listening
-var server = https.createServer(https_options, app);
-var io = require('socket.io').listen(server);
 
 //connection with app server
 var appConn = net.connect(9090);
+
+//cipher class for the connection
+appConn.cipher = new Cipher({
+  'password' : S.APPSERVER.PASSWORD
+});
+
 //handling app responses
 var pendingAppResponses = {};
-appConn.send = (reqObj, callback) => {
+appConn.send = (reqObj, callback, encryption) => {
+  //generating a unique id to identify the request
   let reqNo = uuid();
   reqObj.reqNo = reqNo;
 
+  //storing the callback for later calling
   pendingAppResponses[reqNo] = {};
   if(callback !== null)
     pendingAppResponses[reqNo].callback = callback;
 
+  //sending the request object
   console.log("TO APPSERVER:");
   console.log(reqObj);
-  appConn.write(JSON.stringify(reqObj));
+  if(encryption == "rsa") appConn.write(
+    appConn.rsaEncrypt(JSON.stringify(reqObj), appConn.publicKey) //rsa encryption
+  );
+  else if(encryption == "none") appConn.write(JSON.stringify(reqObj));  //no encryption
+  else {  //encrypt using shared key
+    appConn.write(appConn.cipher.encrypt(JSON.stringify(reqObj)));
+  }
   return reqNo; //just in case
 };
-// // shared session handler
-// var SessionHandler = require('../custom-API/session-handler.js');
-// var sessionHandler = new SessionHandler();
 
-//key for cookie
-const COOKIE_KEY = "cookieSECREEET";
-require("./server-setup.js")({
-  "app": app,
-  "io": io,
-  "pass": pass,
-  "appConn": appConn,
-  "express": express,
-  "net": net,
-  "cookieParser": cookieParser,
-  "cipher": cipher,
-  "COOKIE_KEY": COOKIE_KEY,
-  "pendingAppResponses" : pendingAppResponses
-});
+/****AUTHENTICATION******/
+appConn.send({'publicKey' : KEYS.PUBLIC}, (response) => {
+  //receiving challenge string
+  let input = JSON.parse(appConn.cipher.rsaDecrypt(response, KEYS.PRIVATE));
+  console.log("RECEIVED CHALLENGE STRING");
+  appConn.send({
+    'encryptedChallenge' : appConn.cipher.encrypt(input.challengeString)
+  }, (response) => {
+    let input = JSON.parse(appConn.cipher.rsaDecrypt(response, KEYS.PRIVATE));
+    //generate key using diffie-hellman
+    appConn.dh = crypto.createDiffieHellman(input.prime, input.generator);
+    appConn.dhKey = dh.generateKeys();
+    appConn.secret = appConn.dh.computeSecret(input.key).toString('base64');
 
-//start listening
-server.listen(8080);
-console.log("Listening on port 8080...");
+    //setting cipher object
+    appConn.cipher.password = appConn.secret;
+    appConn.cipher.iv = input.initialIv;
+
+    //send key to AppServer
+    appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
+      let input = JSON.parse(appConn.cipher.rsaDecrypt(response, KEYS.PRIVATE));
+      if(input.auth) {
+        initServer();
+      }
+    }, 'rsa');
+  }, 'rsa');
+}, 'none');
+
+function initServer() {
+  var key = fs.readFileSync('./cert/server.key');
+  var cert = fs.readFileSync('./cert/server.crt');
+
+  //https nonsense
+  var https_options = {
+    key: key,
+    cert: cert
+  };
+
+  //setting up the server + socket.io listening
+  var server = https.createServer(https_options, app);
+  var io = require('socket.io').listen(server);
+
+  require("./server-setup.js")({
+    "C" : C,
+    "app": app,
+    "io": io,
+    "pass": pass,
+    "appConn": appConn,
+    "express": express,
+    "net": net,
+    "cookieParser": cookieParser,
+    "cipher": cipher,
+    "COOKIE_KEY": S.COOKIE_KEY,
+    "pendingAppResponses" : pendingAppResponses
+  });
+
+  //start listening
+  server.listen(8080);
+  console.log("Listening on port 8080...");
+}

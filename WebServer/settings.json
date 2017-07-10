@@ -1,12 +1,14 @@
 {
-  "password" : "password",
-  "AppServer" : {
-    "ip" : "localhost",
-    "port" : 9090
+  "APPSERVER" : {
+    "PASSWORD" : "password",
+    "IP" : "localhost",
+    "PORT" : 9090
   },
-  "keys" : {
-    "public" : "./keys/WebServer-public.key",
-    "private" : "./keys/WebServer-private.key"
+  "KEYS" : {
+    "PUBLIC" : "./keys/WebServer-public.key",
+    "PRIVATE" : "./keys/WebServer-private.key"
   },
-  "constants" : "../custom-API/constants.json"
+  "CONSTANTS" : "../custom-API/constants.json",
+  "CIPHER" : "../custom-API/cipher.js",
+  "COOKIE_KEY" : "cookieKey"
 }

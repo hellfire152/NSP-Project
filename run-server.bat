@@ -2,24 +2,15 @@
 rem Run this to start the WebServer and AppServer together.
 rem Author: Jin Kuan
 
-set pass=%1
-
-if %1.==. goto error
-goto start
-
-:error
-echo "Usage: ./run-server.bat <password>"
-goto end
-
 :start
 cd ./DatabaseServer
-start node ./database.js %pass%
+start node ./database.js ./settings.json
 timeout 1
 cd ../AppServer
-start node ./server.js %pass%
+start node ./server.js ./settings.json
 timeout 1
 cd ../WebServer
-start node ./server.js %pass%
+start node ./server.js ./settings.json
 
 echo Servers started!
 
