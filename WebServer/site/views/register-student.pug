@@ -15,6 +15,10 @@ html
       $(function(){
       $("#register-student").validate({
       rules:{
+      name:{
+      required:true,
+      minlength:5
+      },
       username:{
       required:true,
       minlength:5
@@ -42,6 +46,10 @@ html
       }
       },
       messages:{
+      name:{
+      required: "Please enter name",
+      minlength:"Your name must consist atleast 5 characters"
+      },
       username:{
       required: "Please enter username",
       minlength:"Your username must consist atleast 5 characters"
@@ -72,6 +80,9 @@ html
       });
   body(onmousemove='canceltimer();', onclick='canceltimer();')
     form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
+      input#name(type='text', name='name', placeholder='name', autocomplete="off")
+      br
+      p
       input#username(type='text', name='username', placeholder='username', autocomplete="off")
       br
       p

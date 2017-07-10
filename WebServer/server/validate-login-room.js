@@ -95,10 +95,20 @@ module.exports = function(cipher, appConn, C) {
               // 'password':password
 
             }, (response) => {
-              console.log("HELLO");
-              res.render('login',{
-                data: response.data
-              });
+              console.log(response.data);
+              console.log("Validating");
+              console.log(response.data.success);
+              if(response.data.success==true){
+                res.render('login',{
+                  data: response.data
+                });
+              }
+              else{
+
+                console.log("FAIL");
+
+                res.redirect('/login-fail');
+              }
             });
           // });
         }

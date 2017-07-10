@@ -342,7 +342,8 @@ var server = net.createServer(function(conn){
                           handleDb.handleDecryption(result)
                           .then(resultOut => {
                             objOutResult = {
-                              data : resultOut
+                              data : resultOut,
+                              success : true
                             }
                             sendToServer(objOutResult, inputData);
                           })
