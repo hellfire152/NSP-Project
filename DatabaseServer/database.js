@@ -261,12 +261,13 @@ var server = net.createServer(function(conn){
   //Else no personal data will be sent
   async function retrieveAccount(inputData){
     var data = inputData.data;
+    data.account.email = data.account.username; // seperate email and username to provide encryption for email
     await handleDb.handleEncryption(data.account)
     .then(dataAccount => {
       console.log(dataAccount);
       var query = connection.query(
         "SELECT user_id, password_hash, salt FROM user_account\
-        WHERE email = " + connection.escape(dataAccount.username) +
+        WHERE email = " + connection.escape(dataAccount.email) +
         " OR username = " + connection.escape(dataAccount.username),
         function(err, result){
           if(err){
@@ -298,6 +299,7 @@ var server = net.createServer(function(conn){
                     WHERE student_details.user_id = " + connection.escape(dataOut.userId),
                   function(err, result){
                     if(err){
+                      console.log(result);
                       console.error('[Error in query]: ' + err);
                       var response = {
                         data : {
