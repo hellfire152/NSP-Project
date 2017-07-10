@@ -100,14 +100,14 @@ module.exports = function(cipher, appConn, C) {
               console.log(response.data.success);
               if(response.data.success==true){
                 res.render('login',{
-                  data: response.data
+                  data: response.data.data
                 });
               }
               else{
 
                 console.log("FAIL");
 
-                res.redirect('/login-fail');
+                res.redirect('/login');
               }
             });
           // });
