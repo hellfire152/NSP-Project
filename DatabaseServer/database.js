@@ -311,7 +311,8 @@ var server = net.createServer(function(conn){
                       handleDb.handleDecryption(result)
                       .then(resultOut => {
                         objOutResult = {
-                          data : resultOut
+                          data : resultOut,
+                          success : true
                         }
                         sendToServer(objOutResult, inputData);
                       })
@@ -1012,7 +1013,8 @@ var server = net.createServer(function(conn){
             handleDb.handleRecieveQuestion(outPlainResult)
             .then(outResult => {
               objOutResult = {
-                data : outResult
+                data : outResult,
+                success : true
               }
               sendToServer(objOutResult, inputData);
             })
