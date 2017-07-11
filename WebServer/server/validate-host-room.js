@@ -5,9 +5,8 @@
 */
 
 const uuid = require('uuid');
-module.exports = function(cipher, appConn) {
+module.exports = function(cookieCipher, appConn) {
   return function(req, res) {
-    console.log(cipher);
     req.checkBody('id', 'Username must be specified').notEmpty();
     req.checkBody('pass', 'Password must be specified').notEmpty();
     req.checkBody('quizId', 'Room ID must be specified').notEmpty();
@@ -26,7 +25,7 @@ module.exports = function(cipher, appConn) {
     } else {
       console.log("HOST FORM DATA: ");
       console.log(req.body);
-      cipher.encryptJSON({
+      cookieCipher.encryptJSON({
         "id": req.body.id,
         "pass": req.body.pass
       })

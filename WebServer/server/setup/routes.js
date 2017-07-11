@@ -20,6 +20,7 @@ module.exports = function(data) {
     queryOfUser = data.queryOfUser;
     uuid = data.uuid;
     errors=data.error;
+    cookieCipher = data.cookieCipher;
   uuid = data.uuid;
 
   //middleware
@@ -152,7 +153,7 @@ module.exports = function(data) {
   //handling form submits
   app.post('/data-access', require('../validate-data-access.js')(cipher, appConn, C));
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
-  app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
+  app.post('/host-room', require('../validate-host-room.js')(cookieCipher, appConn));
   app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
   app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C));
   app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C, errors));

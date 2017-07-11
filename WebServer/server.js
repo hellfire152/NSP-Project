@@ -168,7 +168,10 @@ if(!S.AUTH_BYPASS) {
         });
     }, 'rsa');
   }, 'none');
-} else initServer();
+} else {
+  console.log("AUTHENTICATION BYPASSED");
+  initServer();
+}
 
 function initServer() {
   console.log("INIT SERVER");
@@ -187,6 +190,7 @@ function initServer() {
 
   require("./server-setup.js")({
     "C" : C,
+    "S" : S,
     "app": app,
     "io": io,
     "appConn": appConn,
@@ -194,7 +198,6 @@ function initServer() {
     "net": net,
     "cookieParser": cookieParser,
     "Cipher": Cipher,
-    "COOKIE_KEY": S.COOKIE_KEY,
     "pendingAppResponses" : pendingAppResponses
   });
 

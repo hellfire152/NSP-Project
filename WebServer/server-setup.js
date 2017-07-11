@@ -26,12 +26,18 @@ module.exports = function(data) {
   var net = data.net;
   var cookieParser = data.cookieParser;
   var pendingAppResponses = data.pendingAppResponses;
-  const COOKIE_KEY = data.COOKIE_KEY;
+  const S = data.S;
+
+  //cipher for cookies
+  var cookieCipher = new Cipher({
+    'password' : S.COOKIE_KEY,
+    'iv' : S.COOKIE_KEY
+  });
 
   //express-session stuff
   var Session = require('express-session');
   var session = Session({
-        secret: COOKIE_KEY,
+        secret: S.COOKIE_KEY,
         resave: true,
         saveUninitialized: true,
         cookie : {
@@ -49,7 +55,7 @@ module.exports = function(data) {
 
   //Various middleware
   app.use(session);
-  app.use(cookieParser(COOKIE_KEY));
+  app.use(cookieParser(S.COOKIE_KEY));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(expressValidator());
@@ -64,7 +70,8 @@ module.exports = function(data) {
     'Cipher' : Cipher,
     'appConn' : appConn,
     'uuid' : uuid,
-    'pendingAppResponses' : pendingAppResponses
+    'pendingAppResponses' : pendingAppResponses,
+    'cookieCipher' : cookieCipher
   });
 
   //setting up the communication between the WebServer and AppServer

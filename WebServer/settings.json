@@ -11,5 +11,6 @@
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
   "COOKIE_KEY" : "cookieKey",
-  "AUTH_BYPASS" : false
+  "COOKIE_IV" : "cookieIv",
+  "AUTH_BYPASS" : true
 }
