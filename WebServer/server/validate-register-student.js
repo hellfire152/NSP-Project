@@ -54,21 +54,22 @@ module.exports =function(cipher, appConn,C, errors){
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                        type: 'OAuth2',
+                  type: 'OAuth2',
                         user: 'chloeangsl@gmail.com',
-                        clientId: '979107964638-c61trpd4k417h4i9mpakt28j27d5iva3.apps.googleusercontent.com',
-                        clientSecret: 'HVTYi42D2IaOaspKWRmDnind',
-                        refreshToken: '1/aCSuxuv5ZEkKnA_OoSX7S5zjYD2f5ceIw0FbQqtkYTkiTh5mXhLu2xFYdh3hx8zv',
-                        accessToken: 'ya29.GluEBJ4Wqm0aEvoffEuDwKTEdijfkdr9K9KhYJbqBwZBzWnfEV3LKmbx0w_kQzauSIIMRXAHYq28X3sed6gJf4sId-d5PoeP28GvNJ20Qnr0rC5i6kzwxLPd_BQn'
-                    }
-            })
+                        clientId: '709561982297-6rtm33rmm3r9gfht1ik8bpgj5j8fglbs.apps.googleusercontent.com',
+                        clientSecret: 'ov-S6-aeVkziK7zRbZOfDVjo',
+                        refreshToken: '1/eU5uQIN0H0rAe2h8POnA_dzeWjy4-h0JyqjpaH5Gi5RqZlULIHGzA43lUAvKz9jY',
+                        accessToken: 'ya29.GluEBDaSLTHtbVkNjdZdwrMjTzybxrovgctjO-AB1ucWRMc6eu24oBJ_a3SKlERX7cKmaIKtc1QyVahUOvV9td1QIZtXLKFPEyZ9uFUCk6vpVGNrpoTMveJgryJu'
+                        // accessToken: 'ya29.GluEBEUZ_QQlBXuzlKkBx6VfHqdNo7JBy-ZJm4TQJYedcjtCHnI2GkXrafe5eKdWq4pmBblX0tI3MQdK88VTkyI8VAC2zp60C3_mqLsHLIcCwVJm-WEWhiQASU9P'
+                  }
+              })
 
-            var mailOptions = {
-                from: 'My Name <chloeangsl@gmail.com>',
-                to: req.body.email,
-                subject: 'testing my verification',
-                text: 'Hello World!!'
-            }
+              var mailOptions = {
+                  from: 'My Name <chloeangsl@gmail.com>',
+                  to: req.body.email,
+                  subject: 'VERIFICATION EMAIL',
+                  html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'</p>'
+              }
 
             transporter.sendMail(mailOptions, function (err, res) {
                 if(err){
@@ -77,6 +78,7 @@ module.exports =function(cipher, appConn,C, errors){
                     console.log('Email Sent');
                 }
             })
+
 
             console.log(error);
             console.log("pass");
