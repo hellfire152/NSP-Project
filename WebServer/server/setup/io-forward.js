@@ -11,7 +11,7 @@
 module.exports = function(data) {
   //extracting data...
   const C = data.C;
-  let {dirname, io, pendingResponses, pendingAppResponses, cipher, appConn,
+  let {dirname, io, pendingResponses, pendingAppResponses, Cipher, appConn,
     cookie, socketOfUser, roomOfUser} = data;
 
   //setting up forwarding of data between user and game server

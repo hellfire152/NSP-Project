@@ -17,5 +17,6 @@ call npm install promise
 call npm install cookie
 call npm install pug
 call npm install password-validator
+call npm install nodemailer
 cls
 echo All required modules installed!

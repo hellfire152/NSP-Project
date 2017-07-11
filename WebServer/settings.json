@@ -10,5 +10,6 @@
   },
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
-  "COOKIE_KEY" : "cookieKey"
+  "COOKIE_KEY" : "cookieKey",
+  "AUTH_BYPASS" : false
 }

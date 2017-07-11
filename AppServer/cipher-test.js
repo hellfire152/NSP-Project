@@ -7,14 +7,15 @@ const KEYS = {
 
 let c = new Cipher({
   'password': 'df',
-  'iv' : 'sdf'
+  'iv' : 'abc'
 });
 
-let data = c.rsaEncrypt(JSON.stringify({
-  'reqNo' : '655555555555555555555555555555555555555555555'
-}), KEYS.PUBLIC);
-
-let d = c.rsaDecrypt(data, KEYS.PRIVATE);
-
-console.log(data);
-console.log(d);
+c.encrypt('abc')
+  .then(cipher => {
+    console.log(cipher);
+    c.iv = 'bcd';
+    c.encrypt('bcd')
+      .then(cipher => {
+        console.log(cipher);
+      });
+  })

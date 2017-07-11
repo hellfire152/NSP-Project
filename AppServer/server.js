@@ -41,14 +41,21 @@ const KEYS = {
   'PUBLIC' : fs.readFileSync(S.KEYS.PUBLIC, "utf8"),
   'PRIVATE' : fs.readFileSync(S.KEYS.PRIVATE, "utf8")
 };
+const AUTH_BYPASS = S.AUTH_BYPASS;
 
 var server = net.createServer(function (conn) { //WebServer will connect to this server
   conn.setEncoding('utf8');
+
   conn.status = C.AUTH.REQUEST_CONNECTION;
-  conn.cipher = new Cipher({
+  conn.sendCipher = new Cipher({
     'password' : S.WEBSERVER.PASSWORD,
     'iv' : S.WEBSERVER.INITIAL_IV
   });
+  conn.receiveCipher = new Cipher({
+    'password' : S.WEBSERVER.PASSWORD,
+    'iv' : S.WEBSERVER.INITIAL_IV
+  });
+
   console.log("Logic: Server Start");
   // If connection is closed
   conn.on("end", function() {
@@ -58,16 +65,22 @@ var server = net.createServer(function (conn) { //WebServer will connect to this
   // Handle data from client
   conn.on("data", async function(input) {
     let data, encryption;
-    if(conn.status != C.AUTH.AUTHENTICATED) {
-      if(conn.status == C.AUTH.KEY_NEGOTIATION) {
-        data = JSON.parse(await conn.cipher.decrypt(input));
-      } else if(conn.status == C.AUTH.REQUEST_CONNECTION) {
-        console.log("CONNECTION REQUESTED");
-        data = JSON.parse(input);
-      } else {
-        data = JSON.parse(conn.cipher.rsaDecrypt(input, KEYS.PRIVATE));
-      }
-    } else data = JSON.parse(await conn.cipher.decrypt(input));
+    if(!AUTH_BYPASS) { //Authentication bypass, set in settings
+      if(conn.status != C.AUTH.AUTHENTICATED) {
+        if(conn.status == C.AUTH.KEY_NEGOTIATION) {
+          data = JSON.parse(await conn.receiveCipher.decrypt(input));
+        } else if(conn.status == C.AUTH.REQUEST_CONNECTION) {
+          console.log("CONNECTION REQUESTED");
+          data = JSON.parse(input);
+        } else {
+          data = JSON.parse(conn.receiveCipher.rsaDecrypt(input, KEYS.PRIVATE));
+        }
+      } else data = JSON.parse(await conn.receiveCipher.decrypt(input));
+    } else {
+      conn.status = C.AUTH.AUTHENTICATED;
+      data = JSON.parse(input);
+    }
+
     let reqNo = data.reqNo;
     delete data.reqNo;  //hide reqNo from logs
     console.log("FROM WEBSERVER"); //Log all data received from the WebServer
@@ -81,10 +94,6 @@ var server = net.createServer(function (conn) { //WebServer will connect to this
           try {
             //send a json, with this server's public key and the challenge
             conn.publicKey = data.publicKey;
-            conn.cipher = new Cipher({
-              'password' : S.WEBSERVER.PASSWORD,
-              'iv' : S.WEBSERVER.INITIAL_IV
-            });
             conn.challengeString = uuid();
             encryption = 'none';
             response = {
@@ -99,7 +108,7 @@ var server = net.createServer(function (conn) { //WebServer will connect to this
         }
         case C.AUTH.RECEIVED_PUBLIC_KEY: {
           if(data.received) {
-            conn.challengeString = uuid().substring(0, 10);
+            conn.challengeString = uuid().slice(0, 20);
             response = {
               'challengeString' : conn.challengeString,
               'initialIv' : S.WEBSERVER.INITIAL_IV
@@ -115,18 +124,19 @@ var server = net.createServer(function (conn) { //WebServer will connect to this
         case C.AUTH.ENCRYPTED_CHALLENGE : { //receiving the challenge string
           try {
             if(conn.challengeString ==
-              await conn.cipher.decrypt(data.encryptedChallenge)) {
+              await conn.receiveCipher.decrypt(data.encryptedChallenge)) {
                 console.log("CHALLENGE STRING VALIDATED");
               //no need for the challenge string anymore...
               delete conn.challengeString;
 
               //generate key using diffie-hellman
-              conn.dh = crypto.createECDH(S.ECDH_CURVE);
+              conn.dh = crypto.createDiffieHellman(S.DH_KEY_LENGTH);
               conn.dhKey = conn.dh.generateKeys('base64');
 
               response = {
-                'curve' : S.ECDH_CURVE,
-                'key' : conn.dh.getPublicKey('base64')
+                'prime' : conn.dh.getPrime('base64'),
+                'generator' : conn.dh.getGenerator('base64'),
+                'key' : conn.dhKey
               };
               encryption = 'aes';
 
@@ -146,13 +156,19 @@ var server = net.createServer(function (conn) { //WebServer will connect to this
           try {
             let key = data.dhPublic;
             conn.secret = conn.dh.computeSecret(key, 'base64', 'base64');
+            console.log("SECRET" +conn.secret);
+            let r = conn.secret.substring(0, ~~(conn.secret.length / 2));
+            let s =  conn.secret.substring(~~(conn.secret.length / 2));
+            let sendPassword = s;
+            let receivePassword = r;
 
             response = {
               'auth' : true
             };
             encryption = 'aes';
 
-            conn.cipher.password = conn.secret;
+            conn.sendCipher.password = s;
+            conn.receiveCipher.password = r;
             conn.status = C.AUTH.AUTHENTICATED;
           } catch (e) {
             console.log(e);
@@ -247,12 +263,12 @@ dbConn.on('data', function(inputData) {
 function sendToServer(conn, json, encryption) {
   if(encryption == 'rsa') {
     console.log(`WRITING ${json}`);
-    conn.write(conn.cipher.rsaEncrypt(JSON.stringify(json), conn.publicKey));
+    conn.write(conn.sendCipher.rsaEncrypt(JSON.stringify(json), conn.publicKey));
   } else if (encryption == 'none') {
     console.log("NO ENCRYPTION");
     conn.write(JSON.stringify(json));
   } else {
-    conn.cipher.encrypt(JSON.stringify(json))
+    conn.sendCipher.encrypt(JSON.stringify(json))
       .then((data) => {
         conn.write(data);
       });

@@ -10,7 +10,6 @@ var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var helmet = require('helmet');
 var uuid = require('uuid');
-var pendingResponses = {};
 var cookie = require('cookie');
 var ios = require('socket.io-express-session');
 const C = require('../custom-API/constants.json');
@@ -22,7 +21,7 @@ module.exports = function(data) {
   var io = data.io;
   var pass = data.pass;
   var appConn = data.appConn;
-  var cipher = data.cipher;
+  var Cipher = data.Cipher;
   var express = data.express
   var net = data.net;
   var cookieParser = data.cookieParser;
@@ -62,8 +61,7 @@ module.exports = function(data) {
     'C' : C,
     'app' : app,
     'dirname' : __dirname,
-    'pendingResponses' : pendingResponses,
-    'cipher' : cipher,
+    'Cipher' : Cipher,
     'appConn' : appConn,
     'uuid' : uuid,
     'pendingAppResponses' : pendingAppResponses
@@ -73,9 +71,8 @@ module.exports = function(data) {
   require('./server/setup/io-forward.js')({
     'C' : C,
     'dirname' : __dirname,
-    'pendingResponses' : pendingResponses,
     'pendingAppResponses' : pendingAppResponses,
-    'cipher' : cipher,
+    'Cipher' : Cipher,
     'appConn' : appConn,
     'io' : io,
     'cookie' : cookie,
