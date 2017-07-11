@@ -12,59 +12,20 @@ module.exports = function(cipher, appConn, C) {
     // req.checkBody('password','Invalid password').isLength({min:8});
     // console.log("hi");
     var username = req.body.username;
-    var password = req.body.password;
+    var email = req.body.email;
 
         req.sanitize('username').escape();
-        req.sanitize('password').escape();
+        req.sanitize('email').escape();
         req.sanitize('username').trim();
-        req.sanitize('password').trim();
+        req.sanitize('email').trim();
 
     console.log(username);
-    if (username!=""  && password!=""){
-      var schema = new passwordValidator();
-      schema
-      .is().min(8)
-      .has().uppercase()
-      .has().lowercase()
-      .has().digits()
-      .has().not().spaces();
-
-
-      var passwordCheck=schema.validate(password);
+    if (username!=""  && email!=""){}
       var error = req.validationErrors();
 
 
-      if (passwordCheck){
+
         if(!error){
-          const nodemailer = require('nodemailer');
-          const xoauth2 = require('xoauth2');
-
-          var transporter = nodemailer.createTransport({
-              service: 'gmail',
-              auth: {
-                  xoauth2: xoauth2.createXOAuth2Generator({
-                      user: 'chloeangsl@gmail.com',
-                      clientId: '856574075841-dn1nobjm59p0vrhmvcel4sf4djb6sath.apps.googleusercontent.com',
-                      clientSecret: 'i_T_RN-K_p7PsDbAwJXFNXRJ',
-                      refreshToken: '1/3f97hE7yCmipAtuPcu1iu4EhF3kSmzYicMXiamYMjXY'
-                  })
-              }
-          })
-
-          var mailOptions = {
-              from: 'My Name <chloeangsl@gmail.com>',
-              to: 'chloeangsl@gmail.com',
-              subject: 'testing my verification',
-              text: 'Hello World!!'
-          }
-
-          transporter.sendMail(mailOptions, function (err, res) {
-              if(err){
-                  console.log('Error');
-              } else {
-                  console.log('Email Sent');
-              }
-          })
 
           console.log(error);
           console.log("pass");
@@ -88,7 +49,7 @@ module.exports = function(cipher, appConn, C) {
                 type : C.DB.SELECT.USER_ACCOUNT,
                 account : {
                   username : req.body.username,
-                  password : req.body.password
+                  email : req.body.email
                 }
               }
               // 'username' :username,
@@ -107,7 +68,7 @@ module.exports = function(cipher, appConn, C) {
 
                 console.log("FAIL");
 
-                res.redirect('/login');
+                res.redirect('/forget-password');
               }
             });
           // });
@@ -116,21 +77,11 @@ module.exports = function(cipher, appConn, C) {
 
           console.log("FAIL");
 
-          res.redirect('/login');
+          res.redirect('/forget-password');
         }
       }
 
-      else{
 
-          req.session.errors=error;
-          req.session.success=false;
-          console.log(schema.validate('password',{list:true}));
-          console.log("FAIL PW");
-
-          res.redirect('/login');
-
-
-        }
 
     }
     else{
@@ -140,13 +91,13 @@ module.exports = function(cipher, appConn, C) {
         if(username==""){
           console.log("Please enter your username");
         }
-        if(password==""){
-          console.log("Please enter your password");
+        if(email==""){
+          console.log("Please enter your email");
         }
 
         console.log("never fill in all");
 
-        res.redirect('/login');
+        res.redirect('/forget-password');
         return;
 
     }
