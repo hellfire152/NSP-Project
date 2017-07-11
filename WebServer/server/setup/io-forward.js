@@ -11,14 +11,13 @@
 module.exports = function(data) {
   //extracting data...
   const C = data.C;
-  let {dirname, pass, io, pendingResponses, pendingAppResponses, cipher, appConn,
+  let {dirname, io, pendingResponses, pendingAppResponses, cipher, appConn,
     cookie, socketOfUser, roomOfUser} = data;
 
   //setting up forwarding of data between user and game server
   //short hand
   var socketObj = io.sockets.sockets;
-  //for authentication with AppServer
-  appConn.write(JSON.stringify({"password": pass}));
+
   //send stuff from user to game server
   io.on('connection', async function(socket){
     //get login cookie first
@@ -61,9 +60,6 @@ module.exports = function(data) {
 
         data.id = socket.userId;  //add userId to the sent data
         data.roomNo = socket.roomNo; //add roomNo (if applicable)
-
-        //TODO: Need to find a better solution
-        data.password = pass //Temp solution
 
         appConn.send(data, null);
       } catch (err) {

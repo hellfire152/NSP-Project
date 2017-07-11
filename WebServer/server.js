@@ -69,47 +69,96 @@ appConn.send = (reqObj, callback, encryption) => {
 
   //storing the callback for later calling
   pendingAppResponses[reqNo] = {};
-  if(callback !== null)
+  if(callback)
     pendingAppResponses[reqNo].callback = callback;
 
   //sending the request object
   console.log("TO APPSERVER:");
   console.log(reqObj);
-  if(encryption == "rsa") appConn.write(
-    appConn.rsaEncrypt(JSON.stringify(reqObj), appConn.publicKey) //rsa encryption
-  );
+  if(encryption == "rsa")  {
+    appConn.write(
+      appConn.cipher.rsaEncrypt(JSON.stringify(reqObj), appConn.publicKey) //rsa encryption
+    );
+  }
   else if(encryption == "none") appConn.write(JSON.stringify(reqObj));  //no encryption
   else {  //encrypt using shared key
-    appConn.write(appConn.cipher.encrypt(JSON.stringify(reqObj)));
+    appConn.cipher.encrypt(JSON.stringify(reqObj))
+      .then((data) => {
+        appConn.write(data);
+      });
   }
   return reqNo; //just in case
 };
 
+function logResponse(response) {
+  console.log("APPSERVER RESPONSE:");
+  console.log(response);
+}
+
+async function decryptResponse(response) {
+  if(appConn.encryption == 'none') {
+    return JSON.parse(response);
+  } else if(appConn.encryption == 'rsa')  {
+    return JSON.parse(appConn.cipher.rsaDecrypt(response, KEYS.PRIVATE));
+  } else {
+    return JSON.parse(await appConn.cipher.decrypt(response));
+  }
+}
+
+function runCallback(response) {
+  console.log(typeof response);
+  console.log(`RESPONSE REQ NO: ${response.reqNo}`);
+  if(pendingAppResponses[response.reqNo].callback)
+    pendingAppResponses[response.reqNo].callback(response);
+}
+
+appConn.setEncoding('utf8');
+
+appConn.on("data", async (response) => {
+  let data = await decryptResponse(response);
+  logResponse(data);
+  runCallback(data);
+});
+
 /****AUTHENTICATION******/
+appConn.encryption = 'none';
 appConn.send({'publicKey' : KEYS.PUBLIC}, (response) => {
-  //receiving challenge string
-  let input = JSON.parse(appConn.cipher.rsaDecrypt(response, KEYS.PRIVATE));
-  console.log("RECEIVED CHALLENGE STRING");
-  appConn.send({
-    'encryptedChallenge' : appConn.cipher.encrypt(input.challengeString)
-  }, (response) => {
-    let input = JSON.parse(appConn.cipher.rsaDecrypt(response, KEYS.PRIVATE));
-    //generate key using diffie-hellman
-    appConn.dh = crypto.createDiffieHellman(input.prime, input.generator);
-    appConn.dhKey = dh.generateKeys();
-    appConn.secret = appConn.dh.computeSecret(input.key).toString('base64');
+  //receiving public key of AppServer
+  console.log("PUBLIC KEY RECEIVED");
+  appConn.publicKey = response.publicKey;
+  appConn.encryption = 'rsa';
+  appConn.send({'received' : true}, (response) => {
+    //receive challengeString
+    console.log("RECEIVED CHALLENGE STRING");
+    appConn.cipher.iv = response.initialIv;
+    appConn.cipher.encrypt(response.challengeString)
+      .then((challengeString) => {
+        appConn.encryption = 'aes'; //response will be encrypted using aes
+        appConn.send({
+          'encryptedChallenge' : challengeString
+        }, (response) => {
+          //receive diffie-hellman stuff
+          appConn.dh = crypto.createECDH(response.curve);
+          appConn.dhKey = appConn.dh.generateKeys();
+          appConn.secret = appConn.dh.computeSecret(response.key, 'base64', 'base64');
 
-    //setting cipher object
-    appConn.cipher.password = appConn.secret;
-    appConn.cipher.iv = input.initialIv;
+          //cipher change
+          appConn.prependOnceListener('data', () => {
+            appConn.cipher.password = appConn.secret;
+          });
 
-    //send key to AppServer
-    appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
-      let input = JSON.parse(appConn.cipher.rsaDecrypt(response, KEYS.PRIVATE));
-      if(input.auth) {
-        initServer();
-      }
-    }, 'rsa');
+          //send key to AppServer
+          appConn.send({'dhPublic' : appConn.dh.getPublicKey('base64')}, (response) => {
+            if(response.auth) {
+              appConn.cipher.password = appConn.secret;
+              //start the server
+              delete appConn.encryption;
+              initServer();
+            }
+          }, 'aes');
+
+        }, 'rsa');
+      });
   }, 'rsa');
 }, 'none');
 
@@ -131,12 +180,11 @@ function initServer() {
     "C" : C,
     "app": app,
     "io": io,
-    "pass": pass,
     "appConn": appConn,
     "express": express,
     "net": net,
     "cookieParser": cookieParser,
-    "cipher": cipher,
+    "cipher": Cipher,
     "COOKIE_KEY": S.COOKIE_KEY,
     "pendingAppResponses" : pendingAppResponses
   });

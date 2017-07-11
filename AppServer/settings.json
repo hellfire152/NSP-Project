@@ -16,5 +16,5 @@
   },
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
-  "DH_KEY_LENGTH" : 4096
+  "ECDH_CURVE" : "secp521r1"
 }

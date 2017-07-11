@@ -144,11 +144,11 @@ class Cipher {
   rsaEncrypt(toEncrypt, key) {
     var buffer = new Buffer(toEncrypt);
     var encrypted = crypto.publicEncrypt(key, buffer);
-    return encrypted.toString("base64");
+    return encrypted.toString("hex");
   }
 
   rsaDecrypt(toDecrypt, key) {
-    var buffer = new Buffer(toDecrypt, "base64");
+    var buffer = new Buffer(toDecrypt, "hex");
     var decrypted = crypto.privateDecrypt(key, buffer);
     return decrypted.toString("utf8");
   }

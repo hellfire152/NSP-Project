@@ -73,7 +73,6 @@ module.exports = function(data) {
   require('./server/setup/io-forward.js')({
     'C' : C,
     'dirname' : __dirname,
-    'pass' : pass,
     'pendingResponses' : pendingResponses,
     'pendingAppResponses' : pendingAppResponses,
     'cipher' : cipher,
