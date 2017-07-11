@@ -110,6 +110,16 @@ module.exports = {
     }
   },
 
+  retrieveUserDetails : function(){
+    return retrieveUserDetails = {
+      data : {
+        type : C.DB.SELECT.RETRIEVE_USER_DETAILS,
+        username : "nigelhao",
+        email : "nigel.zch@gmail.com"
+      }
+    }
+  },
+
   //Sample data to create a new quiz
   //questions: is an array
   //choices: is an array

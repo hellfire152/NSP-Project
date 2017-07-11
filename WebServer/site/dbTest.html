@@ -86,6 +86,23 @@
       </form>
     </div>
     <br>
+    <div id='dbRetrieveUserDetails'>
+      <h2>Login Account</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="retrieveUserDetails">
+        <label>Username:
+          <input type="text" name="username" id="username"/>
+        </label>
+        <br>
+        <label>Email:
+          <input type="email" name="email" id="email"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
     <div id='dbUpdateUsername'>
       <h2>Update Username</h2>
       <form action='/data-access' method='POST'>

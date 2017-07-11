@@ -17,8 +17,10 @@ var Promise = require('promise');
 //Create connection between app and database
 var connection = mysql.createConnection({
   host: 'localhost',
-  user: 'root',
-  password: '',
+  // user: 'user',
+  // password: 'eH7nKNVoeedg7gGZ',
+    user: 'root',
+    password: '',
   database: 'exquizit'
 });
 
@@ -118,6 +120,10 @@ var server = net.createServer(function(conn){
           await deleteQuiz(inputData);
           break;
         }
+        case C.DB.SELECT.RETRIEVE_USER_DETAILS : {
+          await retrieveUserDetails(inputData);
+          break;
+        }
         case C.DB.DELETE.QUESTION : {
           await deleteQuestion(inputData);
           break;
@@ -134,8 +140,8 @@ var server = net.createServer(function(conn){
         }
         //ADD MORE CASES HERE
       }
-      response.reqNo = data.reqNo;
-      sendToServer(response);
+      // response.reqNo = data.reqNo;
+      // sendToServer(response);
     }
     catch (err) {
       console.log(err);
@@ -439,6 +445,54 @@ var server = net.createServer(function(conn){
     })
     .catch(reason => {
       console.log(reason);
+    });
+  }
+
+  async function retrieveUserDetails(inputData){
+    var data = inputData.data;
+    await handleDb.handleEncryption(data)
+    .then(dataOut => {
+      var query = connection.query("SELECT user_id FROM user_account WHERE username = ? AND email = ?", [dataOut.username, dataOut.email], function(error, result){
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_SQL_QUERY,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        if(result.length === 0){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_INCORRECT_INPUT,
+              message : "Incorrect username or email"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else if(result.length === 1){
+          var response = {
+            data : {
+              success : true,
+              message : "Input correct"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else{
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_UNKNOWN,
+              message : "Something not right"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+      });
     });
   }
 

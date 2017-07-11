@@ -145,7 +145,7 @@ dbConn.on('data', function(inputData) {
 
 
 //Test sample data
-// sendToServer(dbConn, sampleData.updateAccount());
+// sendToServer(dbConn, sampleData.retrieveUserDetails());
 
 /*
 Function that encodes the data in a proper format and sends it to the WebServer

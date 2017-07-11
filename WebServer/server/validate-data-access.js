@@ -201,6 +201,15 @@ module.exports = function(cipher, appConn, C) {
           }
         }
       }
+      else if(req.body.dbType == "retrieveUserDetails"){
+        inputData = {
+          data : {
+            type : C.DB.SELECT.RETRIEVE_USER_DETAILS,
+            username : req.body.username,
+            email : req.body.email
+          }
+        }
+      }
 
       console.log(inputData);
 
