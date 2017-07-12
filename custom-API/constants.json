@@ -91,14 +91,16 @@
     "CREATE" : {
       "STUDENT_ACC" : 101,
       "TEACHER_ACC" : 102,
-      "QUIZ" : 103
+      "QUIZ" : 103,
+      "IP_ADDRESS" : 104
     },
     "SELECT" : {
       "ALL_QUIZ" : 201,
       "QUESTION" : 202,
       "SEARCH_QUIZ" : 203,
       "USER_ACCOUNT" : 204,
-      "RETRIEVE_USER_DETAILS" : 205
+      "RETRIEVE_USER_DETAILS" : 205,
+      "FULL_USER_ACCOUNT" : 206
     },
     "UPDATE" : {
       "PASSWORD" : 301,

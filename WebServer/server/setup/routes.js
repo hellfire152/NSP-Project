@@ -162,6 +162,7 @@ module.exports = function(data) {
   app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C));
   app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C, errors));
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
+  app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C));
 }
 
 function sendErrorPage(res, errormsg) {
