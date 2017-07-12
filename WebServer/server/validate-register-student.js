@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn,C, errors){
+module.exports =function(cipher, appConn,C){
   return function(req, res){
     // req.checkBody('username','Please enter username').notEmpty();
     //
@@ -114,7 +114,7 @@ module.exports =function(cipher, appConn,C, errors){
 
           req.session.errors=error;
           req.session.success=false;
-          errors=true;
+
           console.log("password not match");
           // res.redirect('/registerstud');
         }
@@ -126,7 +126,7 @@ module.exports =function(cipher, appConn,C, errors){
           req.session.success=false;
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
-          errors=true;
+
           // res.redirect('/registerstud');
 
 
@@ -172,7 +172,7 @@ module.exports =function(cipher, appConn,C, errors){
         console.log("never fill in all");
 
         res.redirect('/registerstud');
-        errors=true;
+
         return;
 
     }
