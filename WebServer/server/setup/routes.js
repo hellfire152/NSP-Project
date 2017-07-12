@@ -20,7 +20,7 @@ module.exports = function(data) {
     queryOfUser = data.queryOfUser;
     uuid = data.uuid;
     errors=data.error;
-  uuid = data.uuid;
+    uuid = data.uuid;
 
   //middleware
   app.use('*', checkMultipleOnSameMachine);

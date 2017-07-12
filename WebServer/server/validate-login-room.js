@@ -29,10 +29,8 @@ module.exports = function(cipher, appConn, C) {
       .has().digits()
       .has().not().spaces();
 
-
       var passwordCheck=schema.validate(password);
       var error = req.validationErrors();
-
 
       if (passwordCheck){
         if(!error){
@@ -80,7 +78,9 @@ module.exports = function(cipher, appConn, C) {
             // .then(function(cookieData) {
             // res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
             // res.redirect('/login?room=' +req.body.usename);
-            console.log(`C CONSTANT OBJECT: ${C}`);
+            // console.log(`C CONSTANT OBJECT: ${C}`);
+            // console.log(req.cookies.deviceIP);
+            var deviceIp = JSON.parse(req.cookies.deviceIP);
             appConn.send({
               // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'type':C.REQ_TYPE.DATABASE,
@@ -91,25 +91,55 @@ module.exports = function(cipher, appConn, C) {
                   password : req.body.password
                 }
               }
-              // 'username' :username,
-              // 'password':password
-
             }, (response) => {
-              console.log("HELLO");
-              res.render('login',{
-                data: response.data
-              });
+
+              //If incorrect user input return to login page
+              if(!response.data.success){
+                res.redirect('/login');
+              }
+
+              //Check for identical IP address in user cookie
+              var valid = false;
+              outerloop:
+                for(i=0 ; i<response.data.data.ip_address.length ; i++){
+                  for(j=0 ; j<deviceIp.length ; j++){
+                    if(response.data.data.ip_address[i] == deviceIp[j]){
+                      valid = true;
+                      break outerloop;
+                    }
+                  }
+                }
+
+              if(valid){
+                //TODO: GET ACTUAL DATA AND STORE TO SESSION WITHOUT OTP
+              }
+
+
+
+              if(response.data.success){
+                console.log("SUCCESS");
+                var tempIpArr = ["192.168.2.1", "192.234.123.1", "192.33.2.1"]
+                res.cookie('deviceIP', JSON.stringify(tempIpArr), {"maxAge": 1000*60*60*24*30*3}); //3 month
+                res.render('login',{
+                  data: response.data
+                });
+              }
+              // else{
+              //   console.log("PASS");
+              //   res.redirect('/login');
+              // }
+              // console.log("HELLO");
+              // res.render('login',{
+              //   data: response.data
+              // });
             });
           // });
         }
         else{
-
           console.log("FAIL");
-
           res.redirect('/login');
         }
       }
-
       else{
 
           req.session.errors=error;
@@ -118,13 +148,9 @@ module.exports = function(cipher, appConn, C) {
           console.log("FAIL PW");
 
           res.redirect('/login');
-
-
         }
-
     }
     else{
-
         req.session.errors=error;
         req.session.success=false;
         if(username==""){
@@ -138,11 +164,6 @@ module.exports = function(cipher, appConn, C) {
 
         res.redirect('/login');
         return;
-
     }
-
-
-
-
   }
 }
