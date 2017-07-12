@@ -168,6 +168,6 @@ function initRatingScene() {
 }
 
 function displayResults(roundEndResults) {
-  p.ranking.data = roundEndResults;
+  pixiScenes.ranking.data = roundEndResults;
   swapScene('ranking');
 }

@@ -15,6 +15,9 @@ var ios = require('socket.io-express-session');
 const C = require('../custom-API/constants.json');
 
 var socketOfUser = {};
+setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
+  socketOfUser = {};
+}, 2000);
 module.exports = function(data) {
   //extracting data
   let {app, io, pass, appConn, Cipher, express, net, cookieParser, pendingAppResponses,

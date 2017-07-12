@@ -73,7 +73,7 @@ module.exports = function(data) {
 
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
-    let response = decryptResponse(input);
+    let response = await decryptResponse(input);
     logResponse(response);
     try {
       if(response.special !== undefined){ //handling special stuff

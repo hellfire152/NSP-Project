@@ -267,7 +267,7 @@ function sendToServer(conn, json, encryption) {
   if(encryption == 'rsa') {
     console.log(`WRITING ${json}`);
     conn.write(conn.sendCipher.rsaEncrypt(JSON.stringify(json), conn.publicKey));
-  } else if (encryption == 'none') {
+  } else if (encryption == 'none' || S.AUTH_BYPASS) {
     console.log("NO ENCRYPTION");
     conn.write(JSON.stringify(json));
   } else {
