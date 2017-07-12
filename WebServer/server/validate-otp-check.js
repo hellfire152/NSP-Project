@@ -34,6 +34,7 @@ module.exports = function(cipher, appConn, C) {
               res.clearCookie("otp");
               if(req.cookies.deviceIP != undefined){
                 var ipArr = JSON.parse(req.cookies.deviceIP);
+                console.log(ipArr);
                 ipArr.push(response.data.data.hashedIpAddress);
                 res.cookie('deviceIP', JSON.stringify(ipArr), {"maxAge": 1000*60*60*24*30}); // max age: 30 days
               }

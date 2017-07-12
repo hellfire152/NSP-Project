@@ -70,6 +70,7 @@ module.exports =function(cipher, appConn, C){
                     username :req.body.username,
                     email : req.body.email,
                     password_hash : req.body.password
+                    // contact : req.body.contact TODO: FOR THE CONTACT IN DATABASE
                   },
                   details :{
                     organisation : req.body.school
