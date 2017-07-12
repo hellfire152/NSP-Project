@@ -12,7 +12,8 @@ module.exports = function(data) {
   //extracting data...
   const C = data.C;
   let {dirname, io, pendingResponses, pendingAppResponses, Cipher, appConn,
-    cookie, socketOfUser, roomOfUser} = data;
+    cookie, socketOfUser, roomOfUser, cookieCipher, decryptResponse, logResponse
+    ,  runCallback} = data;
 
   //setting up forwarding of data between user and game server
   //short hand
@@ -31,7 +32,7 @@ module.exports = function(data) {
       }, null);
     });
     try {
-      let loginCookie =  await getLoginCookieS(socket, cipher, cookie);
+      let loginCookie = await getLoginCookieS(socket, cookieCipher, cookie);
       console.log("SOCKET IO CONNECTION INITIATED BY");
       console.log(loginCookie);
       if(socketOfUser[loginCookie.id] !== undefined) { //if user with that id already exists
@@ -54,7 +55,7 @@ module.exports = function(data) {
         console.log("User to WebServer: ");
         console.log(data);
         if (data.sendLoginCookie) {  //Sends the cookie data as well.
-          let cookieData = await getLoginCookieS(socket, cipher, cookie);
+          let cookieData = await getLoginCookieS(socket, cookieCipher, cookie);
           data.cookieData = cookieData;
         }
 
@@ -72,10 +73,9 @@ module.exports = function(data) {
 
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
+    let response = decryptResponse(input);
+    logResponse(response);
     try {
-      let response = JSON.parse(input);
-      console.log("APPSERVER RESPONSE: ");
-      console.log(response);
       if(response.special !== undefined){ //handling special stuff
         await handleSpecialResponse({
           'pendingResponses' : pendingResponses,
@@ -95,11 +95,7 @@ module.exports = function(data) {
             'socketOfUser' : socketOfUser
           });
         }
-        if(pendingAppResponses[response.reqNo]) {
-          if(pendingAppResponses[response.reqNo].callback)
-            pendingAppResponses[response.reqNo].callback(response);
-          delete pendingAppResponses[response.reqNo];
-        }
+        runCallback(response);
       }
     } catch (err) {
       console.log(err);
@@ -113,8 +109,8 @@ var handleIoResponse = require('./io-response.js');
 var handleSpecialResponse = require('./special-response.js');
 
 //get login cookie (for socket.io)
-async function getLoginCookieS(socket, cipher, cookie) {
-  let cookieData = await cipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).login));
+async function getLoginCookieS(socket, cookieCipher, cookie) {
+  let cookieData = await cookieCipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).login));
   console.log("decryptedLoginCookie");
   console.log(cookieData);
   return cookieData;

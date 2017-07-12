@@ -43,101 +43,193 @@ var server = net.createServer(function(conn){
 
   conn.on('data', async function(input){
 
-    console.log("Request recieved from appserver");
-    try{
-      var inputData = (JSON.parse(input));
-      console.log("DB TYPE: " + inputData.data.type);
-      switch(inputData.data.type) {
-        case C.DB.CREATE.STUDENT_ACC :
-        case C.DB.CREATE.TEACHER_ACC : {
-          await createAccount(inputData);
-          break;
-        }
-        case C.DB.CREATE.QUIZ : {
-          await createQuiz(inputData);
-          break;
-        }
-        case C.DB.SELECT.ALL_QUIZ : {
-          await retrieveAllQuiz();
-          break;
-        }
-        case C.DB.SELECT.QUESTION : {
-          await retrieveQuestions(inputData);
-          break;
-        }
-        case C.DB.SELECT.SEARCH_QUIZ : {
-          await searchQuiz(inputData);
-          break;
-        }
-        case C.DB.SELECT.USER_ACCOUNT : {
-          await retrieveAccount(inputData);
-          break;
-        }
-        case C.DB.UPDATE.PASSWORD : {
-          await updatePassword(inputData);
-          break;
-        }
-        case C.DB.UPDATE.QUIZ : {
-          await updateQuiz(inputData);
-          break;
-        }
-        case C.DB.DELETE.ACCOUNT : {
-          await deleteAccount(inputData);
-          break;
-        }
-        case C.DB.UPDATE.QUESTION : {
-          await updateQuestion(inputData);
-          break;
-        }
-        case C.DB.UPDATE.USERNAME : {
-          await updateUsername(inputData);
-          break;
-        }
-        case C.DB.UPDATE.NAME : {
-          await updateName(inputData);
-          break;
-        }
-        case C.DB.UPDATE.ABOUT_ME : {
-          await updateAboutMe(inputData);
-          break;
-        }
-        case C.DB.UPDATE.SCHOOL : {
-          await updateSchool(inputData);
-          break;
-        }
-        case C.DB.UPDATE.STUDENT_CATEGORY : {
-          await updateStudentCategory(inputData);
-          break;
-        }
-        case C.DB.UPDATE.ORGANISATION : {
-          await updateOrganisation(inputData);
-          break;
-        }
-        case C.DB.DELETE.QUIZ : {
-          await deleteQuiz(inputData);
-          break;
-        }
-        case C.DB.DELETE.QUESTION : {
-          await deleteQuestion(inputData);
-          break;
-        }
-        default : {
-          var response = {
-            data : {
-              success : false,
-              message : "Not one of the cases"
-            }
+    if(S.AUTH_BYPASS) console.log("AUTHENTICATED WILL BE BYPASSED");
+
+    if(conn.status != C.AUTH.AUTHENTICATED) { //not authenticated yet
+      /**AUTHENTICATION PROCESS**/
+      switch(conn.status) {
+        case C.AUTH.REQUEST_CONNECTION : { //input has public key
+          try {
+            //send a json, with this server's public key and the challenge
+            conn.publicKey = data.publicKey;
+            conn.challengeString = uuid();
+            encryption = 'none';
+            response = {
+              'publicKey' : KEYS.PUBLIC
+            };
+            conn.status = C.AUTH.RECEIVED_PUBLIC_KEY;
+          } catch (e){
+            console.log(e);
+            conn.destroy();
           }
-          sendToServer(response, inputData);
+          break;
         }
-        //ADD MORE CASES HERE
+        case C.AUTH.RECEIVED_PUBLIC_KEY: {
+          if(data.received) {
+            conn.challengeString = uuid().slice(0, 20);
+            response = {
+              'challengeString' : conn.challengeString,
+              'initialIv' : S.WEBSERVER.INITIAL_IV
+            };
+            encryption = 'rsa';
+            conn.status = C.AUTH.ENCRYPTED_CHALLENGE;
+          } else {
+            console.log("Invalid signal");
+            conn.destroy();
+          }
+          break;
+        }
+        case C.AUTH.ENCRYPTED_CHALLENGE : { //receiving the challenge string
+          try {
+            if(conn.challengeString ==
+              await conn.receiveCipher.decrypt(data.encryptedChallenge)) {
+                console.log("CHALLENGE STRING VALIDATED");
+              //no need for the challenge string anymore...
+              delete conn.challengeString;
+
+              //generate key using diffie-hellman
+              conn.dh = crypto.createDiffieHellman(S.DH_KEY_LENGTH);
+              conn.dhKey = conn.dh.generateKeys('base64');
+
+              response = {
+                'prime' : conn.dh.getPrime('base64'),
+                'generator' : conn.dh.getGenerator('base64'),
+                'key' : conn.dhKey
+              };
+              encryption = 'aes';
+
+              conn.status = C.AUTH.KEY_NEGOTIATION;
+            } else {
+              console.log("AppServer: WebServer password invalid!");
+              conn.destroy();
+            }
+            break;
+          } catch (e) {
+            console.log(e);
+            conn.destroy();
+          }
+          break;
+        }
+        case C.AUTH.KEY_NEGOTIATION : { //input is the diffie-hellman public key
+          try {
+            let key = data.dhPublic;
+            conn.secret = conn.dh.computeSecret(key, 'base64', 'base64');
+            console.log("SECRET" +conn.secret);
+            let r = conn.secret.substring(0, ~~(conn.secret.length / 2));
+            let s =  conn.secret.substring(~~(conn.secret.length / 2));
+            let sendPassword = s;
+            let receivePassword = r;
+
+            response = {
+              'auth' : true
+            };
+            encryption = 'aes';
+
+            conn.sendCipher.password = s;
+            conn.receiveCipher.password = r;
+            conn.status = C.AUTH.AUTHENTICATED;
+          } catch (e) {
+            console.log(e);
+          }
+          break;
+        }
       }
-      response.reqNo = data.reqNo;
-      sendToServer(response);
-    }
-    catch (err) {
-      console.log(err);
-      console.log('AppServer to DatabaseServer input Error!');
+    } else {
+      console.log("Request recieved from appserver");
+      try{
+        var inputData = (JSON.parse(input));
+        console.log("DB TYPE: " + inputData.data.type);
+        switch(inputData.data.type) {
+          case C.DB.CREATE.STUDENT_ACC :
+          case C.DB.CREATE.TEACHER_ACC : {
+            await createAccount(inputData);
+            break;
+          }
+          case C.DB.CREATE.QUIZ : {
+            await createQuiz(inputData);
+            break;
+          }
+          case C.DB.SELECT.ALL_QUIZ : {
+            await retrieveAllQuiz();
+            break;
+          }
+          case C.DB.SELECT.QUESTION : {
+            await retrieveQuestions(inputData);
+            break;
+          }
+          case C.DB.SELECT.SEARCH_QUIZ : {
+            await searchQuiz(inputData);
+            break;
+          }
+          case C.DB.SELECT.USER_ACCOUNT : {
+            await retrieveAccount(inputData);
+            break;
+          }
+          case C.DB.UPDATE.PASSWORD : {
+            await updatePassword(inputData);
+            break;
+          }
+          case C.DB.UPDATE.QUIZ : {
+            await updateQuiz(inputData);
+            break;
+          }
+          case C.DB.DELETE.ACCOUNT : {
+            await deleteAccount(inputData);
+            break;
+          }
+          case C.DB.UPDATE.QUESTION : {
+            await updateQuestion(inputData);
+            break;
+          }
+          case C.DB.UPDATE.USERNAME : {
+            await updateUsername(inputData);
+            break;
+          }
+          case C.DB.UPDATE.NAME : {
+            await updateName(inputData);
+            break;
+          }
+          case C.DB.UPDATE.ABOUT_ME : {
+            await updateAboutMe(inputData);
+            break;
+          }
+          case C.DB.UPDATE.SCHOOL : {
+            await updateSchool(inputData);
+            break;
+          }
+          case C.DB.UPDATE.STUDENT_CATEGORY : {
+            await updateStudentCategory(inputData);
+            break;
+          }
+          case C.DB.UPDATE.ORGANISATION : {
+            await updateOrganisation(inputData);
+            break;
+          }
+          case C.DB.DELETE.QUIZ : {
+            await deleteQuiz(inputData);
+            break;
+          }
+          case C.DB.DELETE.QUESTION : {
+            await deleteQuestion(inputData);
+            break;
+          }
+          default : {
+            var response = {
+              data : {
+                success : false,
+                message : "Not one of the cases"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          //ADD MORE CASES HERE
+        } catch (err) {
+          console.log(err);
+          console.log('AppServer to DatabaseServer input Error!');
+        }
+        response.reqNo = data.reqNo;
+        sendToServer(response);
+      }
     }
   });
 

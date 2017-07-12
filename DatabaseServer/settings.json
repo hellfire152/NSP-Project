@@ -8,5 +8,7 @@
     "public" : "./keys/Database-public.key",
     "private" : "./keys/Database-private.key"
   },
-  "constants" : "../custom-API/constants.json"
+  "constants" : "../custom-API/constants.json",
+  "DATABASE_KEY" : "databaseKey",
+  "AUTH_BYPASS" : true
 }

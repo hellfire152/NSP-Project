@@ -56,11 +56,13 @@ var server = net.createServer(function (conn) { //WebServer will connect to this
     'iv' : S.WEBSERVER.INITIAL_IV
   });
 
-  console.log("Logic: Server Start");
+  console.log("AppServer: Server Start");
   // If connection is closed
   conn.on("end", function() {
     console.log('Server: Logic disconnected');
   });
+
+  if(S.AUTH_BYPASS) console.log("AUTHENTICATED WILL BE BYPASSED");
 
   // Handle data from client
   conn.on("data", async function(input) {
@@ -224,6 +226,7 @@ var server = net.createServer(function (conn) { //WebServer will connect to this
     console.log("AppServer Response: ");
     console.log(response);
     response.reqNo = reqNo;
+    if(S.AUTH_BYPASS) encryption = 'none';
     sendToServer(conn, response, encryption);
   });
 });

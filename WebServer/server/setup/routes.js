@@ -36,7 +36,7 @@ module.exports = function(data) {
   });
 
   app.get('/data', function(req,res){
-      cipher.decryptJSON(req.cookies.encryptedDataReq)
+      cookieCipher.decryptJSON(req.cookies.encryptedDataReq)
         .catch(reason => {
           console.log(reason);
         })
@@ -59,9 +59,12 @@ module.exports = function(data) {
       console.log("Well someone's trying to cause an error...");
     } else {
       let roomNo = req.query.room;
-      cipher.decryptJSON(req.cookies.login)
+      cookieCipher.decryptJSON(req.cookies.login)
         .catch(reason => {
           console.log(reason);
+          res.render('error', {
+            'error' : 'Invalid login cookie'
+          });
         })
         .then(function(cookieData) {
           appConn.send({
@@ -99,7 +102,7 @@ module.exports = function(data) {
       console.log("Please don't mess with my webpage");
     } else {
       let quizId = req.query.quizId;
-      cipher.decryptJSON(req.cookies.login)
+      cookieCipher.decryptJSON(req.cookies.login)
         .catch(reason => {
           console.log(reason);
         })
@@ -112,6 +115,16 @@ module.exports = function(data) {
             'pass': cookieData.pass,
             'quizId': quizId
           }, (response) => {
+            if(response.err) {
+              for(let e of Object.keys(C.ERR)) {
+                if(C.ERR[e] == response.err) {
+                  errorMsg = e;
+                }
+              }
+              res.render('error', {
+                'error' : `Encountered error ${errorMsg}`
+              });
+            }
             res.render('host', {
               'roomNo' : response.roomNo,
               'gamemode' : response.gamemode
@@ -151,13 +164,13 @@ module.exports = function(data) {
   });
 
   //handling form submits
-  app.post('/data-access', require('../validate-data-access.js')(cipher, appConn, C));
-  app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
+  app.post('/data-access', require('../validate-data-access.js')(cookieCipher, appConn, C));
+  app.post('/join-room', require('../validate-join-room.js')(cookieCipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cookieCipher, appConn));
-  app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
-  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C));
-  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C, errors));
-  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
+  app.post('/add-quiz', require('../validate-add-quiz.js')(cookieCipher, appConn, C));
+  app.post('/login-room', require('../validate-login-room.js')(cookieCipher, appConn, C));
+  app.post('/reg-room', require('../validate-register-student.js')(cookieCipher, appConn, C, errors));
+  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cookieCipher, appConn,C));
 }
 
 function sendErrorPage(res, errormsg) {

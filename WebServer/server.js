@@ -65,6 +65,29 @@ appConn.receiveCipher = new Cipher({
 
 //handling app responses
 var pendingAppResponses = {};
+
+var encryptAndSend;
+if(S.AUTH_BYPASS) {
+  encryptAndSend = (reqObj) => {
+    appConn.write(JSON.stringify(reqObj)); ;
+  }
+} else {
+  encryptAndSend = (reqObj, encryption) => {
+    if(encryption == "rsa")  {
+      appConn.write(
+        appConn.sendCipher.rsaEncrypt(JSON.stringify(reqObj), appConn.publicKey) //rsa encryption
+      );
+    }
+    else if(encryption == "none") appConn.write(JSON.stringify(reqObj));  //no encryption
+    else {  //encrypt using shared key
+      appConn.sendCipher.encrypt(JSON.stringify(reqObj))
+        .then((data) => {
+          appConn.write(data);
+        });
+    }
+  }
+}
+
 appConn.send = (reqObj, callback, encryption) => {
   //generating a unique id to identify the request
   let reqNo = uuid();
@@ -78,18 +101,7 @@ appConn.send = (reqObj, callback, encryption) => {
   //sending the request object
   console.log("TO APPSERVER:");
   console.log(reqObj);
-  if(encryption == "rsa")  {
-    appConn.write(
-      appConn.sendCipher.rsaEncrypt(JSON.stringify(reqObj), appConn.publicKey) //rsa encryption
-    );
-  }
-  else if(encryption == "none") appConn.write(JSON.stringify(reqObj));  //no encryption
-  else {  //encrypt using shared key
-    appConn.sendCipher.encrypt(JSON.stringify(reqObj))
-      .then((data) => {
-        appConn.write(data);
-      });
-  }
+  encryptAndSend(reqObj, encryption);
   return reqNo; //just in case
 };
 
@@ -100,6 +112,7 @@ function logResponse(response) {
 
 async function decryptResponse(response) {
   if(appConn.encryption == 'none') {
+    console.log("NO ENCRYPTION");
     return JSON.parse(response);
   } else if(appConn.encryption == 'rsa')  {
     return JSON.parse(appConn.receiveCipher.rsaDecrypt(response, KEYS.PRIVATE));
@@ -109,8 +122,11 @@ async function decryptResponse(response) {
 }
 
 function runCallback(response) {
-  if(pendingAppResponses[response.reqNo].callback)
-    pendingAppResponses[response.reqNo].callback(response);
+  if(pendingAppResponses[response.reqNo]) {
+    if(pendingAppResponses[response.reqNo].callback)
+      pendingAppResponses[response.reqNo].callback(response);
+    delete pendingAppResponses[response.reqNo];
+  }
 }
 
 appConn.setEncoding('utf8');
@@ -160,16 +176,23 @@ if(!S.AUTH_BYPASS) {
               if(response.auth) {
                 delete appConn.encryption; //no need this anymore
                 delete appConn.secret; //or this
+                delete appConn.dh //or that
+                delete appConn.dhKey //EXTERRRRMINATE
+
+                //remove all listeners,
+                //server-setup will add them back in with socket.io support
+                appConn.removeAllListeners('data');
                 initServer();
               }
             }, 'aes');
-
           }, 'rsa');
         });
     }, 'rsa');
   }, 'none');
 } else {
   console.log("AUTHENTICATION BYPASSED");
+  //remove all listeners, server-setup will add them back in with socket.io support
+  appConn.removeAllListeners('data');
   initServer();
 }
 
@@ -198,7 +221,10 @@ function initServer() {
     "net": net,
     "cookieParser": cookieParser,
     "Cipher": Cipher,
-    "pendingAppResponses" : pendingAppResponses
+    "pendingAppResponses" : pendingAppResponses,
+    "decryptResponse" : decryptResponse,
+    "runCallback" : runCallback,
+    "logResponse" : logResponse
   });
 
   //start listening

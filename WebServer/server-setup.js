@@ -17,15 +17,8 @@ const C = require('../custom-API/constants.json');
 var socketOfUser = {};
 module.exports = function(data) {
   //extracting data
-  var app = data.app;
-  var io = data.io;
-  var pass = data.pass;
-  var appConn = data.appConn;
-  var Cipher = data.Cipher;
-  var express = data.express
-  var net = data.net;
-  var cookieParser = data.cookieParser;
-  var pendingAppResponses = data.pendingAppResponses;
+  let {app, io, pass, appConn, Cipher, express, net, cookieParser, pendingAppResponses,
+    decryptResponse, logResponse, runCallback} = data;
   const S = data.S;
 
   //cipher for cookies
@@ -83,6 +76,10 @@ module.exports = function(data) {
     'appConn' : appConn,
     'io' : io,
     'cookie' : cookie,
-    'socketOfUser': socketOfUser
+    'cookieCipher' : cookieCipher,
+    'socketOfUser': socketOfUser,
+    'decryptResponse' : decryptResponse,
+    'logResponse' : logResponse,
+    'runCallback' : runCallback
   });
 }
