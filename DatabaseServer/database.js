@@ -17,8 +17,10 @@ var Promise = require('promise');
 //Create connection between app and database
 var connection = mysql.createConnection({
   host: 'localhost',
-  user: 'root',
-  password: '',
+  // user: 'user',
+  // password: 'eH7nKNVoeedg7gGZ',
+    user: 'root',
+    password: '',
   database: 'exquizit'
 });
 
@@ -118,6 +120,10 @@ var server = net.createServer(function(conn){
           await deleteQuiz(inputData);
           break;
         }
+        case C.DB.SELECT.RETRIEVE_USER_DETAILS : {
+          await retrieveUserDetails(inputData);
+          break;
+        }
         case C.DB.DELETE.QUESTION : {
           await deleteQuestion(inputData);
           break;
@@ -126,6 +132,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_NO_SUCH_FUNCTION,
               message : "Not one of the cases"
             }
           }
@@ -133,8 +140,8 @@ var server = net.createServer(function(conn){
         }
         //ADD MORE CASES HERE
       }
-      response.reqNo = data.reqNo;
-      sendToServer(response);
+      // response.reqNo = data.reqNo;
+      // sendToServer(response);
     }
     catch (err) {
       console.log(err);
@@ -170,6 +177,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_SQL_QUERY,
                 message : error
               }
             }
@@ -185,6 +193,7 @@ var server = net.createServer(function(conn){
                 var response = {
                   data : {
                     success : false,
+                    reason : C.ERR.DB_SQL_QUERY,
                     message : error
                   }
                 }
@@ -224,6 +233,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : ERR.DB_USERNAME_TAKEN,
                 message : "Username or Email have been taken"
               }
             }
@@ -247,6 +257,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -275,6 +286,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_SQL_QUERY,
                 message : err
               }
             }
@@ -304,6 +316,7 @@ var server = net.createServer(function(conn){
                       var response = {
                         data : {
                           success : false,
+                          reason : C.ERR.DB_SQL_QUERY,
                           message : err
                         }
                       }
@@ -336,6 +349,7 @@ var server = net.createServer(function(conn){
                           var response = {
                             data : {
                               success : false,
+                              reason : C.ERR.DB_SQL_QUERY,
                               message : err
                             }
                           }
@@ -362,6 +376,7 @@ var server = net.createServer(function(conn){
                           var response = {
                             data : {
                               success : false,
+                              reason : C.ERR.DB_NO_SUCH_USER,
                               message : "No such user"
                             }
                           }
@@ -373,6 +388,7 @@ var server = net.createServer(function(conn){
                           var response = {
                             data : {
                               success : false,
+                              reason : C.ERR.DB_DUPLICATE_USER_ID,
                               message : "Duplicate user_id"
                             }
                           }
@@ -387,6 +403,7 @@ var server = net.createServer(function(conn){
                       var response = {
                         data : {
                           success : false,
+                          reason : C.ERR.DB_DUPLICATE_USER_ID,
                           message : "Duplicate user_id"
                         }
                       }
@@ -400,6 +417,7 @@ var server = net.createServer(function(conn){
                   var response = {
                     data : {
                       success : false,
+                      reason : C.ERR.DB_PASSWORD_INCORRECT,
                       message : "Password Incorrect"
                     }
                   }
@@ -416,6 +434,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_NO_SUCH_USER,
                 message : "No such user"
               }
             }
@@ -426,6 +445,54 @@ var server = net.createServer(function(conn){
     })
     .catch(reason => {
       console.log(reason);
+    });
+  }
+
+  async function retrieveUserDetails(inputData){
+    var data = inputData.data;
+    await handleDb.handleEncryption(data)
+    .then(dataOut => {
+      var query = connection.query("SELECT user_id FROM user_account WHERE username = ? AND email = ?", [dataOut.username, dataOut.email], function(error, result){
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_SQL_QUERY,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        if(result.length === 0){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_INCORRECT_INPUT,
+              message : "Incorrect username or email"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else if(result.length === 1){
+          var response = {
+            data : {
+              success : true,
+              message : "Input correct"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else{
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_UNKNOWN,
+              message : "Something not right"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+      });
     });
   }
 
@@ -440,6 +507,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -463,6 +531,7 @@ var server = net.createServer(function(conn){
                 var response = {
                   data : {
                     success : false,
+                    reason : C.ERR.DB_SQL_QUERY,
                     message : error
                   }
                 }
@@ -480,6 +549,7 @@ var server = net.createServer(function(conn){
                         var response = {
                           data : {
                             success : false,
+                            reason : C.ERR.DB_SQL_QUERY,
                             message : error
                           }
                         }
@@ -500,6 +570,7 @@ var server = net.createServer(function(conn){
                 var response = {
                   data : {
                     success : false,
+                    reason : C.ERR.DB_PASSWORD_INCORRECT,
                     message : "Incorrect password"
                   }
                 }
@@ -522,6 +593,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -550,6 +622,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -575,6 +648,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -587,6 +661,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_SQL_QUERY,
                 message : error
               }
             }
@@ -607,6 +682,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_USERNAME_TAKEN,
             message : "Username taken"
           }
         }
@@ -625,6 +701,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -643,8 +720,6 @@ var server = net.createServer(function(conn){
 
   async function updateStudentCategory(inputData){
     var data = inputData.data;
-    console.log("HELLO");
-    console.log(data);
     handleDb.handleEncryption(data)
     .then(dataOut => {
       var query = connection.query("UPDATE student_details SET student_category = " + connection.escape(dataOut.student_category) +
@@ -653,6 +728,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -679,6 +755,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -704,6 +781,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -713,6 +791,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_NO_SUCH_USER,
             message : "No such user id"
           }
         }
@@ -732,6 +811,7 @@ var server = net.createServer(function(conn){
                   var response = {
                     data : {
                       success : false,
+                      reason : C.ERR.DB_SQL_QUERY,
                       message : error
                     }
                   }
@@ -750,6 +830,7 @@ var server = net.createServer(function(conn){
                   var response = {
                     data : {
                       success : false,
+                      reason : C.ERR.DB_INCORRECT_INPUT,
                       message : "Incorrect password, username or email"
                     }
                   }
@@ -759,6 +840,7 @@ var server = net.createServer(function(conn){
                   var response = {
                     data : {
                       success : false,
+                      reason : C.ERR.DB_TWO_OR_MORE_ACCOUNT_DELETED,
                       message : "Critical, 2 account been deleted"
                     }
                   }
@@ -783,6 +865,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -817,6 +900,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -846,6 +930,7 @@ var server = net.createServer(function(conn){
               var response = {
                 data : {
                   success : false,
+                  reason : C.ERR.DB_SQL_QUERY,
                   message : error
                 }
               }
@@ -863,14 +948,35 @@ var server = net.createServer(function(conn){
   //Retrieve all the quiz available in the database
   async function retrieveAllQuiz(){
     var query = connection.query('SELECT * FROM quiz ORDER BY date_created DESC', function(err, result, fields){
-  			if (!err) {
-          console.log(result);
-          //TODO: Method to send data to app server
-          sendToServer(result);
-  			} else {
-  				console.log('[No result]');
-          //TODO: return error to server
+  			if (err) {
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_SQL_QUERY,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
   			}
+        if(result.length == 0){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_NO_QUIZ_AVAILAVLE,
+              message : "No quiz available"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else{
+          resultOut = {
+            data:{
+              data : result,
+              success : true
+            }
+          }
+          sendToServer(resultOut, inputData);
+        }
   	});
   }
   async function updateQuiz(inputData){
@@ -893,6 +999,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -924,7 +1031,8 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
-                message : err
+                reason : C.ERR.DB_SQL_QUERY,
+                message : error
               }
             }
             sendToServer(response, inputData);
@@ -933,6 +1041,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_QUESTION_ID_NOT_FOUND,
                 message : "Question ID not found"
               }
             }
@@ -951,6 +1060,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_UNKNOWN,
                 message : "Something not right"
               }
             }
@@ -993,7 +1103,8 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
-                message : err
+                reason : C.ERR.DB_SQL_QUERY,
+                message : error
               }
             }
             sendToServer(response, inputData);
@@ -1038,6 +1149,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : err
             }
           }
@@ -1053,6 +1165,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -1075,6 +1188,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
