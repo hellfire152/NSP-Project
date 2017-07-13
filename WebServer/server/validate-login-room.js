@@ -85,6 +85,7 @@ module.exports = function(cipher, appConn, C) {
               }
             }, (response) => {
 
+              var currentIpAddress = "wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU=" //5555 temp way to get ip address, because site is not s
               //If incorrect user input return to login page
               if(!(response.data.success)){
                 res.redirect('/login');
@@ -96,7 +97,7 @@ module.exports = function(cipher, appConn, C) {
                   outerloop:
                     for(i=0 ; i<response.data.data.ip_address.length ; i++){
                       for(j=0 ; j<deviceIp.length ; j++){
-                        if(response.data.data.ip_address[i] == deviceIp[j]){
+                        if(response.data.data.ip_address[i] == deviceIp[j] && currentIpAddress == response.data.data.ip_address[i] && currentIpAddress == deviceIp[j]){
                           valid = true;
                           break outerloop;
                         }
