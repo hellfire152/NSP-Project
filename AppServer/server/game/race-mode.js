@@ -24,10 +24,16 @@ module.exports = async function(input) {
         }
       }
 
-      //send first question 5 seconds after get ready
+      //send first question to everyone in the room 5 seconds after get ready
       setTimeout(() => {
-        let q = sendQuestion(currentRoom, question, data);
-        sendToServer(conn, q);
+        sendToServer(conn, {
+          'game' : C.GAME_RES.NEXT_QUESTION,
+          'question': common.removeSolution(
+            currentRoom.quiz.questions[currentPlayer.questionCounter]
+          ),
+          'sendTo' : C.SEND_TO.ROOM
+          'roomNo': data.roomNo,
+        });
       }, 5000);
 
       //send the get ready signal...
@@ -126,6 +132,31 @@ module.exports = async function(input) {
         }
       }
     }
+    default : {
+      console.log(`RACE MODE: GAME value is ${response.game}, not a preset case!`);
+    }
     //ADD MORE CASES HERE
+  }
+}
+
+/*
+  Version of sendQuestion for race mode
+*/
+function sendNextQuestion(currentRoom, currentPlayer, data) {
+  console.log(currentRoom);
+  console.log(currentRoom.players);
+  console.log(currentRoom.players[data.id]);
+  console.log(currentPlayer);
+  currentPlayer.questionCounter++;
+  currentPlayer.answerable = true;
+
+  return {
+    'game': C.GAME_RES.NEXT_QUESTION,
+    'sendTo': C.SEND_TO.USER,
+    'question': common.removeSolution(
+      currentRoom.quiz.questions[currentPlayer.questionCounter]
+    ),
+    'roomNo': data.roomNo,
+    'targetId' : data.id
   }
 }

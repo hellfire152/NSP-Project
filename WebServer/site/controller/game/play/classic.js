@@ -33,6 +33,7 @@ function handleGame(response) {
       p.answerResponses.data = response.responseData;
       p.answerResponses.visible = true;
       p.questionDisplay.visible = false;
+      p.mcqButtonHandler.showSolution(response.solution);
 
       //update topBar
       let scoreData = response.scoreData[name];
@@ -40,6 +41,7 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.ROUND_END: {
+      pixiScenes.mcqButtonHandler.stopShowingSolution();
       let p = pixiScenes.ranking;
       p.allPlayerRanking.data = response.roundEndResults;
       swapScene('ranking');

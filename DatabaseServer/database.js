@@ -33,6 +33,12 @@ connection.connect(function(error){
 });
 
 var server = net.createServer(function(conn){
+  conn.status = C.AUTH.REQUEST_CONNECTION;
+  if(S.AUTH_BYPASS) {
+    console.log("AUTHENTICATED WILL BE BYPASSED");
+    conn.status = C.AUTH.AUTHENTICATED;
+  }
+
   console.log("Database server start");
 
   conn.on('end', function(){
@@ -44,7 +50,6 @@ var server = net.createServer(function(conn){
   conn.on('data', async function(input){
 
     if(S.AUTH_BYPASS) console.log("AUTHENTICATED WILL BE BYPASSED");
-
     if(conn.status != C.AUTH.AUTHENTICATED) { //not authenticated yet
       /**AUTHENTICATION PROCESS**/
       switch(conn.status) {

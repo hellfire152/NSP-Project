@@ -33,6 +33,7 @@ class QuestionDisplay extends DisplayElement {
     this._background.width = width;
     this._container.addChild(this._background);
     this._container.addChild(this._text);
+    this._container.addChild(this._timer);
     this.resize();
   }
 
