@@ -32,6 +32,10 @@ html
       required:true,
       email:true
       },
+      phoneNumber:{
+      required:true,
+      phoneNumber:true
+      }
       DOB:{
       required:true,
       date:true
@@ -59,6 +63,10 @@ html
       required:"Please enter email",
       email:"Please enter a valid email"
       },
+      phoneNumber:{
+      required:"Please enter phoneNumber",
+      email:"Please enter a valid phoneNumber"
+      },
       DOB:{
       required:"Please enter your birthdate",
       date:"Please enter a valid date"
@@ -84,6 +92,9 @@ html
       input#confirmPassword(type='password', name='confirmPassword', placeholder='confirmPassword')
       br
       p
+        | Telephone:
+        input(type='tel', name='phoneNumber')
+      br
       #dateOfBirth
         label(for='dateOfBirth', style='float:left; display:inline;')
           | Date of Birth:

@@ -15,16 +15,19 @@ module.exports =function(cipher, appConn,C, errors){
     var email = req.body.email;
     var password = req.body.password;
     var confirmPassword=req.body.confirmPassword;
+    var phoneNumber = req.body.phoneNumber;
     var dateOfBirth=req.body.DOB;
     var school=req.body.school;
 
         req.sanitize('username').escape();
         req.sanitize('email').escape();
         req.sanitize('password').escape();
+        req.sanitize('phoneNumber').escape();
         req.sanitize('dateOfBirth').escape();
         req.sanitize('username').trim();
         req.sanitize('email').trim();
         req.sanitize('password').trim();
+        req.sanitize('phoneNumber').trim();
         req.sanitize('dateOfBirth').trim();
 
 
@@ -88,6 +91,7 @@ module.exports =function(cipher, appConn,C, errors){
               "username": req.body.username,
               "password": req.body.password,
               "email":req.body.email,
+              "phoneNumber":req.body.phoneNumber,
               "dateOfBirth":req.body.DOB,
               "school":req.body.school
             })
@@ -103,6 +107,7 @@ module.exports =function(cipher, appConn,C, errors){
                 'username' :username,
                 'email':email,
                 'password':password,
+                'phoneNumber':phoneNumber,
                 'dateOfBirth':dateOfBirth,
                 'school':school
 
@@ -111,6 +116,7 @@ module.exports =function(cipher, appConn,C, errors){
                   'username':response.username,
                   'email':response.email,
                   'password':response.password,
+                  'phoneNumber':response.phoneNumber,
                   'dateOfBirth':response.dateOfBirth,
                   'school':response.school
                 });
