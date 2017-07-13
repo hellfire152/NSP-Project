@@ -39,6 +39,18 @@ async function handleHashPass(data){
     return data;
 }
 
+async function handleHashIP(data){
+  cipher.hash(data.inputData.ip_address)
+  .then(hashed => {
+    data.inputData.ip_address = hashed;
+  })
+  .catch(reason => {
+    console.log(reason);
+  });
+
+return data;
+}
+
 async function handleDeleteAccount(data){
   var dataArr = [];
   var encryptedData = {};
@@ -153,6 +165,7 @@ module.exports = function() {
     'handleEncryption' : handleEncryption,
     'handleDecryption' : handleDecryption,
     'handleHashPass' : handleHashPass,
-    'handleDeleteAccount' : handleDeleteAccount
+    'handleDeleteAccount' : handleDeleteAccount,
+    'handleHashIP' : handleHashIP
   }
 }

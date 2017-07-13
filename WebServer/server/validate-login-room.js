@@ -29,10 +29,8 @@ module.exports = function(cipher, appConn, C) {
       .has().digits()
       .has().not().spaces();
 
-
       var passwordCheck=schema.validate(password);
       var error = req.validationErrors();
-
 
       if (passwordCheck){
         if(!error){
@@ -70,17 +68,11 @@ module.exports = function(cipher, appConn, C) {
           console.log("pass");
           console.log("HOST FORM DATA: ");
           console.log(req.body);
-          // cipher.encryptJSON({
-          //   "username": req.body.username,
-          //   "password": req.body.password
-          // })
-          //   .catch(function (err) {
-          //     throw new Error('Error parsing JSON!');
-          //   })
-            // .then(function(cookieData) {
-            // res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-            // res.redirect('/login?room=' +req.body.usename);
-            console.log(`C CONSTANT OBJECT: ${C}`);
+
+            if(req.cookies.deviceIP != undefined){
+              var deviceIp = JSON.parse(req.cookies.deviceIP);
+            }
+
             appConn.send({
               // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'type':C.REQ_TYPE.DATABASE,
@@ -91,10 +83,8 @@ module.exports = function(cipher, appConn, C) {
                   password : req.body.password
                 }
               }
-              // 'username' :username,
-              // 'password':password
-
             }, (response) => {
+<<<<<<< HEAD
               console.log(response.data);
               console.log("Validating");
               console.log(response.data.success);
@@ -109,17 +99,68 @@ module.exports = function(cipher, appConn, C) {
 
                 res.redirect('/login');
               }
+=======
+
+              var currentIpAddress = "wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU=" //5555 temp way to get ip address, because site is not s
+              //If incorrect user input return to login page
+              if(!(response.data.success)){
+                res.redirect('/login');
+              }
+              else{
+                //Check for identical IP address in user cookie
+                var valid = false;
+                if(deviceIp != undefined && response.data.data.ip_address != undefined){
+                  outerloop:
+                    for(i=0 ; i<response.data.data.ip_address.length ; i++){
+                      for(j=0 ; j<deviceIp.length ; j++){
+                        if(response.data.data.ip_address[i] == deviceIp[j] && currentIpAddress == response.data.data.ip_address[i] && currentIpAddress == deviceIp[j]){
+                          valid = true;
+                          break outerloop;
+                        }
+                      }
+                    }
+                }
+                if(valid){
+                  //GET ACTUAL DATA AND STORE TO SESSION WITHOUT OTP
+                  appConn.send({
+                    'type' : C.REQ_TYPE.DATABASE,
+                    'data' : {
+                      type : C.DB.SELECT.FULL_USER_ACCOUNT,
+                      user_id : response.data.data.user_id
+                    }
+                  } ,(response) => {
+                    if(response.data.success){
+                      console.log("SUCCESS");
+                      res.render('login',{
+                        data: response.data
+                      });
+                    }
+                    else{
+                      res.render('login',{
+                        data: response.data
+                      });
+                    }
+                  });
+                }
+                else{
+                  //REDIRECT TO OTP WEBSITE TO VERIFY
+                  var otp = {
+                    pin : 1234, //TODO:Will be randomly generated
+                    user_id : response.data.data.user_id,
+                    count : 0
+                  }
+                  res.cookie('otp', JSON.stringify(otp), {"maxAge": 1000*60*5}); //5 min
+                  res.redirect('/otp');
+                }
+              }
+>>>>>>> 94e574438bda271c1c3be3e142852067aab5fd8b
             });
-          // });
         }
         else{
-
           console.log("FAIL");
-
           res.redirect('/login');
         }
       }
-
       else{
 
           req.session.errors=error;
@@ -128,13 +169,9 @@ module.exports = function(cipher, appConn, C) {
           console.log("FAIL PW");
 
           res.redirect('/login');
-
-
         }
-
     }
     else{
-
         req.session.errors=error;
         req.session.success=false;
         if(username==""){
@@ -148,11 +185,6 @@ module.exports = function(cipher, appConn, C) {
 
         res.redirect('/login');
         return;
-
     }
-
-
-
-
   }
 }

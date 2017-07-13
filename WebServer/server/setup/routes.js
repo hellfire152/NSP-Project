@@ -20,7 +20,7 @@ module.exports = function(data) {
     queryOfUser = data.queryOfUser;
     uuid = data.uuid;
     errors=data.error;
-  uuid = data.uuid;
+    uuid = data.uuid;
 
   //middleware
   app.use('*', checkMultipleOnSameMachine);
@@ -162,9 +162,13 @@ module.exports = function(data) {
   app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C));
   app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C));
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
+<<<<<<< HEAD
   app.post('/change-password-room-success', require('../validate-change-password.js')(cipher, appConn,C));
   app.post('/forget-password-room-success', require('../validate-forget-password.js')(cipher, appConn,C));
 
+=======
+  app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C));
+>>>>>>> 94e574438bda271c1c3be3e142852067aab5fd8b
 }
 
 function sendErrorPage(res, errormsg) {
