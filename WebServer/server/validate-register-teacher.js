@@ -16,6 +16,7 @@ module.exports =function(cipher, appConn, C){
     var password = req.body.password;
     var confirmPassword = req.body.confirmPassword;
     var school=req.body.school;
+    var phoneNumber=req.body.phoneNumber
 
     console.log(school);
         req.sanitize('name').escape();
@@ -23,14 +24,15 @@ module.exports =function(cipher, appConn, C){
         req.sanitize('email').escape();
         req.sanitize('password').escape();
         req.sanitize('school').escape();
+        req.sanitize('phoneNumber').escape();
         req.sanitize('name').trim();
         req.sanitize('username').trim();
         req.sanitize('email').trim();
         req.sanitize('password').trim();
         req.sanitize('school').trim();
-
+        req.sanitize('phoneNumber').trim();
     console.log(username);
-    if (name!="" && username!="" && email!="" && password!=""&&school!=""){
+    if (name!="" && username!="" && email!="" && password!=""&&school!=""&&phoneNUmber!=""){
       var schema = new passwordValidator();
       schema
       .is().min(8)
@@ -69,7 +71,8 @@ module.exports =function(cipher, appConn, C){
                     name : req.body.name,
                     username :req.body.username,
                     email : req.body.email,
-                    password_hash : req.body.password
+                    password_hash : req.body.password,
+                    phoneNumber: req.body.phoneNumber
                     // contact : req.body.contact TODO: FOR THE CONTACT IN DATABASE
                   },
                   details :{
@@ -127,6 +130,9 @@ module.exports =function(cipher, appConn, C){
           console.log("Please enter your password");
         }
         if(email==""){
+          console.log("Please enter your email");
+        }
+        if(phoneNumber==""){
           console.log("Please enter your email");
         }
         console.log("never fill in all");

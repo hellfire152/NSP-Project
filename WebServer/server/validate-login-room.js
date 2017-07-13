@@ -84,7 +84,7 @@ module.exports = function(cipher, appConn, C) {
                 }
               }
             }, (response) => {
-<<<<<<< HEAD
+
               console.log(response.data);
               console.log("Validating");
               console.log(response.data.success);
@@ -99,7 +99,6 @@ module.exports = function(cipher, appConn, C) {
 
                 res.redirect('/login');
               }
-=======
 
               var currentIpAddress = "wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU=" //5555 temp way to get ip address, because site is not s
               //If incorrect user input return to login page
@@ -153,7 +152,7 @@ module.exports = function(cipher, appConn, C) {
                   res.redirect('/otp');
                 }
               }
->>>>>>> 94e574438bda271c1c3be3e142852067aab5fd8b
+
             });
         }
         else{
