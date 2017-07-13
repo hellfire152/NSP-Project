@@ -9,6 +9,11 @@ var checkMultipleOnSameMachine = require('./prevent_multiple_session.js');
 
 var express = require('express');
 var nodemailer = require('nodemailer');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var csrf = require('csurf');
+var csrfProtection = csrf({ cookie: true });
+var parseForm = bodyParser.urlencoded({ extended: false });
 
 module.exports = function(data) {
 
@@ -137,6 +142,15 @@ module.exports = function(data) {
   /*TESTING*/
   app.get('/test', function(req, res) {
     res.render('test', {});
+  });
+
+  app.get('/form', csrfProtection, function (req, res) {
+    // pass the csrfToken to the view
+    res.render('send', { csrfToken: req.csrfToken() });
+  });
+
+  app.post('/process', parseForm, csrfProtection, function (req, res) {
+    res.send('data is being processed');
   });
 
 
