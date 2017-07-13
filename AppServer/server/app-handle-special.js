@@ -42,10 +42,11 @@ async function socket_disconnect(data) {
     let host = allRooms[data.roomNo];
     let r = allRooms[data.roomNo];
     if(r.host == data.id) { //host disconnect
+      delete allRooms[data.roomNo]; //kill the room
       response = {
         'special': C.SPECIAL.HOST_DISCONNECT,
         'roomNo': data.roomNo
-      }
+      };
     } else {  //player disconnect
       console.log("PLAYER_DISCONNECT");
       //remove player from playerList

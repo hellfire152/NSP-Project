@@ -68,15 +68,9 @@ app.loader  //load all
   .load((loader, resources) => {
     allResources = resources;
 
-    progressBar = new ProgressBar({
-      'width' : WIDTH,
-      'height' : 10,
-      'maxNo' : 10,
-      'startNo' : 0,
-      'color' : 0xFF0000
-    });
+    let topBar = new TopBar(resources, WIDTH, 50, 'hellfire152');
 
-    app.stage.addChild(progressBar.view);
+    app.stage.addChild(topBar.view);
   });
 
 window.onload = () => {

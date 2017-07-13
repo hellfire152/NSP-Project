@@ -36,7 +36,7 @@ app.loader  //load all
     p.answering = new PIXI.Container();
     p.getReady = new PIXI.Container();
     p.ranking = new PIXI.Container();
-    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
+    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by res.render
 
     //setting up the various scenes...
     //getReady scene
@@ -57,7 +57,8 @@ app.loader  //load all
       'height' : HEIGHT - topBar.height,
       'paddingX' : 40,
       'paddingY' : 20,
-      'minHeight' : 50
+      'minHeight' : 50,
+      'maxHeight' : 100
     }, false);
     //positioning
     p.ranking.allPlayerRanking.y = topBar.height;
@@ -90,8 +91,9 @@ app.loader  //load all
     p.answering.answerResponses = answerResponses;
     p.answering.questionDisplay = questionDisplay;
     p.answering.addChild(
-      topBar.view, questionDisplay.view, answerResponses.view,
+      questionDisplay.view, answerResponses.view,
       mcqButtonHandler.view, shortAnswerTextField.view);
+    p.answering.addChild(topBar.view);
 
     //set all scenes not visible
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
@@ -108,6 +110,7 @@ function swapScene(scene) {
       }
     }
     pixiScenes[scene].visible = true; //set the specified one to be visible
+    pixiScenes.topBar.visible = true; //topBar visible
   } else {
     throw new Error(`Scene ${scene} does not exist!`);
   }

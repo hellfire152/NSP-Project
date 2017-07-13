@@ -87,7 +87,8 @@ module.exports = function(data) {
             } else {
               res.render('play', {
                 'roomNo' : response.roomNo,
-                'gamemode': response.gamemode
+                'gamemode': response.gamemode,
+                'name' : response.id
               });
             }
           });
