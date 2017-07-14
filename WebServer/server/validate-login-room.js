@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator = require('password-validator');
-module.exports = function(cipher, appConn, C) {
+module.exports = function(cipher, appConn, C, xssDefense) {
   return function(req, res){
     console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
@@ -13,7 +13,6 @@ module.exports = function(cipher, appConn, C) {
     // console.log("hi");
     var username = req.body.username;
     var password = req.body.password;
-
         req.sanitize('username').escape();
         req.sanitize('password').escape();
         req.sanitize('username').trim();
@@ -84,7 +83,7 @@ module.exports = function(cipher, appConn, C) {
                 }
               }
             }, (response) => {
-      
+
 
               var currentIpAddress = "wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU=" //5555 temp way to get ip address, because site is not s
               //If incorrect user input return to login page
@@ -115,17 +114,21 @@ module.exports = function(cipher, appConn, C) {
                       user_id : response.data.data.user_id
                     }
                   } ,(response) => {
+
+                    console.log(response.data.data[0]);
+                    var encodedData = xssDefense.jsonEncode(response.data.data[0]);
                     if(response.data.success){
                       console.log("SUCCESS");
-                      res.cookie('user_info', JSON.stringify(response.data));
+                      console.log(encodedData);
+                      res.cookie('user_info', JSON.stringify(encodedData));
                       res.render('login',{
-                        data: response.data
+                        data: encodedData
                       });
                     }
                     else{
-                      res.cookie('user_info', JSON.stringify(response.data));
+                      res.cookie('user_info', JSON.stringify(encodedData));
                       res.render('login',{
-                        data: response.data
+                        data: encodedData
                       });
                     }
                   });

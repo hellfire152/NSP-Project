@@ -15,7 +15,7 @@ var frameguard = require('frameguard');
 
 
 app.use(helmet.noSniff()); // content type should not be changed or followed
-app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working ** 
+app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
 app.use(helmet.xssFilter()); // protects against reflected XSS
 module.exports = function(data) {
 
@@ -170,17 +170,14 @@ module.exports = function(data) {
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
   app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
-  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C));
+  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C, xssDefense));
   app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C));
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
   app.post('/change-password-room-success', require('../validate-change-password.js')(cipher, appConn,C));
   app.post('/forget-password-room-success', require('../validate-forget-password.js')(cipher, appConn,C));
   app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C));
-<<<<<<< HEAD
   app.post('/otp-register', require('../validate-otp-register.js') (cipher, appConn, C));
-=======
 
->>>>>>> 2acf3c68219ba13f4f3c6ca8e93082327937d0f3
 }
 
 function sendErrorPage(res, errormsg) {
