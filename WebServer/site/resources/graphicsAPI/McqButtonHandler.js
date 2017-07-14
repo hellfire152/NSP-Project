@@ -179,6 +179,14 @@ class McqButtonHandler extends DisplayElement {
     let outlineGreenFilter = new PIXI.filters.OutlineFilter(3, 0x00ff04);
     let outlineRedFilter = new PIXI.filters.OutlineFilter(3, 0xff0000);
 
+    //applying filters
+    for(let i = 0, solutionCheck = 8; i < this._buttons.length; i++, solutionCheck /= 2) {
+      if(solution & solutionCheck) {  //correct
+        this._buttons[i].filters = [outlineGreenFilter];
+      } else {  //wrong
+        this._buttons[i].filters = [darkenFilter, outlineRedFilter];
+      }
+    }
     this._solutionFilterTimer = setInterval(() => {
       if(this._showSolution) {
         //applying filters
@@ -197,6 +205,7 @@ class McqButtonHandler extends DisplayElement {
 
   stopShowingSolution() {
     this._showSolution = false; //stop the filter application loop
+    clearInterval(this._solutionFilterTimer);
     for(let button of this._buttons) { //remove any existing filters
       button.filters = [];
     }

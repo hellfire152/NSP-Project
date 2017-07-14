@@ -113,6 +113,9 @@ function roundEndResults(players, sortByPoints) {
   return results;
 }
 
+/*
+  Returns true on a correct answer, false on wrong
+*/
 function checkCorrectAnswer(question, answer) {
   if((question.type == 0 && answer & question.solution)  //MCQ correct
     || (question.type == 1 && //short answer correct (case insensitive)

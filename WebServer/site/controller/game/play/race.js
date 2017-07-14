@@ -4,6 +4,7 @@
   Author: Jin Kuan
 */
 console.log('PLAY: Loaded: race gamemode handler!');
+var firstQuestion = true;
 function handleGame(response) {
   console.log('PLAY: Handling game response!');
   switch(response.game) {
@@ -21,18 +22,22 @@ function handleGame(response) {
         'startNo' : 0,
         'color' : 0xFF0000
       });
+      p.progressBar = progressBar;
       //positioning progressBar right above the answering place
-      progressBar.y = 10 + p.mcqButtonHandler.height;
+      progressBar.y = HEIGHT - p.mcqButtonHandler.height - progressBar.height;
       //add to answering scene
       p.addChild(progressBar.view);
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {  //first question OR gets the previous question correct
-      pixiScenes.topBar.updateCorrect(null, score); //update top bar
+      if(!firstQuestion) pixiScenes.answering.progressBar.increment();
+      else firstQuestion = false;
+      pixiScenes.topBar.updateCorrect(null, response.score); //update top bar
 
       let p = pixiScenes.answering;
       if(response.question.type) { //MCQ question
         p.mcqButtonHandler.visble = true; //show mcq buttons
+        p.mcqButtonHandler.enableAll();
         p.shortAnswerTextField.visible = false;
       } else {  //short answer
         p.shortAnswerTextField.visible = true; //show text field

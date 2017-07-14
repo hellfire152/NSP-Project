@@ -83,11 +83,11 @@ module.exports = async function(input) {
         currentRoom.answers[data.answer]++;
 
         common.handleScoring({
-          'data': data,
-          'currentRoom': currentRoom,
-          'currentPlayer': currentPlayer
+          'data' : data,
+          'currentRoom' : currentRoom,
+          'currentPlayer' : currentPlayer
         });
-
+        
         //tracking variables
         currentPlayer.answered = true;
         currentRoom.answerCount++;

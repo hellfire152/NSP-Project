@@ -41,7 +41,7 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.ROUND_END: {
-      pixiScenes.mcqButtonHandler.stopShowingSolution();
+      pixiScenes.answering.mcqButtonHandler.stopShowingSolution();
       let p = pixiScenes.ranking;
       p.allPlayerRanking.data = response.roundEndResults;
       swapScene('ranking');
@@ -56,33 +56,6 @@ function handleGame(response) {
       console.log(`GAME_RES value is ${response.game}, not a preset case!`);
     }
   }
-}
-
-function loadQuestion(question) {
-  let p = pixiScenes.answering;
-
-  //display the prompt
-  p.questionDisplay.setPrompt(question.prompt, question.time);
-  p.questionDisplay.visible = true;
-
-  let timerEnd; //callback for when timer ends
-  //set both not visible (just in case)
-  p.mcqButtonHandler.visible = p.shortAnswerTextField.visible = false;
-  if(question.type == 0) { //mcq question
-    p.mcqButtonHandler.reset();
-    p.mcqButtonHandler.visible = true;
-    p.mcqButtonHandler.setNoOfChoices(question.choices.length);
-    p.mcqButtonHandler.choices = question.choices;
-    p.mcqButtonHandler.enableAll();
-    timerEnd = () => {p.mcqButtonHandler.disableAll()};
-  } else {  //short answer
-    p.shortAnswerTextField.reset();
-    p.shortAnswerTextField.enable();
-    p.shortAnswerTextField.visible = true;
-    timerEnd = () => {p.shortAnswerTextField.disable()};
-  }
-  p.questionDisplay.text = question.prompt;
-  setTimeout(timerEnd, question.time * 1000);
 }
 
 function gameEnd(response) {

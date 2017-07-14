@@ -19,6 +19,7 @@ module.exports = async function(input) {
       let players = currentRoom.players;
       for(let player in players) {
         if(players.hasOwnProperty(player)) {
+          players[player].score = 0;
           players[player].questionCounter = 0;
           players[player].answerable = true;
         }
@@ -26,13 +27,22 @@ module.exports = async function(input) {
 
       //send first question to everyone in the room 5 seconds after get ready
       setTimeout(() => {
+        //set all players answertime
+        for(let player in players) {
+          if(players.hasOwnProperty(player)) {
+            players[player].answerTime = 0;
+            players[player].time = Date.now();
+          }
+        }
+        //send the first question
         sendToServer(conn, {
           'game' : C.GAME_RES.NEXT_QUESTION,
           'question': common.removeSolution(
-            currentRoom.quiz.questions[currentPlayer.questionCounter]
+            currentRoom.quiz.questions[0]
           ),
-          'sendTo' : C.SEND_TO.ROOM
+          'sendTo' : C.SEND_TO.ROOM,
           'roomNo': data.roomNo,
+          'score' : 0
         });
       }, 5000);
 
@@ -48,15 +58,16 @@ module.exports = async function(input) {
       if(currentPlayer.answerable) {
         let question = currentRoom.quiz.questions[currentPlayer.questionCounter];
 
-        let check = common.handleScoring({
-          'data' : data,
-          'currentRoom' : currentRoom,
-          'currentPlayer' : currentPlayer
-        });
+        let correct = common.checkCorrectAnswer(question, data.answer);
 
-        if(check.correct) {
+        if(correct) {
+          //calculate score
+          currentPlayer.score += common.getReward(currentRoom,
+            currentRoom.quiz.questions[currentPlayer.questionCounter]);
+            
           currentPlayer.answerable = true;  //just in case
           currentPlayer.questionCounter++;
+
 
           //finished the last question
           if(currentPlayer.questionCounter >= currentRoom.quiz.questions.length) {
@@ -70,7 +81,7 @@ module.exports = async function(input) {
                 'roomNo': data.roomNo
               }
             } else {  //send player finish event
-              sendToServer({
+              sendToServer(conn, {
                 'game': C.GAME_RES.PLAYER_FINISH,
                 'completedPlayers' : currentRoom.completedPlayers,
                 'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
@@ -94,7 +105,7 @@ module.exports = async function(input) {
             }
           } else {  //player hasn't finished
             //send correct answer event to everybody else
-            sendToServer({
+            sendToServer(conn, {
               'game': C.GAME_RES.ANSWER_CHOSEN,
               'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
               'roomNo': data.roomNo,
@@ -106,7 +117,7 @@ module.exports = async function(input) {
 
             return {  //send next question to player
               'game': C.GAME_RES.NEXT_QUESTION,
-              'score' : check.score,
+              'score' : currentPlayer.score,
               'sendTo': C.SEND_TO.USER,
               'targetId': data.id,
               'question': common.removeSolution(
@@ -143,15 +154,15 @@ module.exports = async function(input) {
   Version of sendQuestion for race mode
 */
 function sendNextQuestion(currentRoom, currentPlayer, data) {
-  console.log(currentRoom);
-  console.log(currentRoom.players);
-  console.log(currentRoom.players[data.id]);
-  console.log(currentPlayer);
   currentPlayer.questionCounter++;
   currentPlayer.answerable = true;
 
+  //set timer for time taken to a correct answer
+  currentPlayer.timeStart = Date.now();
+
   return {
     'game': C.GAME_RES.NEXT_QUESTION,
+    'score' : currentPlayer.score,
     'sendTo': C.SEND_TO.USER,
     'question': common.removeSolution(
       currentRoom.quiz.questions[currentPlayer.questionCounter]

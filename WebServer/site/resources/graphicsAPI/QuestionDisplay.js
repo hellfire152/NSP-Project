@@ -23,7 +23,7 @@ class QuestionDisplay extends DisplayElement {
     this._timer = new PIXI.Text('', this._fontStyle);
     this._timer.anchor.set(1, 0.5);
     this._timer.x = width - paddingX;  //last element from the right
-
+  
     this._background = new PIXI.Graphics();
     this._background  //draw a white square for a background
       .beginFill(0xffffff)
@@ -68,7 +68,7 @@ class QuestionDisplay extends DisplayElement {
     }
     //reposition
     this._text.x = this._background.width / 2;
-    this._text.y = this._background.height / 2;
+    this._text.y = this._timer.y = this._background.height / 2;
   }
 
   setPrompt(t, timer) {
