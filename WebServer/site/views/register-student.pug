@@ -1,6 +1,6 @@
 html
   head
-    title Register (Teacher)
+    title Register(student)
     script.
       var tim = 0;
       function reload () {
@@ -14,81 +14,111 @@ html
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
     script.
-        jQuery.validator.addMethod('checkphone', function(value){
-          if(/^[0-9]{8}$/.test(value)){
-            return true;
-           } else{
-            return false;
-           };
-         }, 'Please enter a valid phone number');
+      jQuery.validator.addMethod('checkphone', function(value){
+        if(/^[0-9]{8}$/.test(value)){
+          return true;
+         } else{
+          return false;
+         };
+       }, 'Please enter a valid phone number');
     script.
-        $(function(){
-          $('#register-teacher').validate({
-            rules:{
-              username:{
-                required:true,
-                minlength:5
-              },
-              password:{
-                required:true,
-                minlength:8
-              },
-              confirmPassword:{
-                required:true,
-                minlength:8,
-                equalTo:"#password"
-              },
-              phoneNumber:{
-                checkphone:true
-              },
-              email:{
-                required:true,
-                email:true
-              },
-              school:{
-                required:true,
-                minlength:3
-              }
+      $(function(){
+        $('#register-student').validate({
+          rules:{
+            name:{
+              required:true,
+              minlength:5
             },
-            messages:{
-              username:{
-                required: "Please enter username",
-                minlength:"Your username must consist atleast 5 characters"
-              },
-              password:{
-                required: "Please enter password",
-                minlength:"Your password must consist atleast 8 characters"
-              },
-              confirmPassword:{
-                required:"Please enter password",
-                minlength:"Your password must consist atleast 8 characters",
-                equalTo:"Passwords not match"
-              },
-              email:{
-                required:"Please enter email",
-                email:"Please enter a valid email"
-              },
-              school:{
-                required:"Please enter your school",
-                minlength:"Please enter a valid school"
-              }
+            username:{
+              required:true,
+              minlength:5
+            },
+            password:{
+              required:true,
+              minlength:8
+            },
+            confirmPassword:{
+              required:true,
+              minlength:8,
+              equalTo:"#password"
+            },
+            phoneNumber:{
+              checkphone:true
+            },
+            email:{
+              required:true,
+              email:true
+            },
+            DOB:{
+              required:true,
+              date:true
+            },
+            school:{
+              required:true,
+              minlength:3
             }
-          });
+          },
+          messages:{
+            name:{
+              required: "Please enter name",
+              minlength:"Your name must consist atleast 5 characters"
+            },
+            username:{
+              required: "Please enter username",
+              minlength:"Your username must consist atleast 5 characters"
+            },
+            password:{
+              required: "Please enter password",
+              minlength:"Your password must consist atleast 8 characters"
+            },
+            confirmPassword:{
+              required:"Please enter password",
+              minlength:"Your password must consist atleast 8 characters",
+              equalTo:"Passwords not match"
+            },
+            email:{
+              required:"Please enter email",
+              email:"Please enter a valid email"
+            },
+            DOB:{
+              required:"Please enter your birthdate",
+              date:"Please enter a valid date"
+            },
+            school:{
+              required:"Please enter your school",
+              minlength:"Please enter a valid school"
+            }
+          }
         });
-body(onmousemove='canceltimer();', onclick='canceltimer();')
+      });
 
-    form#register-teacher(action='/reg-room', method='post', onsubmit='/validate-register-student')
+  body(onmousemove='canceltimer();', onclick='canceltimer();')
+    form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
+      input#name(type='text', name='name', placeholder='name', autocomplete="off")
+      br
+      p
       input#username(type='text', name='username', placeholder='username', autocomplete="off")
       br
-      input#Email.text(type='email',  name='email', placeholder='Email', autocomplete="off")
+      p
+      input#Email.text(type='email', name='email', placeholder='Email', autocomplete="off")
       br
-      input#password(type='password',  name='password', placeholder='password')
+      p
+      input#password(type='password', name='password', placeholder='password')
       br
-      input#confirmPassword(type='password',  name='confirmPassword', placeholder='confirmPassword')
+      p
+      input#confirmPassword(type='password', name='confirmPassword', placeholder='confirmPassword')
       br
-      input#school(type='text',name='school', placeholder='school', autocomplete="off")
+      p
+      #dateOfBirth
+        label(for='dateOfBirth', style='float:left; display:inline;')
+          | Date of Birth:
+          input#DOB(style='width:230px;', type='date', name='DOB',min='1990-01-01',max='2011-01-15')
+      p
+      input#school(type='text', name='school', placeholder='school', autocomplete="off")
       br
+      p
       input#phoneNumber.checkphone(type='text', name='phoneNumber', placeholder='phoneNumber', autocomplete="off")
       br
+      p
       input.submit(style='display:inline-block;', type='submit', value='Submit')
       input.submit(style='display:inline-block;', type='reset', value='Clear')
