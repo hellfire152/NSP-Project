@@ -160,9 +160,12 @@ module.exports = function(data) {
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
   app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
   app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C));
-  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C, errors));
+  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C));
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
+  app.post('/change-password-room-success', require('../validate-change-password.js')(cipher, appConn,C));
+  app.post('/forget-password-room-success', require('../validate-forget-password.js')(cipher, appConn,C));
   app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C));
+
 }
 
 function sendErrorPage(res, errormsg) {

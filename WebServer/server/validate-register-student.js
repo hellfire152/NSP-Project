@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn,C, errors){
+module.exports =function(cipher, appConn,C){
   return function(req, res){
     // req.checkBody('username','Please enter username').notEmpty();
     //
@@ -11,6 +11,7 @@ module.exports =function(cipher, appConn,C, errors){
     // req.checkBody('password','Invalid password').isLength({min:8});
     console.log(cipher);
     errors=false;
+    var name = req.body.name;
     var username = req.body.username;
     var email = req.body.email;
     var password = req.body.password;
@@ -18,17 +19,19 @@ module.exports =function(cipher, appConn,C, errors){
     var dateOfBirth=req.body.DOB;
     var school=req.body.school;
 
+        req.sanitize('name').escape();
         req.sanitize('username').escape();
         req.sanitize('email').escape();
         req.sanitize('password').escape();
         req.sanitize('dateOfBirth').escape();
+        req.sanitize('name').trim();
         req.sanitize('username').trim();
         req.sanitize('email').trim();
         req.sanitize('password').trim();
         req.sanitize('dateOfBirth').trim();
 
 
-    if (username!="" && email!="" && password!="" && confirmPassword!=""){
+    if (name!="" &&username!="" && email!="" && password!="" && confirmPassword!=""){
       var schema = new passwordValidator();
       schema
       .is().min(8)
@@ -52,39 +55,53 @@ module.exports =function(cipher, appConn,C, errors){
             console.log("pass");
             console.log("Creating an account: ");
             console.log(req.body);
-            cipher.encryptJSON({
-              "username": req.body.username,
-              "password": req.body.password,
-              "email":req.body.email,
-              "dateOfBirth":req.body.DOB,
-              "school":req.body.school
-            })
-              .catch(function (err) {
-                throw new Error('Error parsing JSON!');
-              })
-              .then(function(cookieData) {
-              res.cookie('register-student', cookieData, {"maxAge": 1000*60*60}); //one hour
+            // cipher.encryptJSON({
+            //   "username": req.body.username,
+            //   "password": req.body.password,
+            //   "email":req.body.email,
+            //   "dateOfBirth":req.body.DOB,
+            //   "school":req.body.school
+            // })
+            //   .catch(function (err) {
+            //     throw new Error('Error parsing JSON!');
+            //   })
+            //   .then(function(cookieData) {
+            //   res.cookie('register-student', cookieData, {"maxAge": 1000*60*60}); //one hour
               // res.redirect('/login?room='  +req.body.room);
 
               appConn.send({
-                'type':C.REQ_TYPE.ACCOUNT_CREATE_STUD,
-                'username' :username,
-                'email':email,
-                'password':password,
-                'dateOfBirth':dateOfBirth,
-                'school':school
+                'type':C.REQ_TYPE.DATABASE,
+                'data':{
+                  type:C.DB.CREATE.STUDENT_ACC,
+                  account:{
+                    name : req.body.name,
+                    username :req.body.username,
+                    email : req.body.email,
+                    password_hash : req.body.password
+                  },
+                  details :{
+                    school : req.body.school,
+                    date_of_birth : req.body.DOB
+                  }
+                }
+                // 'username' :username,
+                // 'email':email,
+                // 'password':password,
+                // 'dateOfBirth':dateOfBirth,
+                // 'school':school
 
               }, (response) => {
                 res.render('register-student',{
-                  'username':response.username,
-                  'email':response.email,
-                  'password':response.password,
-                  'dateOfBirth':response.dateOfBirth,
-                  'school':response.school
+                  data:response.data
+                  // 'username':response.username,
+                  // 'email':response.email,
+                  // 'password':response.password,
+                  // 'dateOfBirth':response.dateOfBirth,
+                  // 'school':response.school
                 });
               });
-            });
-            errors=false;
+            // });
+            // errors=false;
           }
           else{
 
@@ -97,7 +114,7 @@ module.exports =function(cipher, appConn,C, errors){
 
           req.session.errors=error;
           req.session.success=false;
-          errors=true;
+
           console.log("password not match");
           // res.redirect('/registerstud');
         }
@@ -109,7 +126,7 @@ module.exports =function(cipher, appConn,C, errors){
           req.session.success=false;
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
-          errors=true;
+
           // res.redirect('/registerstud');
 
 
@@ -121,6 +138,14 @@ module.exports =function(cipher, appConn,C, errors){
         req.session.errors=error;
         req.session.success=false;
         var errormsg = '';
+        if(name==""){
+          console.log("Please enter your name");
+          // errormsg= "Please enter your username"
+          // sendErrorPage(res,errormsg);
+          // res.render('register-student',{
+          //   error1:
+          // });
+        }
         if(username==""){
           console.log("Please enter your username");
           // errormsg= "Please enter your username"
@@ -147,7 +172,7 @@ module.exports =function(cipher, appConn,C, errors){
         console.log("never fill in all");
 
         res.redirect('/registerstud');
-        errors=true;
+
         return;
 
     }

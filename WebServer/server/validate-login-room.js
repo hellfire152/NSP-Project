@@ -84,6 +84,7 @@ module.exports = function(cipher, appConn, C) {
                 }
               }
             }, (response) => {
+      
 
               var currentIpAddress = "wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU=" //5555 temp way to get ip address, because site is not s
               //If incorrect user input return to login page
@@ -142,6 +143,7 @@ module.exports = function(cipher, appConn, C) {
                   res.redirect('/otp');
                 }
               }
+
             });
         }
         else{
