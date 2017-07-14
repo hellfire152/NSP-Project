@@ -27,8 +27,8 @@ module.exports = function(cipher, appConn, C) {
                 type : C.DB.CREATE.IP_ADDRESS,
                 inputData : {
                   user_id : otpObj.user_id,
-                  // ip_address : "5555"
-                  ip_address : Math.floor((Math.random() * 10000) + 1).toString() //Mock up of new IP address TODO: Get IP address from client
+                  ip_address : "5555"
+                  // ip_address : Math.floor((Math.random() * 10000) + 1).toString() //Mock up of new IP address TODO: Get IP address from client
                 }
               }
             }, (response2) => {
@@ -43,12 +43,11 @@ module.exports = function(cipher, appConn, C) {
                 var newIpArr = [response2.data.data.hashedIpAddress];
                 res.cookie('deviceIP', JSON.stringify(newIpArr), {"maxAge": 1000*60*60*24*30}); // max age: 30 days
               }
-
+              res.cookie('user_info', JSON.stringify(response.data));
               res.render('login',{
                 data: response.data
               });
             });
-            console.log("RENDERED");
         });
       }
       else{

@@ -107,11 +107,12 @@ module.exports = function(cipher, appConn, C) {
               }
               else{
                 //Check for identical IP address in user cookie
-                var valid = false;
+                var valid = false; //Registered IP address in client PC
                 if(deviceIp != undefined && response.data.data.ip_address != undefined){
                   outerloop:
                     for(i=0 ; i<response.data.data.ip_address.length ; i++){
                       for(j=0 ; j<deviceIp.length ; j++){
+                        console.log("["+response.data.data.ip_address[i]+"]" + "["+deviceIp[j]+"]" + "["+currentIpAddress+"]");
                         if(response.data.data.ip_address[i] == deviceIp[j] && currentIpAddress == response.data.data.ip_address[i] && currentIpAddress == deviceIp[j]){
                           valid = true;
                           break outerloop;
@@ -130,11 +131,13 @@ module.exports = function(cipher, appConn, C) {
                   } ,(response) => {
                     if(response.data.success){
                       console.log("SUCCESS");
+                      res.cookie('user_info', JSON.stringify(response.data));
                       res.render('login',{
                         data: response.data
                       });
                     }
                     else{
+                      res.cookie('user_info', JSON.stringify(response.data));
                       res.render('login',{
                         data: response.data
                       });
@@ -143,6 +146,9 @@ module.exports = function(cipher, appConn, C) {
                 }
                 else{
                   //REDIRECT TO OTP WEBSITE TO VERIFY
+                  //Generate otp pin
+                  //Send the pin to email
+                  //Change 1234 - random no.
                   var otp = {
                     pin : 1234, //TODO:Will be randomly generated
                     user_id : response.data.data.user_id,
