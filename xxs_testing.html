@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <script>
+      function translate(mystring){
+        return mystring.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;").replace(\/\/, "&#x2F");
+      }
+      var html = translate("<p> Hello my name is nigel & I love yong qi </p>");
+      // document.getElementById("reg").innerHTML = html;
+    </script>
+  </head>
+  <body>
+  <!-- <body onload=alert("XSS")>
+  <img src="javascript:alert('XSS');" onerror="alert();"> -->
+  <input type="image" src="javascript:alert('XSS');">
+  </body>
+</html>

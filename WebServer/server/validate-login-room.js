@@ -96,8 +96,7 @@ module.exports = function(cipher, appConn, C) {
                 if(deviceIp != undefined && response.data.data.ip_address != undefined){
                   outerloop:
                     for(i=0 ; i<response.data.data.ip_address.length ; i++){
-                      for(j=0 ; j<deviceIp.length ; j++){
-                        console.log("["+response.data.data.ip_address[i]+"]" + "["+deviceIp[j]+"]" + "["+currentIpAddress+"]");
+                      for(j=0 ; j<deviceIp.length ; j++){                        console.log("["+response.data.data.ip_address[i]+"]" + "["+deviceIp[j]+"]" + "["+currentIpAddress+"]");
                         if(response.data.data.ip_address[i] == deviceIp[j] && currentIpAddress == response.data.data.ip_address[i] && currentIpAddress == deviceIp[j]){
                           valid = true;
                           break outerloop;
