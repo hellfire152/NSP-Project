@@ -1,7 +1,20 @@
 html
-  body
-    h1 OTP
-    p static OTP pass: 1234 chloe please change to dynamic thx.
-    form(action='/otp-check', method='POST')
-      input#otp(type='text', name='otp')
-      input(type='submit')
+  head
+    title OTP
+    script.
+      var tim = 0;
+      console.log("start timer");
+      function reload () {
+      tim = setTimeout("location.reload(true);",180000);   // 1 minute
+      }
+      console.log("stop timer");
+      function canceltimer() {
+      window.clearTimeout(tim);  // cancel the timer on each mousemove/click
+      reload();  // and restart it
+      }
+  body(onmousemove='canceltimer();', onclick='canceltimer();')
+      h1 OTP
+      p static OTP pass: 1234 chloe please change to dynamic thx.
+      form(action='/otp-check', method='POST')
+        input#otp(type='text', name='otp')
+        input(type='submit')
