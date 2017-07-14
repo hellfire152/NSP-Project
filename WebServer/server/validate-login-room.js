@@ -33,37 +33,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
 
       if (passwordCheck){
         if(!error){
-          const nodemailer = require('nodemailer');
-          const xoauth2 = require('xoauth2');
-
-          var transporter = nodemailer.createTransport({
-              service: 'gmail',
-              auth: {
-                  xoauth2: xoauth2.createXOAuth2Generator({
-                      user: 'chloeangsl@gmail.com',
-                      clientId: '856574075841-dn1nobjm59p0vrhmvcel4sf4djb6sath.apps.googleusercontent.com',
-                      clientSecret: 'i_T_RN-K_p7PsDbAwJXFNXRJ',
-                      refreshToken: '1/3f97hE7yCmipAtuPcu1iu4EhF3kSmzYicMXiamYMjXY'
-                  })
-              }
-          })
-
-          var mailOptions = {
-              from: 'My Name <chloeangsl@gmail.com>',
-              to: 'chloeangsl@gmail.com',
-              subject: 'testing my verification',
-              text: 'Hello World!!'
-          }
-
-          transporter.sendMail(mailOptions, function (err, res) {
-              if(err){
-                  console.log('Error');
-              } else {
-                  console.log('Email Sent');
-              }
-          })
-
-          console.log(error);
+      
           console.log("pass");
           console.log("HOST FORM DATA: ");
           console.log(req.body);

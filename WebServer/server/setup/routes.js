@@ -11,6 +11,7 @@ var express = require('express');
 var nodemailer = require('nodemailer');
 var helmet = require('helmet');
 var app = express();
+var xssDefense = require('xss'); 
 var frameguard = require('frameguard');
 
 

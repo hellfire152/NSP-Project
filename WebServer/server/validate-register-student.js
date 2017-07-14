@@ -49,7 +49,38 @@ module.exports =function(cipher, appConn,C){
         if(password==confirmPassword){
 
 
-          if(!error){
+            if(!error){
+                    // email authentication
+                    const nodemailer = require('nodemailer');
+                    const xoauth2 = require('xoauth2');
+
+                    var transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                                type: 'OAuth2',
+                                user: 'chloeangsl@gmail.com',
+                                clientId: '979107964638-c61trpd4k417h4i9mpakt28j27d5iva3.apps.googleusercontent.com',
+                                clientSecret: 'HVTYi42D2IaOaspKWRmDnind',
+                                refreshToken: '1/aCSuxuv5ZEkKnA_OoSX7S5zjYD2f5ceIw0FbQqtkYTkiTh5mXhLu2xFYdh3hx8zv',
+                                accessToken: 'ya29.GluEBJ4Wqm0aEvoffEuDwKTEdijfkdr9K9KhYJbqBwZBzWnfEV3LKmbx0w_kQzauSIIMRXAHYq28X3sed6gJf4sId-d5PoeP28GvNJ20Qnr0rC5i6kzwxLPd_BQn'
+                            }
+                    })
+
+                    var mailOptions = {
+                        from: 'My Name <chloeangsl@gmail.com>',
+                        to: 'chloeangsl@gmail.com',
+                        subject: 'testing my verification',
+                        text: 'Hello World!!'
+                    }
+
+                    transporter.sendMail(mailOptions, function (err, res) {
+                        if(err){
+                            console.log('Error');
+                        } else {
+                            console.log('Email Sent');
+                        }
+                    })
+
 
             console.log(error);
             console.log("pass");
