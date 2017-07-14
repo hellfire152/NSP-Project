@@ -9,6 +9,7 @@ var checkMultipleOnSameMachine = require('./prevent_multiple_session.js');
 
 var express = require('express');
 var nodemailer = require('nodemailer');
+var xssDefense = require('./xss-defense.js');
 
 module.exports = function(data) {
 
@@ -159,7 +160,7 @@ module.exports = function(data) {
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
   app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
-  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C));
+  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C, xssDefense));
   app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C));
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
   app.post('/change-password-room-success', require('../validate-change-password.js')(cipher, appConn,C));
