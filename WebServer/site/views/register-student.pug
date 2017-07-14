@@ -77,7 +77,7 @@ html
         });
 body(onmousemove='canceltimer();', onclick='canceltimer();')
 
-    form#register-teacher(action='/reg-room-teach', method='post', onsubmit='/validate-register-teacher')
+    form#register-teacher(action='/reg-room', method='post', onsubmit='/validate-register-student')
       input#username(type='text', name='username', placeholder='username', autocomplete="off")
       br
       input#Email.text(type='email',  name='email', placeholder='Email', autocomplete="off")
