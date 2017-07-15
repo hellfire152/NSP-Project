@@ -8,6 +8,10 @@
     "PUBLIC" : "./keys/WebServer-public.key",
     "PRIVATE" : "./keys/WebServer-private.key"
   },
+  "HTTPS" : {
+    "CERT" : "./cert/certificate.pem",
+    "KEY" : "./cert/private.key"
+  },
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
   "COOKIE_KEY" : "cookieKey",
