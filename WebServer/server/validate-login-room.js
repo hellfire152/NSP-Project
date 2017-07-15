@@ -33,7 +33,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
 
       if (passwordCheck){
         if(!error){
-      
+
           console.log("pass");
           console.log("HOST FORM DATA: ");
           console.log(req.body);
