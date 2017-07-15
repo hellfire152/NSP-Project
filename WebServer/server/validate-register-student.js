@@ -57,20 +57,20 @@ module.exports =function(cipher, appConn,C){
                     var transporter = nodemailer.createTransport({
                         service: 'gmail',
                         auth: {
-                                type: 'OAuth2',
+                          type: 'OAuth2',
                                 user: 'chloeangsl@gmail.com',
-                                clientId: '979107964638-c61trpd4k417h4i9mpakt28j27d5iva3.apps.googleusercontent.com',
-                                clientSecret: 'HVTYi42D2IaOaspKWRmDnind',
-                                refreshToken: '1/aCSuxuv5ZEkKnA_OoSX7S5zjYD2f5ceIw0FbQqtkYTkiTh5mXhLu2xFYdh3hx8zv',
-                                accessToken: 'ya29.GluEBJ4Wqm0aEvoffEuDwKTEdijfkdr9K9KhYJbqBwZBzWnfEV3LKmbx0w_kQzauSIIMRXAHYq28X3sed6gJf4sId-d5PoeP28GvNJ20Qnr0rC5i6kzwxLPd_BQn'
-                            }
-                    })
+                                clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
+                                clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
+                                refreshToken: '1/9op62YYjXj8wdRT7uhmlk0Zf486gqhaCWDVFLe3QZdVLdqBhJBUWfIt5vtMRXfu5',
+                                accessToken: 'ya29.GluIBCjmE1jHZ37vT0meyuFXrqdVZ3WzaGVrHtm2Yzr_PxGz0Sc92cND1MpAwY89fYhKws3RLortJpKWY5i0OwIwhTMPtNOmU9OPGTK0U5VUYvA3SAYDQCdyPpVd'
+                          }
+                      })
 
                     var mailOptions = {
                         from: 'My Name <chloeangsl@gmail.com>',
-                        to: 'chloeangsl@gmail.com',
-                        subject: 'testing my verification',
-                        text: 'Hello World!!'
+                        to: req.body.email,
+                        subject: 'VERIFICATION EMAIL',
+                        html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'</p>'
                     }
 
                     transporter.sendMail(mailOptions, function (err, res) {
