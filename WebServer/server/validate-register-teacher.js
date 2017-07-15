@@ -69,7 +69,7 @@ module.exports =function(cipher, appConn, C){
                 from: 'My Name <chloeangsl@gmail.com>',
                 to: req.body.email,
                 subject: 'VERIFICATION EMAIL',
-                html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'</p>'
+                html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'. Your verification number is: </p>'
             }
 
             transporter.sendMail(mailOptions, function (err, res) {

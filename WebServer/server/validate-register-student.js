@@ -9,6 +9,9 @@ module.exports =function(cipher, appConn,C){
     //
     // req.checkBody('password','Please enter password').notEmpty();
     // req.checkBody('password','Invalid password').isLength({min:8});
+    var speakeasy = require("speakeasy");
+    var secret = speakeasy.generateSecret({length: 20});
+    console.log(secret.base32); // Save this value to your DB for the user
     console.log(cipher);
     errors=false;
     var name = req.body.name;
@@ -18,6 +21,22 @@ module.exports =function(cipher, appConn,C){
     var confirmPassword=req.body.confirmPassword;
     var dateOfBirth=req.body.DOB;
     var school=req.body.school;
+
+    var token = speakeasy.totp({
+        secret: secret.base32,
+        encoding: 'base32'
+      });
+
+      console.log("HERE");
+      console.log(token);
+
+      var verified = speakeasy.totp.verify({
+        secret: secret.base32,
+        encoding: 'base32',
+        token: token
+      });
+
+      console.log(verified);
 
         req.sanitize('name').escape();
         req.sanitize('username').escape();
@@ -70,14 +89,14 @@ module.exports =function(cipher, appConn,C){
                         from: 'My Name <chloeangsl@gmail.com>',
                         to: req.body.email,
                         subject: 'VERIFICATION EMAIL',
-                        html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'</p>'
+                        html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'. Your verification number is: '+token+ ' </p>'
                     }
 
                     transporter.sendMail(mailOptions, function (err, res) {
                         if(err){
                             console.log('Error');
                         } else {
-                            console.log('Email Sent');
+                            console.log('Email verification has been sent');
                         }
                     })
 

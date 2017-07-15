@@ -5,7 +5,9 @@ module.exports = function(cipher, appConn, C) {
   return function(req, res) {
     req.sanitize('otp').escape();
 
+
     var errors = req.validationErrors();
+
 
     if(errors) {
       //TODO::Handle errors
