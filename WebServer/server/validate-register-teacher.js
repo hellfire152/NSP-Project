@@ -16,7 +16,24 @@ module.exports =function(cipher, appConn, C){
     var password = req.body.password;
     var confirmPassword = req.body.confirmPassword;
     var school=req.body.school;
-    var phoneNumber=req.body.phoneNumber
+    var phoneNumber=req.body.phoneNumber;
+    var speakeasy = require("speakeasy");
+    var secret = speakeasy.generateSecret({length: 20}); // Secret key is 20 characters long
+
+    var otp = speakeasy.totp({
+        secret: secret.base32,
+        encoding: 'base32'
+      });
+
+      console.log(otp);
+      // to test for verification
+      var verified = speakeasy.totp.verify({
+        secret: secret.base32,
+        encoding: 'base32',
+        otp: otp
+      });
+
+      console.log(verified);
 
     console.log(school);
         req.sanitize('name').escape();
@@ -32,7 +49,7 @@ module.exports =function(cipher, appConn, C){
         req.sanitize('school').trim();
         req.sanitize('phoneNumber').trim();
     console.log(username);
-    if (name!="" && username!="" && email!="" && password!=""&&school!=""&&phoneNUmber!=""){
+    if (name!="" && username!="" && email!="" && password!=""&&school!=""&&phoneNumber!=""){
       var schema = new passwordValidator();
       schema
       .is().min(8)
@@ -69,7 +86,7 @@ module.exports =function(cipher, appConn, C){
                 from: 'My Name <chloeangsl@gmail.com>',
                 to: req.body.email,
                 subject: 'VERIFICATION EMAIL',
-                html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'. Your verification number is: </p>'
+                html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'. Your verification number is: '+otp+ ' </p>'
             }
 
             transporter.sendMail(mailOptions, function (err, res) {
@@ -107,7 +124,8 @@ module.exports =function(cipher, appConn, C){
                     // contact : req.body.contact TODO: FOR THE CONTACT IN DATABASE
                   },
                   details :{
-                    organisation : req.body.school
+                    organisation : req.body.school,
+                    otp: otp
                   }
                 }
 
