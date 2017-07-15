@@ -9,8 +9,15 @@ var checkMultipleOnSameMachine = require('./prevent_multiple_session.js');
 
 var express = require('express');
 var nodemailer = require('nodemailer');
-var xssDefense = require('./xss-defense.js');
+var helmet = require('helmet');
+var app = express();
+var xssDefense = require('xss'); 
+var frameguard = require('frameguard');
 
+
+app.use(helmet.noSniff()); // content type should not be changed or followed
+app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
+app.use(helmet.xssFilter()); // protects against reflected XSS
 module.exports = function(data) {
 
   const C = data.C;
@@ -160,6 +167,10 @@ module.exports = function(data) {
     res.render('test', {});
   });
 
+  app.get('/add-quiz', function (req, res) {
+    res.render('add-quiz', {});
+})
+
 
   //handling all other requests (PUT THIS LAST)
 
@@ -181,6 +192,7 @@ module.exports = function(data) {
   app.post('/change-password-room-success', require('../validate-change-password.js')(cipher, appConn,C));
   app.post('/forget-password-room-success', require('../validate-forget-password.js')(cipher, appConn,C));
   app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C));
+  app.post('/otp-register', require('../validate-otp-register.js') (cipher, appConn, C));
 
 }
 

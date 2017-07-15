@@ -13,6 +13,7 @@ var uuid = require('uuid');
 var cookie = require('cookie');
 var ios = require('socket.io-express-session');
 const C = require('../custom-API/constants.json');
+var xssDefense = require('xss'); 
 
 var socketOfUser = {};
 setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
