@@ -19,7 +19,8 @@ html
 
       $('#submit').click(function() {
       $.get('verify?secret=' + $('#secret').text() + '&token=' + $('#otp').val(), function( data ) {
-
+      }
+      }
   body(onmousemove='canceltimer();', onclick='canceltimer();')
       h1 OTP
       p static OTP pass: 1234 chloe please change to dynamic thx.
