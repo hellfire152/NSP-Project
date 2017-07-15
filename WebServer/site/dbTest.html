@@ -4,6 +4,12 @@
     <script src='socket.io/socket.io.js'></script>
     <script src='resources/pixi.js'></script>
     <script src="https://code.jquery.com/jquery-latest.js"></script> <!--HTTPS -->
+    <script>
+    $.get("http://ipinfo.io", function(response) {
+        alert(response.ip);
+    }, "jsonp");
+
+    </script>
   </head>
   <body>
     <h1>Database Testing</h1>
@@ -79,6 +85,23 @@
         <br>
         <label>Password:
           <input type="password" name="password" id="loginPassword"/>
+        </label>
+        <br>
+        <br>
+        <input type='submit' value='Submit' /><br>
+      </form>
+    </div>
+    <br>
+    <div id='dbRetrieveUserDetails'>
+      <h2>Login Account</h2>
+      <form action='/data-access' method='POST'>
+        <input type="hidden" name="dbType" value="retrieveUserDetails">
+        <label>Username:
+          <input type="text" name="username" id="username"/>
+        </label>
+        <br>
+        <label>Email:
+          <input type="email" name="email" id="email"/>
         </label>
         <br>
         <br>

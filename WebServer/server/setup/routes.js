@@ -9,6 +9,7 @@ var checkMultipleOnSameMachine = require('./prevent_multiple_session.js');
 
 var express = require('express');
 var nodemailer = require('nodemailer');
+var xssDefense = require('./xss-defense.js');
 
 module.exports = function(data) {
 
@@ -135,19 +136,24 @@ module.exports = function(data) {
     }
   });
 
-  app.get('/login', function(req, res){
-    res.render('login',{title: 'Login',success:req.session.success, errors:req.session.errors});
-    req.session.errors=null;
-  });
-  app.get('/registerstud', function(req, res){
-    console.log("HEREHE");
-    res.render('register-student',{title: 'Register(Student)',success:req.session.success, errors:req.session.errors});
-    req.session.errors=null;
-  });
-  app.get('/registerteach', function(req, res){
-    res.render('register-teacher',{title: 'Register(Teacher)',success:req.session.success, errors:req.session.errors});
-    req.session.errors=null;
-  });
+  // app.get('/login', function(req, res){
+  //   console.log("RESPONSE");
+  //   console.log(res);
+  //   res.render('login',{
+  //     title : 'Login',
+  //     data : res
+  //   });
+  //   req.session.errors=null;
+  // });
+  // app.get('/registerstud', function(req, res){
+  //   console.log("HEREHE");
+  //   res.render('register-student',{title: 'Register(Student)',success:req.session.success, errors:req.session.errors});
+  //   req.session.errors=null;
+  // });
+  // app.get('/registerteach', function(req, res){
+  //   res.render('register-teacher',{title: 'Register(Teacher)',success:req.session.success, errors:req.session.errors});
+  //   req.session.errors=null;
+  // });
   //handling all other
   /*TESTING*/
   app.get('/test', function(req, res) {
@@ -165,13 +171,17 @@ module.exports = function(data) {
   });
 
   //handling form submits
-  app.post('/data-access', require('../validate-data-access.js')(cookieCipher, appConn, C));
-  app.post('/join-room', require('../validate-join-room.js')(cookieCipher, appConn));
-  app.post('/host-room', require('../validate-host-room.js')(cookieCipher, appConn));
-  app.post('/add-quiz', require('../validate-add-quiz.js')(cookieCipher, appConn, C));
-  app.post('/login-room', require('../validate-login-room.js')(cookieCipher, appConn, C));
-  app.post('/reg-room', require('../validate-register-student.js')(cookieCipher, appConn, C, errors));
-  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cookieCipher, appConn,C));
+  app.post('/data-access', require('../validate-data-access.js')(cipher, appConn, C));
+  app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
+  app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
+  app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
+  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C, xssDefense));
+  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C));
+  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
+  app.post('/change-password-room-success', require('../validate-change-password.js')(cipher, appConn,C));
+  app.post('/forget-password-room-success', require('../validate-forget-password.js')(cipher, appConn,C));
+  app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C));
+
 }
 
 function sendErrorPage(res, errormsg) {
