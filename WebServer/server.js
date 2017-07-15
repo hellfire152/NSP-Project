@@ -32,8 +32,6 @@ var fs = require('fs');
 var net = require('net');
 var crypto = require('crypto');
 var cookieParser = require('cookie-parser');
-var key = fs.readFileSync('./cert/server.key');
-var cert = fs.readFileSync('./cert/server.crt');
 var uuid = require('uuid');
 
 const S = require(settings);
@@ -196,8 +194,8 @@ var attemptConnection = setInterval(() => {
 
     function initServer() {
       console.log("INIT SERVER");
-      var key = fs.readFileSync('./cert/server.key');
-      var cert = fs.readFileSync('./cert/server.crt');
+      var key = fs.readFileSync(S.HTTPS.KEY);
+      var cert = fs.readFileSync(S.HTTPS.CERT);
 
       //https nonsense
       var https_options = {
