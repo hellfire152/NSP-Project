@@ -43,217 +43,337 @@ const KEYS = {
 };
 const AUTH_BYPASS = S.AUTH_BYPASS;
 
-var server = net.createServer(function (conn) { //WebServer will connect to this server
-  conn.setEncoding('utf8');
+function initServer() {
+  var server = net.createServer(function (conn) { //WebServer will connect to this server
+    conn.setEncoding('utf8');
 
-  conn.status = C.AUTH.REQUEST_CONNECTION;
-  conn.sendCipher = new Cipher({
-    'password' : S.WEBSERVER.PASSWORD,
-    'iv' : S.WEBSERVER.INITIAL_IV
-  });
-  conn.receiveCipher = new Cipher({
-    'password' : S.WEBSERVER.PASSWORD,
-    'iv' : S.WEBSERVER.INITIAL_IV
-  });
+    conn.status = C.AUTH.REQUEST_CONNECTION;
+    conn.sendCipher = new Cipher({
+      'password' : S.WEBSERVER.PASSWORD,
+      'iv' : S.WEBSERVER.INITIAL_IV
+    });
+    conn.receiveCipher = new Cipher({
+      'password' : S.WEBSERVER.PASSWORD,
+      'iv' : S.WEBSERVER.INITIAL_IV
+    });
 
-  console.log("AppServer: Server Start");
-  // If connection is closed
-  conn.on("end", function() {
-    console.log('Server: Logic disconnected');
-  });
+    console.log("AppServer: Server Start");
+    // If connection is closed
+    conn.on("end", function() {
+      console.log('Server: Logic disconnected');
+    });
 
-  if(S.AUTH_BYPASS) console.log("AUTHENTICATED WILL BE BYPASSED");
+    if(S.AUTH_BYPASS) console.log("AUTHENTICATED WILL BE BYPASSED");
 
-  // Handle data from client
-  conn.on("data", async function(input) {
-    let data, encryption;
-    if(!AUTH_BYPASS) { //Authentication bypass, set in settings
-      if(conn.status != C.AUTH.AUTHENTICATED) {
-        if(conn.status == C.AUTH.KEY_NEGOTIATION) {
-          data = JSON.parse(await conn.receiveCipher.decrypt(input));
-        } else if(conn.status == C.AUTH.REQUEST_CONNECTION) {
-          console.log("CONNECTION REQUESTED");
-          data = JSON.parse(input);
-        } else {
-          data = JSON.parse(conn.receiveCipher.rsaDecrypt(input, KEYS.PRIVATE));
-        }
-      } else data = JSON.parse(await conn.receiveCipher.decrypt(input));
-    } else {
-      conn.status = C.AUTH.AUTHENTICATED;
-      data = JSON.parse(input);
-    }
-
-    let reqNo = data.reqNo;
-    delete data.reqNo;  //hide reqNo from logs
-    console.log("FROM WEBSERVER"); //Log all data received from the WebServer
-    console.log(data);
-    let response = {};
-
-    if(conn.status != C.AUTH.AUTHENTICATED) { //not authenticated yet
-      /**AUTHENTICATION PROCESS**/
-      switch(conn.status) {
-        case C.AUTH.REQUEST_CONNECTION : { //input has public key
-          try {
-            //send a json, with this server's public key and the challenge
-            conn.publicKey = data.publicKey;
-            conn.challengeString = uuid();
-            encryption = 'none';
-            response = {
-              'publicKey' : KEYS.PUBLIC
-            };
-            conn.status = C.AUTH.RECEIVED_PUBLIC_KEY;
-          } catch (e){
-            console.log(e);
-            conn.destroy();
-          }
-          break;
-        }
-        case C.AUTH.RECEIVED_PUBLIC_KEY: {
-          if(data.received) {
-            conn.challengeString = uuid().slice(0, 20);
-            response = {
-              'challengeString' : conn.challengeString,
-              'initialIv' : S.WEBSERVER.INITIAL_IV
-            };
-            encryption = 'rsa';
-            conn.status = C.AUTH.ENCRYPTED_CHALLENGE;
+    // Handle data from client
+    conn.on("data", async function(input) {
+      let data, encryption;
+      if(!AUTH_BYPASS) { //Authentication bypass, set in settings
+        if(conn.status != C.AUTH.AUTHENTICATED) {
+          if(conn.status == C.AUTH.KEY_NEGOTIATION) {
+            data = JSON.parse(await conn.receiveCipher.decrypt(input));
+          } else if(conn.status == C.AUTH.REQUEST_CONNECTION) {
+            console.log("CONNECTION REQUESTED");
+            data = JSON.parse(input);
           } else {
-            console.log("Invalid signal");
-            conn.destroy();
+            data = JSON.parse(conn.receiveCipher.rsaDecrypt(input, KEYS.PRIVATE));
           }
-          break;
-        }
-        case C.AUTH.ENCRYPTED_CHALLENGE : { //receiving the challenge string
-          try {
-            if(conn.challengeString ==
-              await conn.receiveCipher.decrypt(data.encryptedChallenge)) {
-                console.log("CHALLENGE STRING VALIDATED");
-              //no need for the challenge string anymore...
-              delete conn.challengeString;
+        } else data = JSON.parse(await conn.receiveCipher.decrypt(input));
+      } else {
+        conn.status = C.AUTH.AUTHENTICATED;
+        data = JSON.parse(input);
+      }
 
-              //generate key using diffie-hellman
-              conn.dh = crypto.createDiffieHellman(S.DH_KEY_LENGTH);
-              conn.dhKey = conn.dh.generateKeys('base64');
+      let reqNo = data.reqNo;
+      delete data.reqNo;  //hide reqNo from logs
+      console.log("FROM WEBSERVER"); //Log all data received from the WebServer
+      console.log(data);
+      let response = {};
 
+      if(conn.status != C.AUTH.AUTHENTICATED) { //not authenticated yet
+        /**AUTHENTICATION PROCESS**/
+        switch(conn.status) {
+          case C.AUTH.REQUEST_CONNECTION : { //input has public key
+            try {
+              //send a json, with this server's public key and the challenge
+              conn.publicKey = data.publicKey;
+              conn.challengeString = uuid();
+              encryption = 'none';
               response = {
-                'prime' : conn.dh.getPrime('base64'),
-                'generator' : conn.dh.getGenerator('base64'),
-                'key' : conn.dhKey
+                'publicKey' : KEYS.PUBLIC
               };
-              encryption = 'aes';
-
-              conn.status = C.AUTH.KEY_NEGOTIATION;
-            } else {
-              console.log("AppServer: WebServer password invalid!");
+              conn.status = C.AUTH.RECEIVED_PUBLIC_KEY;
+            } catch (e){
+              console.log(e);
               conn.destroy();
             }
             break;
-          } catch (e) {
-            console.log(e);
-            conn.destroy();
           }
-          break;
-        }
-        case C.AUTH.KEY_NEGOTIATION : { //input is the diffie-hellman public key
-          try {
-            let key = data.dhPublic;
-            conn.secret = conn.dh.computeSecret(key, 'base64', 'base64');
-            console.log("SECRET" +conn.secret);
-            let r = conn.secret.substring(0, ~~(conn.secret.length / 2));
-            let s =  conn.secret.substring(~~(conn.secret.length / 2));
-            let sendPassword = s;
-            let receivePassword = r;
+          case C.AUTH.RECEIVED_PUBLIC_KEY: {
+            if(data.received) {
+              conn.challengeString = uuid().slice(0, 20);
+              response = {
+                'challengeString' : conn.challengeString,
+                'initialIv' : S.WEBSERVER.INITIAL_IV
+              };
+              encryption = 'rsa';
+              conn.status = C.AUTH.ENCRYPTED_CHALLENGE;
+            } else {
+              console.log("Invalid signal");
+              conn.destroy();
+            }
+            break;
+          }
+          case C.AUTH.ENCRYPTED_CHALLENGE : { //receiving the challenge string
+            try {
+              if(conn.challengeString ==
+                await conn.receiveCipher.decrypt(data.encryptedChallenge)) {
+                  console.log("CHALLENGE STRING VALIDATED");
+                //no need for the challenge string anymore...
+                delete conn.challengeString;
 
-            response = {
-              'auth' : true
-            };
-            encryption = 'aes';
+                //generate key using diffie-hellman
+                conn.dh = crypto.createDiffieHellman(S.DH_KEY_LENGTH);
+                conn.dhKey = conn.dh.generateKeys('base64');
 
-            conn.sendCipher.password = s;
-            conn.receiveCipher.password = r;
-            conn.status = C.AUTH.AUTHENTICATED;
-          } catch (e) {
-            console.log(e);
+                response = {
+                  'prime' : conn.dh.getPrime('base64'),
+                  'generator' : conn.dh.getGenerator('base64'),
+                  'key' : conn.dhKey
+                };
+                encryption = 'aes';
+
+                conn.status = C.AUTH.KEY_NEGOTIATION;
+              } else {
+                console.log("AppServer: WebServer password invalid!");
+                conn.destroy();
+              }
+              break;
+            } catch (e) {
+              console.log(e);
+              conn.destroy();
+            }
+            break;
           }
-          break;
-        }
-      }
-    } else {
-      try {
-        //if there's an Error
-        if (data.err) {
-          console.log("ERROR RECEIVED, CODE: " + data.err);
-          switch(data.err) {
-            //handle errors
+          case C.AUTH.KEY_NEGOTIATION : { //input is the diffie-hellman public key
+            try {
+              let key = data.dhPublic;
+              conn.secret = conn.dh.computeSecret(key, 'base64', 'base64');
+              console.log("SECRET" +conn.secret);
+              let r = conn.secret.substring(0, ~~(conn.secret.length / 2));
+              let s =  conn.secret.substring(~~(conn.secret.length / 2));
+              let sendPassword = s;
+              let receivePassword = r;
+
+              response = {
+                'auth' : true
+              };
+              encryption = 'aes';
+
+              conn.sendCipher.password = s;
+              conn.receiveCipher.password = r;
+              conn.status = C.AUTH.AUTHENTICATED;
+            } catch (e) {
+              console.log(e);
+            }
+            break;
           }
         }
-        if(data.type !== undefined) { //data type defined
-          response = await handleReq({
+      } else {
+        try {
+          //if there's an Error
+          if (data.err) {
+            console.log("ERROR RECEIVED, CODE: " + data.err);
+            switch(data.err) {
+              //handle errors
+            }
+          }
+          if(data.type !== undefined) { //data type defined
+            response = await handleReq({
+                'data' : data,
+                'C' : C,
+                'allRooms' : allRooms
+              });
+          } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
+            response = await handleIo({
+              'data' : data,
+              'C' : C,
+              'allRooms' : allRooms,
+              'sendToServer': sendToServer,
+              'conn': conn
+            });
+          } else if (!(data.game === undefined)){  //game stuff
+            response = await handleGame({
+              'data' : data,
+              'C' : C,
+              'allRooms' : allRooms,
+              'conn': conn,
+              'sendToServer': sendToServer
+            });
+          } else {
+            response = await handleSpecial({  //special
               'data' : data,
               'C' : C,
               'allRooms' : allRooms
             });
-        } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
-          response = await handleIo({
-            'data' : data,
-            'C' : C,
-            'allRooms' : allRooms,
-            'sendToServer': sendToServer,
-            'conn': conn
-          });
-        } else if (!(data.game === undefined)){  //game stuff
-          response = await handleGame({
-            'data' : data,
-            'C' : C,
-            'allRooms' : allRooms,
-            'conn': conn,
-            'sendToServer': sendToServer
-          });
-        } else {
-          response = await handleSpecial({  //special
-            'data' : data,
-            'C' : C,
-            'allRooms' : allRooms
-          });
+          }
+        } catch (err) {
+          console.log(err);
+          console.log('WebServer to AppServer input Error!');
         }
-      } catch (err) {
-        console.log(err);
-        console.log('WebServer to AppServer input Error!');
       }
-    }
 
-    //logging and response
-    console.log("AppServer Response: ");
-    console.log(response);
-    response.reqNo = reqNo;
-    if(S.AUTH_BYPASS) encryption = 'none';
-    sendToServer(conn, response, encryption);
+      //logging and response
+      console.log("AppServer Response: ");
+      console.log(response);
+      response.reqNo = reqNo;
+      if(S.AUTH_BYPASS) encryption = 'none';
+      sendToServer(conn, response, encryption);
+    });
+  });
+  server.listen(9090);
+  console.log("Listening on port 9090...");
+}
+
+//connection with datbase server
+var dbConn = net.connect(S.DATABASE.PORT, S.DATABASE.IP, (conn) => {
+  conn.setEncoding('utf8');
+  //cipher objects to send between servers
+  conn.sendCipher = new Cipher({
+    'password' : S.APPSERVER.PASSWORD
+  });
+  conn.receiveCipher = new Cipher({
+    'password' : S.APPSERVER.PASSWORD
   });
 });
 
-console.log("Listening on port 9090...");
-server.listen(9090);
-
-//connection with datbase server
-var dbConn = net.connect(7070);
-
-//implementing the send function on the database connection
-dbConn.send = (reqObj, callback) => {
-  let reqNo = uuid();
-  pendingDatabaseResponses[reqNo] = callback;
-  reqObj.reqNo = reqNo;
-  dbConn.write(JSON.stringify(reqObj));
+var encryptAndSend;
+if(S.AUTH_BYPASS) {
+  encryptAndSend = (reqObj) => {
+    dbConn.write(JSON.stringify(reqObj)); ;
+  }
+} else {
+  encryptAndSend = (reqObj, encryption) => {
+    if(encryption == "rsa")  {
+      dbConn.write(
+        dbConn.sendCipher.rsaEncrypt(JSON.stringify(reqObj), dbConn.publicKey) //rsa encryption
+      );
+    }
+    else if(encryption == "none") dbConn.write(JSON.stringify(reqObj));  //no encryption
+    else {  //encrypt using shared key
+      dbConn.sendCipher.encrypt(JSON.stringify(reqObj))
+        .then((data) => {
+          dbConn.write(data);
+        });
+    }
+  }
 }
 
+function logResponse(response) {
+  console.log("APPSERVER RESPONSE:");
+  console.log(response);
+}
+
+async function decryptResponse(response) {
+  if(dbConn.encryption == 'none') {
+    console.log("NO ENCRYPTION");
+    return JSON.parse(response);
+  } else if(dbConn.encryption == 'rsa')  {
+    return JSON.parse(dbConn.receiveCipher.rsaDecrypt(response, KEYS.PRIVATE));
+  } else {
+    return JSON.parse(await dbConn.receiveCipher.decrypt(response));
+  }
+}
+
+function runCallback(response) {
+  if(pendingDatabaseResponses[response.reqNo]) {
+    if(pendingDatabaseResponses[response.reqNo].callback)
+      pendingDatabaseResponses[response.reqNo].callback(response);
+    delete pendingDatabaseResponses[response.reqNo];
+  }
+}
+
+//implementing the send function on the database connection
+dbConn.send = (reqObj, callback, encryption) => {
+  //generating a unique id to identify the request
+  let reqNo = uuid();
+  reqObj.reqNo = reqNo;
+
+  //storing the callback for later calling
+  pendingDatabaseResponses[reqNo] = {};
+  if(callback)
+    pendingDatabaseResponses[reqNo].callback = callback;
+
+  //sending the request object
+  console.log("TO DATABASE SERVER:");
+  console.log(reqObj);
+  encryptAndSend(reqObj, encryption);
+  return reqNo; //just in case
+};
+
 //Recieve data from database and run callback
-dbConn.on('data', function(inputData) {
-  data = JSON.parse(inputData);
-  data.reqNo = pendingDatabaseResponses[data.reqNo];
-  // pendingDatabaseResponses[data.reqNo](data);
-  delete pendingDatabaseResponses[data.reqNo];
-  sendToServer(connection, data);
+dbConn.on('data', async function(inputData) {
+  let data = await decryptResponse(inputData);
+  logResponse(data);
+  runCallback(data);
 });
 
+/****AUTHENTICATION******/
+dbConn.encryption = 'none';
+if(!S.AUTH_BYPASS) {
+  dbConn.send({'publicKey' : KEYS.PUBLIC}, (response) => {
+    //receiving public key of AppServer
+    console.log("PUBLIC KEY RECEIVED");
+    dbConn.publicKey = response.publicKey;
+    dbConn.encryption = 'rsa';
+    dbConn.send({'received' : true}, (response) => {
+      //receive challengeString
+      console.log("RECEIVED CHALLENGE STRING");
+      dbConn.sendCipher.iv = response.initialIv;
+      dbConn.receiveCipher.iv = response.initialIv;
+      dbConn.receiveCipher.encrypt(response.challengeString)
+        .then((challengeString) => {
+          dbConn.encryption = 'aes'; //response will be encrypted using aes
+          dbConn.send({
+            'encryptedChallenge' : challengeString
+          }, (response) => {
+            //receive diffie-hellman stuff
+            dbConn.dh = crypto.createDiffieHellman(
+              response.prime, 'base64', response.generator, 'base64');
+            dbConn.dhKey = dbConn.dh.generateKeys('base64');
+            dbConn.secret = dbConn.dh.computeSecret(response.key, 'base64', 'base64');
+            console.log("SECRET" +dbConn.secret);
+            let s = dbConn.secret.substring(0, ~~(dbConn.secret.length / 2));
+            let r =  dbConn.secret.substring(~~(dbConn.secret.length / 2));
+
+            //cipher change
+            dbConn.prependOnceListener('data', () => {
+              dbConn.sendCipher.password = s;
+              dbConn.receiveCipher.password = r;
+            });
+
+            //send key to AppServer
+            dbConn.send({'dhPublic' : dbConn.dhKey}, (response) => {
+              if(response.auth) {
+                delete dbConn.encryption; //no need this anymore
+                delete dbConn.secret; //or this
+                delete dbConn.dh //or that
+                delete dbConn.dhKey //EXTERRRRMINATE
+
+                //remove all listeners,
+                //server-setup will add them back in with socket.io support
+                dbConn.removeAllListeners('data');
+                initServer();
+              }
+            }, 'aes');
+          }, 'rsa');
+        });
+    }, 'rsa');
+  }, 'none');
+} else {
+  console.log("AUTHENTICATION BYPASSED");
+  initServer();
+}
 
 //Test sample data
 // sendToServer(dbConn, sampleData.retrieveUserDetails());

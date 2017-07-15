@@ -6,17 +6,17 @@
   Author : Nigel Chen Chin Hao
  */
 
-var cipher = require("../custom-API/cipher.js")();
-const C = require("../custom-API/constants.json");
+var databasedatabaseCipher;
+const C;
 
 //Input user data password will undergo hashing and salting before storing to database
 async function handlePassword(data){
-  await cipher.generateSalt()
+  await databaseCipher.generateSalt()
     .then(saltValue => {
       data.account.salt = saltValue;
     })
     .then(function(){
-      cipher.hash(data.account.password_hash + data.account.salt)
+      databaseCipher.hash(data.account.password_hash + data.account.salt)
         .then(hashed =>{
           data.account.password_hash = hashed;
         })
@@ -28,7 +28,7 @@ async function handlePassword(data){
 }
 
 async function handleHashPass(data){
-    cipher.hash(data.verify.password_hash + data.verify.salt)
+    databaseCipher.hash(data.verify.password_hash + data.verify.salt)
       .then(hashed =>{
         data.verify.password_hash = hashed;
       })
@@ -40,7 +40,7 @@ async function handleHashPass(data){
 }
 
 async function handleHashIP(data){
-  cipher.hash(data.inputData.ip_address)
+  databaseCipher.hash(data.inputData.ip_address)
   .then(hashed => {
     data.inputData.ip_address = hashed;
   })
@@ -58,7 +58,7 @@ async function handleDeleteAccount(data){
   await handleDecryption(dataArr)
   .then(dataDecrypt => {
     data = dataDecrypt[0];
-    cipher.hash(data.account.password + data.salt)
+    databaseCipher.hash(data.account.password + data.salt)
     .then(hashed => {
       data.account.password_hash = hashed;
       delete data.account.password;
@@ -85,7 +85,7 @@ async function handleRecieveAccount(data){
 
   await handleDecryption(dataArr)
   .then(dataOut => {
-    cipher.hash(dataOut[0].password + dataOut[0].salt)
+    databaseCipher.hash(dataOut[0].password + dataOut[0].salt)
     .then(hashed => {
       dataOut[0].hash_password = hashed;
       plainData = dataOut[0];
@@ -138,25 +138,28 @@ async function handleRecieveQuestion(data){
 
 async function handleEncryption(data){
   // return data; //For testing purposes where data will not be encrypted before storing to database
-  var cipherData;
-  await cipher.encryptDbData(data)
+  var databaseCipherData;
+  await databaseCipher.encryptDbData(data)
   .then(dataOut => {
-    cipherData = dataOut;
+    databaseCipherData = dataOut;
   });
-  return cipherData;
+  return databaseCipherData;
 }
 
 async function handleDecryption(data){
   // return data; //For testing purposes where data will not be decrypted before processing data to client
   var plainData;
-  await cipher.decryptDbData(data)
+  await databaseCipher.decryptDbData(data)
   .then(dataOut => {
     plainData = dataOut;
   });
   return plainData;
 }
 
-module.exports = function() {
+module.exports = function(data) {
+  if(databaseCipher === undefined || C === undefined)
+    throw new Error("databaseCipher or C not set!");
+  ({databaseCipher, C} = data);
   return {
     'handlePassword' : handlePassword,
     "handleRecieveAccount" : handleRecieveAccount,
