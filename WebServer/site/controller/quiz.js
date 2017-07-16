@@ -71,6 +71,7 @@ function createNode1(){
 
         var cardImg = document.createElement('img');
         cardImg.className = "quiz-image";
+        cardImg.setAttribute('src', '/resources/images/quiz_default.jpg');
         cardImgDiv.appendChild(cardImg);
 
         var actionButtonDiv1 = document.createElement('div');
@@ -251,7 +252,7 @@ function findTopRating1(){
 
     // for(j =topRatingArr.length-1;j>-1;j--){
     //     if(Totalquiz[j].quiz_rating == topRatingArr[j]){
-    //         maxArr[j] = Totalquiz[j].quiz_title;    
+    //         maxArr[j] = Totalquiz[j].quiz_title;
     //     }
     // }
 
@@ -277,7 +278,7 @@ function findTopRating1(){
         console.log(maxArr[v]);
 
         iDiv.appendChild(newTitle);
-        
+
         var divImg = document.createElement('div');
         divImg.className = "card-image";
         iDiv.appendChild(divImg);
@@ -329,11 +330,11 @@ function findTopRating(){
     var topRatingArr = [];
     var maxArr = [];
 
- 
-    
+
+
     for(var i =0;i<Totalquiz.length;i++){
-        topRatingArr.push(Totalquiz[i].quiz_rating);      
-    } 
+        topRatingArr.push(Totalquiz[i].quiz_rating);
+    }
 
     topRatingArr.sort();
 
@@ -358,7 +359,7 @@ function findTopRating(){
         console.log(maxArr[v]);
 
         iDiv.appendChild(newTitle);
-        
+
         var divImg = document.createElement('div');
         divImg.className = "card-image";
         iDiv.appendChild(divImg);
@@ -406,7 +407,7 @@ function findTopRating(){
 $(document).ready(createNode1());
 $(document).ready(findTopRating1());
 //ToDo find out the error on .splice method
-//Supposedly result is to print out only top 3  
+//Supposedly result is to print out only top 3
 /*
 function findTopRating() {
     var max = 0;

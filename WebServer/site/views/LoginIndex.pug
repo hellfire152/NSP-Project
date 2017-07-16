@@ -3,20 +3,16 @@ html
   head
     title
     // Bootstrap CSS File
-    link(href='../css/bootstrap.min.css', rel='stylesheet')
-    link(href='lib/owlcarousel/owl.carousel.min.css', rel='stylesheet')
-    link(href='lib/owlcarousel/owl.theme.min.css', rel='stylesheet')
-    link(href='lib/owlcarousel/owl.transitions.min.css', rel='stylesheet')
+    link(href='/resources/css/bootstrap.min.css', rel='stylesheet')
     link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
     // Font Awesome Stylesheet File
-    link(href='../css/font-awesome.min.css', rel='stylesheet')
+    link(href='/resources/css/font-awesome.min.css', rel='stylesheet')
     // Material StyleSheet
-    link(type='text/css', rel='stylesheet', href='../css/materialize.min.css', media='screen,projection')
+    link(type='text/css', rel='stylesheet', href='/resources/css/materialize.min.css', media='screen,projection')
     // Animate Stylesheet
-    link(rel='stylesheet', type='text/css', href='../css/animate.css')
-    link(rel='stylesheet', type='text/css', href='../css/mainstyle.css')
-    link(rel='stylesheet', type='text/css', href='../css/LoginHome.css')
-    script(src='https://s.codepen.io/assets/libs/modernizr.js', type='text/javascript')
+    link(rel='stylesheet', type='text/css', href='/resources/css/animate.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/mainstyle.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/LoginHome.css')
   body
     // Hidden Header
     .header-hidden.collapse
@@ -24,14 +20,14 @@ html
         .row
           .col-md-3
             h5
-              | Welcome 
-              span#user-name Bryan 
+              | Welcome
+              span#user-name  Bryan
               | ,
             p
               | Account description Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
               | tempor incididunt ut labore et dolore magna aliqua.
             a.btn.btn-more(href='#')
-              | Profile 
+              | Profile
               i.fa.fa-arrow-right(aria-hidden='true')
           .col-md-3
           .col-md-6
@@ -57,7 +53,7 @@ html
     nav
       .nav-wrapper
         a.brand-logo(href='LoginIndex.pug')
-          img.logo(src='img/logo.png')
+          img.logo(src='/resources/images/logo.png')
         ul#nav-mobile.right.hide-on-med-and-down
           li
             a(href='#')
@@ -86,7 +82,7 @@ html
       .row
         .col-md-8
           .greeting
-            h4 Hello UserName, 
+            h4 Hello UserName,
             p You have 0 new quiz
         .col-md-4
           .statistics
@@ -133,7 +129,7 @@ html
           .card.all-quiz
             .card-image.waves-effect.waves-block.waves-light
               a.btn-floating.btn-large.btn-price.waves-effect.waves-light.pink.accent-2.quiz-category(href='#') Uni
-              img.quiz-image(src='img/quiz_default.jpg')
+              img.quiz-image(src='/resources/images/quiz_default.jpg')
             .col.s2.offset-s5
               a.btn-floating.btn-large.waves-effect.waves-light.green.accent-4
                 i.material-icons share
@@ -157,7 +153,7 @@ html
           .card.all-quiz
             .card-image.waves-effect.waves-block.waves-light
               a.btn-floating.btn-large.btn-price.waves-effect.waves-light.pink.accent-2.quiz-category(href='#') Uni
-              img.quiz-image(src='img/quiz_default.jpg')
+              img.quiz-image(src='resources/images/quiz_default.jpg')
             .col.s2.offset-s5
               a.btn-floating.btn-large.waves-effect.waves-light.green.accent-4
                 i.material-icons share
@@ -183,13 +179,9 @@ html
     a#scroll(href='#', style='display: none;')
       i.material-icons arrow_drop_up
     // Required JavaScript Libraries
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
-    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
-    script(type='text/javascript', src='../js/materialize.min.js')
-    script(src='lib/owlcarousel/owl.carousel.min.js')
-    script(src='lib/stellar/stellar.min.js')
-    script(src='lib/waypoints/waypoints.min.js')
-    script(src='lib/counterup/counterup.min.js')
+    script(src='/resources/js/jquery.min.js')
+    script(src='/resources/js/bootstrap.min.js')
+    script(type='text/javascript', src='/resources/js/materialize.min.js')
     script(type='text/javascript', src='../controller/quiz.js')
     script(type='text/javascript', src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/499416/TweenLite.min.js')
     script(type='text/javascript', src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/499416/EasePack.min.js')

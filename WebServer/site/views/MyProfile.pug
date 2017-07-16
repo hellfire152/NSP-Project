@@ -3,17 +3,17 @@ html
   head
     title
     // Bootstrap CSS File
-    link(href='../css/bootstrap.min.css', rel='stylesheet')
+    link(href='/resources/css/bootstrap.min.css', rel='stylesheet')
     // Main Stylesheet File
-    link(rel='stylesheet', type='text/css', href='../css/Profile.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/Profile.css')
     // Font Awesome Stylesheet File
-    link(href='../css/font-awesome.min.css', rel='stylesheet')
+    link(href='/resources/css/font-awesome.min.css', rel='stylesheet')
     // Material StyleSheet
-    link(type='text/css', rel='stylesheet', href='../css/materialize.css', media='screen,projection')
+    link(type='text/css', rel='stylesheet', href='/resources/css/materialize.css', media='screen,projection')
     // Animate Stylesheet
-    link(rel='stylesheet', type='text/css', href='../css/animate.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/animate.css')
     // Main Stylesheet File
-    link(href='../css/mainstyle.css', rel='stylesheet')
+    link(href='/resources/css/mainstyle.css', rel='stylesheet')
     // Your custom colour override - predefined colours are: colour-blue.css, colour-green.css, colour-lavander.css, orange is default
     link#colour-scheme(href='#', rel='stylesheet')
     link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
@@ -48,7 +48,7 @@ html
     nav
       .nav-wrapper
         a.brand-logo(href='LoginIndex.pug')
-          img.logo(src='img/logo.png')
+          img.logo(src='/resources/images/logo.png')
         ul#nav-mobile.right.hide-on-med-and-down
           li
             a(href='#')
@@ -71,10 +71,10 @@ html
       .section
         .card.profile-card
           .card-image.waves-effect.waves-block.waves-light
-            img.activator(src='img/bio_background.jpg')
+            img.activator(src='/resources/images/backgrounds/bio_background.jpg')
           .card-content
             .profile-pic
-              img.circle.responsive-img.z-depth-4(src='img/profilePic.jpg')
+              img.circle.responsive-img.z-depth-4(src='/resources/images/profilePic.jpg')
             .row
               .col.s3.offset-s2
                 h4#name.card-title.grey-text.text-darken-4 Bryan Tan
@@ -101,28 +101,28 @@ html
               | My Profile
               i.material-icons.right close
             p
-              | User ID: 
+              | User ID:
               span#user_id
             p
-              | User Name: 
+              | User Name:
               span#user_name
             p
-              | Email Address: 
+              | Email Address:
               span#email
             p
-              | School: 
+              | School:
               span#school
             p
-              | Date Of Birth: 
+              | Date Of Birth:
               span#DOB
             p
-              | Organisation: 
+              | Organisation:
               span#organisation
     .row
       #sidebar.col.s12.m4
         .card.aboutMe.deep-purple
           .card-content.white-text
-            span.card-title About Me! 
+            span.card-title About Me!
             p
               | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
               | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
@@ -149,7 +149,7 @@ html
             h4#complete_quiz.card-stats-number
             p.card-stats-compare
               i.material-icons arrow_drop_up
-              |  70% 
+              |  70%
               span.purple-text.text-lighten-5 last month
           .card-action.cyan.darken-2
             #sales-compositebar

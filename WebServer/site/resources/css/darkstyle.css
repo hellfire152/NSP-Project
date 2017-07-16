@@ -4,6 +4,12 @@ html{
 body{
   font-family: "Roboto", sans-serif;
   max-width:100%;
+  background-color: #15202A;
+}
+
+@font-face{
+  font-family:'Futura';
+  src:url(../FuturaBoldfont.ttf);
 }
 .hero .hero-wrapper {
   text-align: center;
@@ -12,10 +18,10 @@ body{
   padding-top: 0 !important;
 }
 .hero {
-  background-image: url("../img/cover.jpg");
+  background: #1c202a;
   background-size: cover;
   background-repeat: no-repeat;
-  height:450px;
+  height:500px;
   background-position: 50% 50%;
 }
 .hero .hero-wrapper {
@@ -33,8 +39,9 @@ body{
   position: relative;
   z-index: 1;
 }
-.hero h4{
-  color:white;
+.hero span{
+  color: #FFF;
+  font-size: 34px;
 }
 .hero .hero-wrapper h1:before, .hero .hero-wrapper h1:after {
   content: "";
@@ -63,7 +70,7 @@ body{
 .section.slanted:before, .section.slanted:after {
   content: "";
   position: absolute;
-  background-color: #fff;
+  background-color: #15202A;
   width: 100%;
   height: 100%;
   transform-origin: 0%;
@@ -91,11 +98,24 @@ body{
   width:1000px;
 
 }
+.why{
+  background-color: #15202A;
+}
+.why-title{
+  background: -webkit-linear-gradient(left,#2196f3, #f44336);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 0px 60px #FF5F6D;
+}
 .why-div{
   width:300px;
   margin-right:20px;
+
   display:inline-block;
   text-align: center;
+}
+.why-div h5{
+  color:#CDECF7;
 }
 .icons8-Eye{
   margin:auto;
@@ -177,7 +197,7 @@ a.btn-hh-trigger.target-open:after {
   filter: alpha(opacity=100);
 }
 .header-hidden {
-  background: #512DA8;
+  background: #15202A;
   color: #ffffff;
 }
 .header-hidden a:not(.btn),
@@ -210,16 +230,43 @@ a.btn-hh-trigger.target-open:after {
 
 
 .enter-quiz{
-  margin:auto;
+  margin:auto;  
 }
-
-.time h4{
-  margin-top:70px;
+.enter-btn{
+  background-color: #736CC4;
+  box-shadow:0px 30px 10px 0 rgba(115, 108, 196, .4);
+}
+.time h4{ 
+  margin-top:100px;
   text-align: center;
-  margin-bottom: 80px;
+  color: #FFF;
+  text-shadow:0 0 2px #fff, 0 0 25px #C1FD33;
 
 }
-
+.time hr{
+  width:60px;
+  height: 1px;
+  background-color:#AAFF01;
+  text-shadow:2px 5px 10px #AAFF01;
+}
+.http{
+  color:#e74c3c;
+}
+.http-title{
+  color:#e74c3c;
+}
+.insight{
+  color:#2ecc71;
+}
+.fastconnect{
+  color:#9b59b6;
+}
+.simple{
+  color:#f39c12;
+}
+blockquote{
+  color:#EB7077;
+}
 .timeline {
   list-style: none;
   padding: 0;
@@ -389,7 +436,7 @@ a.btn-hh-trigger.target-open:after {
 }
 
 .time{
-  background:#F5F4F9;
+  background:url("../img/backgroundImage.jpg");
   background-repeat: no-repeat;
   background-size:cover;
 }
@@ -397,14 +444,17 @@ a.btn-hh-trigger.target-open:after {
   color:#536DFD;
 }
 
-.time h5{
-  color:#FEEA3B;
-}
 
 .time p{
-  color:#536DFD;
+  color:#FFF;
+  text-shadow:0 0 5px #fff, 0 0 10px #fff, 0 0 20px rgba(37,254,230,.18), 0 0 30px rgba(37,254,230,.18), 0 0 40px rgba(37,254,230,.18), 0 0 55px rgba(37,254,230,.18), 0 0 75px rgba(37,254,230,.18);
 }
-
+.subheading{
+  font-family: 'Futura';
+  color:#FFF;
+  font-size:32px;
+  text-shadow:0 0 2px #fff, 0 0 15px #F3F315;
+}
 
 .faq h4{
 
@@ -644,15 +694,11 @@ a.btn-hh-trigger.target-open:after {
     height: 13px;
   }
 }
-.btn{
-  background-color: #536DFD;
-}
-.btn:hover{
-  background-color: #FEEA3B;
-}
+
+
 
 .faq{
-  background:url('../images/faqbackground.jpg');
+  background:url('../img/faqbackground.jpg');
   background-repeat: no-repeat;
   background-size:cover;
   height: 400px;
@@ -668,32 +714,38 @@ a.btn-hh-trigger.target-open:after {
 .createAccount{
   margin-top:25px;
   height:45px;
+  background:linear-gradient(90deg,#9d58ff,#5a35ed);
+  box-shadow: 0 20px 20px 0 rgba(157,88,255,.3);
+}
+.createAccount:hover{
+  color:white;
+  box-shadow: 0 20px 20px 0 rgba(157,88,255,.3);
 }
 /* Shared Code */
 nav{
 
-  background-color:#673AB7;
+  background-color:#15202A;
   height:65px;
 }
 
 
 nav li a:hover{
-  background-color: #536DFD;
+  background-color: #736CC4 ;
   color:white;
 
 }
 
 .page-footer{
-  background-color: #512DA8;
+  background-color: #15202A;
 }
 
 .collapsible-header{
-  background-color: #536DFD;
+  background: -webkit-linear-gradient(left, #FF5F6D , #FFC371);
   color:white;
 }
 
 .collapsible-body{
-  background-color: #D0C3E8;
+  background: -webkit-linear-gradient(left, #EECDA3 , #EF629F);
 }
 
 
@@ -712,8 +764,8 @@ nav li a:hover{
   display: block;
   overflow: hidden;
   margin: auto;
-  background: #536DFD;
-
+  background: #736CC4;
+  box-shadow: 0 20px 60px 0 rgba(37,254,230,.18);
 }
 
 label {
@@ -722,6 +774,7 @@ label {
   height: 100%;
   padding: 1em;
   font-size: 1em;
+  color:white;
   transition: transform 400ms;
   transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
   line-height: 18px;
@@ -759,4 +812,93 @@ input:focus + label, input.filled + label,
 textarea:focus + label,
 textarea.filled + label {
   transform: translate3D(75%, 0, 0);
+}
+.home{
+  display:block;
+  height:400px;
+}
+.HomeHero{
+  width:100%;
+  position:relative;
+  padding:7em 0;
+  background:#1c202a;
+}
+.HomeHero__blueOval{
+  width:300px;
+  height:300px;
+  position:absolute;
+  content:"";
+  z-index: 40;
+  top:60%;
+  left:-10%;
+  border:20px solid #5946ff;
+  border-radius: 50%;
+  box-shadow: 0 50px 60px 0 rgba(85,88,254,.3);
+}
+.fadeInLeft{
+  animation-name:fadeInLeft;
+  animation-duration: 1s;
+}
+.HomeHero__aquaOval{
+  width:300px;
+  height:300px;
+  position:absolute;
+  content:"";
+  z-index:40;
+  top:150%;
+  right:-10%;
+  border:20px solid #50d4c5;
+  border-radius:50%;
+  box-shadow: 0 50px 60px 0 rgba(37,254,230,.18);
+}
+.fadeInRight{
+  animation-name:fadeInRight;
+  animation-duration: 1.5s;
+}
+.HomeHero__purpleOval{
+  width:300px;
+  height:300px;
+  top:40%;
+  right:-8%;
+  position: absolute;
+  content:"";
+  border:20px solid #8c53f9;
+  border-radius: 50%;
+  z-index: 40;
+  box-shadow: 0 50px 60px 0 rgba(178,71,255,.2);
+}
+.fadeInUp{
+  animation-name:fadeInUp;
+  animation-duration: 1s;
+}
+.HomeHero__pinkOval{
+  width:300px;
+  height:300px;
+  bottom:-34%;
+  left:15%;
+  position: absolute;
+  content:"";
+  border:20px solid #e7586e;
+  border-radius: 50%;
+  z-index: 40;
+  box-shadow: 60px 50px 60px 0 rgba(255,45,102,.25);
+}
+.fadeInUpalt{
+  animation-duration: 4s;
+  animation-name:fadeInUp;
+}
+.wrapper{
+  max-width: 55em;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1em;
+}
+.HomeHero__content{
+      position: relative;
+    z-index: 400;
+    padding-left: 20px;
+    animation-name: fadeInDown;
+    animation-duration: 2s;
+    margin-top: -60px;
+    margin-bottom: 40px;
 }

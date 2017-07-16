@@ -1,0 +1,93 @@
+.statistics{
+	background:url("../img/reportbackground.jpg") center center fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+	color:white;
+	height:350px;
+}
+.statistics h5{
+    color:#4B1248;
+}
+.statistics h6, p{
+    color:#544C5A;
+}
+
+.collapsible-header{
+    background: -webkit-linear-gradient(left,#FFAC62, #FF8BEA);
+    border:none;
+}
+.collapsible-body{
+    background: -webkit-linear-gradient(left, #EECDA3 , #EF629F);
+ 	/* Style the buttons that are used to open and close the accordion panel */
+}
+.data{
+    color:#FFF;
+}
+.tabs .tabs a{
+    color: #4B1248;
+}
+tabs .tab a:hover,.tabs .tab a.active {
+    color:#4B1248;
+}
+.tabs .indicator {
+    background-color:#4B1248;
+}
+
+button.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+button.accordion.active, button.accordion:hover {
+    background-color: #ddd;
+}
+
+div.panel {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+button.accordion:after {
+    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    font-size: 13px;
+    color: #777;
+    float: right;
+    margin-left: 5px;
+}
+
+button.accordion.active:after {
+    content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+.action-div{
+    display:block;
+    margin:auto;
+
+}
+.action{
+    background-color: transparent;
+    border:1px solid #4B1248;
+    border-radius: 5px;
+    color:#4B1248;
+    margin:auto;
+    width:120px;
+    height:35px;
+    display:block;
+    margin-top:10px;
+}
+
+.action:hover{
+    transition: 0.4s;
+    background-color: #4B1248;
+    color:white;
+}

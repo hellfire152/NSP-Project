@@ -3,18 +3,18 @@ html
   head
     title
     // Bootstrap CSS File
-    link(href='../css/bootstrap.min.css', rel='stylesheet')
+    link(href='/resources/css/bootstrap.min.css', rel='stylesheet')
     // Font Awesome Stylesheet File
-    link(href='../css/font-awesome.min.css', rel='stylesheet')
+    link(href='/resources/css/font-awesome.min.css', rel='stylesheet')
     // Material StyleSheet
-    link(type='text/css', rel='stylesheet', href='../css/materialize.css', media='screen,projection')
-    link(rel='stylesheet', type='text/css', href='../css/report.css')
-    link(rel='stylesheet', type='text/css', href='../css/mainstyle.css')
+    link(type='text/css', rel='stylesheet', href='/resources/css/materialize.css', media='screen,projection')
+    link(rel='stylesheet', type='text/css', href='/resources/css/report.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/mainstyle.css')
   body(onload='displayHostedQuestion()')
     nav
       .nav-wrapper
         a.brand-logo(href='LoginIndex.pug')
-          img.logo(src='img/logo.png')
+          img.logo(src='/resources/images/logo.png')
         ul#nav-mobile.right.hide-on-med-and-down
           li
             a(href='#')
@@ -46,7 +46,7 @@ html
             span.gameType.live C
             span#quiz-name(name='quiz-name') Ministries of Singapore (Host)
           p#date
-            | June 17th, 04:09pm 
+            | June 17th, 04:09pm
             span#days (4 days ago)
         .col-md-4
           button.action Print
@@ -108,9 +108,9 @@ html
         .container
           | © 2017 All Rights Reserved
           a.grey-text.text-lighten-4.right(href='#!') Terms of Use
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
-    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
-    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js')
+    script(src='/resources/js/jquery.min.js')
+    script(src='/resources/js/bootstrap.min.js')
+    script(type='text/javascript', src='/resources/js/materialize.min.js')
     script(type='text/javascript', src='../controller/client-quiz.js')
     script(type='text/javascript').
       var acc = document.getElementsByClassName("accordion");

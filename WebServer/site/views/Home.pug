@@ -3,15 +3,15 @@ html
   head
     title Network Security Project
     // Bootstrap CSS File
-    link(href='../css/bootstrap.min.css', rel='stylesheet')
+    link(href='/resources/css/bootstrap.min.css', rel='stylesheet')
     // Font Awesome Stylesheet File
-    link(href='../css/font-awesome.min.css', rel='stylesheet')
+    link(href='/resources/css/font-awesome.min.css', rel='stylesheet')
     // Material StyleSheet
-    link(type='text/css', rel='stylesheet', href='../css/materialize.css', media='screen,projection')
+    link(type='text/css', rel='stylesheet', href='/resources/css/materialize.css', media='screen,projection')
     // Animate Stylesheet
-    link(rel='stylesheet', type='text/css', href='../css/animate.css')
-    link#default-style(rel='stylesheet', type='text/css', href='../css/mainstyle.css', title='Default')
-    link#dark-style(rel='stylesheet alternate', type='text/css', href='../css/darkstyle.css', title='Dark')
+    link(rel='stylesheet', type='text/css', href='/resources/css/animate.css')
+    link#default-style(rel='stylesheet', type='text/css', href='/resources/css/mainstyle.css', title='Default')
+    link#dark-style(rel='stylesheet alternate', type='text/css', href='/resources/css/darkstyle.css', title='Dark')
     link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
     script(type='text/javascript').
       var theme_style = localStorage && localStorage.getItem('theme_style');
@@ -53,7 +53,7 @@ html
     nav
       .nav-wrapper
         a.brand-logo(href='home.pug')
-          img.logo(src='../img/logo.png')
+          img.logo(src='/resources/images/logo.png')
         ul#nav-mobile.right.hide-on-med-and-down
           li
             a(href='#') Join Quiz
@@ -82,19 +82,19 @@ html
             .why-div
               h5
                 | Fun For Everyone
-                img(src='img/text330.png', width='180px;')
+                img(src='/resources/images/text330.png', width='180px;')
                 p.medium-small.grey-text
                   | Profile, leaderboard, theming and music! We're always working on new ways to keep things interesting
             .why-div
               h5
                 | Create quiz in minutes!
-                img(src='img/g12.png', width='120px;')
+                img(src='/resources/images/g12.png', width='120px;')
                 p.medium-small.grey-text
                   | Our Create Quiz UI is simple enough to allow you to create quizzes between minutes!
             .why-div
               h5
                 | Presentable Data
-                img(src='img/MIXCGHJ42.png', width='180px;')
+                img(src='/resources/images/MIXCGHJ42.png', width='180px;')
                 p.medium-small.grey-text
                   | Teachers provided with detailed details of participating students data, and of course there's an option for excel generating too!
           .col-md-1
@@ -107,7 +107,7 @@ html
           ul.timeline
             li
               .timeline-image
-                img.img-circle.img-responsive(src='img/g2196.png', alt='')
+                img.img-circle.img-responsive(src='/resources/images/g2196.png', alt='')
               .timeline-panel.fadeInLeft
                 .timeline-heading
                   h5.subheading Search Or Create
@@ -116,7 +116,7 @@ html
                     | Find amazing quizzes made by other users, or create your own quizzes and share them with others
             li.timeline-inverted
               .timeline-image
-                img.img-circle.img-responsive(src='img/g2362.png', alt='')
+                img.img-circle.img-responsive(src='/resources/images/g2362.png', alt='')
               .timeline-panel
                 .timeline-heading
                   h5.subheading Choose Between 2 Game Categories
@@ -125,7 +125,7 @@ html
                     | Start an exciting game with others by choosing either of our 2 game categories, Classic mode and Dash mode. Choose between MCQ Questions or Short Answers to up the difficulties of the game
             li
               .timeline-image
-                img.img-circle.img-responsive(src='img/8-People-copy.ai.png', alt='')
+                img.img-circle.img-responsive(src='/resources/images/8-People-copy.ai.png', alt='')
               .timeline-panel
                 .timeline-heading
                   h5.subheading Play!
@@ -134,7 +134,7 @@ html
                     | Everybody plays together, Gamfication elements like avatars, leaderboard add to the fun! Review your work in the end
             li.timeline-inverted
               .timeline-image
-                img.img-circle.img-responsive(src='img/g1074.png', alt='')
+                img.img-circle.img-responsive(src='/resources/images/g1074.png', alt='')
               .timeline-panel
                 .timeline-heading
                   h5.subheading Analyze
@@ -155,7 +155,7 @@ html
             | We are committed to providing a flexible, scalable and powerful platform to help you learn with velocity
         .col-md-4
           a.waves-effect.waves-light.btn.black.createAccount(href='LoginForm.pug')
-            | Create Free Account 
+            | Create Free Account
             i.material-icons fast_forward
         .col-md-1
       .row
@@ -250,9 +250,9 @@ html
           | © 2017 All Rights Reserved
           a.grey-text.text-lighten-4.right(href='#!') Terms of Use
     // Required JavaScript Libraries
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
-    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
-    script(type='text/javascript', src='../js/materialize.min.js')
+    script(src='/resources/js/jquery.min.js')
+    script(src='/resources/js/bootstrap.min.js')
+    script(type='text/javascript', src='/resources/js/materialize.min.js')
     script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js')
     script(type='text/javascript').
       //Initialize Image

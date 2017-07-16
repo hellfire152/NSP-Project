@@ -3,13 +3,13 @@ html
   head
     title
     // Bootstrap CSS File
-    link(href='../css/bootstrap.min.css', rel='stylesheet')
+    link(href='/resources/css/bootstrap.min.css', rel='stylesheet')
     // Font Awesome Stylesheet File
-    link(href='../css/font-awesome.min.css', rel='stylesheet')
+    link(href='/resources/css/font-awesome.min.css', rel='stylesheet')
     // Material StyleSheet
-    link(type='text/css', rel='stylesheet', href='../css/materialize.min.css', media='screen,projection')
-    link(rel='stylesheet', type='text/css', href='../css/mainstyle.css')
-    link(rel='stylesheet', type='text/css', href='../css/report.css')
+    link(type='text/css', rel='stylesheet', href='/resources/css/materialize.min.css', media='screen,projection')
+    link(rel='stylesheet', type='text/css', href='/resources/css/mainstyle.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/report.css')
     link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
     style.
       .table{
@@ -19,7 +19,7 @@ html
     nav
       .nav-wrapper
         a.brand-logo(href='LoginIndex.pug')
-          img.logo(src='img/logo.png')
+          img.logo(src='/resources/images/logo.png')
         ul#nav-mobile.right.hide-on-med-and-down
           li
             a(href='#')
@@ -50,7 +50,7 @@ html
           h6
             span#type.gameType.live D
             span#quiz-name(name='quiz-name') Ministries of Singapore
-          p#date June 17th, 04:09pm 
+          p#date June 17th, 04:09pm
           p#days
         .col-md-4.action-div
           button.action
