@@ -1,0 +1,142 @@
+doctype html
+html
+  head
+    title
+    // Bootstrap CSS File
+    link(href='../css/bootstrap.min.css', rel='stylesheet')
+    // Font Awesome Stylesheet File
+    link(href='../css/font-awesome.min.css', rel='stylesheet')
+    // Material StyleSheet
+    link(type='text/css', rel='stylesheet', href='../css/materialize.css', media='screen,projection')
+    link(rel='stylesheet', type='text/css', href='../css/report.css')
+    link(rel='stylesheet', type='text/css', href='../css/mainstyle.css')
+  body(onload='displayHostedQuestion()')
+    nav
+      .nav-wrapper
+        a.brand-logo(href='LoginIndex.pug')
+          img.logo(src='img/logo.png')
+        ul#nav-mobile.right.hide-on-med-and-down
+          li
+            a(href='#')
+              i.fa.fa-plus-square-o
+              |  Create
+          li
+            a(href='#')
+              i.fa.fa-graduation-cap
+              |  Quiz
+          li
+          li.active
+            a(href='MyProfile.pug')
+              i.fa.fa-user(aria-hidden='true')
+              |  Profile
+          li
+            a(href='#') Join Quiz
+          li
+            a.btn.btn-primary.btn-hh-trigger(role='button', data-toggle='collapse', data-target='.header-hidden') Open
+    .container-fluid.statistics
+      .row
+        .col-md-1
+        .col-md-10
+          h5 Reports
+        .col-md-1
+      .row
+        .col-md-1
+        .col-md-6
+          h6
+            span.gameType.live C
+            span#quiz-name(name='quiz-name') Ministries of Singapore (Host)
+          p#date
+            | June 17th, 04:09pm 
+            span#days (4 days ago)
+        .col-md-4
+          button.action Print
+          button.action Download Excel
+        .col-md-1
+      .row
+        .col-md-5
+        .col-md-2
+          .data
+            h2 54%
+            p Accuracy
+        .col-md-2
+          .data
+            h2#question_no 13
+            p Questions
+        .col-md-2
+          .data
+            h2 1
+            p Players
+        .col-md-1
+    .container-fluid
+      .row
+        .col.s12
+          ul.tabs
+            li.tab.col.s3
+              a.active(href='#test1') Questions
+            li.tab.col.s3
+              a(href='#test2') Players
+        #test1.col.s12
+          ul.collapsible(data-collapsible='accordion')
+        #test2.col.s12 Test 2
+    footer.page-footer
+      .container
+        .row
+          .col.l6.s12
+            h5.white-text Quizzit! Inc
+            p.grey-text.text-lighten-4 Get things done within minutes
+            .chip
+              i.fa.fa-facebook-official(aria-hidden='true')
+              |                      Facebook
+            .chip
+              i.fa.fa-twitter-square(aria-hidden='true')
+              |                       Twitter
+            .chip
+              i.fa.fa-instagram(aria-hidden='true')
+              |                       Instagram
+          .col.l4.offset-l2.s12
+            h5.white-text Hyperlinks
+            ul
+              li
+                a.grey-text.text-lighten-3(href='#!') Join Room
+              li
+                a.grey-text.text-lighten-3(href='#!') Login
+              li
+                a.grey-text.text-lighten-3(href='#!') Create Account
+              li
+                a.grey-text.text-lighten-3(href='#!') Support
+      .footer-copyright
+        .container
+          | © 2017 All Rights Reserved
+          a.grey-text.text-lighten-4.right(href='#!') Terms of Use
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js')
+    script(type='text/javascript', src='../controller/client-quiz.js')
+    script(type='text/javascript').
+      var acc = document.getElementsByClassName("accordion");
+      var i;
+      for (i = 0; i < acc.length; i++) {
+      acc[i].onclick = function() {
+      this.classList.toggle("active");
+      var panel = this.nextElementSibling;
+      if (panel.style.maxHeight){
+      panel.style.maxHeight = null;
+      } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+      }
+      }
+      }
+      $(document).ready(function() {
+      (function($) {
+      $('.tab ul.tabs').addClass('active').find('> li:eq(0)').addClass('current');
+      $('.tab ul.tabs li a').click(function(g) {
+      var tab = $(this).closest('.tab'),
+      index = $(this).closest('li').index();
+      tab.find('ul.tabs > li').removeClass('current');
+      $(this).closest('li').addClass('current');
+      tab.find('.tab_content').find('div.tabs_item').not('div.tabs_item:eq(' + index + ')').slideUp();
+      tab.find('.tab_content').find('div.tabs_item:eq(' + index + ')').slideDown();
+      g.preventDefault();
+      });
+      })(jQuery);
+      });
