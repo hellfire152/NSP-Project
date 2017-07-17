@@ -95,6 +95,4 @@ function handleGame(response) {
 
 function initHost() {
   firstQuestion = false;
-
-  //display
 }

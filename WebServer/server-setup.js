@@ -5,14 +5,13 @@
   This file does set most of the middleware used
   Author: Jin Kuan
 */
-
+//required modules
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var helmet = require('helmet');
 var uuid = require('uuid');
 var cookie = require('cookie');
 var ios = require('socket.io-express-session');
-var xssDefense = require('xss');
 
 var socketOfUser = {};
 setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
@@ -57,8 +56,19 @@ module.exports = function(data) {
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(expressValidator());
   app.use("/", express.static(__dirname));
-  app.use(helmet()); //adds a bunch of security features
+  //app.use(helmet()); //adds a bunch of security features
+  app.use(helmet.noSniff()); // content type should not be changed or followed
+  app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
+  app.use(helmet.xssFilter()); // protects against reflected XSS
 
+  //implementing our own security stuff
+  var security = require('./various-security.js')({
+    'app':  app,
+    'C' : C,
+    'S' : S,
+    'helmet' : helmet
+  });
+  
   //setting routes
   require('./server/setup/routes.js')({
     'C' : C,

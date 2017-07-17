@@ -3,21 +3,11 @@
 
   Author: Jin Kuan
 */
-let uuid;
-
-var checkMultipleOnSameMachine = require('./prevent_multiple_session.js');
+var uuid;
 
 var express = require('express');
 var nodemailer = require('nodemailer');
-var helmet = require('helmet');
-var app = express();
-var xssDefense = require('./xss-defense.js');
-var frameguard = require('frameguard');
 
-
-app.use(helmet.noSniff()); // content type should not be changed or followed
-app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
-app.use(helmet.xssFilter()); // protects against reflected XSS
 module.exports = function(data) {
 
   const C = data.C;
@@ -25,14 +15,11 @@ module.exports = function(data) {
     dirname = data.dirname,
     cipher = data.cipher,
     appConn = data.appConn,
-    queryOfUser = data.queryOfUser;
-    uuid = data.uuid;
-    errors=data.error;
+    queryOfUser = data.queryOfUser,
+    errors = data.error,
     cookieCipher = data.cookieCipher;
   uuid = data.uuid;
 
-  //middleware
-  app.use('*', checkMultipleOnSameMachine);
   //routing
   //handling requests for .html, controller, css or resource files
   app.get('((/resources|/controller|/css)*)|*.html|/favicon.ico', function(req, res) {
@@ -70,9 +57,7 @@ module.exports = function(data) {
       cookieCipher.decryptJSON(req.cookies.login)
         .catch(reason => {
           console.log(reason);
-          res.render('error', {
-            'error' : 'Invalid login cookie'
-          });
+          sendErrorPage(res, 'You are not logged in!');
         })
         .then(function(cookieData) {
           appConn.send({
