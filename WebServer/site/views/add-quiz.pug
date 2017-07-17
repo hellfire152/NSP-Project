@@ -6,7 +6,7 @@ html
     script(src='https://code.jquery.com/jquery-1.10.2.js')
   body
     #createQuiz
-      form(method='POST')
+      form
         h1 Create a quiz
         label Name of Quiz
         input#nameofQuiz(type='text', name='nameofQuiz')
@@ -26,7 +26,7 @@ html
         input#next(type='button', value='Create Quiz!')
         br
     #addQuestion
-      form(method='POST')
+      form
         h1 Add your question!
         label Prompt
         input#prompt(type='text', name='prompt')
@@ -67,8 +67,8 @@ html
         label Penalty
         input#penalty(type='number', name='penalty')
         br
-        input.cancel(type='reset', value='Add Quiz', onclick='addQuestion()')
-        input#submit(type='submit', value='Submit')
-    form
+        input.cancel(type='reset', value='Add Question', onclick='addQuestion()')
+        input#submit(type='button', value='Submit' onclick = 'sendSetQuiz()')
+    form#sendQuiz(method='POST', name="sendQuiz" action='/add-quiz')
       input#quizSet(type='hidden', name='quizSet')
     script(src='/resources/js/add-quiz.js')

@@ -122,8 +122,7 @@ defaultSetting();
 setDisplay();
 
  // validations when question is added
-$('#submit').click(function()
-{
+function sendSetQuiz(){
  if( !$('#prompt').val() ) {
   alert('Please fill in the prompt!');
   return false;
@@ -166,10 +165,8 @@ $('#submit').click(function()
      question : questionArr,
      choices : choiceArr
    }
-   
    sendToServer(data);
-
- });
+ }
 
 //choices in an array
 var choiceArr = [];
@@ -177,17 +174,21 @@ var create;
 var questionArr = [];
 var questionNo = 1;
 
+function sendToServer(inputData){
+  $('#quizSet').val(JSON.stringify(inputData));
+  console.log($('#quizSet').val());
+  document.forms["sendQuiz"].submit(function(){
+    alert("send");
+  });
+}
+
 //check weather it is public or private quiz
 function checkPublic() {
 if ($("#public").is(":checked")) {
-   return true;
+   return 1;
  } else {
-   return false;
+   return 0;
  }
-}
-
-function sendToServer(inputData){
-  console.log(inputData);
 }
 
 //Add and prepare question into array
@@ -220,7 +221,7 @@ function addQuestion() {
   }
 
   choice = {
-    choice : choice,
+    choices : JSON.stringify(choice),
     question_no : questionNo
   }
 
@@ -239,7 +240,7 @@ function addQuestion() {
   // user_id : 1
 
   question = {
-    questionNo : questionNo,
+    question_no : questionNo,
     prompt : $("#prompt").val(),
     type : $('input[name="type"]:checked').val(),
     solution : solution(),

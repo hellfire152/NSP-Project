@@ -8,7 +8,9 @@
   Author: Nigel Chen Chin Hao
   Date: 09062017
  */
-
+process.on('uncaughtException', (err) => {
+  console.log(err);
+})
 var mysql = require('mysql');
 var handleDb = require("./data-handle.js")();
 const C = require('../custom-API/constants.json');
@@ -58,6 +60,7 @@ var server = net.createServer(function(conn){
         }
         case C.DB.CREATE.QUIZ : {
           await createQuiz(inputData);
+          console.log(inputData);
           break;
         }
         case C.DB.SELECT.ALL_QUIZ : {
@@ -943,7 +946,10 @@ var server = net.createServer(function(conn){
   async function createQuiz(inputData){
     var data = inputData.data;
     data.quiz.date_created = new Date();
+    console.log("Eadfhjhgfyuiudahfycohasdkgiofhcuds");
+    console.log(data.quiz);
     var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
+      console.log(query);
       if(error){
         console.error('[Error in query]: ' + error);
         var response = {
@@ -1003,12 +1009,19 @@ var server = net.createServer(function(conn){
   //Search for matching questionNo, and then store the data accordingly
   async function addChoices(choiceData, questionId, questionNo, inputData){
     choiceData.question_id = questionId;
+    console.log(choiceData);
     for(let choice of choiceData){
+      console.log("THIS IS THe CHOICE");
+      console.log(choice);
+      console.log("END");
+      console.log(choice.question_no + '|' + questionNo);
       if(choice.question_no == questionNo){
         choice.question_id = questionId;
         await handleDb.handleEncryption(choice)
         .then(choiceDataOut => {
           var query = connection.query("INSERT INTO quiz_question_choices SET ?", choiceDataOut, function(error, result){
+            console.log("SIJLOIUYTFDRSFTGYHUIJUYTFDRGRTFGYJKHUIJLHUGYTFHDRGSFHTGYJKHUIL");
+            console.log(query);
             if(error){
               console.error('[Error in query]: ' + error);
               var response = {
@@ -1215,7 +1228,7 @@ var server = net.createServer(function(conn){
             .then(outResult => {
               objOutResult = {
                 data:{
-                  data : resultOut,
+                  data : outResult,
                   success : true
                 }
               }
