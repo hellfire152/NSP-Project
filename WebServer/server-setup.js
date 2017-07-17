@@ -14,6 +14,7 @@ var pendingResponses = {};
 var cookie = require('cookie');
 var ios = require('socket.io-express-session');
 const C = require('../custom-API/constants.json');
+var xssDefense = require('xss'); 
 
 var socketOfUser = {};
 module.exports = function(data) {

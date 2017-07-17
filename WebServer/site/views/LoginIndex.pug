@@ -1,0 +1,214 @@
+doctype html
+html
+  head
+    title
+    // Bootstrap CSS File
+    link(href='/resources/css/bootstrap.min.css', rel='stylesheet')
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+    // Font Awesome Stylesheet File
+    link(href='/resources/css/font-awesome.min.css', rel='stylesheet')
+    // Material StyleSheet
+    link(type='text/css', rel='stylesheet', href='/resources/css/materialize.min.css', media='screen,projection')
+    // Animate Stylesheet
+    link(rel='stylesheet', type='text/css', href='/resources/css/animate.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/mainstyle.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/LoginHome.css')
+  body
+    // Hidden Header
+    .header-hidden.collapse
+      .header-hidden-inner.container
+        .row
+          .col-md-3
+            h5
+              | Welcome
+              span#user-name  Bryan
+              | ,
+            p
+              | Account description Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+              | tempor incididunt ut labore et dolore magna aliqua.
+            a.btn.btn-more(href='#')
+              | Profile
+              i.fa.fa-arrow-right(aria-hidden='true')
+          .col-md-3
+          .col-md-6
+            h3
+              | Choose A Theme
+            .switcher
+              .cols
+                br
+                a.background.benches.active(href='#benches', title='Benches')  Benches
+                a.background.boots(href='#boots', title='Boots') Boots
+                a.background.buildings(href='#buildings', title='Buildings') Buildings
+                a.background.city(href='#city', title='City') City
+                a.background.metro(href='#metro', title='Metro') Metro
+              .cols
+                | Colours:
+                br
+                a.colour.orange.active(href='#orange', title='Orange') Orange
+                a.colour.green(href='#green', title='Green') Green
+                a.colour.blue(href='#blue', title='Blue') Blue
+                a.colour.lavender(href='#lavender', title='Lavender') Lavender
+            p
+              small Selection is not persistent
+    nav
+      .nav-wrapper
+        a.brand-logo(href='LoginIndex.pug')
+          img.logo(src='/resources/images/logo.png')
+        ul#nav-mobile.right.hide-on-med-and-down
+          li
+            a(href='#')
+              i.fa.fa-plus-square-o
+              |  Create
+          li
+            a(href='#')
+              i.fa.fa-graduation-cap
+              |  Quiz
+          li
+            a.dropdown-button(href='MyProfile.pug', data-activates='dropdown1')
+              i.fa.fa-user(aria-hidden='true')
+              |  Profile
+              i.material-icons.right arrow_drop_down
+          ul#dropdown1.dropdown-content
+            li
+              a(href='#!') Hosted
+            li.divider
+            li
+              a(href='#!') Attempts
+          li
+            a(href='#') Join Quiz
+          li
+            a.btn.btn-primary.btn-hh-trigger(role='button', data-toggle='collapse', data-target='.header-hidden') Open
+    .container-fluid.welcome
+      .row
+        .col-md-8
+          .greeting
+            h4 Hello UserName,
+            p You have 0 new quiz
+        .col-md-4
+          .statistics
+            .ui
+              .ui_box
+                .ui_box__inner
+                  h2
+                    | Achievement
+                  p Overview of your achievement
+                  .statistics
+                    span 58%
+                  .progress
+                    .progress_bar
+                  p Highest achievement
+    .control
+      .btn-material
+      i.material-icons.icon-material-search search
+    // full screen form controls
+    i.icon-close.material-icons close
+    .search-input
+      input.input-search(placeholder='Start Typing', type='text')
+    .container-fluid
+      .row
+        .col-md-6
+          nav#searchbar
+            .nav-wrapper
+              form
+                .input-field
+                  input#search(type='search', placeholder='Search for quizzes', required='')
+                  label.label-icon(for='search')
+                    i.material-icons search
+                  i.material-icons close
+        .col-md-6
+      .row
+        .col-md-9
+          blockquote
+            | All Quizzes
+        .col-md-3
+          blockquote
+            | Top Quizzes
+    .container-fluid
+      .row
+        .col.s12.m9.quiz-container
+          .card.all-quiz
+            .card-image.waves-effect.waves-block.waves-light
+              a.btn-floating.btn-large.btn-price.waves-effect.waves-light.pink.accent-2.quiz-category(href='#') Uni
+              img.quiz-image(src='/resources/images/quiz_default.jpg')
+            .col.s2.offset-s5
+              a.btn-floating.btn-large.waves-effect.waves-light.green.accent-4
+                i.material-icons share
+            .col.s2
+              a.btn-floating.btn-large.waves-effect.waves-light.red.accent-2
+                i.material-icons favorite
+            .col.s2
+              a.btn-floating.btn-large.waves-effect.waves-light.light-blue
+                i.material-icons.activator info
+            .card-content
+              span.card-title.activator.grey-text.text-darken-4 Blah Blah Quiz
+              a.btn-floating.btn-large.waves-effect.waves-light.red
+                i.material-icons play_circle_filled
+            .card-reveal(style='border:1px solid red')
+              span.card-title.grey-text.text-darken-4
+                | Blah Blah Quiz
+                i.material-icons.right close
+              p 20 MCQ Questions
+              p Created By: 123
+              p Created On: 2017-06-15
+          .card.all-quiz
+            .card-image.waves-effect.waves-block.waves-light
+              a.btn-floating.btn-large.btn-price.waves-effect.waves-light.pink.accent-2.quiz-category(href='#') Uni
+              img.quiz-image(src='resources/images/quiz_default.jpg')
+            .col.s2.offset-s5
+              a.btn-floating.btn-large.waves-effect.waves-light.green.accent-4
+                i.material-icons share
+            .col.s2
+              a.btn-floating.btn-large.waves-effect.waves-light.red.accent-2
+                i.material-icons favorite
+            .col.s2
+              a.btn-floating.btn-large.waves-effect.waves-light.light-blue
+                i.material-icons.activator info
+            .card-content
+              span.card-title.activator.grey-text.text-darken-4 Blah Blah Quiz
+              a.btn-floating.btn-large.waves-effect.waves-light.red
+                i.material-icons play_circle_filled
+            .card-reveal
+              span.card-title.grey-text.text-darken-4
+                | Blah Blah Quiz
+                i.material-icons.right close
+              p 20 MCQ Questions
+              p Created By: 123
+              p Created On: 2017-06-15
+        .col.s12.m3
+          .quiz
+    a#scroll(href='#', style='display: none;')
+      i.material-icons arrow_drop_up
+    // Required JavaScript Libraries
+    script(src='/resources/js/jquery.min.js')
+    script(src='/resources/js/bootstrap.min.js')
+    script(type='text/javascript', src='/resources/js/materialize.min.js')
+    script(type='text/javascript', src='../controller/quiz.js')
+    script(type='text/javascript', src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/499416/TweenLite.min.js')
+    script(type='text/javascript', src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/499416/EasePack.min.js')
+    script(type='text/javascript').
+      var options = [
+      {selector: '.card', offset: 0, callback: function(el) {
+      Materialize.showStaggeredList($(el));
+      }}
+      ];
+      Materialize.scrollFire(options);
+      $(document).ready(function(){
+      $(window).scroll(function(){
+      if ($(this).scrollTop() > 100) {
+      $('#scroll').fadeIn();
+      } else {
+      $('#scroll').fadeOut();
+      }
+      });
+      $('#scroll').click(function(){
+      $("html, body").animate({ scrollTop: 0 }, 600);
+      return false;
+      });
+      });
+      $('.control').click( function(){
+      $('body').addClass('search-active');
+      $('.input-search').focus();
+      });
+      $('.icon-close').click( function(){
+      $('body').removeClass('search-active');
+      });

@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator = require('password-validator');
-module.exports = function(cipher, appConn, C) {
+module.exports = function(cipher, appConn, C, xssDefense) {
   return function(req, res){
     console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
@@ -13,7 +13,6 @@ module.exports = function(cipher, appConn, C) {
     // console.log("hi");
     var username = req.body.username;
     var password = req.body.password;
-
         req.sanitize('username').escape();
         req.sanitize('password').escape();
         req.sanitize('username').trim();
@@ -34,37 +33,7 @@ module.exports = function(cipher, appConn, C) {
 
       if (passwordCheck){
         if(!error){
-          const nodemailer = require('nodemailer');
-          const xoauth2 = require('xoauth2');
 
-          var transporter = nodemailer.createTransport({
-              service: 'gmail',
-              auth: {
-                  xoauth2: xoauth2.createXOAuth2Generator({
-                      user: 'chloeangsl@gmail.com',
-                      clientId: '856574075841-dn1nobjm59p0vrhmvcel4sf4djb6sath.apps.googleusercontent.com',
-                      clientSecret: 'i_T_RN-K_p7PsDbAwJXFNXRJ',
-                      refreshToken: '1/3f97hE7yCmipAtuPcu1iu4EhF3kSmzYicMXiamYMjXY'
-                  })
-              }
-          })
-
-          var mailOptions = {
-              from: 'My Name <chloeangsl@gmail.com>',
-              to: 'chloeangsl@gmail.com',
-              subject: 'testing my verification',
-              text: 'Hello World!!'
-          }
-
-          transporter.sendMail(mailOptions, function (err, res) {
-              if(err){
-                  console.log('Error');
-              } else {
-                  console.log('Email Sent');
-              }
-          })
-
-          console.log(error);
           console.log("pass");
           console.log("HOST FORM DATA: ");
           console.log(req.body);
@@ -84,12 +53,12 @@ module.exports = function(cipher, appConn, C) {
                 }
               }
             }, (response) => {
-      
+
 
               var currentIpAddress = "wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU=" //5555 temp way to get ip address, because site is not s
               //If incorrect user input return to login page
               if(!(response.data.success)){
-                res.redirect('/login');
+                res.redirect('/LoginForm');
               }
               else{
                 //Check for identical IP address in user cookie
@@ -115,17 +84,21 @@ module.exports = function(cipher, appConn, C) {
                       user_id : response.data.data.user_id
                     }
                   } ,(response) => {
+
+                    console.log(response.data.data[0]);
+                    var encodedData = xssDefense.jsonEncode(response.data.data[0]);
                     if(response.data.success){
                       console.log("SUCCESS");
-                      res.cookie('user_info', JSON.stringify(response.data));
-                      res.render('login',{
-                        data: response.data
+                      console.log(encodedData);
+                      res.cookie('user_info', JSON.stringify(encodedData));
+                      res.render('Loginindex',{
+                        data: encodedData
                       });
                     }
                     else{
-                      res.cookie('user_info', JSON.stringify(response.data));
-                      res.render('login',{
-                        data: response.data
+                      res.cookie('user_info', JSON.stringify(encodedData));
+                      res.render('LoginForm',{
+                        data: encodedData
                       });
                     }
                   });
@@ -149,7 +122,7 @@ module.exports = function(cipher, appConn, C) {
         }
         else{
           console.log("FAIL");
-          res.redirect('/login');
+          res.redirect('/LoginForm');
         }
       }
       else{
@@ -159,7 +132,7 @@ module.exports = function(cipher, appConn, C) {
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.redirect('/login');
+          res.redirect('/LoginForm');
         }
     }
     else{
@@ -174,7 +147,7 @@ module.exports = function(cipher, appConn, C) {
 
         console.log("never fill in all");
 
-        res.redirect('/login');
+        res.redirect('/LoginForm');
         return;
     }
   }

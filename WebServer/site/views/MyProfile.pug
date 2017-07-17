@@ -1,0 +1,253 @@
+doctype html
+html
+  head
+    title
+    // Bootstrap CSS File
+    link(href='/resources/css/bootstrap.min.css', rel='stylesheet')
+    // Main Stylesheet File
+    link(rel='stylesheet', type='text/css', href='/resources/css/Profile.css')
+    // Font Awesome Stylesheet File
+    link(href='/resources/css/font-awesome.min.css', rel='stylesheet')
+    // Material StyleSheet
+    link(type='text/css', rel='stylesheet', href='/resources/css/materialize.css', media='screen,projection')
+    // Animate Stylesheet
+    link(rel='stylesheet', type='text/css', href='/resources/css/animate.css')
+    // Main Stylesheet File
+    link(href='/resources/css/mainstyle.css', rel='stylesheet')
+    // Your custom colour override - predefined colours are: colour-blue.css, colour-green.css, colour-lavander.css, orange is default
+    link#colour-scheme(href='#', rel='stylesheet')
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+  body(onload='displayProfile()')
+    // Hidden Header
+    .header-hidden.collapse
+      .header-hidden-inner.container
+        .row
+          .col-md-3
+          .col-md-3
+          .col-md-6
+            h3
+              | Choose A Theme
+            .switcher
+              .cols
+                br
+                a.background.benches.active(href='#benches', title='Benches')  Benches
+                a.background.boots(href='#boots', title='Boots') Boots
+                a.background.buildings(href='#buildings', title='Buildings') Buildings
+                a.background.city(href='#city', title='City') City
+                a.background.metro(href='#metro', title='Metro') Metro
+              .cols
+                | Colours:
+                br
+                a.colour.orange.active(href='#orange', title='Orange') Orange
+                a.colour.green(href='#green', title='Green') Green
+                a.colour.blue(href='#blue', title='Blue') Blue
+                a.colour.lavender(href='#lavender', title='Lavender') Lavender
+            p
+              small Selection is not persistent
+    nav
+      .nav-wrapper
+        a.brand-logo(href='LoginIndex.pug')
+          img.logo(src='/resources/images/logo.png')
+        ul#nav-mobile.right.hide-on-med-and-down
+          li
+            a(href='#')
+              i.fa.fa-plus-square-o
+              |  Create
+          li
+            a(href='#')
+              i.fa.fa-graduation-cap
+              |  Quiz
+          li
+          li.active
+            a(href='MyProfile.pug')
+              i.fa.fa-user(aria-hidden='true')
+              |  Profile
+          li
+            a(href='#') Join Quiz
+          li
+            a.btn.btn-primary.btn-hh-trigger(role='button', data-toggle='collapse', data-target='.header-hidden') Open
+    .container-fluid.profile-area
+      .section
+        .card.profile-card
+          .card-image.waves-effect.waves-block.waves-light
+            img.activator(src='/resources/images/backgrounds/bio_background.jpg')
+          .card-content
+            .profile-pic
+              img.circle.responsive-img.z-depth-4(src='/resources/images/profilePic.jpg')
+            .row
+              .col.s3.offset-s2
+                h4#name.card-title.grey-text.text-darken-4 Bryan Tan
+                p#email.medium-small.grey-text Test
+              .col.s2.center-align
+                h4.card-title.grey-text.text-darken-4
+                  | University
+                p.medium-small.grey-text Category
+              .col.s2.center-align
+                h4#numOfQuiz.card-title.grey-text.text-darken-4
+                  | 5
+                p.medium-small.grey-text
+                  | Completed Quizzes
+              .col.s2.center-align
+                h4.card-title.grey-text.text-darken-4
+                  | 30/6/2017
+                p.medium-small.grey-text
+                  | Account dated
+              .col.s1.right-align
+                a.btn-floating.activator.waves-effect.waves-light.darken-2.right
+                  i.material-icons person_outline
+          .card-reveal
+            span.card-title.grey-text.text-darken-4
+              | My Profile
+              i.material-icons.right close
+            p
+              | User ID:
+              span#user_id
+            p
+              | User Name:
+              span#user_name
+            p
+              | Email Address:
+              span#email
+            p
+              | School:
+              span#school
+            p
+              | Date Of Birth:
+              span#DOB
+            p
+              | Organisation:
+              span#organisation
+    .row
+      #sidebar.col.s12.m4
+        .card.aboutMe.deep-purple
+          .card-content.white-text
+            span.card-title About Me!
+            p
+              | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+              | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+              | quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        ul#profile-page-about-details.collection.z-depth-1
+          li.collection-item
+            .row
+              .col.s5.grey-text.darken-1
+                i.material-icons assessment
+                | Skills
+              .col.s7.grey-text.text-darken-4.right-align HTML, CSS
+          li.collection-item
+            .row
+              .col.s5.grey-text.darken-1
+                i.material-icons cake
+                |  Birth date
+              .col.s7.grey-text.text-darken-4.right-align
+                span#DOB 29-12-1998
+        .card.center-align
+          .card-content.cyan.white-text
+            p.card-stats-title
+              i.mdi-editor-attach-money
+              | Completed Quiz
+            h4#complete_quiz.card-stats-number
+            p.card-stats-compare
+              i.material-icons arrow_drop_up
+              |  70%
+              span.purple-text.text-lighten-5 last month
+          .card-action.cyan.darken-2
+            #sales-compositebar
+      #main-div.col.s12.m8
+        ul.tabs.indigo.accent-2.text-white
+          li.tab.col.s3
+            a.active(href='#test1') Completed Quizzes
+          li.tab.col.s3
+            a(href='#test2') Hosted Quizzes
+          li.tab.col.s3
+            a(href='#test4') Overall Stats
+      #test1.col.s12.m8
+        table#testTable.entity
+          tbody
+            tr.data-table
+              td
+                | Type
+              td
+                | Quiz Name
+              td
+                | Date Of Quiz
+              td
+                | Total Rating
+              td
+            tr.records
+              td
+                span.gameType.live C
+              td
+                span.quiz-name Ministries of Singapore
+              td
+                span.quiz-date 1 day ago
+              td
+                span.total-players 1
+              td.btn-cell
+                a.edit-btn(href='#')
+                  i.fa.fa-pencil(aria-hidden='true')
+                a.download-btn(href='#')
+                  span
+                    i.fa.fa-download(aria-hidden='true')
+                a.trash-btn(href='#')
+                  i.fa.fa-trash-o(aria-hidden='true')
+                button.btn.waves-effect.waves-light.view-btn(type='submit', name='action')
+                  | View
+      #test2.col.s12.m8
+        table#tableToExcel.entity
+          tbody
+            tr.data-table
+              td
+                | Type
+              td
+                | Quiz Name
+              td
+                | Date Of Quiz
+              td
+                | Total Rating
+              td
+            tr.records
+              td
+                | C
+              td
+                span.quiz-name Ministries of Singapore
+              td
+                span.quiz-date 1 day ago
+              td
+                span.total-players 1
+              td.btn-cell
+                a.edit-btn(href='#')
+                  i.fa.fa-pencil(aria-hidden='true')
+                a.download-btn(href='#')
+                  span
+                    i.fa.fa-download(aria-hidden='true')
+                a.trash-btn(href='#')
+                  i.fa.fa-trash-o(aria-hidden='true')
+                button.btn.waves-effect.waves-light.view-btn(type='submit', name='action')
+                  | View
+      #test4.col.s12.m8
+        #canvas-holder(style='width:40%')
+          canvas#chart-area
+      // / tabs
+    .fixed-action-btn.vertical
+      a.btn-floating.btn-large.red
+        i.large.material-icons mode_edit
+      ul
+        li
+          a.btn-floating.red
+            i.material-icons insert_chart
+        li
+          a.btn-floating.yellow.darken-1
+            i.material-icons format_quote
+        li
+          a.btn-floating.green
+            i.material-icons publish
+        li
+          a.btn-floating.blue
+            i.material-icons attach_file
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js')
+    script(type='text/javascript', src='../controller/client-quiz.js')
+    script(type='text/javascript', src='../controller/Chart.js')
+    script(type='text/javascript').
