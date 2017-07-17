@@ -1009,19 +1009,12 @@ var server = net.createServer(function(conn){
   //Search for matching questionNo, and then store the data accordingly
   async function addChoices(choiceData, questionId, questionNo, inputData){
     choiceData.question_id = questionId;
-    console.log(choiceData);
     for(let choice of choiceData){
-      console.log("THIS IS THe CHOICE");
-      console.log(choice);
-      console.log("END");
-      console.log(choice.question_no + '|' + questionNo);
       if(choice.question_no == questionNo){
         choice.question_id = questionId;
         await handleDb.handleEncryption(choice)
         .then(choiceDataOut => {
           var query = connection.query("INSERT INTO quiz_question_choices SET ?", choiceDataOut, function(error, result){
-            console.log("SIJLOIUYTFDRSFTGYHUIJUYTFDRGRTFGYJKHUIJLHUGYTFHDRGSFHTGYJKHUIL");
-            console.log(query);
             if(error){
               console.error('[Error in query]: ' + error);
               var response = {
@@ -1035,7 +1028,6 @@ var server = net.createServer(function(conn){
             }
 
             console.log('[Query successful]');
-            console.log(result);
           });
         });
       }
@@ -1214,7 +1206,30 @@ var server = net.createServer(function(conn){
   //If question type is a short ans, choice_arr will be null
   async function retrieveQuestions(inputData){
     var quizId = inputData.data.quizId;
-    var query = connection.query("SELECT quiz_question.quiz_id, quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices\
+    var quizInfo;
+    var query = connection.query("SELECT quiz.reward, user_account.name, quiz.date_created, quiz.visibility, quiz.description\
+    FROM quiz\
+    LEFT OUTER JOIN user_account\
+      ON user_account.user_id = quiz.user_id\
+    WHERE quiz.quiz_id = '" + quizId + "'", function(err, result){
+      if(err){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+
+      handleDb.handleDecryption(result)
+      .then(resultOut => {
+        quizInfo = resultOut[0]; //A really lazy way, but it works
+      });
+    });
+
+    var query = connection.query("SELECT quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices, quiz_question.reward, quiz_question.penalty\
     FROM quiz_question\
     LEFT OUTER JOIN quiz_question_choices\
       ON quiz_question.question_id = quiz_question_choices.question_id\
@@ -1228,7 +1243,15 @@ var server = net.createServer(function(conn){
             .then(outResult => {
               objOutResult = {
                 data:{
-                  data : outResult,
+                  data : {
+                    id : quizId,
+                    question : outResult,
+                    reward : quizInfo.reward,
+                    author : quizInfo.name,
+                    creationDate : quizInfo.date_created,
+                    'public' : quizInfo.visibility,
+                    description : quizInfo.description
+                  },
                   success : true
                 }
               }

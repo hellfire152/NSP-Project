@@ -1,3 +1,9 @@
+//choices in an array
+var choiceArr = [];
+var create;
+var questionArr = [];
+var questionNo = 1;
+
 //Validation check for quiz description
 $('#next').click(function(){
   if( !$('#nameofQuiz').val() ) {
@@ -43,7 +49,6 @@ $('#next').click(function(){
    $('#createQuiz').show();
  }
 
-
  //Store choices into an array
  function displayAnswer() {
    var choice = [];
@@ -61,7 +66,6 @@ $('#next').click(function(){
    });
    var choiceArr = [choice[0] , choice[1], choice[2], choice[3]];
 
-  console.log(choiceArr);
  }
 
 // Activate choice 2 when field is choice 1 is properly set
@@ -118,9 +122,6 @@ $('#next').click(function(){
 
  }
 
-defaultSetting();
-setDisplay();
-
  // validations when question is added
 function sendSetQuiz(){
  if( !$('#prompt').val() ) {
@@ -159,7 +160,8 @@ function sendSetQuiz(){
           return false;
        }
      }
-   //TODO: SEND TO SERVER
+
+  //NOTE: This is the place where it send the quiz set to database
    var data = {
      quiz : create,
      question : questionArr,
@@ -168,12 +170,8 @@ function sendSetQuiz(){
    sendToServer(data);
  }
 
-//choices in an array
-var choiceArr = [];
-var create;
-var questionArr = [];
-var questionNo = 1;
-
+//Input data object into a hidden form #quizSet
+//And then send to server via the form.
 function sendToServer(inputData){
   $('#quizSet').val(JSON.stringify(inputData));
   console.log($('#quizSet').val());
@@ -185,9 +183,9 @@ function sendToServer(inputData){
 //check weather it is public or private quiz
 function checkPublic() {
 if ($("#public").is(":checked")) {
-   return 1;
+   return true;
  } else {
-   return 0;
+   return false;
  }
 }
 
@@ -220,11 +218,13 @@ function addQuestion() {
     }
   }
 
+  //Prepare choices Object and store into an array
   choice = {
     choices : JSON.stringify(choice),
     question_no : questionNo
   }
 
+  //Prepare Quiz Object
   create = {
     quiz_title : $("#nameofQuiz").val(),
     description : $("#desc").val(),
@@ -232,13 +232,7 @@ function addQuestion() {
     reward : $("#cReward").val()
   }
 
-  // quiz_title : "Know your product",
-  // visibility : true,
-  // description : "About new technology",
-  // quiz_type : "Classic",
-  // quiz_rating : 5,
-  // user_id : 1
-
+  //Prepare Question Object and store into an array
   question = {
     question_no : questionNo,
     prompt : $("#prompt").val(),
@@ -250,13 +244,12 @@ function addQuestion() {
   }
 
   questionNo++;
+
   if($("#mcq").is(":checked")){
-    console.log("IN");
     choiceArr.push(choice);
   }
-
-  console.log(choiceArr);
   questionArr.push(question);
-  console.log(questionArr);
-
 }
+
+defaultSetting();
+setDisplay();
