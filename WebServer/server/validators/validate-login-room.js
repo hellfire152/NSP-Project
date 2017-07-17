@@ -58,7 +58,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
               var currentIpAddress = "wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU=" //5555 temp way to get ip address, because site is not s
               //If incorrect user input return to login page
               if(!(response.data.success)){
-                res.redirect('/login');
+                res.redirect('/LoginForm');
               }
               else{
                 //Check for identical IP address in user cookie
@@ -91,13 +91,13 @@ module.exports = function(cipher, appConn, C, xssDefense) {
                       console.log("SUCCESS");
                       console.log(encodedData);
                       res.cookie('user_info', JSON.stringify(encodedData));
-                      res.render('login',{
+                      res.render('Loginindex',{
                         data: encodedData
                       });
                     }
                     else{
                       res.cookie('user_info', JSON.stringify(encodedData));
-                      res.render('login',{
+                      res.render('LoginForm',{
                         data: encodedData
                       });
                     }
@@ -122,7 +122,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
         }
         else{
           console.log("FAIL");
-          res.redirect('/login');
+          res.redirect('/LoginForm');
         }
       }
       else{
@@ -132,7 +132,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.redirect('/login');
+          res.redirect('/LoginForm');
         }
     }
     else{
@@ -147,7 +147,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
 
         console.log("never fill in all");
 
-        res.redirect('/login');
+        res.redirect('/LoginForm');
         return;
     }
   }

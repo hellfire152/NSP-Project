@@ -94,19 +94,19 @@ html
 
   body(onmousemove='canceltimer();', onclick='canceltimer();')
     form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
-      input#name(type='text', name='name', placeholder='name', autocomplete="off")
+      input#name(type='text', name='name', placeholder='name', autocomplete="off")//
       br
       p
-      input#username(type='text', name='username', placeholder='username', autocomplete="off")
+      input#username(type='text', name='username', placeholder='username', autocomplete="off")//
       br
       p
-      input#Email.text(type='email', name='email', placeholder='Email', autocomplete="off")
+      input#Email.text(type='email', name='email', placeholder='Email', autocomplete="off")//
       br
       p
-      input#password(type='password', name='password', placeholder='password')
+      input#password(type='password', name='password', placeholder='password')//
       br
       p
-      input#confirmPassword(type='password', name='confirmPassword', placeholder='confirmPassword')
+      input#confirmPassword(type='password', name='confirmPassword', placeholder='confirmPassword')//
       br
       p
       #dateOfBirth
@@ -114,10 +114,10 @@ html
           | Date of Birth:
           input#DOB(style='width:230px;', type='date', name='DOB',min='1990-01-01',max='2011-01-15')
       p
-      input#school(type='text', name='school', placeholder='school', autocomplete="off")
+      input#school(type='text', name='school', placeholder='school', autocomplete="off")//
       br
       p
-      input#phoneNumber.checkphone(type='text', name='phoneNumber', placeholder='phoneNumber', autocomplete="off")
+      input#phoneNumber.checkphone(type='text', name='phoneNumber', placeholder='phoneNumber', autocomplete="off")//
       br
       p
       input.submit(style='display:inline-block;', type='submit', value='Submit')
