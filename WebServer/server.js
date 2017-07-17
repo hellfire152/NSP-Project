@@ -32,8 +32,8 @@ var fs = require('fs');
 var net = require('net');
 var cookieParser = require('cookie-parser');
 var cipher = require('../custom-API/cipher.js')();
-var key = fs.readFileSync('./cert/server.key');
-var cert = fs.readFileSync('./cert/server.crt');
+var key = fs.readFileSync('./cert/private.key');
+var cert = fs.readFileSync('./cert/certificate.pem');
 //https nonsense, have yet to set it up properly
 var https_options = {
     key: key,

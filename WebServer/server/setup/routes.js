@@ -11,7 +11,7 @@ var express = require('express');
 var nodemailer = require('nodemailer');
 var helmet = require('helmet');
 var app = express();
-var xssDefense = require('xss'); 
+var xssDefense = require('./xss-defense.js');
 var frameguard = require('frameguard');
 
 
@@ -176,8 +176,8 @@ module.exports = function(data) {
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
   app.post('/change-password-room-success', require('../validate-change-password.js')(cipher, appConn,C));
   app.post('/forget-password-room-success', require('../validate-forget-password.js')(cipher, appConn,C));
-  app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C));
-  app.post('/otp-register', require('../validate-otp-register.js') (cipher, appConn, C));
+  app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C, xssDefense));
+  app.post('/otp-register', require('../validate-otp-register.js') (cipher, appConn, C, xssDefense));
 
 }
 

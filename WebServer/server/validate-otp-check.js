@@ -1,7 +1,7 @@
 //login
 
 const uuid = require('uuid');
-module.exports = function(cipher, appConn, C) {
+module.exports = function(cipher, appConn, C, xssDefense) {
   return function(req, res) {
     req.sanitize('otp').escape();
 
@@ -36,6 +36,7 @@ module.exports = function(cipher, appConn, C) {
                 }
               }
             }, (response2) => {
+              var encodedData = xssDefense.jsonEncode(response.data.data[0]);
               res.clearCookie("otp");
               if(req.cookies.deviceIP != undefined){
                 var ipArr = JSON.parse(req.cookies.deviceIP);
@@ -47,8 +48,8 @@ module.exports = function(cipher, appConn, C) {
                 var newIpArr = [response2.data.data.hashedIpAddress];
                 res.cookie('deviceIP', JSON.stringify(newIpArr), {"maxAge": 1000*60*60*24*30}); // max age: 30 days
               }
-              res.cookie('user_info', JSON.stringify(response.data));
-              res.render('login',{
+              res.cookie('user_info', JSON.stringify(encodedData));
+              res.render('LoginIndex',{
                 data: response.data
               });
             });
@@ -65,7 +66,7 @@ module.exports = function(cipher, appConn, C) {
         else{
           console.log("HERE");
           res.clearCookie("otp");
-          res.redirect('/login');
+          res.redirect('/LoginForm');
         }
       }
     }

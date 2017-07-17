@@ -1,0 +1,199 @@
+doctype html
+html
+  head
+    link(rel='stylesheet', type='text/css', href='/resources/css/LoginForm.css')
+    title Login
+    script.
+      var data = !{JSON.stringify(data)}
+      console.log(data)
+      var tim = 0;
+      function reload () {
+      tim = setTimeout("location.reload(true);",60000);   // 1 minute
+      }
+      function canceltimer() {
+      window.clearTimeout(tim);  // cancel the timer on each mousemove/click
+      reload();  // and restart it
+      }
+    script(src='https://code.jquery.com/jquery-1.11.0.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
+    script.
+      jQuery.validator.addMethod('checkphone', function(value){
+        if(/^[0-9]{8}$/.test(value)){
+          return true;
+         } else{
+          return false;
+         };
+       }, 'Please enter a valid phone number');
+    script.
+      $(function(){
+        $('#register-student').validate({
+          rules:{
+            name:{
+              required:true,
+              minlength:5
+            },
+            username:{
+              required:true,
+              minlength:5
+            },
+            password:{
+              required:true,
+              minlength:8
+            },
+            cpassword:{
+              required:true,
+              minlength:8,
+              equalTo:"#password"
+            },
+            number:{
+              checkphone:true
+            },
+            email:{
+              required:true,
+              email:true
+            },
+            DOB:{
+              required:true,
+              date:true
+            },
+            school:{
+              required:true,
+              minlength:3
+            }
+          },
+          messages:{
+            name:{
+              required: "Please enter name",
+              minlength:"Your name must consist atleast 5 characters"
+            },
+            username:{
+              required: "Please enter username",
+              minlength:"Your username must consist atleast 5 characters"
+            },
+            password:{
+              required: "Please enter password",
+              minlength:"Your password must consist atleast 8 characters"
+            },
+            cpassword:{
+              required:"Please enter password",
+              minlength:"Your password must consist atleast 8 characters",
+              equalTo:"Passwords not match"
+            },
+            email:{
+              required:"Please enter email",
+              email:"Please enter a valid email"
+            },
+            DOB:{
+              required:"Please enter your birthdate",
+              date:"Please enter a valid date"
+            },
+            school:{
+              required:"Please enter your school",
+              minlength:"Please enter a valid school"
+            }
+          }
+        });
+      });
+    script.
+        $(function(){
+        $("#login").validate({
+        rules:{
+        username:{
+        required:true,
+        minlength:5
+        },
+        password:{
+        required:true,
+        minlength:8
+        }
+        },
+        messages:{
+        username:{
+        required: "Please enter username",
+        minlength:"Your username must consist atleast 5 characters"
+        },
+        password:{
+        required: "Please enter password",
+        minlength:"Your password must consist atleast 8 characters"
+        },
+        }
+        });
+        });
+  body(onmousemove='canceltimer();', onclick='canceltimer();')
+    // Form
+    .form
+      .form-toggle
+      .form-panel.one
+        .form-header
+          h1 Account Login
+        .form-content
+          form#login(onsubmit='/validate-login-room', method='POST', action='/login-room')
+            .form-group
+              label(for='username') Username
+              input#username(type='text', name='username', required='required', autocomplete="off")
+            .form-group
+              label(for='password') Password
+              input#password(type='password', name='password', required='required', autocomplete="off")
+            .form-group
+              a.form-recovery(href='ForgetPassword.html') Forgot Password?
+            .form-group
+              button(type='submit') Log In
+      .form-panel.two
+        .form-header
+          h1 Register Account
+        // @ToDO add tool tips
+        .form-content
+          form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
+            .form-group
+              label(for='name') Name
+              input#name(type='text', name='name', required='required' , autocomplete="off")
+            .form-group
+              label(for='username') Username
+              input#username(type='text', name='username', required='required')
+            .form-group
+              label(for='password') Password
+              input#password(type='password', name='password', required='required')
+            .form-group
+              label(for='cpassword') Confirm Password
+              input#cpassword(type='password', name='confirmPassword', required='required')
+            .form-group
+              label(for='email') Email Address
+              input#email(type='email', name='email', required='required', autocomplete="off")
+            .form-group
+              label(for='number') School
+              input#number.checkphone(type='text', name='school' , autocomplete="off")
+            .form-group
+              label(for='school') Phone Number
+              input#school(type='text', name='phoneNumber' , autocomplete="off")
+            //- .form-group/', type='date', name='DOB',min='1990-01-01',max='2011-01-15')
+            .form-group
+              button(type='submit') Register
+    script(src='/resources/js/jquery.min.js')
+    script(src='/resources/js/bootstrap.min.js')
+    script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/jquery.validate.min.js')
+    script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/additional-methods.min.js')
+    script(type='text/javascript').
+      $(document).ready(function() {
+      var panelOne = $('.form-panel.two').height(),
+      panelTwo = $('.form-panel.two')[0].scrollHeight;
+      $('.form-panel.two').not('.form-panel.two.active').on('click', function(e) {
+      e.preventDefault();
+      $('.form-toggle').addClass('visible');
+      $('.form-panel.one').addClass('hidden');
+      $('.form-panel.two').addClass('active');
+      $('.form').animate({
+      'height': panelTwo
+      }, 200);
+      });
+      $('.form-toggle').on('click', function(e) {
+      e.preventDefault();
+      $(this).removeClass('visible');
+      $('.form-panel.one').removeClass('hidden');
+      $('.form-panel.two').removeClass('active');
+      $('.form').animate({
+      'height': panelOne
+      }, 200);
+      });
+      });
