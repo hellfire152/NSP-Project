@@ -32,22 +32,64 @@ function handleGame(response) {
       answersObj[response.answer]++;
 
       //update display
+      if(S.showLiveResponse) {
+        updateDisplay();
+      }
+      break;
+    }
+    case C.GAME_RES.RESPONSE_DATA: {
+      document.getElementById('currentQuestion').style.display = 'block';
+      updateDisplay();
+      //show the next button
+      let nextButton = document.createElement('button');
+      nextButton.onclick = () => {
+        send({
+          'game' : C.GAME.NEXT_ROUND
+        });
+        document.getElementById('currentQuestion').style.display = 'none';
+      }
+      nextButton.id = 'next-button';
+
       break;
     }
     case C.GAME_RES.ROUND_END: {
-      //show the results on screen
+      //show the current rankings on screen
+      document.getElementById('ranking').style.display = 'block';
+      document.getElementById('currentQuestion').style.display = 'none';
+
+      //show ranking
+      let rankingList = document.getElementById('ranking');
+      rankingList.innerHTML = "";
+      for(let player of response.roundEndResults) {
+        let playerLi = document.createElement('div');
+        let name = document.createElement('p');
+        name.appendChild(document.createTextNode(player.name));
+        name.class += ' ranking-name';
+
+        let score = document.createElement('p');
+        score.appendChild(document.createTextNode(player.score));
+        score.class += ' ranking-score';
+        
+        let answerStreak = document.createElement('p');
+        answerStreak.appendChild(document.createTextNode(player.answerStreak));
+        answerStreak.class += ' ranking-answer-streak';
+      }
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
+      //hide the other divs and show the question one
+      document.getElementById('currentQuestion').style.display = 'block';
+      document.getElementById('ranking').style.display = 'none'
+      currentQuestion = response.question;
+
       //create a div for the question
-      let currentQuestionDiv = document.createElement('div');
-      currentQuestionDiv.id = 'current-question';
       currentQuestionDiv.appendChild(document.createTextNode(response.question.prompt));
 
+      //a ordered list for the choices...
+      let responsesOl = document.createElement('ol');
+      responsesOl.id = 'response-list';
+
       if(question.type == 0) {  //MCQ question
-        //a ordered list for the choices...
-        let choicesOl = document.createElement('ol');
-        choicesOl.id = 'choices-list';
 
         //append a list element for each choice in the question
         let choiceCounter = 0;
@@ -66,15 +108,14 @@ function handleGame(response) {
 
           //add to list
           choiceLi.appendChild(noTimesChosenSpan);
-          choicesOl.appendChild(choicesLi);
+          responsesOl.appendChild(choicesLi);
         }
 
         //add to the display
-        currentQuestionDiv.appendChild(choicesOl);
-        document.body.appendChild(currentQuestionDiv);
-      } else {  //Short answer question
-
+        currentQuestionDiv.appendChild(responsesOl);
       }
+
+      document.body.appendChild(currentQuestionDiv);
       break;
     }
     case C.GAME_RES.GAME_END: {
@@ -94,5 +135,40 @@ function handleGame(response) {
 }
 
 function initHost() {
+  let currentQuestionDiv = document.createElement('div');
+  currentQuestionDiv.id = 'current-question';
   firstQuestion = false;
+
+  //init ranking stuff
+  let rankingDiv = document.createElement('div');
+  rankingDiv.id = 'ranking';
+  rankingDiv.style.display = 'none';
+
+  document.body.appendChild(rankingDiv);
+}
+
+function updateDisplay() {
+  if(question.type == 0) {  //MCQ
+    //edit the field
+    for(let i = 0, answer = 8; i < question.choices.length; i++, answer /= 2) {
+      let chosenNo = (answersObj[answer] === undefined)? 0 : answersObj[answer];
+      document.getElementById(`choice-${i}-chosen`).nodeValue = chosenNo;
+    }
+  } else { //Short answer
+    //
+    document.getElementById('response-list').innerHTML = "";
+    for(let answer in answersObj) {
+      if(answersObj.hasOwnProperty(answer)) {
+        let responseLi = document.createElement('li');
+        let responseText = document.createTextNode(answer);
+        let responseNo = document.createTextNode(answersObj[answer]);
+        responseText.class += ' response';
+        responseNo.class += ' response-no';
+
+        responseLi.appendChild(responseText);
+        responseLi.appendChild(responseNo);
+        document.getElementById('response-list').appendChild(responseLi);
+      }
+    }
+  }
 }

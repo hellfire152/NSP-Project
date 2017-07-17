@@ -59,44 +59,14 @@ function handleGame(response) {
 }
 
 function gameEnd(response) {
-  //allows for swapping via buttons
-  pixiScenes.titlesAndAchievenments = new PIXI.Container();
   //updating the ranking list
   displayResults(response.roundEndData);
   //showing titles and achievements
   showTitlesAndAchievements(response.titlesAndAchievenments); //in common
-  //initialize rating scene
-  initRatingScene();  //in common
-  //init end scene
-  initEndScene(); //in common
 
-  //defining next and previous page buttons
-  //order: ranking -> titlesAndAchievenments -> rating -> end
-  let next = new Button(allResources['next-button'].textures, WIDTH / 8, () => {
-    if(pixiScenes.currentScene === 'ranking') {
-      previous.enable();
-      swapScene('titlesAndAchievenments');
-    } else if(pixiScenes.currentScene === 'titlesAndAchievenments') {
-      swapScene('rating');
-    } else if(pixiScenes.currentScene === 'rating') {
-      swapScene('end');
-      this.disable();
-    } else {
-      throw new Error(`Cannot go to the next panel, currentScene = ${pixiScenes.currentScene}`);
-    }
-  }, null);
-  let previous = new Button(allResources['previous-button'].textures, WIDTH / 8, () => {
-    if(pixiScenes.currentScene === 'end') {
-      next.enable();
-      swapScene('rating');
-    } else if(pixiScenes.currentScene === 'rating') {
-      swapScene('titlesAndAchievenments');
-    } else if(pixiScenes.currentScene === 'titlesAndAchievenments') {
-      swapScene('ranking');
-      this.disable();
-    } else {
-      throw new Error(`Cannot go to the next panel, currentScene = ${pixiScenes.currentScene}`);
-    }
-  }, null);
-  swapScene('ranking');
+  let appView = document.getElementsByTagName('canvas')[0];
+  appView.parentNode.removeChild(appView);
+
+  //init ranking
+  
 }

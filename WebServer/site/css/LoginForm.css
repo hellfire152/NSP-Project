@@ -282,3 +282,18 @@ body {
     transition: 0.4s
 }
 
+.acc-details{
+    background-color:#d7ccc8;
+    height:30px;
+    padding-top:2px;
+    padding-left:3px;
+    border-radius:2px;
+}
+
+.otp-tab{
+    width:800px;
+    margin:auto;
+}
+.submit-otp{
+  margin-top:20px;
+}

@@ -9,8 +9,8 @@
     "PRIVATE" : "./keys/WebServer-private.key"
   },
   "HTTPS" : {
-    "CERT" : "./cert/certificate.pem",
-    "KEY" : "./cert/private.key"
+    "CERT" : "./cert/dreamcatcher-cert/server.crt",
+    "KEY" : "./cert/dreamcatcher-cert/server.key"
   },
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",

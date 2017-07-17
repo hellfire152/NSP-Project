@@ -8,41 +8,39 @@ var uuid;
 var express = require('express');
 var nodemailer = require('nodemailer');
 
-//validators
-var validators = {
-  'data-access' : require('../validators/validate-data-access.js')(cipher, appConn, C),
-  'join-room' : require('../validators/validate-join-room.js')(cipher, appConn)),
-  'host-room' : require('../validators/validate-host-room.js')(cipher, appConn)),
-  'add-quiz' : require('../validators/validate-add-quiz.js')(cipher, appConn, C)),
-  'login-room' : require('../validators/validate-login-room.js')(cipher, appConn, C, xssDefense)),
-  'reg-room' : require('../validators/validate-register-student.js')(cipher, appConn, C)),
-  'reg-room-teach' : require('../validators/validate-register-teacher.js')(cipher, appConn,C)),
-  'change-password-room' : require('../validators/validate-change-password.js')(cipher, appConn,C)),
-  'forget-password-room' : require('../validators/validate-forget-password.js')(cipher, appConn,C)),
-  'otp-check' : require('../validators/validate-otp-check.js')(cipher, appConn,C)),
-  'otp-register' : require('../validators/validate-otp-register.js')(cipher, appConn, C))
-};
-
 module.exports = function(data) {
-
+  let {app, dirname, cipher, appConn, queryOfUser, errors, cookieCipher, xssDefense}
+    = data;
   const C = data.C;
-  let app = data.app,
-    dirname = data.dirname,
-    cipher = data.cipher,
-    appConn = data.appConn,
-    queryOfUser = data.queryOfUser,
-    errors = data.error,
-    cookieCipher = data.cookieCipher;
   uuid = data.uuid;
+
+  //validators
+  var validators = {
+    'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
+    'join-room' : require('../validators/validate-join-room.js')(cookieCipher, appConn),
+    'host-room' : require('../validators/validate-host-room.js')(cookieCipher, appConn),
+    'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C),
+    'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense),
+    'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C),
+    'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn,C),
+    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn,C),
+    'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C),
+    'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C),
+    'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C)
+  };
 
   //routing
   //handling requests for .html, controller, css or resource files
-  app.get('((/resources|/controller|/css)*)|*.html|/favicon.ico', function(req, res) {
+  app.get('((/resources|/controller|/css)*)|/favicon.ico', function(req, res) {
     res.sendFile(`${dirname}/site${req.path}`);
   });
-  //sends index.html when someone sends a https request
+  //handling all .html file requests
+  app.get('*.html', function(req, res) {
+    res.sendFile(`${dirname}/site/html${req.path}`);
+  });
+  //sends index.html when someone sends a https request to the root directory
   app.get('/', function(req, res){
-    res.sendFile(dirname + "/site/index.html");
+    res.sendFile(dirname + "/site/html/index.html");
   });
 
   app.get('/data', function(req,res){

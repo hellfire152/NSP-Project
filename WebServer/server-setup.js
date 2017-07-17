@@ -12,7 +12,7 @@ var helmet = require('helmet');
 var uuid = require('uuid');
 var cookie = require('cookie');
 var ios = require('socket.io-express-session');
-
+var xssDefense = require('./server/setup/xss-defense.js');
 var socketOfUser = {};
 setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
   socketOfUser = {};
@@ -78,7 +78,8 @@ module.exports = function(data) {
     'appConn' : appConn,
     'uuid' : uuid,
     'pendingAppResponses' : pendingAppResponses,
-    'cookieCipher' : cookieCipher
+    'cookieCipher' : cookieCipher,
+    'xssDefense' : xssDefense
   });
 
   //setting up the communication between the WebServer and AppServer

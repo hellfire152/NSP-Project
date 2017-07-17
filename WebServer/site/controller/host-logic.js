@@ -15,6 +15,7 @@ const GAMEMODE_NO_TO_STRING = {
   3: 'Tug of War'
 };
 
+const S;
 
 var socket = io();
 socket.on('receive', function(input) {
@@ -57,6 +58,8 @@ socket.on('receive', function(input) {
             }
           }
           document.getElementsByTagName("head")[0].appendChild(tag);
+
+          S = response.S;
           break;
         }
         case C.EVENT_RES.PLAYER_JOIN: {
