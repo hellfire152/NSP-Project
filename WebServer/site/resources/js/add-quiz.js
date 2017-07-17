@@ -1,3 +1,4 @@
+//Validation check for quiz description
 $('#next').click(function(){
   if( !$('#nameofQuiz').val() ) {
      alert('Please fill in the name of the quiz!');
@@ -23,24 +24,27 @@ $('#next').click(function(){
       $('input[type="checkbox"]').not(this).prop('checked', false);
   });
 });
-//hello
+
+//Display MCQ fields to user to input
  function setMCQ(){
    $("#mcqSection").show();
    $('#shortSection').hide();
  }
 
+//Display Short answer fields to user to input
  function setShort(){
    $("#mcqSection").hide();
    $('#shortSection').show();
  }
 
+//Set the default upon loading web page
  function setDisplay() {
    $("#addQuestion").hide();
    $('#createQuiz').show();
  }
 
 
- // everything in an array
+ //Store choices into an array
  function displayAnswer() {
    var choice = [];
 
@@ -49,7 +53,7 @@ $('#next').click(function(){
    choice[2] = $("#choice3").val();
    choice[3] = $("#choice4").val();
 
-   var choiceArr  = []
+   var choiceArr  = [];
    choice.forEach(function(individualChoice){
      if(individualChoice !== ""){
        choiceArr.push(individualChoice);
@@ -60,6 +64,7 @@ $('#next').click(function(){
   console.log(choiceArr);
  }
 
+// Activate choice 2 when field is choice 1 is properly set
  function displayChoice1() {
    if ($ ('#choice1').val() == "") {
      $("#choice2").empty();
@@ -69,6 +74,7 @@ $('#next').click(function(){
    }
  }
 
+// Activate choice 3 when field is choice 2 is properly set
  function displayChoice2() {
    if ($ ('#choice2').val() == '') {
      $("#choice3").empty();
@@ -77,7 +83,7 @@ $('#next').click(function(){
      $("#choice3").prop('disabled', false);
    }
  }
-
+// Activate choice 4 when field is choice 3 is properly set
  function displayChoice3() {
    if ($('#choice3').val() == '') {
      $("#choice4").empty();
@@ -87,18 +93,20 @@ $('#next').click(function(){
    }
  }
 
+//On every key stroke, check weahter there is input in field
+//If field is empty deactiveate accordingly
  function displayChoice(){
    displayChoice1();
    displayChoice2();
    displayChoice3();
  }
-
  $(".choices").on('keydown', function() {
    displayChoice();
  });
 
-
+//Set default setting when adding question is loaded
  function defaultSetting(){
+   $("#mcq").prop("checked", true);
    setMCQ();
    //using constants
    $("#mcq").val(0);
@@ -113,7 +121,7 @@ $('#next').click(function(){
 defaultSetting();
 setDisplay();
 
- // validations
+ // validations when question is added
 $('#submit').click(function()
 {
  if( !$('#prompt').val() ) {
@@ -152,22 +160,15 @@ $('#submit').click(function()
           return false;
        }
      }
-
-
    //TODO: SEND TO SERVER
    var data = {
      quiz : create,
      question : questionArr,
      choices : choiceArr
    }
+   
+   sendToServer(data);
 
-
-   var xhr = new XMLHttpRequest();
-   xhr.open("POST", '/add-quiz', true);
-   xhr.setRequestHeader("Content-type", "application/json;charset=UTF-8");
-  //  xhr.send(data);
-   //OR TO STRINGIFY
-   xhr.send(JSON.stringify(data));
  });
 
 //choices in an array
@@ -176,6 +177,7 @@ var create;
 var questionArr = [];
 var questionNo = 1;
 
+//check weather it is public or private quiz
 function checkPublic() {
 if ($("#public").is(":checked")) {
    return true;
@@ -184,7 +186,11 @@ if ($("#public").is(":checked")) {
  }
 }
 
+function sendToServer(inputData){
+  console.log(inputData);
+}
 
+//Add and prepare question into array
 function addQuestion() {
   var choice = [];
   if ($ ('#choice1').val().length != 0) {
@@ -213,17 +219,24 @@ function addQuestion() {
     }
   }
 
-
   choice = {
-    choice : choice
+    choice : choice,
+    question_no : questionNo
   }
 
   create = {
-    name : $("#nameofQuiz").val(),
+    quiz_title : $("#nameofQuiz").val(),
     description : $("#desc").val(),
-    public :  checkPublic(),
+    visibility :  checkPublic(),
     reward : $("#cReward").val()
-    }
+  }
+
+  // quiz_title : "Know your product",
+  // visibility : true,
+  // description : "About new technology",
+  // quiz_type : "Classic",
+  // quiz_rating : 5,
+  // user_id : 1
 
   question = {
     questionNo : questionNo,
@@ -235,17 +248,14 @@ function addQuestion() {
     penalty : $("#penalty").val()
   }
 
-
   questionNo++;
-  choiceArr.push(choice);
-  console.log(choiceArr);
-  // $('#submit').click(function()
-  // {
-  //   createArr.push(create);
-  //   console.log(createArr);
-  // });
+  if($("#mcq").is(":checked")){
+    console.log("IN");
+    choiceArr.push(choice);
+  }
 
+  console.log(choiceArr);
   questionArr.push(question);
   console.log(questionArr);
 
-  }
+}

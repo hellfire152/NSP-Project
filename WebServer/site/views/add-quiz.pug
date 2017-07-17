@@ -1,0 +1,74 @@
+html
+  head
+    script(src='/resources/constants.js')
+    script(src='socket.io/socket.io.js')
+    script(src='resources/pixi.js')
+    script(src='https://code.jquery.com/jquery-1.10.2.js')
+  body
+    #createQuiz
+      form(method='POST')
+        h1 Create a quiz
+        label Name of Quiz
+        input#nameofQuiz(type='text', name='nameofQuiz')
+        br
+        label Description
+        input#desc(type='textarea', name='desc')
+        br
+        label Reward
+        input#cReward(type='number', name='cReward')
+        br
+        input#public(type='radio', name='typeOfQuiz')
+        | Public Quiz
+        input#private(type='radio', name='typeOfQuiz')
+        | Private Quiz
+        br
+        input.cancel(type='reset', value='Clear')
+        input#next(type='button', value='Create Quiz!')
+        br
+    #addQuestion
+      form(method='POST')
+        h1 Add your question!
+        label Prompt
+        input#prompt(type='text', name='prompt')
+        br
+        label Type
+        input#mcq(type='radio', name='type', onclick='setMCQ()')
+        | MCQ
+        input#short-answer(type='radio', name='type', onclick='setShort()')
+        | Short Answer
+        br
+        #mcqSection
+          label Choices
+          input#choice1.choices(type='textarea', name='choices')
+          input#choice1Ans(type='checkbox', name='solution')
+          br
+          input#choice2.choices(type='textarea', name='choices', disabled='disabled')
+          input#choice2Ans(type='checkbox', name='solution')
+          br
+          input#choice3.choices(type='textarea', name='choices', disabled='disabled')
+          input#choice3Ans(type='checkbox', name='solution')
+          br
+          input#choice4.choices(type='textarea', name='choices', disabled='disabled')
+          input#choice4Ans(type='checkbox', name='solution')
+          br
+        #shortSection
+          label Short Answer
+          input#shortAns(type='text', name='shortAns')
+        label Time
+        select#time(name='time')
+          option(value='5') 5 seconds
+          option(value='10') 10 seconds
+          option(value='15') 15 seconds
+          option(value='20') 20 seconds
+        br
+        label Reward
+        input#reward(type='number', name='reward')
+        br
+        label Penalty
+        input#penalty(type='number', name='penalty')
+        br
+        input.cancel(type='reset', value='Add Quiz', onclick='addQuestion()')
+        input#submit(type='submit', value='Submit')
+    form
+      input#quizSet(type='hidden', name='quizSet')
+    script(src='/resources/js/add-quiz.js')
