@@ -8,6 +8,21 @@ var uuid;
 var express = require('express');
 var nodemailer = require('nodemailer');
 
+//validators
+var validators = {
+  'data-access' : require('../validators/validate-data-access.js')(cipher, appConn, C),
+  'join-room' : require('../validators/validate-join-room.js')(cipher, appConn)),
+  'host-room' : require('../validators/validate-host-room.js')(cipher, appConn)),
+  'add-quiz' : require('../validators/validate-add-quiz.js')(cipher, appConn, C)),
+  'login-room' : require('../validators/validate-login-room.js')(cipher, appConn, C, xssDefense)),
+  'reg-room' : require('../validators/validate-register-student.js')(cipher, appConn, C)),
+  'reg-room-teach' : require('../validators/validate-register-teacher.js')(cipher, appConn,C)),
+  'change-password-room' : require('../validators/validate-change-password.js')(cipher, appConn,C)),
+  'forget-password-room' : require('../validators/validate-forget-password.js')(cipher, appConn,C)),
+  'otp-check' : require('../validators/validate-otp-check.js')(cipher, appConn,C)),
+  'otp-register' : require('../validators/validate-otp-register.js')(cipher, appConn, C))
+};
+
 module.exports = function(data) {
 
   const C = data.C;
@@ -147,17 +162,17 @@ module.exports = function(data) {
   });
 
   //handling form submits
-  app.post('/data-access', require('../validators/validate-data-access.js')(cipher, appConn, C));
-  app.post('/join-room', require('../validators/validate-join-room.js')(cipher, appConn));
-  app.post('/host-room', require('../validators/validate-host-room.js')(cipher, appConn));
-  app.post('/add-quiz', require('../validators/validate-add-quiz.js')(cipher, appConn, C));
-  app.post('/login-room', require('../validators/validate-login-room.js')(cipher, appConn, C, xssDefense));
-  app.post('/reg-room', require('../validators/validate-register-student.js')(cipher, appConn, C));
-  app.post('/reg-room-teach', require('../validators/validate-register-teacher.js')(cipher, appConn,C));
-  app.post('/change-password-room-success', require('../validators/validate-change-password.js')(cipher, appConn,C));
-  app.post('/forget-password-room-success', require('../validators/validate-forget-password.js')(cipher, appConn,C));
-  app.post('/otp-check', require('../validators/validate-otp-check.js')(cipher, appConn,C));
-  app.post('/otp-register', require('../validators/validate-otp-register.js') (cipher, appConn, C));
+  app.post('/data-access', validators["data-access"]);
+  app.post('/join-room', validators["join-room"]);
+  app.post('/host-room', validators["host-room"]);
+  app.post('/add-quiz', validators["add-quiz"]);
+  app.post('/login-room', validators["login-room"]);
+  app.post('/reg-room', validators["reg-room"]);
+  app.post('/reg-room-teach', validators["reg-room-teach"]);
+  app.post('/change-password-room-success', validators["change-password-room"]);
+  app.post('/forget-password-room-success', validators["forget-password-room"]);
+  app.post('/otp-check', validators["otp-check"]);
+  app.post('/otp-register', validators["otp-register"]);
 
 }
 

@@ -29,13 +29,6 @@ function checkMultipleOnSameMachine(req, res, next) {
     next();
 }
 
-var ninetyDaysInSeconds = 7776000;
-app.use(helmet.hpkp({
-  maxAge: ninetyDaysInSeconds,
-  sha256s: ['AbCdEf123=', 'ZyXwVu456=']
-}));
-
-
 /**PUT SOME COMMENTS**/
 function attachCsrfToken(req, res, next){
   res.locals.csrfTokenFunction = req.csrfToken;
@@ -51,16 +44,15 @@ function invalidCsrfToken(err, req, res, next){
   res.send('session has expired or form tampered with ')
 }
 
-app.use(helmet.hpkp({
-  maxAge: 1000 * 60 * 5, //5 minutes, for testing
-  sha256s: [/*TODO::Generate public key*/]
-}));
-
 module.exports = function(data) {
   ({app, helmet, C, S} = data);
 
   /***PUT YOUR APP.USE HERE***/
   app.use(checkMultipleOnSameMachine);
+  // app.use(helmet.hpkp({
+  //   maxAge: 1000 * 60 * 5, //5 minutes, for testing
+  //   sha256s: [/*TODO::Generate public key*/]
+  // }));
 
   return { //in case there's any function you need outside here
   }

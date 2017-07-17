@@ -62,13 +62,13 @@ module.exports = function(data) {
   app.use(helmet.xssFilter()); // protects against reflected XSS
 
   //implementing our own security stuff
-  var security = require('./various-security.js')({
+  var security = require('./server/setup/various-security.js')({
     'app':  app,
     'C' : C,
     'S' : S,
     'helmet' : helmet
   });
-  
+
   //setting routes
   require('./server/setup/routes.js')({
     'C' : C,
