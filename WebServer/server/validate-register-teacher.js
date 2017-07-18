@@ -77,8 +77,8 @@ module.exports =function(cipher, appConn, C){
                         user: 'chloeangsl@gmail.com',
                         clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
                         clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-                        refreshToken: '1/9op62YYjXj8wdRT7uhmlk0Zf486gqhaCWDVFLe3QZdVLdqBhJBUWfIt5vtMRXfu5',
-                        accessToken: 'ya29.GluIBCjmE1jHZ37vT0meyuFXrqdVZ3WzaGVrHtm2Yzr_PxGz0Sc92cND1MpAwY89fYhKws3RLortJpKWY5i0OwIwhTMPtNOmU9OPGTK0U5VUYvA3SAYDQCdyPpVd'
+                        refreshToken: '1/A-c1xD3ySllNeX9NB58yD-lN0f3c954gpANTOpEV5zA',
+                        accessToken: 'ya29.GluLBGoKiZhUKdP6YXwiIuawS2SqxGdhu6R8U2h_U7dHo54x4TrJ6RjDmZoEBr_5AmGSW96YPEeEKToNTUPsFT75-a1Xh6pzNl_F6oip_tAd_n0ZieU3JWUY7v6H'
                   }
               })
 
@@ -86,7 +86,7 @@ module.exports =function(cipher, appConn, C){
                 from: 'My Name <chloeangsl@gmail.com>',
                 to: req.body.email,
                 subject: 'VERIFICATION EMAIL',
-                html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'. Your verification number is: '+otp+ ' </p>'
+                html: '<p>hello! you have created an account with the Username: ' +req.body.username+ ', and Email: '+req.body.email+'. Your verification number is: '+otp+ ' </p>'
             }
 
             transporter.sendMail(mailOptions, function (err, res) {

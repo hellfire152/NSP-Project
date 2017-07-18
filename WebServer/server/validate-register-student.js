@@ -24,15 +24,15 @@ module.exports =function(cipher, appConn,C){
     var dateOfBirth=req.body.DOB;
     var school=req.body.school;
 
-    // generate out the OTP
+    // // generate out the OTP
     var otp = speakeasy.totp({
         secret: secret.base32,
         encoding: 'base32'
       });
 
       console.log(otp);
-      // to test for verification
-      var verified = speakeasy.totp.verify({
+    //   // to test for verification
+    var verified = speakeasy.totp.verify({
         secret: secret.base32,
         encoding: 'base32',
         otp: otp
@@ -82,16 +82,16 @@ module.exports =function(cipher, appConn,C){
                                 user: 'chloeangsl@gmail.com',
                                 clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
                                 clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-                                refreshToken: '1/azzoH3H1x51yWY7S3n9G0SRJHciR7UG3DpRRnVvB3EQ',
-                                accessToken: 'ya29.GluIBNWLbnc9vIpT0LtG39qzRAU0vcox0R42p6Embv7Gb8UoaeCyAEAkToFCpf9Av4sad07gdPTfEQWkGCbpZC1Ztx3U1vaBWSs6TwNB55h0g6O61Nz0MgivnL7W'
+                                refreshToken: '1/NFpI-3lIBsn-FxIbgkahJGU6Ukq1G4aiAfcTVD9W4Tw',
+                                accessToken: 'ya29.GluLBENk_w1ueu8y8DP8FUmXB5pJ4j2HVkwtdhA9RxdpRlRN3_eZrIr2WbIYvhUngx3SErGa_2TCwbSYIykHntHKU18i5kCDxw-ROcnShPv4UVixTASX3sWDFMx4'
                           }
                       })
 
                     var mailOptions = {
-                        from: 'My Name <chloeangsl@gmail.com>',
+                        from: 'ADMIN <chloeangsl@gmail.com>',
                         to: req.body.email,
                         subject: 'VERIFICATION EMAIL',
-                        html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'. Your verification number is: '+otp+ ' </p>'
+                        html: '<p>hello! you have created an account with the Username: ' +req.body.username+ ', and Email: '+req.body.email+'. Your verification code is: '+otp+' </p>'
                     }
 
                     transporter.sendMail(mailOptions, function (err, res) {

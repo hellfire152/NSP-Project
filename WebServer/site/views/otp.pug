@@ -4,7 +4,6 @@ html
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
-    script(src='/server/validate-register-student.js')
     script.
       var tim = 0;
       console.log("start timer");
@@ -17,13 +16,33 @@ html
       reload();  // and restart it
       }
 
-      $('#submit').click(function() {
-      $.get('verify?secret=' + $('#secret').text() + '&token=' + $('#otp').val(), function( data ) {
+
+
+      function validate(){
+      var inputCode = document.getElementById("input").value.toUpperCase();
+
+      if(inputCode.length <= 0) { // If the input code length is 0
+      alert(" Please enter the verification code ！"); // Please enter the verification code
+      }
+
+      else if(inputCode != code ) { // If the input verification code is inconsistent with the generated verification code
+      alert(" Verification code input error ！@_@"); // The verification code input error
+      createCode();// Refresh verification code
+      document.getElementById("input").value = "";// Empty text box
+
+      }
+
+      else { // Enter the correct time
+      alert("^-^");
       }
       }
+
+
+
   body(onmousemove='canceltimer();', onclick='canceltimer();')
       h1 OTP
       p static OTP pass: 1234 chloe please change to dynamic thx.
       form(action='/otp-check', method='POST')
-        input#otp(type='text', name='otp')
-        input(type='submit')
+      input#input(type='text')
+      input#code(type='text', onclick='createCode()')
+      input(type='button', value=' Verification ', onclick='validate()')
