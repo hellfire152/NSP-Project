@@ -1,6 +1,7 @@
 
 
 const uuid = require('uuid');
+var mailchecker= require('mailchecker');
 var passwordValidator =require('password-validator');
 module.exports =function(cipher, appConn,C, emailServer){
   return function(req, res){
@@ -54,112 +55,121 @@ module.exports =function(cipher, appConn,C, emailServer){
         req.sanitize('dateOfBirth').trim();
 
 
+
     if (name!="" &&username!="" && email!="" && password!="" && confirmPassword!=""){
-      var schema = new passwordValidator();
-      schema
-      .is().min(8)
-      .has().uppercase()
-      .has().lowercase()
-      .has().digits()
-      .has().not().spaces();
+      if(mailchecker.isValid(email)){
+        var schema = new passwordValidator();
+        schema
+        .is().min(8)
+        .has().uppercase()
+        .has().lowercase()
+        .has().digits()
+        .has().not().spaces();
 
 
-      var passwordCheck=schema.validate(password);
-      var error = req.validationErrors();
+        var passwordCheck=schema.validate(password);
+        var error = req.validationErrors();
 
 
-      if (passwordCheck){
-        if(password==confirmPassword){
+        if (passwordCheck){
+          if(password==confirmPassword){
 
-          emailObj = {
-            username: req.body.username,
-            pin : randomNum,
-            email : req.body.email
-          }
+            emailObj = {
+              username: req.body.username,
+              pin : randomNum,
+              email : req.body.email
+            }
 
-          emailServer.createAccountOtpEmail(emailObj);
+            emailServer.createAccountOtpEmail(emailObj);
 
-            if(!error){
+              if(!error){
 
-            console.log(error);
-            console.log("pass");
-            console.log("Creating an account: ");
-            console.log(req.body);
-            // cipher.encryptJSON({
-            //   "username": req.body.username,
-            //   "password": req.body.password,
-            //   "email":req.body.email,
-            //   "dateOfBirth":req.body.DOB,
-            //   "school":req.body.school
-            // })
-            //   .catch(function (err) {
-            //     throw new Error('Error parsing JSON!');
-            //   })
-            //   .then(function(cookieData) {
-            //   res.cookie('register-student', cookieData, {"maxAge": 1000*60*60}); //one hour
-              // res.redirect('/login?room='  +req.body.room);
+              console.log(error);
+              console.log("pass");
+              console.log("Creating an account: ");
+              console.log(req.body);
+              // cipher.encryptJSON({
+              //   "username": req.body.username,
+              //   "password": req.body.password,
+              //   "email":req.body.email,
+              //   "dateOfBirth":req.body.DOB,
+              //   "school":req.body.school
+              // })
+              //   .catch(function (err) {
+              //     throw new Error('Error parsing JSON!');
+              //   })
+              //   .then(function(cookieData) {
+              //   res.cookie('register-student', cookieData, {"maxAge": 1000*60*60}); //one hour
+                // res.redirect('/login?room='  +req.body.room);
 
-              appConn.send({
-                'type':C.REQ_TYPE.DATABASE,
-                'data':{
-                  type:C.DB.CREATE.STUDENT_ACC,
-                  account:{
-                    name : req.body.name,
-                    username :req.body.username,
-                    email : req.body.email,
-                    password_hash : req.body.password
-                  },
-                  details :{
-                    school : req.body.school,
-                    date_of_birth : req.body.DOB
+                appConn.send({
+                  'type':C.REQ_TYPE.DATABASE,
+                  'data':{
+                    type:C.DB.CREATE.STUDENT_ACC,
+                    account:{
+                      name : req.body.name,
+                      username :req.body.username,
+                      email : req.body.email,
+                      password_hash : req.body.password
+                    },
+                    details :{
+                      school : req.body.school,
+                      date_of_birth : req.body.DOB
+                    }
                   }
-                }
-                // 'username' :username,
-                // 'email':email,
-                // 'password':password,
-                // 'dateOfBirth':dateOfBirth,
-                // 'school':school
+                  // 'username' :username,
+                  // 'email':email,
+                  // 'password':password,
+                  // 'dateOfBirth':dateOfBirth,
+                  // 'school':school
 
-              }, (response) => {
-                res.render('register-student',{
-                  data:response.data
-                  // 'username':response.username,
-                  // 'email':response.email,
-                  // 'password':response.password,
-                  // 'dateOfBirth':response.dateOfBirth,
-                  // 'school':response.school
+                }, (response) => {
+                  res.render('register-student',{
+                    data:response.data
+                    // 'username':response.username,
+                    // 'email':response.email,
+                    // 'password':response.password,
+                    // 'dateOfBirth':response.dateOfBirth,
+                    // 'school':response.school
+                  });
                 });
-              });
-            // });
-            // errors=false;
+              // });
+              // errors=false;
+            }
+            else{
+
+              console.log("FAIL");
+              errors=true;
+              res.redirect('/registerstud');
+            }
           }
           else{
 
-            console.log("FAIL");
-            errors=true;
-            res.redirect('/registerstud');
+            req.session.errors=error;
+            req.session.success=false;
+
+            console.log("password not match");
+            // res.redirect('/registerstud');
+          }
+        }
+
+        else{
+
+            req.session.errors=error;
+            req.session.success=false;
+            console.log(schema.validate('password',{list:true}));
+            console.log("FAIL PW");
+
+            // res.redirect('/registerstud');
+
+
           }
         }
         else{
-
           req.session.errors=error;
           req.session.success=false;
 
-          console.log("password not match");
-          // res.redirect('/registerstud');
-        }
-      }
-
-      else{
-
-          req.session.errors=error;
-          req.session.success=false;
-          console.log(schema.validate('password',{list:true}));
-          console.log("FAIL PW");
-
-          // res.redirect('/registerstud');
-
-
+          console.log("email not valid");
         }
 
     }
