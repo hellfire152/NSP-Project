@@ -63,9 +63,6 @@ module.exports = function(cipher, appConn, C, xssDefense) {
               //   console.log(hashedIp);
               //   currentIpAddress = hashedIp;
               // });
-              var currentIpAddress = req.body.userIp;
-              console.log("CURRENT IP");
-              console.log(currentIpAddress);
               //If incorrect user input return to login page
               if(!(response.data.success)){
                 res.redirect('/LoginForm');
