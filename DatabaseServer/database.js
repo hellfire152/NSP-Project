@@ -139,6 +139,11 @@ var server = net.createServer(function(conn){
           await addIpAddress(inputData);
           break;
         }
+        case C.DB.SELECT.EMAIL : {
+          console.log(inputData);
+          await retrieveEmail(inputData);
+          break;
+        }
         default : {
           var response = {
             data : {
@@ -501,6 +506,33 @@ var server = net.createServer(function(conn){
         sendToServer(response, inputData);
 
       }
+    });
+  }
+
+  //Retrieve email for OTP
+  async function retrieveEmail(inputData){
+    var data = inputData.data;
+    var query = connection.query("SELECT email FROM user_account WHERE user_id = " + connection.escape(data.user_id), function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      handleDb.handleDecryption(result)
+      .then(resultOut => {
+        objOutResult = {
+          data:{
+            data : resultOut[0],
+            success : true
+          }
+        }
+        sendToServer(objOutResult, inputData);
+      });
     });
   }
 

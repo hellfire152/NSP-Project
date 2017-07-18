@@ -16,33 +16,13 @@ html
       reload();  // and restart it
       }
 
-
-
-      function validate(){
+      function validate() {
       var inputCode = document.getElementById("input").value.toUpperCase();
-
-      if(inputCode.length <= 0) { // If the input code length is 0
-      alert(" Please enter the verification code ！"); // Please enter the verification code
       }
-
-      else if(inputCode != code ) { // If the input verification code is inconsistent with the generated verification code
-      alert(" Verification code input error ！@_@"); // The verification code input error
-      createCode();// Refresh verification code
-      document.getElementById("input").value = "";// Empty text box
-
-      }
-
-      else { // Enter the correct time
-      alert("^-^");
-      }
-      }
-
 
 
   body(onmousemove='canceltimer();', onclick='canceltimer();')
       h1 OTP
-      p static OTP pass: 1234 chloe please change to dynamic thx.
       form(action='/otp-check', method='POST')
-      input#input(type='text')
-      input#code(type='text', onclick='createCode()')
-      input(type='button', value=' Verification ', onclick='validate()')
+        input#otp(type='text' name='otp')
+        input(type='submit', value=' Verification ')

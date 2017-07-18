@@ -2,7 +2,7 @@
 
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn,C){
+module.exports =function(cipher, appConn,C, emailServer){
   return function(req, res){
     // req.checkBody('username','Please enter username').notEmpty();
     //
@@ -23,22 +23,24 @@ module.exports =function(cipher, appConn,C){
     var confirmPassword=req.body.confirmPassword;
     var dateOfBirth=req.body.DOB;
     var school=req.body.school;
+    var randomNum = Math.floor((Math.random() * 999999) + 10000);
+
 
     // // generate out the OTP
-    var otp = speakeasy.totp({
-        secret: secret.base32,
-        encoding: 'base32'
-      });
-
-      console.log(otp);
-    //   // to test for verification
-    var verified = speakeasy.totp.verify({
-        secret: secret.base32,
-        encoding: 'base32',
-        otp: otp
-      });
-
-      console.log(verified);
+    // var otp = speakeasy.totp({
+    //     secret: secret.base32,
+    //     encoding: 'base32'
+    //   });
+    //
+    //   console.log(otp);
+    // //   // to test for verification
+    // var verified = speakeasy.totp.verify({
+    //     secret: secret.base32,
+    //     encoding: 'base32',
+    //     otp: otp
+    //   });
+    //
+    //   console.log(verified);
 
         req.sanitize('name').escape();
         req.sanitize('username').escape();
@@ -69,39 +71,15 @@ module.exports =function(cipher, appConn,C){
       if (passwordCheck){
         if(password==confirmPassword){
 
+          emailObj = {
+            username: req.body.username,
+            pin : randomNum,
+            email : req.body.email
+          }
+
+          emailServer.createAccountOtpEmail(emailObj);
 
             if(!error){
-                    // email authentication
-                    const nodemailer = require('nodemailer');
-                    const xoauth2 = require('xoauth2');
-
-                    var transporter = nodemailer.createTransport({
-                        service: 'gmail',
-                        auth: {
-                          type: 'OAuth2',
-                                user: 'chloeangsl@gmail.com',
-                                clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
-                                clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-                                refreshToken: '1/NFpI-3lIBsn-FxIbgkahJGU6Ukq1G4aiAfcTVD9W4Tw',
-                                accessToken: 'ya29.GluLBENk_w1ueu8y8DP8FUmXB5pJ4j2HVkwtdhA9RxdpRlRN3_eZrIr2WbIYvhUngx3SErGa_2TCwbSYIykHntHKU18i5kCDxw-ROcnShPv4UVixTASX3sWDFMx4'
-                          }
-                      })
-
-                    var mailOptions = {
-                        from: 'ADMIN <chloeangsl@gmail.com>',
-                        to: req.body.email,
-                        subject: 'VERIFICATION EMAIL',
-                        html: '<p>hello! you have created an account with the Username: ' +req.body.username+ ', and Email: '+req.body.email+'. Your verification code is: '+otp+' </p>'
-                    }
-
-                    transporter.sendMail(mailOptions, function (err, res) {
-                        if(err){
-                            console.log('Error');
-                        } else {
-                            console.log('Email verification has been sent');
-                        }
-                    })
-
 
             console.log(error);
             console.log("pass");
@@ -133,8 +111,7 @@ module.exports =function(cipher, appConn,C){
                   },
                   details :{
                     school : req.body.school,
-                    date_of_birth : req.body.DOB,
-                    otp: otp
+                    date_of_birth : req.body.DOB
                   }
                 }
                 // 'username' :username,
