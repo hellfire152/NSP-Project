@@ -87,7 +87,7 @@ module.exports = async function(input) {
           'currentRoom' : currentRoom,
           'currentPlayer' : currentPlayer
         });
-        
+
         //tracking variables
         currentPlayer.answered = true;
         currentRoom.answerCount++;
@@ -167,7 +167,6 @@ function sendQuestion(currentRoom, question, data) {
 }
 
 function sendGameEnd(players, data) {
-  console.log(players);
   common.setAllAnswered(players);
 
   let gameEndResults = {};

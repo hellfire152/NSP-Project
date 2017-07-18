@@ -69,7 +69,7 @@ function handleGame(response) {
         let score = document.createElement('p');
         score.appendChild(document.createTextNode(player.score));
         score.class += ' ranking-score';
-        
+
         let answerStreak = document.createElement('p');
         answerStreak.appendChild(document.createTextNode(player.answerStreak));
         answerStreak.class += ' ranking-answer-streak';
@@ -140,9 +140,9 @@ function initHost() {
   firstQuestion = false;
 
   //init ranking stuff
-  let rankingDiv = document.createElement('div');
-  rankingDiv.id = 'ranking';
-  rankingDiv.style.display = 'none';
+  let gameRankingDiv = document.createElement('div');
+  gameRankingDiv.id = 'game-ranking';
+  gameRankingDiv.style.display = 'none';
 
   document.body.appendChild(rankingDiv);
 }
