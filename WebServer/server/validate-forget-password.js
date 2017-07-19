@@ -20,11 +20,17 @@ module.exports = function(cipher, appConn, C) {
         req.sanitize('email').trim();
 
     console.log(username);
+<<<<<<< HEAD
     if (username!=""  && email!=""){}
       var error = req.validationErrors();
 
 
 
+=======
+    if (username!=""  && email!=""){
+      var error = req.validationErrors();
+
+>>>>>>> origin/formIntegration
         if(!error){
 
           console.log(error);
@@ -81,9 +87,12 @@ module.exports = function(cipher, appConn, C) {
         }
       }
 
+<<<<<<< HEAD
 
 
     }
+=======
+>>>>>>> origin/formIntegration
     else{
 
         req.session.errors=error;

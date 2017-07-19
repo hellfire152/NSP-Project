@@ -10,77 +10,133 @@ html
       window.clearTimeout(tim);  // cancel the timer on each mousemove/click
       reload();  // and restart it
       }
-    script(src='https://code.jquery.com/jquery-1.11.0.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
+<<<<<<< HEAD
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/mailcheck/1.1.2/mailcheck.min.js')
     script.
+      var domains = ['hotmail.com', 'gmail.com', 'yahoo.com'];
+      var topLevelDomains = ["com", "net", "org"];
+      window.onload = function() {
+        document.getElementById("email").onblur = function() {
+          console.log("mailchecking...");
+          $(this).mailcheck({
+            domains: domains,
+            topLevelDomains: topLevelDomains,
+            suggested: function(element, suggestion) {
+              $("#suggest").html("Did you mean :<b>" + suggestion.full + "</b>");
+              },
+              empty: function(element) {
+                $("#suggest").html("");
+              }
+              });
+            };
+      }
+      jQuery.validator.addMethod('checkphone', function(value){
+        if(/^[0-9]{8}$/.test(value)){
+          return true;
+         } else{
+          return false;
+         };
+       }, 'Please enter a valid phone number');
+    script.
+=======
+    script.
+      jQuery.validator.addMethod('checkphone', function(value){
+        if(/^[0-9]{8}$/.test(value)){
+          return true;
+         } else{
+          return false;
+         };
+       }, 'Please enter a valid phone number');
+    script.
+>>>>>>> origin/formIntegration
       $(function(){
-      $("#register-student").validate({
-      rules:{
-      username:{
-      required:true,
-      minlength:5
-      },
-      password:{
-      required:true,
-      minlength:8
-      },
-      confirmPassword:{
-      required:true,
-      minlength:8,
-      equalTo:"#password"
-      },
-      email:{
-      required:true,
-      email:true
-      },
-      DOB:{
-      required:true,
-      date:true
-      },
-      school:{
-      required:true,
-      minlength:3
-      }
-      },
-      messages:{
-      username:{
-      required: "Please enter username",
-      minlength:"Your username must consist atleast 5 characters"
-      },
-      password:{
-      required: "Please enter password",
-      minlength:"Your password must consist atleast 8 characters"
-      },
-      confirmPassword:{
-      required:"Please enter password",
-      minlength:"Your password must consist atleast 8 characters",
-      equalTo:"Passwords not match"
-      },
-      email:{
-      required:"Please enter email",
-      email:"Please enter a valid email"
-      },
-      DOB:{
-      required:"Please enter your birthdate",
-      date:"Please enter a valid date"
-      },
-      school:{
-      required:"Please enter your school",
-      minlength:"PLease enter a valid school"
-      }
-      }
+        $('#register-student').validate({
+          rules:{
+            name:{
+              required:true,
+              minlength:5
+            },
+            username:{
+              required:true,
+              minlength:5
+            },
+            password:{
+              required:true,
+              minlength:8
+            },
+            confirmPassword:{
+              required:true,
+              minlength:8,
+              equalTo:"#password"
+            },
+            phoneNumber:{
+              checkphone:true
+            },
+            email:{
+              required:true,
+              email:true
+            },
+            DOB:{
+              required:true,
+              date:true
+            },
+            school:{
+              required:true,
+              minlength:3
+            }
+          },
+          messages:{
+            name:{
+              required: "Please enter name",
+              minlength:"Your name must consist atleast 5 characters"
+            },
+            username:{
+              required: "Please enter username",
+              minlength:"Your username must consist atleast 5 characters"
+            },
+            password:{
+              required: "Please enter password",
+              minlength:"Your password must consist atleast 8 characters"
+            },
+            confirmPassword:{
+              required:"Please enter password",
+              minlength:"Your password must consist atleast 8 characters",
+              equalTo:"Passwords not match"
+            },
+            email:{
+              required:"Please enter email",
+              email:"Please enter a valid email"
+            },
+            DOB:{
+              required:"Please enter your birthdate",
+              date:"Please enter a valid date"
+            },
+            school:{
+              required:"Please enter your school",
+              minlength:"Please enter a valid school"
+            }
+          }
+        });
       });
-      });
+
   body(onmousemove='canceltimer();', onclick='canceltimer();')
     form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
+      input#name(type='text', name='name', placeholder='name', autocomplete="off")
+      br
+      p
       input#username(type='text', name='username', placeholder='username', autocomplete="off")
       br
       p
-      input#Email.text(type='email', name='email', placeholder='Email', autocomplete="off")
+      input#email.text(type='email', name='email', placeholder='Email', autocomplete="off")
       br
+      p
       p
       input#password(type='password', name='password', placeholder='password')
       br
-      p
+      p#suggest
       input#confirmPassword(type='password', name='confirmPassword', placeholder='confirmPassword')
       br
       p
@@ -92,8 +148,8 @@ html
       input#school(type='text', name='school', placeholder='school', autocomplete="off")
       br
       p
+      input#phoneNumber.checkphone(type='text', name='phoneNumber', placeholder='phoneNumber', autocomplete="off")
+      br
+      p
       input.submit(style='display:inline-block;', type='submit', value='Submit')
       input.submit(style='display:inline-block;', type='reset', value='Clear')
-
-  script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/jquery.validate.min.js')
-  script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/additional-methods.min.js')

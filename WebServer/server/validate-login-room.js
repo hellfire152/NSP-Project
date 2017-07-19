@@ -1,6 +1,7 @@
 const uuid = require('uuid');
+var crypto = require('crypto'); // NOTE: TEMP SOLUTION
 var passwordValidator = require('password-validator');
-module.exports = function(cipher, appConn, C) {
+module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
   return function(req, res){
     console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
@@ -13,11 +14,15 @@ module.exports = function(cipher, appConn, C) {
     // console.log("hi");
     var username = req.body.username;
     var password = req.body.password;
-
+    var randomNum = req.body.randomNum;
         req.sanitize('username').escape();
         req.sanitize('password').escape();
+        req.sanitize('userIp').escape();
+        req.sanitize('randomNum').escape();
         req.sanitize('username').trim();
         req.sanitize('password').trim();
+        req.sanitize('userIp').trim();
+        req.sanitize('randomNum').trim();
 
     console.log(username);
     if (username!=""  && password!=""){
@@ -29,58 +34,19 @@ module.exports = function(cipher, appConn, C) {
       .has().digits()
       .has().not().spaces();
 
-
       var passwordCheck=schema.validate(password);
       var error = req.validationErrors();
 
-
       if (passwordCheck){
         if(!error){
-          const nodemailer = require('nodemailer');
-          const xoauth2 = require('xoauth2');
 
-          var transporter = nodemailer.createTransport({
-              service: 'gmail',
-              auth: {
-                  xoauth2: xoauth2.createXOAuth2Generator({
-                      user: 'chloeangsl@gmail.com',
-                      clientId: '856574075841-dn1nobjm59p0vrhmvcel4sf4djb6sath.apps.googleusercontent.com',
-                      clientSecret: 'i_T_RN-K_p7PsDbAwJXFNXRJ',
-                      refreshToken: '1/3f97hE7yCmipAtuPcu1iu4EhF3kSmzYicMXiamYMjXY'
-                  })
-              }
-          })
-
-          var mailOptions = {
-              from: 'My Name <chloeangsl@gmail.com>',
-              to: 'chloeangsl@gmail.com',
-              subject: 'testing my verification',
-              text: 'Hello World!!'
-          }
-
-          transporter.sendMail(mailOptions, function (err, res) {
-              if(err){
-                  console.log('Error');
-              } else {
-                  console.log('Email Sent');
-              }
-          })
-
-          console.log(error);
           console.log("pass");
           console.log("HOST FORM DATA: ");
-          console.log(req.body);
-          // cipher.encryptJSON({
-          //   "username": req.body.username,
-          //   "password": req.body.password
-          // })
-          //   .catch(function (err) {
-          //     throw new Error('Error parsing JSON!');
-          //   })
-            // .then(function(cookieData) {
-            // res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-            // res.redirect('/login?room=' +req.body.usename);
-            console.log(`C CONSTANT OBJECT: ${C}`);
+
+            if(req.cookies.deviceIP != undefined){
+              var deviceIp = JSON.parse(req.cookies.deviceIP);
+            }
+
             appConn.send({
               // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'type':C.REQ_TYPE.DATABASE,
@@ -91,35 +57,117 @@ module.exports = function(cipher, appConn, C) {
                   password : req.body.password
                 }
               }
-              // 'username' :username,
-              // 'password':password
-
             }, (response) => {
-              console.log(response.data);
-              console.log("Validating");
-              console.log(response.data.success);
-              if(response.data.success==true){
-                res.render('login',{
-                  data: response.data.data
-                });
+
+              console.log(req.body.userIp);
+              // await cipher.hash(req.body.userIp)
+              // .then(hashedIp => {
+              //   console.log("HERE");
+              //   console.log(hashedIp);
+              //   currentIpAddress = hashedIp;
+              // });
+<<<<<<< HEAD
+              var currentIpAddress = req.body.userIp;
+              console.log("CURRENT IP");
+              console.log(currentIpAddress);
+=======
+>>>>>>> origin/formIntegration
+              //If incorrect user input return to login page
+              if(!(response.data.success)){
+                res.redirect('/LoginForm');
               }
               else{
+                // var currentIpAddress; //5555 temp way to get ip address, because site is not s
+                //Check for identical IP address in user cookie
+                var valid = false; //Registered IP address in client PC
+                if(deviceIp != undefined && response.data.data.ip_address != undefined){
+                  // await cipher.hash(req.body.userIp)
+                  // .then(currentIpAddress => {
+                  var currentIpAddress = crypto.createHash('SHA256').update(req.body.userIp).digest('base64'); //NOTE: Temp solution
+                    outerloop:
+                      for(i=0 ; i<response.data.data.ip_address.length ; i++){
+                        for(j=0 ; j<deviceIp.length ; j++){
+                          console.log("["+response.data.data.ip_address[i]+"]" + "["+deviceIp[j]+"]" + "["+currentIpAddress+"]");
+                          if(response.data.data.ip_address[i] == deviceIp[j] && currentIpAddress == response.data.data.ip_address[i] && currentIpAddress == deviceIp[j]){
+                            valid = true;
+                            break outerloop;
+                          }
+                        }
+                      }
+                  // });
+                }
+                if(valid){
+                  //GET ACTUAL DATA AND STORE TO SESSION WITHOUT OTP
+                  appConn.send({
+                    'type' : C.REQ_TYPE.DATABASE,
+                    'data' : {
+                      type : C.DB.SELECT.FULL_USER_ACCOUNT,
+                      user_id : response.data.data.user_id
+                    }
+                  } ,(response) => {
 
-                console.log("FAIL");
+                    console.log(response.data.data[0]);
+                    var encodedData = xssDefense.jsonEncode(response.data.data[0]);
+                    if(response.data.success){
+                      console.log("SUCCESS");
+                      console.log(encodedData);
+                      res.cookie('user_info', JSON.stringify(encodedData));
+                      res.render('Loginindex',{
+                        data: encodedData
+                      });
+                    }
+                    else{
+                      res.cookie('user_info', JSON.stringify(encodedData));
+                      res.render('LoginForm',{
+                        data: encodedData
+                      });
+                    }
+                  });
+                }
+                else{
+                  //TODO:
+                  //REDIRECT TO OTP WEBSITE TO VERIFY
+                  //Generate otp pin
+                  //Send the pin to email
+                  //Change 1234 - random no.
+                  var randomNum = Math.floor((Math.random() * 999999) + 10000);
+                  console.log("THIS IS THE PIN: " + randomNum);
 
-                res.redirect('/login');
+                  appConn.send({
+                    'type' : C.REQ_TYPE.DATABASE,
+                    'data' : {
+                      type : C.DB.SELECT.EMAIL,
+                      user_id : response.data.data.user_id
+                    }
+                  } ,(response2) => {
+                    var email = response2.data.data.email
+                    //TODO: SEND THE DATA TO THE EMAIL SERVEVR
+                    emailObj = {
+                      pin : randomNum,
+                      email : email
+                    }
+
+                    emailServer.loginAccountOtpEmail(emailObj);
+                  });
+
+                  var otp = {
+                    pin : randomNum,
+                    user_id : response.data.data.user_id,
+                    userIp : req.body.userIp,
+                    count : 0
+                  }
+                  res.cookie('otp', JSON.stringify(otp), {"maxAge": 1000*60*5}); //5 min
+                  res.redirect('/otp');
+                }
               }
+
             });
-          // });
         }
         else{
-
           console.log("FAIL");
-
-          res.redirect('/login');
+          res.redirect('/LoginForm');
         }
       }
-
       else{
 
           req.session.errors=error;
@@ -127,14 +175,10 @@ module.exports = function(cipher, appConn, C) {
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.redirect('/login');
-
-
+          res.redirect('/LoginForm');
         }
-
     }
     else{
-
         req.session.errors=error;
         req.session.success=false;
         if(username==""){
@@ -146,13 +190,20 @@ module.exports = function(cipher, appConn, C) {
 
         console.log("never fill in all");
 
-        res.redirect('/login');
+        res.redirect('/LoginForm');
         return;
-
     }
-
-
-
-
   }
+}
+
+async function handleHashIP(data){
+  cipher.hash(data)
+  .then(hashed => {
+    data = hashed;
+  })
+  .catch(reason => {
+    console.log(reason);
+  });
+
+return data;
 }

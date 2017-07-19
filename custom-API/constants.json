@@ -91,13 +91,17 @@
     "CREATE" : {
       "STUDENT_ACC" : 101,
       "TEACHER_ACC" : 102,
-      "QUIZ" : 103
+      "QUIZ" : 103,
+      "IP_ADDRESS" : 104
     },
     "SELECT" : {
       "ALL_QUIZ" : 201,
       "QUESTION" : 202,
       "SEARCH_QUIZ" : 203,
-      "USER_ACCOUNT" : 204
+      "USER_ACCOUNT" : 204,
+      "RETRIEVE_USER_DETAILS" : 205,
+      "FULL_USER_ACCOUNT" : 206,
+      "EMAIL" : 207
     },
     "UPDATE" : {
       "PASSWORD" : 301,
@@ -137,7 +141,16 @@
     "ALREADY_ANSWERED": 1500,
     "GAME_HAS_NOT_STARTED" : 1501,
 
-    "DB_NO_RESULT" : 2000,
-    "DB_EMAIL_TAKEN" : 2001
+    "DB_NO_SUCH_FUNCTION" : 2000,
+    "DB_SQL_QUERY" : 2001,
+    "DB_USERNAME_TAKEN" : 2002,
+    "DB_NO_SUCH_USER" : 2003,
+    "DB_DUPLICATE_USER_ID" : 2004,
+    "DB_PASSWORD_INCORRECT" : 2005,
+    "DB_INCORRECT_INPUT" : 2006,
+    "DB_TWO_OR_MORE_ACCOUNT_DELETED" : 2007,
+    "DB_NO_QUIZ_AVAILAVLE" : 2008,
+    "DB_QUESTION_ID_NOT_FOUND" : 2009,
+    "DB_UNKNOWN" : 2010
   }
 }

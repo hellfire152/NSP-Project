@@ -9,7 +9,16 @@ var checkMultipleOnSameMachine = require('./prevent_multiple_session.js');
 
 var express = require('express');
 var nodemailer = require('nodemailer');
+var helmet = require('helmet');
+var app = express();
+var xssDefense = require('./xss-defense.js');
+var frameguard = require('frameguard');
+var emailServer = require('./email.js');
 
+
+app.use(helmet.noSniff()); // content type should not be changed or followed
+app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
+app.use(helmet.xssFilter()); // protects against reflected XSS
 module.exports = function(data) {
 
   const C = data.C;
@@ -20,7 +29,7 @@ module.exports = function(data) {
     queryOfUser = data.queryOfUser;
     uuid = data.uuid;
     errors=data.error;
-  uuid = data.uuid;
+    uuid = data.uuid;
 
   //middleware
   app.use('*', checkMultipleOnSameMachine);
@@ -120,24 +129,33 @@ module.exports = function(data) {
     }
   });
 
-  app.get('/login', function(req, res){
-    res.render('login',{title: 'Login',success:req.session.success, errors:req.session.errors});
-    req.session.errors=null;
-  });
-  app.get('/registerstud', function(req, res){
-    console.log("HEREHE");
-    res.render('register-student',{title: 'Register(Student)',success:req.session.success, errors:req.session.errors});
-    req.session.errors=null;
-  });
-  app.get('/registerteach', function(req, res){
-    res.render('register-teacher',{title: 'Register(Teacher)',success:req.session.success, errors:req.session.errors});
-    req.session.errors=null;
-  });
+  // app.get('/login', function(req, res){
+  //   console.log("RESPONSE");
+  //   console.log(res);
+  //   res.render('login',{
+  //     title : 'Login',
+  //     data : res
+  //   });
+  //   req.session.errors=null;
+  // });
+  // app.get('/registerstud', function(req, res){
+  //   console.log("HEREHE");
+  //   res.render('register-student',{title: 'Register(Student)',success:req.session.success, errors:req.session.errors});
+  //   req.session.errors=null;
+  // });
+  // app.get('/registerteach', function(req, res){
+  //   res.render('register-teacher',{title: 'Register(Teacher)',success:req.session.success, errors:req.session.errors});
+  //   req.session.errors=null;
+  // });
   //handling all other
   /*TESTING*/
   app.get('/test', function(req, res) {
     res.render('test', {});
   });
+
+  app.get('/add-quiz', function (req, res) {
+    res.render('add-quiz', {});
+})
 
 
   //handling all other requests (PUT THIS LAST)
@@ -148,16 +166,26 @@ module.exports = function(data) {
     console.log("GET FILE: " +req.path.substring(1));
     res.render(req.path.substring(1));
   });
-
   //handling form submits
   app.post('/data-access', require('../validate-data-access.js')(cipher, appConn, C));
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
   app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
+<<<<<<< HEAD
   app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C));
   app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C));
   app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
   app.post('/change-password-success',require('../validate-change-password.js')(cipher, appConn,C));
+=======
+  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C, xssDefense, emailServer));
+  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C, emailServer));
+  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C, emailServer));
+  app.post('/change-password-room-success', require('../validate-change-password.js')(cipher, appConn,C));
+  app.post('/forget-password-room-success', require('../validate-forget-password.js')(cipher, appConn,C));
+  app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C, xssDefense));
+  app.post('/otp-register', require('../validate-otp-register.js') (cipher, appConn, C, xssDefense));
+
+>>>>>>> origin/formIntegration
 }
 
 function sendErrorPage(res, errormsg) {

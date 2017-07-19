@@ -32,7 +32,11 @@ module.exports =function(cipher, appConn,C){
       .has().digits()
       .has().not().spaces();
 
+<<<<<<< HEAD
       var oldPasswordCheck=schema.validate(Password);
+=======
+      var oldPasswordCheck=schema.validate(oldPassword);
+>>>>>>> origin/formIntegration
       var newPasswordCheck=schema.validate(newPassword);
       var error = req.validationErrors();
 
@@ -52,6 +56,7 @@ module.exports =function(cipher, appConn,C){
                 throw new Error('Error parsing JSON!');
               })
               .then(function(cookieData) {
+<<<<<<< HEAD
               res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
               // res.redirect('/login?room='  +req.body.room);
               console.log(`C CONSTANT OBJECT: ${C}`);
@@ -60,6 +65,20 @@ module.exports =function(cipher, appConn,C){
                 'data':{
                   verify : {
                     user_id : req.body.userId,
+=======
+              // res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
+              // res.redirect('/login?room='  +req.body.room);
+              // console.log(`C CONSTANT OBJECT: ${C}`);
+              var userInfo =JSON.parse(req.cookies.user_info);
+              console.log(userInfo);
+
+              appConn.send({
+                'type': C.REQ_TYPE.DATABASE,
+                'data':{
+                    type : C.DB.UPDATE.PASSWORD,
+                  verify : {
+                    user_id : userInfo.data[0].user_id,
+>>>>>>> origin/formIntegration
                     password_hash : req.body.oldPassword
                   },
                   account : {
@@ -73,7 +92,11 @@ module.exports =function(cipher, appConn,C){
                 console.log("Validating");
                 console.log(response.data.success);
                 if(response.data.success==true){
+<<<<<<< HEAD
                   res.render('login',{
+=======
+                  res.render('/change-password-room-success',{
+>>>>>>> origin/formIntegration
                     data: response.data.data
                   });
                 }

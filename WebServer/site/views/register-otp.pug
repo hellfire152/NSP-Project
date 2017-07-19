@@ -1,0 +1,7 @@
+html
+  body
+    h1 OTP
+    p static OTP pass: 1234 chloe please change to dynamic thx.
+    form(action='/otp-register', method='POST')
+      input#otp(type='text', name='otp')
+      input(type='submit')

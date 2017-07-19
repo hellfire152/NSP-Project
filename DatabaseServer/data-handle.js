@@ -39,6 +39,18 @@ async function handleHashPass(data){
     return data;
 }
 
+async function handleHashIP(data){
+  cipher.hash(data.inputData.ip_address)
+  .then(hashed => {
+    data.inputData.ip_address = hashed;
+  })
+  .catch(reason => {
+    console.log(reason);
+  });
+
+return data;
+}
+
 async function handleDeleteAccount(data){
   var dataArr = [];
   var encryptedData = {};
@@ -113,6 +125,16 @@ async function handleSearchQuiz(searchItem){
 async function handleRecieveQuestion(data){
   var num;
   data.forEach(function(individualData){
+    console.log(individualData);
+    if(individualData.choices === null){
+      delete individualData.choices
+    }
+    if(individualData.reward === null){
+      delete individualData.reward
+    }
+    if(individualData.penalty === null){
+      delete individualData.penalty
+    }
     num = parseInt(individualData.solution);
     if(!isNaN(num)){
       individualData.solution = num;
@@ -153,6 +175,7 @@ module.exports = function() {
     'handleEncryption' : handleEncryption,
     'handleDecryption' : handleDecryption,
     'handleHashPass' : handleHashPass,
-    'handleDeleteAccount' : handleDeleteAccount
+    'handleDeleteAccount' : handleDeleteAccount,
+    'handleHashIP' : handleHashIP
   }
 }

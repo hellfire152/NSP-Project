@@ -8,7 +8,9 @@
   Author: Nigel Chen Chin Hao
   Date: 09062017
  */
-
+process.on('uncaughtException', (err) => {
+  console.log(err);
+})
 var mysql = require('mysql');
 var handleDb = require("./data-handle.js")();
 const C = require('../custom-API/constants.json');
@@ -17,8 +19,10 @@ var Promise = require('promise');
 //Create connection between app and database
 var connection = mysql.createConnection({
   host: 'localhost',
-  user: 'root',
-  password: '',
+  // user: 'user',
+  // password: 'eH7nKNVoeedg7gGZ',
+    user: 'root',
+    password: '',
   database: 'exquizit'
 });
 
@@ -46,6 +50,7 @@ var server = net.createServer(function(conn){
     console.log("Request recieved from appserver");
     try{
       var inputData = (JSON.parse(input));
+      console.log(inputData.data);
       console.log("DB TYPE: " + inputData.data.type);
       switch(inputData.data.type) {
         case C.DB.CREATE.STUDENT_ACC :
@@ -55,6 +60,7 @@ var server = net.createServer(function(conn){
         }
         case C.DB.CREATE.QUIZ : {
           await createQuiz(inputData);
+          console.log(inputData);
           break;
         }
         case C.DB.SELECT.ALL_QUIZ : {
@@ -70,7 +76,7 @@ var server = net.createServer(function(conn){
           break;
         }
         case C.DB.SELECT.USER_ACCOUNT : {
-          await retrieveAccount(inputData);
+          await retrievePreAccount(inputData);
           break;
         }
         case C.DB.UPDATE.PASSWORD : {
@@ -117,14 +123,32 @@ var server = net.createServer(function(conn){
           await deleteQuiz(inputData);
           break;
         }
+        case C.DB.SELECT.RETRIEVE_USER_DETAILS : {
+          await retrieveUserDetails(inputData);
+          break;
+        }
         case C.DB.DELETE.QUESTION : {
           await deleteQuestion(inputData);
+          break;
+        }
+        case C.DB.SELECT.FULL_USER_ACCOUNT : {
+          await retrieveFullAccount(inputData);
+          break;
+        }
+        case C.DB.CREATE.IP_ADDRESS : {
+          await addIpAddress(inputData);
+          break;
+        }
+        case C.DB.SELECT.EMAIL : {
+          console.log(inputData);
+          await retrieveEmail(inputData);
           break;
         }
         default : {
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_NO_SUCH_FUNCTION,
               message : "Not one of the cases"
             }
           }
@@ -132,8 +156,8 @@ var server = net.createServer(function(conn){
         }
         //ADD MORE CASES HERE
       }
-      response.reqNo = data.reqNo;
-      sendToServer(response);
+      // response.reqNo = data.reqNo;
+      // sendToServer(response);
     }
     catch (err) {
       console.log(err);
@@ -169,6 +193,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_SQL_QUERY,
                 message : error
               }
             }
@@ -184,6 +209,7 @@ var server = net.createServer(function(conn){
                 var response = {
                   data : {
                     success : false,
+                    reason : C.ERR.DB_SQL_QUERY,
                     message : error
                   }
                 }
@@ -223,6 +249,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : ERR.DB_USERNAME_TAKEN,
                 message : "Username or Email have been taken"
               }
             }
@@ -246,6 +273,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -258,14 +286,14 @@ var server = net.createServer(function(conn){
   //Check if password input is correct
   //If correct, user personal data will be retrieved from database
   //Else no personal data will be sent
-  async function retrieveAccount(inputData){
+  async function retrievePreAccount(inputData){
     var data = inputData.data;
+    data.account.email = data.account.username; // seperate email and username to provide encryption for email
     await handleDb.handleEncryption(data.account)
     .then(dataAccount => {
-      console.log(dataAccount);
       var query = connection.query(
         "SELECT user_id, password_hash, salt FROM user_account\
-        WHERE email = " + connection.escape(dataAccount.username) +
+        WHERE email = " + connection.escape(dataAccount.email) +
         " OR username = " + connection.escape(dataAccount.username),
         function(err, result){
           if(err){
@@ -273,6 +301,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_SQL_QUERY,
                 message : err
               }
             }
@@ -289,100 +318,45 @@ var server = net.createServer(function(conn){
                 //If user password input is equal to database password
                 if(dataOut.hash_password === dataOut.dbPass){
                   console.log("Password correct");
-                  var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
+                  var query = connection.query("SELECT user_account.user_id, ip_address\
                     FROM user_account\
-                    LEFT OUTER JOIN student_details\
-                    ON user_account.user_id = student_details.user_id\
-                    WHERE student_details.user_id = " + connection.escape(dataOut.userId),
+                    LEFT OUTER JOIN new_device\
+                    ON user_account.user_id = new_device.user_id\
+                    WHERE user_account.user_id = " + connection.escape(dataOut.userId),
                   function(err, result){
                     if(err){
                       console.error('[Error in query]: ' + err);
                       var response = {
                         data : {
                           success : false,
+                          reason : C.ERR.DB_SQL_QUERY,
                           message : err
                         }
                       }
                       sendToServer(response, inputData);
                     }
-                    if(result.length === 1){
                       handleDb.handleDecryption(result)
                       .then(resultOut => {
+
+                        var ipAddressArr = [];
+                        resultOut.forEach(function(obj){
+                          ipAddressArr.push(obj.ip_address);
+                        });
+
                         objOutResult = {
-                          data : resultOut
+                          data:{
+                            data : {
+                              user_id : resultOut[0].user_id,
+                              ip_address : ipAddressArr
+                            },
+                            success : true
+                          }
                         }
                         sendToServer(objOutResult, inputData);
                       })
                       .catch(reason => {
                         console.log(reason);
                       });
-                    }
-                    else if(result.length === 0){
-                      console.log(dataOut.account.userId);
-                      var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, teacher_details.teacher_id, teacher_details.organisation\
-                        FROM user_account\
-                        LEFT OUTER JOIN teacher_details\
-                        ON user_account.user_id = teacher_details.user_id\
-                        WHERE teacher_details.user_id = " + connection.escape(dataOut.account.userId),
-                      function(err, result){
-                        if(err){
-                          console.error('[Error in query]: ' + err);
-                          var response = {
-                            data : {
-                              success : false,
-                              message : err
-                            }
-                          }
-                          sendToServer(response, inputData);
-                        }
-                        if(result.length === 1){
-                          handleDb.handleDecryption(result)
-                          .then(resultOut => {
-                            objOutResult = {
-                              data : resultOut
-                            }
-                            sendToServer(objOutResult, inputData);
-                          })
-                          .catch(reason => {
-                            console.log(reason);
-                          });
-                        }
-                        else if(result.length === 0){
-                          console.log("[No related data found]");
-                          //TODO: Send error message to server
-                          var response = {
-                            data : {
-                              success : false,
-                              message : "No such user"
-                            }
-                          }
-                          sendToServer(response, inputData);
-                        }
-                        else{
-                          console.log("[Duplicate user_id, Entity integrity compromise]");
-                          //TODO: Send error message to server
-                          var response = {
-                            data : {
-                              success : false,
-                              message : "Duplicate user_id"
-                            }
-                          }
-                          sendToServer(response, inputData);
-
-                        }
-                      });
-                    }
-                    else{
-                      console.log("[Duplicate user_id, Entity integrity compromise]");
-                      //TODO: Send error message to server
-                      var response = {
-                        data : {
-                          success : false,
-                          message : "Duplicate user_id"
-                        }
-                      }
-                      sendToServer(response, inputData);
-                    }
                   });
                 }
                 else {
@@ -391,6 +365,7 @@ var server = net.createServer(function(conn){
                   var response = {
                     data : {
                       success : false,
+                      reason : C.ERR.DB_PASSWORD_INCORRECT,
                       message : "Password Incorrect"
                     }
                   }
@@ -407,6 +382,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_NO_SUCH_USER,
                 message : "No such user"
               }
             }
@@ -417,6 +393,225 @@ var server = net.createServer(function(conn){
     })
     .catch(reason => {
       console.log(reason);
+    });
+  }
+
+  async function retrieveFullAccount(inputData){
+    var data = inputData.data
+    console.log("HERE");
+    console.log(data.user_id);
+    var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
+      FROM user_account\
+      LEFT OUTER JOIN student_details\
+      ON user_account.user_id = student_details.user_id\
+      WHERE student_details.user_id = " + connection.escape(data.user_id),
+    function(err, result){
+      if(err){
+        console.error('[Error in query]: ' + err);
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : err
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      if(result.length === 1){ // Student User
+        handleDb.handleDecryption(result)
+        .then(resultOut => {
+          objOutResult = {
+            data:{
+              data : resultOut,
+              success : true
+            }
+          }
+          sendToServer(objOutResult, inputData);
+        })
+        .catch(reason => {
+          console.log(reason);
+        });
+      }
+      else if(result.length === 0){ //Check Teacher user
+        var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, teacher_details.teacher_id, teacher_details.organisation\
+          FROM user_account\
+          LEFT OUTER JOIN teacher_details\
+          ON user_account.user_id = teacher_details.user_id\
+          WHERE teacher_details.user_id = " + connection.escape(dataOut.userId),
+        function(err, result){
+          if(err){
+            console.error('[Error in query]: ' + err);
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_SQL_QUERY,
+                message : err
+              }
+            }
+            sendToServer(response, inputData);
+          }
+
+          if(result.length === 1){
+            handleDb.handleDecryption(result)
+            .then(resultOut => {
+              objOutResult = {
+                data:{
+                  data : resultOut,
+                  success : true
+                }
+              }
+              sendToServer(objOutResult, inputData);
+            })
+            .catch(reason => {
+              console.log(reason);
+            });
+          }
+          else if(result.length === 0){
+            console.log("[No related data found]");
+            //TODO: Send error message to server
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_NO_SUCH_USER,
+                message : "No such user"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          else{
+            console.log("[Duplicate user_id, Entity integrity compromise]");
+            //TODO: Send error message to server
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_DUPLICATE_USER_ID,
+                message : "Duplicate user_id"
+              }
+            }
+            sendToServer(response, inputData);
+
+          }
+        });
+      }
+      else{
+        console.log("[Duplicate user_id, Entity integrity compromise]");
+        //TODO: Send error message to server
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_DUPLICATE_USER_ID,
+            message : "Duplicate user_id"
+          }
+        }
+        sendToServer(response, inputData);
+
+      }
+    });
+  }
+
+  //Retrieve email for OTP
+  async function retrieveEmail(inputData){
+    var data = inputData.data;
+    var query = connection.query("SELECT email FROM user_account WHERE user_id = " + connection.escape(data.user_id), function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      handleDb.handleDecryption(result)
+      .then(resultOut => {
+        objOutResult = {
+          data:{
+            data : resultOut[0],
+            success : true
+          }
+        }
+        sendToServer(objOutResult, inputData);
+      });
+    });
+  }
+
+  async function addIpAddress(inputData){
+    var data = inputData.data;
+    await handleDb.handleHashIP(data)
+    .then(dataOut => {
+      var query = connection.query("INSERT INTO new_device SET ?", dataOut.inputData, function(error, result){
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_SQL_QUERY,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else{
+          var response = {
+            data : {
+              success : true,
+              data : {
+                hashedIpAddress : dataOut.inputData.ip_address
+              }
+            }
+          }
+          sendToServer(response, inputData);
+        }
+      });
+    });
+  }
+
+
+  async function retrieveUserDetails(inputData){
+    var data = inputData.data;
+    await handleDb.handleEncryption(data)
+    .then(dataOut => {
+      var query = connection.query("SELECT user_id FROM user_account WHERE username = ? AND email = ?", [dataOut.username, dataOut.email], function(error, result){
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_SQL_QUERY,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        if(result.length === 0){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_INCORRECT_INPUT,
+              message : "Incorrect username or email"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else if(result.length === 1){
+          var response = {
+            data : {
+              success : true,
+              message : "Input correct"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else{
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_UNKNOWN,
+              message : "Something not right"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+      });
     });
   }
 
@@ -431,6 +626,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -454,6 +650,7 @@ var server = net.createServer(function(conn){
                 var response = {
                   data : {
                     success : false,
+                    reason : C.ERR.DB_SQL_QUERY,
                     message : error
                   }
                 }
@@ -471,6 +668,7 @@ var server = net.createServer(function(conn){
                         var response = {
                           data : {
                             success : false,
+                            reason : C.ERR.DB_SQL_QUERY,
                             message : error
                           }
                         }
@@ -491,6 +689,7 @@ var server = net.createServer(function(conn){
                 var response = {
                   data : {
                     success : false,
+                    reason : C.ERR.DB_PASSWORD_INCORRECT,
                     message : "Incorrect password"
                   }
                 }
@@ -513,6 +712,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -541,6 +741,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -566,6 +767,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -578,6 +780,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_SQL_QUERY,
                 message : error
               }
             }
@@ -598,6 +801,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_USERNAME_TAKEN,
             message : "Username taken"
           }
         }
@@ -616,6 +820,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -634,8 +839,6 @@ var server = net.createServer(function(conn){
 
   async function updateStudentCategory(inputData){
     var data = inputData.data;
-    console.log("HELLO");
-    console.log(data);
     handleDb.handleEncryption(data)
     .then(dataOut => {
       var query = connection.query("UPDATE student_details SET student_category = " + connection.escape(dataOut.student_category) +
@@ -644,6 +847,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -670,6 +874,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -695,6 +900,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -704,6 +910,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_NO_SUCH_USER,
             message : "No such user id"
           }
         }
@@ -723,6 +930,7 @@ var server = net.createServer(function(conn){
                   var response = {
                     data : {
                       success : false,
+                      reason : C.ERR.DB_SQL_QUERY,
                       message : error
                     }
                   }
@@ -741,6 +949,7 @@ var server = net.createServer(function(conn){
                   var response = {
                     data : {
                       success : false,
+                      reason : C.ERR.DB_INCORRECT_INPUT,
                       message : "Incorrect password, username or email"
                     }
                   }
@@ -750,6 +959,7 @@ var server = net.createServer(function(conn){
                   var response = {
                     data : {
                       success : false,
+                      reason : C.ERR.DB_TWO_OR_MORE_ACCOUNT_DELETED,
                       message : "Critical, 2 account been deleted"
                     }
                   }
@@ -768,12 +978,16 @@ var server = net.createServer(function(conn){
   async function createQuiz(inputData){
     var data = inputData.data;
     data.quiz.date_created = new Date();
+    console.log("Eadfhjhgfyuiudahfycohasdkgiofhcuds");
+    console.log(data.quiz);
     var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
+      console.log(query);
       if(error){
         console.error('[Error in query]: ' + error);
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -808,6 +1022,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : error
             }
           }
@@ -837,6 +1052,7 @@ var server = net.createServer(function(conn){
               var response = {
                 data : {
                   success : false,
+                  reason : C.ERR.DB_SQL_QUERY,
                   message : error
                 }
               }
@@ -844,7 +1060,6 @@ var server = net.createServer(function(conn){
             }
 
             console.log('[Query successful]');
-            console.log(result);
           });
         });
       }
@@ -854,14 +1069,35 @@ var server = net.createServer(function(conn){
   //Retrieve all the quiz available in the database
   async function retrieveAllQuiz(){
     var query = connection.query('SELECT * FROM quiz ORDER BY date_created DESC', function(err, result, fields){
-  			if (!err) {
-          console.log(result);
-          //TODO: Method to send data to app server
-          sendToServer(result);
-  			} else {
-  				console.log('[No result]');
-          //TODO: return error to server
+  			if (err) {
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_SQL_QUERY,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
   			}
+        if(result.length == 0){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_NO_QUIZ_AVAILAVLE,
+              message : "No quiz available"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else{
+          resultOut = {
+            data:{
+              data : result,
+              success : true
+            }
+          }
+          sendToServer(resultOut, inputData);
+        }
   	});
   }
   async function updateQuiz(inputData){
@@ -884,6 +1120,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -915,7 +1152,8 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
-                message : err
+                reason : C.ERR.DB_SQL_QUERY,
+                message : error
               }
             }
             sendToServer(response, inputData);
@@ -924,6 +1162,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_QUESTION_ID_NOT_FOUND,
                 message : "Question ID not found"
               }
             }
@@ -942,6 +1181,7 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
+                reason : C.ERR.DB_UNKNOWN,
                 message : "Something not right"
               }
             }
@@ -984,7 +1224,8 @@ var server = net.createServer(function(conn){
             var response = {
               data : {
                 success : false,
-                message : err
+                reason : C.ERR.DB_SQL_QUERY,
+                message : error
               }
             }
             sendToServer(response, inputData);
@@ -997,7 +1238,30 @@ var server = net.createServer(function(conn){
   //If question type is a short ans, choice_arr will be null
   async function retrieveQuestions(inputData){
     var quizId = inputData.data.quizId;
-    var query = connection.query("SELECT quiz_question.quiz_id, quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices\
+    var quizInfo;
+    var query = connection.query("SELECT quiz.reward, user_account.name, quiz.date_created, quiz.visibility, quiz.description\
+    FROM quiz\
+    LEFT OUTER JOIN user_account\
+      ON user_account.user_id = quiz.user_id\
+    WHERE quiz.quiz_id = '" + quizId + "'", function(err, result){
+      if(err){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+
+      handleDb.handleDecryption(result)
+      .then(resultOut => {
+        quizInfo = resultOut[0]; //A really lazy way, but it works
+      });
+    });
+
+    var query = connection.query("SELECT quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices, quiz_question.reward, quiz_question.penalty\
     FROM quiz_question\
     LEFT OUTER JOIN quiz_question_choices\
       ON quiz_question.question_id = quiz_question_choices.question_id\
@@ -1010,7 +1274,18 @@ var server = net.createServer(function(conn){
             handleDb.handleRecieveQuestion(outPlainResult)
             .then(outResult => {
               objOutResult = {
-                data : outResult
+                data:{
+                  data : {
+                    id : quizId,
+                    question : outResult,
+                    reward : quizInfo.reward,
+                    author : quizInfo.name,
+                    creationDate : quizInfo.date_created,
+                    'public' : quizInfo.visibility,
+                    description : quizInfo.description
+                  },
+                  success : true
+                }
               }
               sendToServer(objOutResult, inputData);
             })
@@ -1026,6 +1301,7 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : false,
+              reason : C.ERR.DB_SQL_QUERY,
               message : err
             }
           }
@@ -1041,6 +1317,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }
@@ -1063,6 +1340,7 @@ var server = net.createServer(function(conn){
         var response = {
           data : {
             success : false,
+            reason : C.ERR.DB_SQL_QUERY,
             message : error
           }
         }

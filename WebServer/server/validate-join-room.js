@@ -16,7 +16,7 @@ module.exports = function(cipher, appConn) {
     req.sanitize('pass').escape();
     req.sanitize('room').escape();
     req.sanitize('id').trim();
-    req.sanitize('pass').trim();
+    req.sanitize('pass').trim`();`
     req.sanitize('room').trim();
 
     var errors = req.validationErrors();
