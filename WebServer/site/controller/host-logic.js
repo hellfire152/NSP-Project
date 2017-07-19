@@ -15,7 +15,7 @@ const GAMEMODE_NO_TO_STRING = {
   3: 'Tug of War'
 };
 
-const S;
+var S;
 
 var socket = io();
 socket.on('receive', function(input) {

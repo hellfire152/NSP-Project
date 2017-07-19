@@ -36,17 +36,24 @@ module.exports = function(cipher, appConn, C) {
             }, (response2) => {
               res.clearCookie("otp");
               if(req.cookies.deviceIP != undefined){
-                var ipArr = JSON.parse(req.cookies.deviceIP);
+                var ipArr = req.cookies.deviceIP;
                 console.log(ipArr);
                 ipArr.push(response2.data.data.hashedIpAddress);
-                res.cookie('deviceIP', JSON.stringify(ipArr), {"maxAge": 1000*60*60*24*30}); // max age: 30 days
+                //set device IP cookie
+                cipher.encryptJSON(ipArr)
+                  .then((encryptedCookie) => {
+                    res.cookie('deviceIP', encryptedCookie, {"maxAge": 1000*60*60*24*30}); // max age: 30 days
+                  });
               }
               else{
                 var newIpArr = [response2.data.data.hashedIpAddress];
-                res.cookie('deviceIP', JSON.stringify(newIpArr), {"maxAge": 1000*60*60*24*30}); // max age: 30 days
+                cipher.encryptJSON(ipArr)
+                  .then((encryptedCookie) => {
+                    res.cookie('deviceIP', encryptedCookie, {"maxAge": 1000*60*60*24*30}); // max age: 30 days
+                  });
               }
 
-              res.render('login',{
+              res.render('login', {
                 data: response.data
               });
             });
@@ -58,11 +65,14 @@ module.exports = function(cipher, appConn, C) {
         //More than 3 time boot out and clear cookies
         if(otpObj.count < 3){
           otpObj.count++;
-          res.cookie('otp-register', JSON.stringify(otpObj), {"maxAge": 1000*60*5}); //5 min
-          res.redirect('/register-otp');
+          cipher.encryptJSON(otpObj)
+            .then(encryptedCookie => {
+              res.cookie('otp-register', encryptedCookie, {"maxAge" : 1000 * 60 * 5});
+              res.redirect('/register-otp');
+            });
         }
-        else{
-          console.log("HERE");
+        else {
+          console.log("OTP Register Success!");
           res.clearCookie("otp");
           res.redirect('/login');
         }

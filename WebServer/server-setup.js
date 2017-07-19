@@ -26,14 +26,14 @@ module.exports = function(data) {
 
   //cipher for cookies
   var cookieCipher = new Cipher({
-    'password' : S.COOKIE_KEY,
-    'iv' : S.COOKIE_KEY
+    'password' : S.COOKIE.KEY,
+    'iv' : S.COOKIE.IV
   });
 
   //express-session stuff
   var Session = require('express-session');
   var session = Session({
-        secret: S.COOKIE_KEY,
+        secret: S.COOKIE.KEY,
         resave: true,
         saveUninitialized: true,
         cookie : {
@@ -60,6 +60,18 @@ module.exports = function(data) {
   app.use(helmet.noSniff()); // content type should not be changed or followed
   app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
   app.use(helmet.xssFilter()); // protects against reflected XSS
+
+  //decrypt cookies
+  app.use(async (req, res, next) => {
+    for(let cookie in req.cookies) {
+      if(req.cookies.hasOwnProperty(cookie)) {
+        if(S.COOKIE.CIPHERED.indexOf(cookie) >= 0) {
+          req.cookies[cookie] = await cookieCipher.decryptJSON(req.cookies[cookie]);
+        }
+      }
+    }
+    next();
+  });
 
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({

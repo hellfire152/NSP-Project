@@ -12,9 +12,15 @@
     "CERT" : "./cert/certificate.pem",
     "KEY" : "./cert/private.key"
   },
+  "COOKIE" : {
+    "CIPHERED" : ["login", "otp", "deviceIP", "user_info"],
+    "KEY" : "cookieKey",
+    "IV" : "cookieIv",
+    "MAPPINGS" : {
+      "login" : "asnsdavioasnviosanvoirviwh"
+    }
+  },
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
-  "COOKIE_KEY" : "cookieKey",
-  "COOKIE_IV" : "cookieIv",
   "AUTH_BYPASS" : true
 }

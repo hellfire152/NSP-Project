@@ -24,7 +24,7 @@ module.exports = function(cipher, appConn, C) {
       console.log("Data: ");
       dataObj.quiz.quiz_rating = 0; //Default
       dataObj.quiz.reward = parseInt(dataObj.quiz.reward);
-      dataObj.quiz.user_id = JSON.parse(req.cookies.user_info).user_id;
+      dataObj.quiz.user_id = req.cookies.user_info.user_id;
 
       // cipher.encryptJSON({
       //

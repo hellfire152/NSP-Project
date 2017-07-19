@@ -15,12 +15,12 @@ module.exports =function(cipher, appConn,C){
     var newPassword = req.body.newPassword;
     var confirmPassword = req.body.confirmPassword;
 
-        req.sanitize('oldPassword').escape();
-        req.sanitize('newPassword').escape();
-        req.sanitize('confirmPassword').escape();
-        req.sanitize('oldPassword').trim();
-        req.sanitize('newPassword').trim();
-        req.sanitize('confirmPassword').trim();
+      req.sanitize('oldPassword').escape();
+      req.sanitize('newPassword').escape();
+      req.sanitize('confirmPassword').escape();
+      req.sanitize('oldPassword').trim();
+      req.sanitize('newPassword').trim();
+      req.sanitize('confirmPassword').trim();
 
     console.log(oldPassword);
     if (oldPassword!="" && newPassword!="" && confirmPassword!=""){
@@ -37,7 +37,7 @@ module.exports =function(cipher, appConn,C){
       var error = req.validationErrors();
 
       if (oldPasswordCheck && newPasswordCheck){
-        if(newPassword==confirmPassword){
+        if(newPassword == confirmPassword){
           if(!error){
 
             console.log(error);
@@ -55,7 +55,7 @@ module.exports =function(cipher, appConn,C){
               // res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
               // res.redirect('/login?room='  +req.body.room);
               // console.log(`C CONSTANT OBJECT: ${C}`);
-              var userInfo =JSON.parse(req.cookies.user_info);
+              var userInfo = req.cookies.user_info;
               console.log(userInfo);
 
               appConn.send({
@@ -82,9 +82,7 @@ module.exports =function(cipher, appConn,C){
                   });
                 }
                 else{
-
-                  console.log("FAIL");
-
+                  console.log("Change password has failed.");
                   res.redirect('/change-password');
                 }
               });
@@ -113,55 +111,17 @@ module.exports =function(cipher, appConn,C){
           console.log("Password does not match");
           // res.redirect('/registerstud');
         }
-      }
-    // else{
-    //     req.session.errors=error;
-    //     req.session.success=false;
-    //     console.log(schema.validate('password',{list:true}));
-    //     console.log("FAIL PW");
-    // }
-  // }
-    else{
-
+      } else {
         req.session.errors=error;
         req.session.success=false;
-        var errormsg = '';
-        if(oldPassword==""){
-          console.log("Please enter your current password");
-          // errormsg= "Please enter your username"
-          // sendErrorPage(res,errormsg);
-          // res.render('register-student',{
-          //   error1:
-          // });
-        }
-        if(newPassword==""){
-          console.log("Please enter your new password");
-          // errormsg= "Please enter your passwor"
-          // sendErrorPage(res,errormsg);
-          // res.render('register-student',{
-          //   error3:'Please enter your password'
-          // });
-        }
-        if(confirmPassword==""){
-          console.log("Please enter your new password");
-          // res.render('register-student',{
-          //   error2:'Please enter your email'
-          // });
-
-        }
-        console.log("never fill in all");
 
         res.redirect('/change-password');
-
         return;
-
     }
     function sendErrorPage(res, errormsg) {
       res.render('change-password', {
         'error': errormsg
       });
     }
-
-
   }
 }

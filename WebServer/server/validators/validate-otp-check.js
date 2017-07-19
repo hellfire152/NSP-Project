@@ -5,15 +5,13 @@ module.exports = function(cipher, appConn, C, xssDefense) {
   return function(req, res) {
     req.sanitize('otp').escape();
 
-
     var errors = req.validationErrors();
-
 
     if(errors) {
       //TODO::Handle errors
     } else {
       var userOTP = req.body.otp;
-      var otpObj = JSON.parse(req.cookies.otp);
+      var otpObj = req.cookies.otp;
 
       if(userOTP == otpObj.pin){
         //TODO: Get data from database and send to client and redirect to new page
@@ -38,20 +36,29 @@ module.exports = function(cipher, appConn, C, xssDefense) {
             }, (response2) => {
               var encodedData = xssDefense.jsonEncode(response.data.data[0]);
               res.clearCookie("otp");
-              if(req.cookies.deviceIP != undefined){
-                var ipArr = JSON.parse(req.cookies.deviceIP);
+              if(req.cookies.deviceIP !== undefined){
+                var ipArr = req.cookies.deviceIP
                 console.log(ipArr);
                 ipArr.push(response2.data.data.hashedIpAddress);
-                res.cookie('deviceIP', JSON.stringify(ipArr), {"maxAge": 1000*60*60*24*30}); // max age: 30 days
+                cipher.encryptJSON(ipArr)
+                  .then((encryptedCookie) => {
+                    res.cookie('deviceIP', encryptedCookie, {"maxAge" : 1000 * 60 * 60 * 24 * 30}); //30 days
+                  });
               }
               else{
                 var newIpArr = [response2.data.data.hashedIpAddress];
-                res.cookie('deviceIP', JSON.stringify(newIpArr), {"maxAge": 1000*60*60*24*30}); // max age: 30 days
+                cipher.encryptJSON(ipArr)
+                  .then((encryptedCookie) => {
+                    res.cookie('deviceIP', encryptedCookie, {"maxAge" : 1000 * 60 * 60 * 24 * 30}); //30 days
+                  });
               }
-              res.cookie('user_info', JSON.stringify(encodedData));
-              res.render('LoginIndex',{
-                data: response.data
-              });
+              cipher.encryptJSON(encodedData)
+                .then((encryptedCookie) => {
+                  res.cookie('user_info', encryptedCookie);
+                  res.render('LoginIndex', {
+                    data : response.data
+                  });
+                });
             });
         });
       }
@@ -60,11 +67,14 @@ module.exports = function(cipher, appConn, C, xssDefense) {
         //More than 3 time boot out and clear cookies
         if(otpObj.count < 3){
           otpObj.count++;
-          res.cookie('otp', JSON.stringify(otpObj), {"maxAge": 1000*60*5}); //5 min
-          res.redirect('/otp');
+          cipher.encryptJSON(otpObj)
+            .then((encryptedCookie) => {
+              res.cookie('otp', encryptedCookie, {"maxAge" : 1000 * 60 * 5}) //5 min
+              res.redirect('/otp');
+            });
         }
         else{
-          console.log("HERE");
+          console.log("OTP SUCCESS");
           res.clearCookie("otp");
           res.redirect('/LoginForm');
         }

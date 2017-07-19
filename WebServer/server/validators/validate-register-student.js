@@ -5,13 +5,6 @@ var mailchecker= require('mailchecker');
 var passwordValidator =require('password-validator');
 module.exports =function(cipher, appConn,C, emailServer){
   return function(req, res){
-    // req.checkBody('username','Please enter username').notEmpty();
-    //
-    // req.checkBody('email','Please enter email').notEmpty();
-    // req.checkBody('email','Invalid email address').isEmail();
-    //
-    // req.checkBody('password','Please enter password').notEmpty();
-    // req.checkBody('password','Invalid password').isLength({min:8});
     var speakeasy = require("speakeasy");
     var secret = speakeasy.generateSecret({length: 20}); // Secret key is 20 characters long
     console.log(secret.base32); // Save this value to your DB for the user
@@ -26,35 +19,16 @@ module.exports =function(cipher, appConn,C, emailServer){
     var school=req.body.school;
     var randomNum = Math.floor((Math.random() * 999999) + 10000);
 
-
-    // // generate out the OTP
-    // var otp = speakeasy.totp({
-    //     secret: secret.base32,
-    //     encoding: 'base32'
-    //   });
-    //
-    //   console.log(otp);
-    // //   // to test for verification
-    // var verified = speakeasy.totp.verify({
-    //     secret: secret.base32,
-    //     encoding: 'base32',
-    //     otp: otp
-    //   });
-    //
-    //   console.log(verified);
-
-        req.sanitize('name').escape();
-        req.sanitize('username').escape();
-        req.sanitize('email').escape();
-        req.sanitize('password').escape();
-        req.sanitize('dateOfBirth').escape();
-        req.sanitize('name').trim();
-        req.sanitize('username').trim();
-        req.sanitize('email').trim();
-        req.sanitize('password').trim();
-        req.sanitize('dateOfBirth').trim();
-
-
+    req.sanitize('name').escape();
+    req.sanitize('username').escape();
+    req.sanitize('email').escape();
+    req.sanitize('password').escape();
+    req.sanitize('dateOfBirth').escape();
+    req.sanitize('name').trim();
+    req.sanitize('username').trim();
+    req.sanitize('email').trim();
+    req.sanitize('password').trim();
+    req.sanitize('dateOfBirth').trim();
 
     if (name!="" &&username!="" && email!="" && password!="" && confirmPassword!=""){
       if(mailchecker.isValid(email)){
@@ -66,14 +40,11 @@ module.exports =function(cipher, appConn,C, emailServer){
         .has().digits()
         .has().not().spaces();
 
-
         var passwordCheck=schema.validate(password);
         var error = req.validationErrors();
 
-
         if (passwordCheck){
           if(password==confirmPassword){
-
             emailObj = {
               username: req.body.username,
               pin : randomNum,
@@ -82,146 +53,63 @@ module.exports =function(cipher, appConn,C, emailServer){
 
             emailServer.createAccountOtpEmail(emailObj);
 
-              if(!error){
-
-              console.log(error);
-              console.log("pass");
-              console.log("Creating an account: ");
-              console.log(req.body);
-              // cipher.encryptJSON({
-              //   "username": req.body.username,
-              //   "password": req.body.password,
-              //   "email":req.body.email,
-              //   "dateOfBirth":req.body.DOB,
-              //   "school":req.body.school
-              // })
-              //   .catch(function (err) {
-              //     throw new Error('Error parsing JSON!');
-              //   })
-              //   .then(function(cookieData) {
-              //   res.cookie('register-student', cookieData, {"maxAge": 1000*60*60}); //one hour
-                // res.redirect('/login?room='  +req.body.room);
-
-                appConn.send({
-                  'type':C.REQ_TYPE.DATABASE,
-                  'data':{
-                    type:C.DB.CREATE.STUDENT_ACC,
-                    account:{
-                      name : req.body.name,
-                      username :req.body.username,
-                      email : req.body.email,
-                      password_hash : req.body.password
-                    },
-                    details :{
-                      school : req.body.school,
-                      date_of_birth : req.body.DOB
-                    }
+            if(!error) {
+            console.log("Creating an account: ");
+              appConn.send({
+                'type':C.REQ_TYPE.DATABASE,
+                'data': {
+                  type:C.DB.CREATE.STUDENT_ACC,
+                  account: {
+                    name : req.body.name,
+                    username :req.body.username,
+                    email : req.body.email,
+                    password_hash : req.body.password
+                  },
+                  details : {
+                    school : req.body.school,
+                    date_of_birth : req.body.DOB
                   }
-                  // 'username' :username,
-                  // 'email':email,
-                  // 'password':password,
-                  // 'dateOfBirth':dateOfBirth,
-                  // 'school':school
-
-                }, (response) => {
-                  res.render('register-student',{
-                    data:response.data
-                    // 'username':response.username,
-                    // 'email':response.email,
-                    // 'password':response.password,
-                    // 'dateOfBirth':response.dateOfBirth,
-                    // 'school':response.school
-                  });
+                }
+              }, (response) => {
+                res.render('register-student',{
+                  data : response.data
                 });
-              // });
-              // errors=false;
-            }
-            else{
-
+              });
+          } else {
               console.log("FAIL");
               errors=true;
               res.redirect('/registerstud');
-            }
           }
-          else{
-
+        } else {
             req.session.errors=error;
             req.session.success=false;
 
             console.log("password not match");
-            // res.redirect('/registerstud');
           }
-        }
-
-        else{
-
+        } else {
             req.session.errors=error;
             req.session.success=false;
             console.log(schema.validate('password',{list:true}));
             console.log("FAIL PW");
-
-            // res.redirect('/registerstud');
-
-
           }
-        }
-        else{
+        } else{
           req.session.errors=error;
           req.session.success=false;
 
           console.log("email not valid");
         }
-
-    }
-    else{
-
+      } else {
         req.session.errors=error;
         req.session.success=false;
         var errormsg = '';
-        if(name==""){
-          console.log("Please enter your name");
-          // errormsg= "Please enter your username"
-          // sendErrorPage(res,errormsg);
-          // res.render('register-student',{
-          //   error1:
-          // });
-        }
-        if(username==""){
-          console.log("Please enter your username");
-          // errormsg= "Please enter your username"
-          // sendErrorPage(res,errormsg);
-          // res.render('register-student',{
-          //   error1:
-          // });
-        }
-        if(password==""){
-          console.log("Please enter your password");
-          // errormsg= "Please enter your passwor"
-          // sendErrorPage(res,errormsg);
-          // res.render('register-student',{
-          //   error3:'Please enter your password'
-          // });
-        }
-        if(email==""){
-          console.log("Please enter your email");
-          // res.render('register-student',{
-          //   error2:'Please enter your email'
-          // });
 
-        }
-        console.log("never fill in all");
-
-        res.redirect('/registerstud');
-
-        return;
-
+        sendErrorPage(res, 'Not all fields filled in!');
     }
-    function sendErrorPage(res, errormsg) {
-      res.render('register-student', {
-        'error': errormsg
-      });
-    }
-
-
   }
+}
+
+function sendErrorPage(res, errormsg) {
+  res.render('error', {
+    'error': errormsg
+  });
 }
