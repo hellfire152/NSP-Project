@@ -9,27 +9,22 @@ module.exports = function(cipher, appConn, C) {
   return function(req, res) {
 
     // check name + description not empty, ' ' -> id
-    req.checkBody('prompt', 'Prompt must be specified').notEmpty().isString;
-    req.checkBody('shortAns', 'Solution must be specified').notEmpty().isString;
+    // req.checkBody('prompt', 'Prompt must be specified').notEmpty().isString;
+    // req.checkBody('shortAns', 'Solution must be specified').notEmpty().isString;
+    //
+    // req.sanitize('prompt').escape();
+    // req.sanitize('shortAns').escape();
+    // req.sanitize('prompt').trim();
+    // req.sanitize('shortAns').trim();
+    //
 
-    req.sanitize('prompt').escape();
-    req.sanitize('shortAns').escape();
-    req.sanitize('prompt').trim();
-    req.sanitize('shortAns').trim();
-
+    console.log(req.body);
+    var dataObj = JSON.parse(req.body.quizSet);
 
       console.log("Data: ");
-
-      var inputData = {
-        data : {
-          type : C.DB.CREATE.QUIZ,
-          quiz : req.body.quiz,
-          question : req.body.question,
-          choices : req.body.choices
-        }
-      }
-
-      console.log(inputData);
+      dataObj.quiz.quiz_rating = 0; //Default
+      dataObj.quiz.reward = parseInt(dataObj.quiz.reward);
+      dataObj.quiz.user_id = JSON.parse(req.cookies.user_info).user_id;
 
       // cipher.encryptJSON({
       //
@@ -51,12 +46,15 @@ module.exports = function(cipher, appConn, C) {
       // var penalty = req.body.penalty;
         // res.redirect('/add-question?prompt=' +req.body.prompt);
         appConn.send({
-          'type': C.REQ_TYPE.DATABASE, //JOIN_ROOM
-          'data': inputData
+          'type': C.REQ_TYPE.DATABASE,
+          'data': {
+            type : C.DB.CREATE.QUIZ,
+            quiz : dataObj.quiz,
+            question : dataObj.question,
+            choices : dataObj.choices
+          }
         }, (response) => {
-          res.render('add-quiz', {
-
-          });
+          res.redirect('add-quiz');
         });
       }
     };

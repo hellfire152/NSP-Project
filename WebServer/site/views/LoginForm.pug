@@ -2,7 +2,7 @@ doctype html
 html
   head
     link(rel='stylesheet', type='text/css', href='/resources/css/LoginForm.css')
-    title Login
+    title Login 
     script.
       var data = !{JSON.stringify(data)}
       console.log(data)
@@ -121,6 +121,10 @@ html
         }
         });
         });
+    script.
+      function setIp(){
+        $('#userIp').val(userip);
+      }
   body(onmousemove='canceltimer();', onclick='canceltimer();')
     // Form
     .form
@@ -129,13 +133,14 @@ html
         .form-header
           h1 Account Login
         .form-content
-          form#login(onsubmit='/validate-login-room', method='POST', action='/login-room')
+          form#login(onsubmit = 'setIp()' ,method='POST', action='/login-room')
             .form-group
               label(for='username') Username
               input#username(type='text', name='username', required='required', autocomplete="off")
             .form-group
               label(for='password') Password
               input#password(type='password', name='password', required='required', autocomplete="off")
+            input#userIp(type='hidden' name='userIp')
             .form-group
               a.form-recovery(href='ForgetPassword.html') Forgot Password?
             .form-group
@@ -165,18 +170,18 @@ html
               label(for='number') School
               input#number.checkphone(type='text', name='school' , autocomplete="off")
             .form-group
-              label(for='number') Phone Number
+              label(for='school') Phone Number
               input#school(type='text', name='phoneNumber' , autocomplete="off")
-            //- .form-group
-            //-   label(for='dateOfBirth', style='float:left; display:inline;')
-            //-     | Date of Birth:
-            //-     input#DOB(style='width:230px;', type='date', name='DOB',min='1990-01-01',max='2011-01-15')
+            //- .form-group/', type='date', name='DOB',min='1990-01-01',max='2011-01-15')
             .form-group
               button(type='submit') Register
     script(src='/resources/js/jquery.min.js')
     script(src='/resources/js/bootstrap.min.js')
     script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/jquery.validate.min.js')
     script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/additional-methods.min.js')
+    script.
+      var userip;
+    script(src='https://l2.io/ip.js?var=userip')
     script(type='text/javascript').
       $(document).ready(function() {
       var panelOne = $('.form-panel.two').height(),

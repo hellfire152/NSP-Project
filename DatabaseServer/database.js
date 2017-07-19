@@ -23,6 +23,10 @@ if(settings === undefined) {
 
 const S = require(settings);
 const C = require(S.CONSTANTS);
+ */
+process.on('uncaughtException', (err) => {
+  console.log(err);
+})
 var mysql = require('mysql');
 var handleDb;
 var Cipher = require(S.CIPHER);
@@ -112,6 +116,9 @@ var server = net.createServer(function(conn){
             console.log(e);
             conn.destroy();
           }
+        case C.DB.CREATE.QUIZ : {
+          await createQuiz(inputData);
+          console.log(inputData);
           break;
         }
         case C.AUTH.RECEIVED_PUBLIC_KEY: {
@@ -136,6 +143,103 @@ var server = net.createServer(function(conn){
                 console.log("CHALLENGE STRING VALIDATED");
               //no need for the challenge string anymore...
               delete conn.challengeString;
+        case C.DB.SELECT.QUESTION : {
+          await retrieveQuestions(inputData);
+          break;
+        }
+        case C.DB.SELECT.SEARCH_QUIZ : {
+          await searchQuiz(inputData);
+          break;
+        }
+        case C.DB.SELECT.USER_ACCOUNT : {
+          await retrievePreAccount(inputData);
+          break;
+        }
+        case C.DB.UPDATE.PASSWORD : {
+          await updatePassword(inputData);
+          break;
+        }
+        case C.DB.UPDATE.QUIZ : {
+          await updateQuiz(inputData);
+          break;
+        }
+        case C.DB.DELETE.ACCOUNT : {
+          await deleteAccount(inputData);
+          break;
+        }
+        case C.DB.UPDATE.QUESTION : {
+          await updateQuestion(inputData);
+          break;
+        }
+        case C.DB.UPDATE.USERNAME : {
+          await updateUsername(inputData);
+          break;
+        }
+        case C.DB.UPDATE.NAME : {
+          await updateName(inputData);
+          break;
+        }
+        case C.DB.UPDATE.ABOUT_ME : {
+          await updateAboutMe(inputData);
+          break;
+        }
+        case C.DB.UPDATE.SCHOOL : {
+          await updateSchool(inputData);
+          break;
+        }
+        case C.DB.UPDATE.STUDENT_CATEGORY : {
+          await updateStudentCategory(inputData);
+          break;
+        }
+        case C.DB.UPDATE.ORGANISATION : {
+          await updateOrganisation(inputData);
+          break;
+        }
+        case C.DB.DELETE.QUIZ : {
+          await deleteQuiz(inputData);
+          break;
+        }
+        case C.DB.SELECT.RETRIEVE_USER_DETAILS : {
+          await retrieveUserDetails(inputData);
+          break;
+        }
+        case C.DB.DELETE.QUESTION : {
+          await deleteQuestion(inputData);
+          break;
+        }
+        case C.DB.SELECT.FULL_USER_ACCOUNT : {
+          await retrieveFullAccount(inputData);
+          break;
+        }
+        case C.DB.CREATE.IP_ADDRESS : {
+          await addIpAddress(inputData);
+          break;
+        }
+        case C.DB.SELECT.EMAIL : {
+          console.log(inputData);
+          await retrieveEmail(inputData);
+          break;
+        }
+        default : {
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_NO_SUCH_FUNCTION,
+              message : "Not one of the cases"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        //ADD MORE CASES HERE
+      }
+      // response.reqNo = data.reqNo;
+      // sendToServer(response);
+    }
+    catch (err) {
+      console.log(err);
+      console.log('AppServer to DatabaseServer input Error!');
+    }
+  });
 
               //generate key using diffie-hellman
               conn.dh = crypto.createDiffieHellman(S.DH_KEY_LENGTH);
@@ -324,6 +428,38 @@ async function createAccount(inputData){
         WHERE email = " + connection.escape(dataAccount.email) +
         " OR username = " + connection.escape(dataAccount.username), function(error, result){
         // console.log(query);
+  //Retrieve email for OTP
+  async function retrieveEmail(inputData){
+    var data = inputData.data;
+    var query = connection.query("SELECT email FROM user_account WHERE user_id = " + connection.escape(data.user_id), function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      handleDb.handleDecryption(result)
+      .then(resultOut => {
+        objOutResult = {
+          data:{
+            data : resultOut[0],
+            success : true
+          }
+        }
+        sendToServer(objOutResult, inputData);
+      });
+    });
+  }
+
+  async function addIpAddress(inputData){
+    var data = inputData.data;
+    await handleDb.handleHashIP(data)
+    .then(dataOut => {
+      var query = connection.query("INSERT INTO new_device SET ?", dataOut.inputData, function(error, result){
         if(error){
           console.error('[Error in query]: ' + error);
           var response = {
@@ -1117,12 +1253,14 @@ async function createQuiz(inputData){
 
 }
 
-//Function will be called by createQuiz(), addQuestion will be called repeatedly until all question is stored.
-async function addQuestion(questionData, data, quizId, inputData){
-  questionData.quiz_id = quizId;
-  await handleDb.handleEncryption(questionData)
-  .then(questionDataOut => {
-    var query = connection.query("INSERT INTO quiz_question SET ?", questionDataOut, function(error, result){
+  //Create quiz and add to database accordinly
+  async function createQuiz(inputData){
+    var data = inputData.data;
+    data.quiz.date_created = new Date();
+    console.log("Eadfhjhgfyuiudahfycohasdkgiofhcuds");
+    console.log(data.quiz);
+    var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
+      console.log(query);
       if(error){
         console.error('[Error in query]: ' + error);
         var response = {
@@ -1222,14 +1360,9 @@ async function updateQuiz(inputData){
 
   queryStatment += " WHERE quiz_id = " + connection.escape(data.quiz_id);
 
-  connection.query(queryStatment, function(err, result){
-    if(err){
-      var response = {
-        data : {
-          success : false,
-          reason : C.ERR.DB_SQL_QUERY,
-          message : error
-        }
+            console.log('[Query successful]');
+          });
+        });
       }
       sendToServer(response, inputData);
     }
@@ -1326,7 +1459,74 @@ async function searchQuiz(inputData){
             objResult = {
               data : result
             }
-          sendToServer(objResult, inputData);
+            sendToServer(response, inputData);
+    			}
+    	});
+    });
+  }
+
+  //Retrieve every questions corresponding to the quiz specifed (quizId)
+  //If question type is a short ans, choice_arr will be null
+  async function retrieveQuestions(inputData){
+    var quizId = inputData.data.quizId;
+    var quizInfo;
+    var query = connection.query("SELECT quiz.reward, user_account.name, quiz.date_created, quiz.visibility, quiz.description\
+    FROM quiz\
+    LEFT OUTER JOIN user_account\
+      ON user_account.user_id = quiz.user_id\
+    WHERE quiz.quiz_id = '" + quizId + "'", function(err, result){
+      if(err){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+
+      handleDb.handleDecryption(result)
+      .then(resultOut => {
+        quizInfo = resultOut[0]; //A really lazy way, but it works
+      });
+    });
+
+    var query = connection.query("SELECT quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices, quiz_question.reward, quiz_question.penalty\
+    FROM quiz_question\
+    LEFT OUTER JOIN quiz_question_choices\
+      ON quiz_question.question_id = quiz_question_choices.question_id\
+    WHERE quiz_question.quiz_id = '" + quizId + "'\
+    ORDER BY quiz_question.question_no",
+    async function(err, result, fields){
+  			if (!err) { //result = data recieve from database
+          handleDb.handleDecryption(result)
+          .then(outPlainResult => {
+            handleDb.handleRecieveQuestion(outPlainResult)
+            .then(outResult => {
+              objOutResult = {
+                data:{
+                  data : {
+                    id : quizId,
+                    question : outResult,
+                    reward : quizInfo.reward,
+                    author : quizInfo.name,
+                    creationDate : quizInfo.date_created,
+                    'public' : quizInfo.visibility,
+                    description : quizInfo.description
+                  },
+                  success : true
+                }
+              }
+              sendToServer(objOutResult, inputData);
+            })
+            .catch(reason => {
+              console.log(reason);
+            });
+          })
+          .catch(reason => {
+            console.log(reason);
+          });
   			} else {
           var response = {
             data : {

@@ -158,7 +158,6 @@ module.exports = function(data) {
     console.log("GET FILE: " +req.path.substring(1));
     res.render(req.path.substring(1));
   });
-
   //handling form submits
   app.post('/data-access', validators["data-access"]);
   app.post('/join-room', validators["join-room"]);

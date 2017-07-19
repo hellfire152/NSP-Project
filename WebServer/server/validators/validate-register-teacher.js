@@ -16,7 +16,24 @@ module.exports =function(cipher, appConn, C){
     var password = req.body.password;
     var confirmPassword = req.body.confirmPassword;
     var school=req.body.school;
-    var phoneNumber=req.body.phoneNumber
+    var phoneNumber=req.body.phoneNumber;
+    var speakeasy = require("speakeasy");
+    var secret = speakeasy.generateSecret({length: 20}); // Secret key is 20 characters long
+
+    var otp = speakeasy.totp({
+        secret: secret.base32,
+        encoding: 'base32'
+      });
+
+      console.log(otp);
+      // to test for verification
+      var verified = speakeasy.totp.verify({
+        secret: secret.base32,
+        encoding: 'base32',
+        otp: otp
+      });
+
+      console.log(verified);
 
     console.log(school);
         req.sanitize('name').escape();
@@ -32,7 +49,7 @@ module.exports =function(cipher, appConn, C){
         req.sanitize('school').trim();
         req.sanitize('phoneNumber').trim();
     console.log(username);
-    if (name!="" && username!="" && email!="" && password!=""&&school!=""&&phoneNUmber!=""){
+    if (name!="" && username!="" && email!="" && password!=""&&school!=""&&phoneNumber!=""){
       var schema = new passwordValidator();
       schema
       .is().min(8)
@@ -60,8 +77,8 @@ module.exports =function(cipher, appConn, C){
                         user: 'chloeangsl@gmail.com',
                         clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
                         clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-                        refreshToken: '1/9op62YYjXj8wdRT7uhmlk0Zf486gqhaCWDVFLe3QZdVLdqBhJBUWfIt5vtMRXfu5',
-                        accessToken: 'ya29.GluIBCjmE1jHZ37vT0meyuFXrqdVZ3WzaGVrHtm2Yzr_PxGz0Sc92cND1MpAwY89fYhKws3RLortJpKWY5i0OwIwhTMPtNOmU9OPGTK0U5VUYvA3SAYDQCdyPpVd'
+                        refreshToken: '1/PqljSvhT5eVC59mMuJlSq3n-OXAC7t780142zdxSkuj0_lQqCwgeXxn7htzTCBmZ',
+                        accessToken: 'ya29.GluLBFitkUrt-trDc194r8hRXTSD4eUnvV2ZM1g2ARX5ug8SbCywqvGcjwRybPs7PIbYsi-7sJs5WG8ztMPUgOpMSBbEFEdudEywH8ouPH-QNZDvTVOuTgnWw_7C'
                   }
               })
 
@@ -69,16 +86,17 @@ module.exports =function(cipher, appConn, C){
                 from: 'My Name <chloeangsl@gmail.com>',
                 to: req.body.email,
                 subject: 'VERIFICATION EMAIL',
-                html: '<p>hello! you have created an account with the username: ' +req.body.username+ ' and Email: '+req.body.email+'</p>'
+                html: '<p>hello! you have created an account with the Username: ' +req.body.username+ ', and Email: '+req.body.email+'. Your verification number is: '+randomNum+' </p>'
             }
 
             transporter.sendMail(mailOptions, function (err, res) {
                 if(err){
                     console.log('Error');
                 } else {
-                    console.log('Email Sent');
+                    console.log('Email verification has been sent.');
                 }
             })
+
 
             console.log(error);
             console.log("pass");
@@ -107,7 +125,8 @@ module.exports =function(cipher, appConn, C){
                     // contact : req.body.contact TODO: FOR THE CONTACT IN DATABASE
                   },
                   details :{
-                    organisation : req.body.school
+                    organisation : req.body.school,
+                    otp: otp
                   }
                 }
 

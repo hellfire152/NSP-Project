@@ -1,3 +1,10 @@
+//choices in an array
+var choiceArr = [];
+var create;
+var questionArr = [];
+var questionNo = 1;
+
+//Validation check for quiz description
 $('#next').click(function(){
   if( !$('#nameofQuiz').val() ) {
      alert('Please fill in the name of the quiz!');
@@ -19,28 +26,30 @@ $('#next').click(function(){
     $('#createQuiz').hide();
   }
 
-  $(document).on('click', 'input[type="checkbox"]', function() {
-      $('input[type="checkbox"]').not(this).prop('checked', false);
-  });
+//   $(document).on('click', 'input[type="checkbox"]', function() {
+//       $('input[type="checkbox"]').not(this).prop('checked', false);
+//   });
 });
-//hello
+
+//Display MCQ fields to user to input
  function setMCQ(){
    $("#mcqSection").show();
    $('#shortSection').hide();
  }
 
+//Display Short answer fields to user to input
  function setShort(){
    $("#mcqSection").hide();
    $('#shortSection').show();
  }
 
+//Set the default upon loading web page
  function setDisplay() {
    $("#addQuestion").hide();
    $('#createQuiz').show();
  }
 
-
- // everything in an array
+ //Store choices into an array
  function displayAnswer() {
    var choice = [];
 
@@ -49,7 +58,7 @@ $('#next').click(function(){
    choice[2] = $("#choice3").val();
    choice[3] = $("#choice4").val();
 
-   var choiceArr  = []
+   var choiceArr  = [];
    choice.forEach(function(individualChoice){
      if(individualChoice !== ""){
        choiceArr.push(individualChoice);
@@ -57,9 +66,9 @@ $('#next').click(function(){
    });
    var choiceArr = [choice[0] , choice[1], choice[2], choice[3]];
 
-  console.log(choiceArr);
  }
 
+// Activate choice 2 when field is choice 1 is properly set
  function displayChoice1() {
    if ($ ('#choice1').val() == "") {
      $("#choice2").empty();
@@ -69,6 +78,7 @@ $('#next').click(function(){
    }
  }
 
+// Activate choice 3 when field is choice 2 is properly set
  function displayChoice2() {
    if ($ ('#choice2').val() == '') {
      $("#choice3").empty();
@@ -77,7 +87,7 @@ $('#next').click(function(){
      $("#choice3").prop('disabled', false);
    }
  }
-
+// Activate choice 4 when field is choice 3 is properly set
  function displayChoice3() {
    if ($('#choice3').val() == '') {
      $("#choice4").empty();
@@ -87,18 +97,20 @@ $('#next').click(function(){
    }
  }
 
+//On every key stroke, check weahter there is input in field
+//If field is empty deactiveate accordingly
  function displayChoice(){
    displayChoice1();
    displayChoice2();
    displayChoice3();
  }
-
  $(".choices").on('keydown', function() {
    displayChoice();
  });
 
-
+//Set default setting when adding question is loaded
  function defaultSetting(){
+   $("#mcq").prop("checked", true);
    setMCQ();
    //using constants
    $("#mcq").val(0);
@@ -110,12 +122,8 @@ $('#next').click(function(){
 
  }
 
-defaultSetting();
-setDisplay();
-
- // validations
-$('#submit').click(function()
-{
+ // validations when question is added
+function sendSetQuiz(){
  if( !$('#prompt').val() ) {
   alert('Please fill in the prompt!');
   return false;
@@ -153,29 +161,26 @@ $('#submit').click(function()
        }
      }
 
-
-   //TODO: SEND TO SERVER
+  //NOTE: This is the place where it send the quiz set to database
    var data = {
      quiz : create,
      question : questionArr,
      choices : choiceArr
    }
+   sendToServer(data);
+ }
 
+//Input data object into a hidden form #quizSet
+//And then send to server via the form.
+function sendToServer(inputData){
+  $('#quizSet').val(JSON.stringify(inputData));
+  console.log($('#quizSet').val());
+  document.forms["sendQuiz"].submit(function(){
+    alert("send");
+  });
+}
 
-   var xhr = new XMLHttpRequest();
-   xhr.open("POST", '/add-quiz', true);
-   xhr.setRequestHeader("Content-type", "application/json;charset=UTF-8");
-  //  xhr.send(data);
-   //OR TO STRINGIFY
-   xhr.send(JSON.stringify(data));
- });
-
-//choices in an array
-var choiceArr = [];
-var create;
-var questionArr = [];
-var questionNo = 1;
-
+//check weather it is public or private quiz
 function checkPublic() {
 if ($("#public").is(":checked")) {
    return true;
@@ -184,7 +189,7 @@ if ($("#public").is(":checked")) {
  }
 }
 
-
+//Add and prepare question into array
 function addQuestion() {
   var choice = [];
   if ($ ('#choice1').val().length != 0) {
@@ -213,20 +218,23 @@ function addQuestion() {
     }
   }
 
-
+  //Prepare choices Object and store into an array
   choice = {
-    choice : choice
+    choices : JSON.stringify(choice),
+    question_no : questionNo
   }
 
+  //Prepare Quiz Object
   create = {
-    name : $("#nameofQuiz").val(),
+    quiz_title : $("#nameofQuiz").val(),
     description : $("#desc").val(),
-    public :  checkPublic(),
+    visibility :  checkPublic(),
     reward : $("#cReward").val()
-    }
+  }
 
+  //Prepare Question Object and store into an array
   question = {
-    questionNo : questionNo,
+    question_no : questionNo,
     prompt : $("#prompt").val(),
     type : $('input[name="type"]:checked').val(),
     solution : solution(),
@@ -235,17 +243,13 @@ function addQuestion() {
     penalty : $("#penalty").val()
   }
 
-
   questionNo++;
-  choiceArr.push(choice);
-  console.log(choiceArr);
-  // $('#submit').click(function()
-  // {
-  //   createArr.push(create);
-  //   console.log(createArr);
-  // });
 
-  questionArr.push(question);
-  console.log(questionArr);
-
+  if($("#mcq").is(":checked")){
+    choiceArr.push(choice);
   }
+  questionArr.push(question);
+}
+
+defaultSetting();
+setDisplay();

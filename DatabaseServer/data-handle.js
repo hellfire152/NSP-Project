@@ -125,6 +125,16 @@ async function handleSearchQuiz(searchItem){
 async function handleRecieveQuestion(data){
   var num;
   data.forEach(function(individualData){
+    console.log(individualData);
+    if(individualData.choices === null){
+      delete individualData.choices
+    }
+    if(individualData.reward === null){
+      delete individualData.reward
+    }
+    if(individualData.penalty === null){
+      delete individualData.penalty
+    }
     num = parseInt(individualData.solution);
     if(!isNaN(num)){
       individualData.solution = num;

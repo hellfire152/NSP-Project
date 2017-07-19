@@ -1,5 +1,5 @@
 body {
-    background: url('../img/login_background.jpg');
+    background: url('/resources/images/backgrounds/login_background.jpg');
     background-repeat: no-repeat;
     background-size:cover;
     color: rgba(0, 0, 0, 0.6);
