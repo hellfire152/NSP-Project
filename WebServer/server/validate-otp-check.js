@@ -5,7 +5,9 @@ module.exports = function(cipher, appConn, C, xssDefense) {
   return function(req, res) {
     req.sanitize('otp').escape();
 
+
     var errors = req.validationErrors();
+
 
     if(errors) {
       //TODO::Handle errors
@@ -29,7 +31,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
                 type : C.DB.CREATE.IP_ADDRESS,
                 inputData : {
                   user_id : otpObj.user_id,
-                  ip_address : "5555"
+                  ip_address : otpObj.userIp
                   // ip_address : Math.floor((Math.random() * 10000) + 1).toString() //Mock up of new IP address TODO: Get IP address from client
                 }
               }

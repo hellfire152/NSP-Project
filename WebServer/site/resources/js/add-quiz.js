@@ -26,9 +26,9 @@ $('#next').click(function(){
     $('#createQuiz').hide();
   }
 
-  $(document).on('click', 'input[type="checkbox"]', function() {
-      $('input[type="checkbox"]').not(this).prop('checked', false);
-  });
+//   $(document).on('click', 'input[type="checkbox"]', function() {
+//       $('input[type="checkbox"]').not(this).prop('checked', false);
+//   });
 });
 
 //Display MCQ fields to user to input

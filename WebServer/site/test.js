@@ -4,20 +4,20 @@ const xoauth2 = require('xoauth2');
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        xoauth2: xoauth2.createXOAuth2Generator({
+      type: 'OAuth2',
             user: 'chloeangsl@gmail.com',
-            clientId: '856574075841-dn1nobjm59p0vrhmvcel4sf4djb6sath.apps.googleusercontent.com',
-            clientSecret: 'mHy11MyVPixj1dx44fX30uoV',
-            refreshToken: '1/3f97hE7yCmipAtuPcu1iu4EhF3kSmzYicMXiamYMjXY'
-        })
-    }
-})
+            clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
+            clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
+            refreshToken: '1/A-c1xD3ySllNeX9NB58yD-lN0f3c954gpANTOpEV5zA',
+            accessToken: 'ya29.GluLBGoKiZhUKdP6YXwiIuawS2SqxGdhu6R8U2h_U7dHo54x4TrJ6RjDmZoEBr_5AmGSW96YPEeEKToNTUPsFT75-a1Xh6pzNl_F6oip_tAd_n0ZieU3JWUY7v6H'
+      }
+  })
 
 var mailOptions = {
     from: 'My Name <chloeangsl@gmail.com>',
-    to: 'chloeangsl@gmail.com',
-    subject: 'testing my verification',
-    text: 'Hello World!!'
+    to: req.body.email,
+    subject: 'VERIFICATION EMAIL',
+    html: '<p>hello! you have created an account with the Username: ' +req.body.username+ ', and Email: '+req.body.email+'. Your verification number is: '+otp+ ' </p>'
 }
 
 transporter.sendMail(mailOptions, function (err, res) {

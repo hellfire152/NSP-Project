@@ -100,7 +100,8 @@
       "SEARCH_QUIZ" : 203,
       "USER_ACCOUNT" : 204,
       "RETRIEVE_USER_DETAILS" : 205,
-      "FULL_USER_ACCOUNT" : 206
+      "FULL_USER_ACCOUNT" : 206,
+      "EMAIL" : 207
     },
     "UPDATE" : {
       "PASSWORD" : 301,

@@ -13,6 +13,7 @@ var helmet = require('helmet');
 var app = express();
 var xssDefense = require('./xss-defense.js');
 var frameguard = require('frameguard');
+var emailServer = require('./email.js');
 
 
 app.use(helmet.noSniff()); // content type should not be changed or followed
@@ -165,15 +166,14 @@ module.exports = function(data) {
     console.log("GET FILE: " +req.path.substring(1));
     res.render(req.path.substring(1));
   });
-
   //handling form submits
   app.post('/data-access', require('../validate-data-access.js')(cipher, appConn, C));
   app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
   app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
   app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
-  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C, xssDefense));
-  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C));
-  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C));
+  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C, xssDefense, emailServer));
+  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C, emailServer));
+  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C, emailServer));
   app.post('/change-password-room-success', require('../validate-change-password.js')(cipher, appConn,C));
   app.post('/forget-password-room-success', require('../validate-forget-password.js')(cipher, appConn,C));
   app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C, xssDefense));

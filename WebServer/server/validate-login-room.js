@@ -1,6 +1,7 @@
 const uuid = require('uuid');
+var crypto = require('crypto'); // NOTE: TEMP SOLUTION
 var passwordValidator = require('password-validator');
-module.exports = function(cipher, appConn, C, xssDefense) {
+module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
   return function(req, res){
     console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
@@ -13,10 +14,15 @@ module.exports = function(cipher, appConn, C, xssDefense) {
     // console.log("hi");
     var username = req.body.username;
     var password = req.body.password;
+    var randomNum = req.body.randomNum;
         req.sanitize('username').escape();
         req.sanitize('password').escape();
+        req.sanitize('userIp').escape();
+        req.sanitize('randomNum').escape();
         req.sanitize('username').trim();
         req.sanitize('password').trim();
+        req.sanitize('userIp').trim();
+        req.sanitize('randomNum').trim();
 
     console.log(username);
     if (username!=""  && password!=""){
@@ -36,7 +42,6 @@ module.exports = function(cipher, appConn, C, xssDefense) {
 
           console.log("pass");
           console.log("HOST FORM DATA: ");
-          console.log(req.body);
 
             if(req.cookies.deviceIP != undefined){
               var deviceIp = JSON.parse(req.cookies.deviceIP);
@@ -54,26 +59,36 @@ module.exports = function(cipher, appConn, C, xssDefense) {
               }
             }, (response) => {
 
-
-              var currentIpAddress = "wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU=" //5555 temp way to get ip address, because site is not s
+              console.log(req.body.userIp);
+              // await cipher.hash(req.body.userIp)
+              // .then(hashedIp => {
+              //   console.log("HERE");
+              //   console.log(hashedIp);
+              //   currentIpAddress = hashedIp;
+              // });
               //If incorrect user input return to login page
               if(!(response.data.success)){
                 res.redirect('/LoginForm');
               }
               else{
+                // var currentIpAddress; //5555 temp way to get ip address, because site is not s
                 //Check for identical IP address in user cookie
                 var valid = false; //Registered IP address in client PC
                 if(deviceIp != undefined && response.data.data.ip_address != undefined){
-                  outerloop:
-                    for(i=0 ; i<response.data.data.ip_address.length ; i++){
-                      for(j=0 ; j<deviceIp.length ; j++){
-                        console.log("["+response.data.data.ip_address[i]+"]" + "["+deviceIp[j]+"]" + "["+currentIpAddress+"]");
-                        if(response.data.data.ip_address[i] == deviceIp[j] && currentIpAddress == response.data.data.ip_address[i] && currentIpAddress == deviceIp[j]){
-                          valid = true;
-                          break outerloop;
+                  // await cipher.hash(req.body.userIp)
+                  // .then(currentIpAddress => {
+                  var currentIpAddress = crypto.createHash('SHA256').update(req.body.userIp).digest('base64'); //NOTE: Temp solution
+                    outerloop:
+                      for(i=0 ; i<response.data.data.ip_address.length ; i++){
+                        for(j=0 ; j<deviceIp.length ; j++){
+                          console.log("["+response.data.data.ip_address[i]+"]" + "["+deviceIp[j]+"]" + "["+currentIpAddress+"]");
+                          if(response.data.data.ip_address[i] == deviceIp[j] && currentIpAddress == response.data.data.ip_address[i] && currentIpAddress == deviceIp[j]){
+                            valid = true;
+                            break outerloop;
+                          }
                         }
                       }
-                    }
+                  // });
                 }
                 if(valid){
                   //GET ACTUAL DATA AND STORE TO SESSION WITHOUT OTP
@@ -104,13 +119,35 @@ module.exports = function(cipher, appConn, C, xssDefense) {
                   });
                 }
                 else{
+                  //TODO:
                   //REDIRECT TO OTP WEBSITE TO VERIFY
                   //Generate otp pin
                   //Send the pin to email
                   //Change 1234 - random no.
+                  var randomNum = Math.floor((Math.random() * 999999) + 10000);
+                  console.log("THIS IS THE PIN: " + randomNum);
+
+                  appConn.send({
+                    'type' : C.REQ_TYPE.DATABASE,
+                    'data' : {
+                      type : C.DB.SELECT.EMAIL,
+                      user_id : response.data.data.user_id
+                    }
+                  } ,(response2) => {
+                    var email = response2.data.data.email
+                    //TODO: SEND THE DATA TO THE EMAIL SERVEVR
+                    emailObj = {
+                      pin : randomNum,
+                      email : email
+                    }
+
+                    emailServer.loginAccountOtpEmail(emailObj);
+                  });
+
                   var otp = {
-                    pin : 1234, //TODO:Will be randomly generated
+                    pin : randomNum,
                     user_id : response.data.data.user_id,
+                    userIp : req.body.userIp,
                     count : 0
                   }
                   res.cookie('otp', JSON.stringify(otp), {"maxAge": 1000*60*5}); //5 min
@@ -151,4 +188,16 @@ module.exports = function(cipher, appConn, C, xssDefense) {
         return;
     }
   }
+}
+
+async function handleHashIP(data){
+  cipher.hash(data)
+  .then(hashed => {
+    data = hashed;
+  })
+  .catch(reason => {
+    console.log(reason);
+  });
+
+return data;
 }

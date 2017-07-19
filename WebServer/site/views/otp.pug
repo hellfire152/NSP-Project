@@ -1,6 +1,9 @@
 html
   head
     title OTP
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
     script.
       var tim = 0;
       console.log("start timer");
@@ -12,9 +15,14 @@ html
       window.clearTimeout(tim);  // cancel the timer on each mousemove/click
       reload();  // and restart it
       }
+
+      function validate() {
+      var inputCode = document.getElementById("input").value.toUpperCase();
+      }
+
+
   body(onmousemove='canceltimer();', onclick='canceltimer();')
       h1 OTP
-      p static OTP pass: 1234 chloe please change to dynamic thx.
       form(action='/otp-check', method='POST')
-        input#otp(type='text', name='otp')
-        input(type='submit')
+        input#otp(type='text' name='otp')
+        input(type='submit', value=' Verification ')
