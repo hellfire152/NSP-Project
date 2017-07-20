@@ -13,6 +13,8 @@ var uuid = require('uuid');
 var cookie = require('cookie');
 var ios = require('socket.io-express-session');
 var xssDefense = require('./server/setup/xss-defense.js');
+var emailServer = require('./server/setup/email.js');
+
 var socketOfUser = {};
 setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
   socketOfUser = {};
@@ -91,7 +93,8 @@ module.exports = function(data) {
     'uuid' : uuid,
     'pendingAppResponses' : pendingAppResponses,
     'cookieCipher' : cookieCipher,
-    'xssDefense' : xssDefense
+    'xssDefense' : xssDefense,
+    'emailServer' : emailServer
   });
 
   //setting up the communication between the WebServer and AppServer

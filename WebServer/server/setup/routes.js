@@ -9,7 +9,7 @@ var express = require('express');
 var nodemailer = require('nodemailer');
 
 module.exports = function(data) {
-  let {app, dirname, cipher, appConn, queryOfUser, errors, cookieCipher, xssDefense}
+  let {app, dirname, cipher, emailServer, appConn, queryOfUser, errors, cookieCipher, xssDefense}
     = data;
   const C = data.C;
   uuid = data.uuid;
@@ -20,10 +20,10 @@ module.exports = function(data) {
     'join-room' : require('../validators/validate-join-room.js')(cookieCipher, appConn),
     'host-room' : require('../validators/validate-host-room.js')(cookieCipher, appConn),
     'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C),
-    'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense),
-    'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C),
-    'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn,C),
-    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn,C),
+    'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer),
+    'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
+    'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
+    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C),
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C),
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C),
     'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C)

@@ -1,24 +1,24 @@
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
-
+var S;
 async function createAccountOtpEmail(emailObj){
   console.log("INSIDE EMAIL SERVER");
   console.log(emailObj);
 
   var transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: S.EMAIL.SERVICE,
       auth: {
-        type: 'OAuth2',
-              user: 'chloeangsl@gmail.com',
-              clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
-              clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-              refreshToken: '1/1GVyLb8PTdvJ7pOcoNGgFfyy57RlukHB6UJ_W22UTV4',
-              accessToken: 'ya29.GluLBIxQYjPTkuJBqVhtWukxOUB4HCKjfYIFNuNtNiEK0P_xFvttlL2Z61ezv4cvCGUYB-RP4nKkFuzXFtY_OfaHQYZi_Zl3RxaMpEhGCScsc7vYxk1kZSz-MFtV'
-        }
-    })
+        type: S.EMAIL.AUTH.TYPE,
+        user: S.EMAIL.AUTH.USER,
+        clientId: S.EMAIL.AUTH.CLIENT_ID,
+        clientSecret: S.EMAIL.AUTH.CLIENT_SECRET,
+        refreshToken: S.EMAIL.AUTH.REFRESH_TOKEN,
+        accessToken: S.EMAIL.AUTH.ACCESS_TOKEN
+      }
+    });
 
   var mailOptions = {
-      from: 'ExQuizIt! Admin <chloeangsl@gmail.com>',
+      from: `ExQuizIt! Admin <${S.EMAIL.AUTH.USER}>`,
       to: emailObj.email,
       subject: 'ExQuizIt! Account Creation Verification',
       html: '<p>Dear Sir/Mdm! \n\t You have created an account with the Username: ' +emailObj.username+ ', and Email: '+emailObj.email+'. \n\tYour verification number is: '+emailObj.pin+'\n\nLove,\nExQuizIt </p>'
@@ -40,19 +40,19 @@ async function loginAccountOtpEmail(emailObj){
   console.log(emailObj);
 
   var transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: S.EMAIL.SERVICE,
       auth: {
-        type: 'OAuth2',
-              user: 'chloeangsl@gmail.com',
-              clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
-              clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-              refreshToken: '1/1GVyLb8PTdvJ7pOcoNGgFfyy57RlukHB6UJ_W22UTV4',
-              accessToken: 'ya29.GluLBIxQYjPTkuJBqVhtWukxOUB4HCKjfYIFNuNtNiEK0P_xFvttlL2Z61ezv4cvCGUYB-RP4nKkFuzXFtY_OfaHQYZi_Zl3RxaMpEhGCScsc7vYxk1kZSz-MFtV'
-        }
-    })
+        type: S.EMAIL.AUTH.TYPE,
+        user: S.EMAIL.AUTH.USER,
+        clientId: S.EMAIL.AUTH.CLIENT_ID,
+        clientSecret: S.EMAIL.AUTH.CLIENT_SECRET,
+        refreshToken: S.EMAIL.AUTH.REFRESH_TOKEN,
+        accessToken: S.EMAIL.AUTH.ACCESS_TOKEN
+      }
+    });
 
   var mailOptions = {
-      from: 'ExQuizIt! Admin <chloeangsl@gmail.com>',
+      from: `ExQuizIt! Admin <${S.EMAIL.AUTH.USER}>`,
       to: emailObj.email,
       subject: 'ExQuizIt! Verification',
       html: '<p>Dear Sir/Mdm! \n\t You have created an account with the Email: '+emailObj.email+'. Your verification number is: '+emailObj.pin+'\n\nLove,\nExQuizIt</p>'
@@ -70,7 +70,10 @@ async function loginAccountOtpEmail(emailObj){
   return true;
 }
 
-module.exports = {
-  'createAccountOtpEmail' : createAccountOtpEmail,
-  'loginAccountOtpEmail' : loginAccountOtpEmail
+module.exports = function(s) {
+  S = s;
+  return {
+    'createAccountOtpEmail' : createAccountOtpEmail,
+    'loginAccountOtpEmail' : loginAccountOtpEmail
+  }
 }
