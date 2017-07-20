@@ -4,7 +4,6 @@
   Author: Jin Kuan
 */
 console.log('PLAY: Loaded: race gamemode handler!');
-var firstQuestion = true;
 function handleGame(response) {
   console.log('PLAY: Handling game response!');
   switch(response.game) {
@@ -30,8 +29,7 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {  //first question OR gets the previous question correct
-      if(!firstQuestion) pixiScenes.answering.progressBar.increment();
-      else firstQuestion = false;
+      pixiScenes.answering.progressBar.increment();
       pixiScenes.topBar.updateCorrect(null, response.score); //update top bar
 
       let p = pixiScenes.answering;

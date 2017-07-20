@@ -52,18 +52,24 @@ app.loader  //load all
     p.getReady.addChild(getReadyBackground, getReadyText);
 
     //ranking scene
+    let scoreText = new PIXI.Text('Score');
+    let scoreTextBackground = new PIXI.Graphics()
+      .beginFill()
+      .drawRect(0,0,WIDTH,100)
+      .endFill();
+    scoreTextBackground.addChild(scoreText);
     p.ranking.allPlayerRanking = new AllPlayerRanking(resources, null, {
       'width' : WIDTH,
-      'height' : HEIGHT - topBar.height,
+      'height' : HEIGHT - 100 - topBar.height,
       'paddingX' : 40,
       'paddingY' : 20,
       'minHeight' : 50,
       'maxHeight' : 100
     }, false);
     //positioning
-    p.ranking.allPlayerRanking.y = topBar.height;
+    p.ranking.allPlayerRanking.y = topBar.height + scoreTextBackground.height;
     //adding to scene
-    p.ranking.addChild(p.ranking.allPlayerRanking.view);
+    p.ranking.addChild(scoreTextBackground, p.ranking.allPlayerRanking.view);
 
     //answering scene
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);

@@ -43,6 +43,7 @@ const KEYS = {
 };
 const AUTH_BYPASS = S.AUTH_BYPASS;
 
+//launches the app server
 function initServer() {
   var server = net.createServer(function (conn) { //WebServer will connect to this server
     conn.setEncoding('utf8');
@@ -133,6 +134,7 @@ function initServer() {
                 delete conn.challengeString;
 
                 //generate key using diffie-hellman
+                console.log(`Generating a ${S.DH_KEY_LENGTH} bit prime, this may take a while...`);
                 conn.dh = crypto.createDiffieHellman(S.DH_KEY_LENGTH);
                 conn.dhKey = conn.dh.generateKeys('base64');
 
@@ -236,15 +238,18 @@ function initServer() {
 }
 
 //connection with datbase server
-var dbConn = net.connect(S.DATABASE.PORT, S.DATABASE.IP, (conn) => {
-  conn.setEncoding('utf8');
-  //cipher objects to send between servers
-  conn.sendCipher = new Cipher({
-    'password' : S.APPSERVER.PASSWORD
-  });
-  conn.receiveCipher = new Cipher({
-    'password' : S.APPSERVER.PASSWORD
-  });
+var dbConn = net.connect({
+  'port' : S.DATABASE.PORT,
+  'host' : S.DATABASE.HOST
+});
+
+dbConn.setEncoding('utf8');
+//cipher objects to send between servers
+dbConn.sendCipher = new Cipher({
+  'password' : S.DATABASE.PASSWORD
+});
+dbConn.receiveCipher = new Cipher({
+  'password' : S.DATABASE.PASSWORD
 });
 
 var encryptAndSend;
@@ -270,7 +275,7 @@ if(S.AUTH_BYPASS) {
 }
 
 function logResponse(response) {
-  console.log("APPSERVER RESPONSE:");
+  console.log("DATABASE RESPONSE:");
   console.log(response);
 }
 
@@ -360,8 +365,7 @@ if(!S.AUTH_BYPASS) {
                 delete dbConn.dh //or that
                 delete dbConn.dhKey //EXTERRRRMINATE
 
-                //remove all listeners,
-                //server-setup will add them back in with socket.io support
+                //remove all listeners, initServer will add them as needed
                 dbConn.removeAllListeners('data');
                 initServer();
               }

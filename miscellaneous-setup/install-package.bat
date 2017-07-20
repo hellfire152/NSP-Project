@@ -18,5 +18,7 @@ call npm install cookie
 call npm install pug
 call npm install password-validator
 call npm install nodemailer
+call npm install mailchecker
+call npm install xoauth2
 cls
 echo All required modules installed!

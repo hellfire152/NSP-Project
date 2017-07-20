@@ -6,8 +6,8 @@
   Author : Nigel Chen Chin Hao
  */
 
-var databasedatabaseCipher;
-const C;
+var databaseCipher;
+var C;
 
 //Input user data password will undergo hashing and salting before storing to database
 async function handlePassword(data){
@@ -167,7 +167,7 @@ async function handleDecryption(data){
 }
 
 module.exports = function(data) {
-  if(databaseCipher === undefined || C === undefined)
+  if(data.databaseCipher === undefined || data.C === undefined)
     throw new Error("databaseCipher or C not set!");
   ({databaseCipher, C} = data);
   return {

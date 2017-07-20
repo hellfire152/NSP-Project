@@ -175,5 +175,6 @@ function sendGameEnd(players, data) {
   gameEndResults.sendTo = C.SEND_TO.ROOM;
   gameEndResults.roomNo = data.roomNo;
 
+  gameEndResults.titlesAndAchievenments = common.calculateTitles(currentRoom);
   return gameEndResults;
 }

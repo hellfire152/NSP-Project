@@ -230,6 +230,6 @@ var attemptConnection = setInterval(() => {
     }
   } catch (e) { //connection fails
     console.log(e);
-    console.log('Connection failed (most likely), retrying in 5 seconds...');
+    console.log('Connection failed (most likely), retrying in 10 seconds...');
   }
-}, 5000);
+}, 10000);

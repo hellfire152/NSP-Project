@@ -7,12 +7,10 @@
 
   Author: Nigel Chen Chin Hao
   Date: 09062017
-*/
-//do not shut down on error
-process.on('uncaughtException', function (err) {
- console.log(err);
-});
-
+ */
+process.on('uncaughtException', (err) => {
+  console.log(err);
+})
 
 //Check for setting obejct's existence
 var settings = process.argv[2];
@@ -21,25 +19,41 @@ if(settings === undefined) {
   process.exit(1);
 }
 
+var mysql = require('mysql');
 const S = require(settings);
 const C = require(S.CONSTANTS);
- */
-process.on('uncaughtException', (err) => {
-  console.log(err);
-})
-var mysql = require('mysql');
-var handleDb;
 var Cipher = require(S.CIPHER);
 var net = require('net');
+var crypto = require('crypto');
+var fs = require('fs');
+var uuid = require('uuid');
 var Promise = require('promise');
+
+//getting keys
+//getting the RSA keys
+const KEYS = {
+  'PUBLIC' : fs.readFileSync(S.KEYS.PUBLIC, "utf8"),
+  'PRIVATE' : fs.readFileSync(S.KEYS.PRIVATE, "utf8")
+};
+const AUTH_BYPASS = S.AUTH_BYPASS;
+
 //Create connection between app and database
 var connection = mysql.createConnection({
   host: S.DATABASE.HOST,
-  // user: 'user',
-  // password: 'eH7nKNVoeedg7gGZ',
   user: S.DATABASE.USER,
   password: S.DATABASE.PASSWORD,
   database: S.DATABASE.DATABASE_NAME
+});
+
+//for encrypting the database
+var databaseCipher = new Cipher({
+  'password' : S.DATABASE.CIPHER_KEY,
+  'iv' : S.DATABASE.CIPHER_IV
+});
+
+var handleDb = require("./data-handle.js")({
+  'C' : C,
+  'databaseCipher' : databaseCipher
 });
 
 //Ensure connection have been successful between data and database
@@ -48,27 +62,24 @@ connection.connect(function(error){
     console.error('[Failed to connect to database]: ' + error);
   }
   else{
-    connection.cipher = new Cipher({
-      'password' : S.DATABASE.CIPHER_KEY,
-      'iv' : S.DATABASE.CIPHER_IV
-    });
-    handleDb = require("./data-handle.js")({
-      'databaseCipher' : connection.cipher,
-      'C' : C
-    });
     console.log('[Successfully connected to database]');
   }
 });
 
-let appConn;
+var appConn;
 var server = net.createServer(function(conn){
   appConn = conn;
   conn.setEncoding('utf8');
+
   conn.status = C.AUTH.REQUEST_CONNECTION;
-  if(S.AUTH_BYPASS) {
-    console.log("AUTHENTICATED WILL BE BYPASSED");
-    conn.status = C.AUTH.AUTHENTICATED;
-  }
+  conn.sendCipher = new Cipher({
+    'password' : S.APPSERVER.PASSWORD,
+    'iv' : S.APPSERVER.INITIAL_IV
+  });
+  conn.receiveCipher = new Cipher({
+    'password' : S.APPSERVER.PASSWORD,
+    'iv' : S.APPSERVER.INITIAL_IV
+  });
 
   console.log("Database server start");
 
@@ -79,33 +90,34 @@ var server = net.createServer(function(conn){
   });
 
   conn.on('data', async function(input){
-    if(S.AUTH_BYPASS) console.log("AUTHENTICATED WILL BE BYPASSED");
-    /****DECRYPTION REQUEST*****/
-    let data, encryption;
-    if(!AUTH_BYPASS) { //Authentication bypass, set in settings
+    let inputData, encryption;
+    /**DECRYPTING INPUT*/
+    if(!AUTH_BYPASS) { //Authentication bnot bypassed
       if(conn.status != C.AUTH.AUTHENTICATED) {
         if(conn.status == C.AUTH.KEY_NEGOTIATION) {
-          data = JSON.parse(await conn.receiveCipher.decrypt(input));
+          inputData = JSON.parse(await conn.receiveCipher.decrypt(input));
         } else if(conn.status == C.AUTH.REQUEST_CONNECTION) {
           console.log("CONNECTION REQUESTED");
-          data = JSON.parse(input);
+          inputData = JSON.parse(input);
         } else {
-          data = JSON.parse(conn.receiveCipher.rsaDecrypt(input, KEYS.PRIVATE));
+          inputData = JSON.parse(conn.receiveCipher.rsaDecrypt(input, KEYS.PRIVATE));
         }
-      } else data = JSON.parse(await conn.receiveCipher.decrypt(input));
-    } else {
+      } else inputData = JSON.parse(await conn.receiveCipher.decrypt(input));
+    } else { //authentication bypassed
       conn.status = C.AUTH.AUTHENTICATED;
-      data = JSON.parse(input);
+      inputData = JSON.parse(input);
     }
+
     console.log("FROM APPSERVER:");
-    console.log(data);
+    console.log(inputData);
+
     if(conn.status != C.AUTH.AUTHENTICATED) { //not authenticated yet
       /**AUTHENTICATION PROCESS**/
       switch(conn.status) {
         case C.AUTH.REQUEST_CONNECTION : { //input has public key
           try {
             //send a json, with this server's public key and the challenge
-            conn.publicKey = data.publicKey;
+            conn.publicKey = inputData.publicKey;
             conn.challengeString = uuid();
             encryption = 'none';
             response = {
@@ -116,17 +128,14 @@ var server = net.createServer(function(conn){
             console.log(e);
             conn.destroy();
           }
-        case C.DB.CREATE.QUIZ : {
-          await createQuiz(inputData);
-          console.log(inputData);
           break;
         }
         case C.AUTH.RECEIVED_PUBLIC_KEY: {
-          if(data.received) {
+          if(inputData.received) {
             conn.challengeString = uuid().slice(0, 20);
             response = {
               'challengeString' : conn.challengeString,
-              'initialIv' : S.WEBSERVER.INITIAL_IV
+              'initialIv' : S.APPSERVER.INITIAL_IV
             };
             encryption = 'rsa';
             conn.status = C.AUTH.ENCRYPTED_CHALLENGE;
@@ -139,109 +148,13 @@ var server = net.createServer(function(conn){
         case C.AUTH.ENCRYPTED_CHALLENGE : { //receiving the challenge string
           try {
             if(conn.challengeString ==
-              await conn.receiveCipher.decrypt(data.encryptedChallenge)) {
+              await conn.receiveCipher.decrypt(inputData.encryptedChallenge)) {
                 console.log("CHALLENGE STRING VALIDATED");
               //no need for the challenge string anymore...
               delete conn.challengeString;
-        case C.DB.SELECT.QUESTION : {
-          await retrieveQuestions(inputData);
-          break;
-        }
-        case C.DB.SELECT.SEARCH_QUIZ : {
-          await searchQuiz(inputData);
-          break;
-        }
-        case C.DB.SELECT.USER_ACCOUNT : {
-          await retrievePreAccount(inputData);
-          break;
-        }
-        case C.DB.UPDATE.PASSWORD : {
-          await updatePassword(inputData);
-          break;
-        }
-        case C.DB.UPDATE.QUIZ : {
-          await updateQuiz(inputData);
-          break;
-        }
-        case C.DB.DELETE.ACCOUNT : {
-          await deleteAccount(inputData);
-          break;
-        }
-        case C.DB.UPDATE.QUESTION : {
-          await updateQuestion(inputData);
-          break;
-        }
-        case C.DB.UPDATE.USERNAME : {
-          await updateUsername(inputData);
-          break;
-        }
-        case C.DB.UPDATE.NAME : {
-          await updateName(inputData);
-          break;
-        }
-        case C.DB.UPDATE.ABOUT_ME : {
-          await updateAboutMe(inputData);
-          break;
-        }
-        case C.DB.UPDATE.SCHOOL : {
-          await updateSchool(inputData);
-          break;
-        }
-        case C.DB.UPDATE.STUDENT_CATEGORY : {
-          await updateStudentCategory(inputData);
-          break;
-        }
-        case C.DB.UPDATE.ORGANISATION : {
-          await updateOrganisation(inputData);
-          break;
-        }
-        case C.DB.DELETE.QUIZ : {
-          await deleteQuiz(inputData);
-          break;
-        }
-        case C.DB.SELECT.RETRIEVE_USER_DETAILS : {
-          await retrieveUserDetails(inputData);
-          break;
-        }
-        case C.DB.DELETE.QUESTION : {
-          await deleteQuestion(inputData);
-          break;
-        }
-        case C.DB.SELECT.FULL_USER_ACCOUNT : {
-          await retrieveFullAccount(inputData);
-          break;
-        }
-        case C.DB.CREATE.IP_ADDRESS : {
-          await addIpAddress(inputData);
-          break;
-        }
-        case C.DB.SELECT.EMAIL : {
-          console.log(inputData);
-          await retrieveEmail(inputData);
-          break;
-        }
-        default : {
-          var response = {
-            data : {
-              success : false,
-              reason : C.ERR.DB_NO_SUCH_FUNCTION,
-              message : "Not one of the cases"
-            }
-          }
-          sendToServer(response, inputData);
-        }
-        //ADD MORE CASES HERE
-      }
-      // response.reqNo = data.reqNo;
-      // sendToServer(response);
-    }
-    catch (err) {
-      console.log(err);
-      console.log('AppServer to DatabaseServer input Error!');
-    }
-  });
 
               //generate key using diffie-hellman
+              console.log(`Generating a ${S.DH_KEY_LENGTH} bit prime, this may take a while...`);
               conn.dh = crypto.createDiffieHellman(S.DH_KEY_LENGTH);
               conn.dhKey = conn.dh.generateKeys('base64');
 
@@ -266,7 +179,7 @@ var server = net.createServer(function(conn){
         }
         case C.AUTH.KEY_NEGOTIATION : { //input is the diffie-hellman public key
           try {
-            let key = data.dhPublic;
+            let key = inputData.dhPublic;
             conn.secret = conn.dh.computeSecret(key, 'base64', 'base64');
             console.log("SECRET" +conn.secret);
             let r = conn.secret.substring(0, ~~(conn.secret.length / 2));
@@ -288,9 +201,10 @@ var server = net.createServer(function(conn){
           break;
         }
       }
-    } else {  //authenticated
+      sendToServer(response, inputData, encryption);
+    } else {  //ALEADY AUTHENTICATED
       try {
-        switch(data.data.type) {
+        switch(inputData.data.type) {
           case C.DB.CREATE.STUDENT_ACC :
           case C.DB.CREATE.TEACHER_ACC : {
             await createAccount(inputData);
@@ -313,7 +227,7 @@ var server = net.createServer(function(conn){
             break;
           }
           case C.DB.SELECT.USER_ACCOUNT : {
-            await retrieveAccount(inputData);
+            await retrievePreAccount(inputData);
             break;
           }
           case C.DB.UPDATE.PASSWORD : {
@@ -360,12 +274,12 @@ var server = net.createServer(function(conn){
             await deleteQuiz(inputData);
             break;
           }
-          case C.DB.DELETE.QUESTION : {
-            await deleteQuestion(inputData);
-            break;
-          }
           case C.DB.SELECT.RETRIEVE_USER_DETAILS : {
             await retrieveUserDetails(inputData);
+            break;
+          }
+          case C.DB.DELETE.QUESTION : {
+            await deleteQuestion(inputData);
             break;
           }
           case C.DB.SELECT.FULL_USER_ACCOUNT : {
@@ -376,7 +290,11 @@ var server = net.createServer(function(conn){
             await addIpAddress(inputData);
             break;
           }
-          //ADD MORE CASES HERE
+          case C.DB.SELECT.EMAIL : {
+            console.log(inputData);
+            await retrieveEmail(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -384,27 +302,33 @@ var server = net.createServer(function(conn){
                 reason : C.ERR.DB_NO_SUCH_FUNCTION,
                 message : "Not one of the cases"
               }
-            };
+            }
             sendToServer(response, inputData);
           }
+          //ADD MORE CASES HERE
         }
-      } catch (err) {
-          console.log(err);
-          console.log('AppServer to DatabaseServer input Error!');
+        // response.reqNo = data.reqNo;
+        // sendToServer(response);
+      }
+      catch (err) {
+        console.log(err);
+        console.log('AppServer to DatabaseServer input Error!');
       }
     }
   });
 });
 
-function sendToServer(response, inputData, encryption) {
+//Send JSON string to app server
+async function sendToServer(response, inputData, encryption) {
+  response.reqNo = inputData.reqNo;
   if(encryption == 'rsa') {
-    console.log(`WRITING ${json}`);
-    appConn.write(appConn.sendCipher.rsaEncrypt(JSON.stringify(json), appConn.publicKey));
+    console.log(`WRITING ${response}`);
+    appConn.write(appConn.sendCipher.rsaEncrypt(JSON.stringify(response), appConn.publicKey));
   } else if (encryption == 'none' || S.AUTH_BYPASS) {
     console.log("NO ENCRYPTION");
-    appConn.write(JSON.stringify(json));
+    appConn.write(JSON.stringify(response));
   } else {
-    appConn.sendCipher.encrypt(JSON.stringify(json))
+    appConn.sendCipher.encrypt(JSON.stringify(response))
       .then((data) => {
         appConn.write(data);
       });
@@ -428,38 +352,6 @@ async function createAccount(inputData){
         WHERE email = " + connection.escape(dataAccount.email) +
         " OR username = " + connection.escape(dataAccount.username), function(error, result){
         // console.log(query);
-  //Retrieve email for OTP
-  async function retrieveEmail(inputData){
-    var data = inputData.data;
-    var query = connection.query("SELECT email FROM user_account WHERE user_id = " + connection.escape(data.user_id), function(error, result){
-      if(error){
-        var response = {
-          data : {
-            success : false,
-            reason : C.ERR.DB_SQL_QUERY,
-            message : error
-          }
-        }
-        sendToServer(response, inputData);
-      }
-      handleDb.handleDecryption(result)
-      .then(resultOut => {
-        objOutResult = {
-          data:{
-            data : resultOut[0],
-            success : true
-          }
-        }
-        sendToServer(objOutResult, inputData);
-      });
-    });
-  }
-
-  async function addIpAddress(inputData){
-    var data = inputData.data;
-    await handleDb.handleHashIP(data)
-    .then(dataOut => {
-      var query = connection.query("INSERT INTO new_device SET ?", dataOut.inputData, function(error, result){
         if(error){
           console.error('[Error in query]: ' + error);
           var response = {
@@ -778,6 +670,33 @@ async function retrieveFullAccount(inputData){
       sendToServer(response, inputData);
 
     }
+  });
+}
+
+//Retrieve email for OTP
+async function retrieveEmail(inputData){
+  var data = inputData.data;
+  var query = connection.query("SELECT email FROM user_account WHERE user_id = " + connection.escape(data.user_id), function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    handleDb.handleDecryption(result)
+    .then(resultOut => {
+      objOutResult = {
+        data:{
+          data : resultOut[0],
+          success : true
+        }
+      }
+      sendToServer(objOutResult, inputData);
+    });
   });
 }
 
@@ -1223,7 +1142,10 @@ async function deleteAccount(inputData){
 async function createQuiz(inputData){
   var data = inputData.data;
   data.quiz.date_created = new Date();
+  console.log("Eadfhjhgfyuiudahfycohasdkgiofhcuds");
+  console.log(data.quiz);
   var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
+    console.log(query);
     if(error){
       console.error('[Error in query]: ' + error);
       var response = {
@@ -1253,14 +1175,12 @@ async function createQuiz(inputData){
 
 }
 
-  //Create quiz and add to database accordinly
-  async function createQuiz(inputData){
-    var data = inputData.data;
-    data.quiz.date_created = new Date();
-    console.log("Eadfhjhgfyuiudahfycohasdkgiofhcuds");
-    console.log(data.quiz);
-    var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
-      console.log(query);
+//Function will be called by createQuiz(), addQuestion will be called repeatedly until all question is stored.
+async function addQuestion(questionData, data, quizId, inputData){
+  questionData.quiz_id = quizId;
+  await handleDb.handleEncryption(questionData)
+  .then(questionDataOut => {
+    var query = connection.query("INSERT INTO quiz_question SET ?", questionDataOut, function(error, result){
       if(error){
         console.error('[Error in query]: ' + error);
         var response = {
@@ -1304,7 +1224,6 @@ async function addChoices(choiceData, questionId, questionNo, inputData){
           }
 
           console.log('[Query successful]');
-          console.log(result);
         });
       });
     }
@@ -1360,9 +1279,14 @@ async function updateQuiz(inputData){
 
   queryStatment += " WHERE quiz_id = " + connection.escape(data.quiz_id);
 
-            console.log('[Query successful]');
-          });
-        });
+  connection.query(queryStatment, function(err, result){
+    if(err){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
       }
       sendToServer(response, inputData);
     }
@@ -1459,74 +1383,7 @@ async function searchQuiz(inputData){
             objResult = {
               data : result
             }
-            sendToServer(response, inputData);
-    			}
-    	});
-    });
-  }
-
-  //Retrieve every questions corresponding to the quiz specifed (quizId)
-  //If question type is a short ans, choice_arr will be null
-  async function retrieveQuestions(inputData){
-    var quizId = inputData.data.quizId;
-    var quizInfo;
-    var query = connection.query("SELECT quiz.reward, user_account.name, quiz.date_created, quiz.visibility, quiz.description\
-    FROM quiz\
-    LEFT OUTER JOIN user_account\
-      ON user_account.user_id = quiz.user_id\
-    WHERE quiz.quiz_id = '" + quizId + "'", function(err, result){
-      if(err){
-        var response = {
-          data : {
-            success : false,
-            reason : C.ERR.DB_SQL_QUERY,
-            message : error
-          }
-        }
-        sendToServer(response, inputData);
-      }
-
-      handleDb.handleDecryption(result)
-      .then(resultOut => {
-        quizInfo = resultOut[0]; //A really lazy way, but it works
-      });
-    });
-
-    var query = connection.query("SELECT quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices, quiz_question.reward, quiz_question.penalty\
-    FROM quiz_question\
-    LEFT OUTER JOIN quiz_question_choices\
-      ON quiz_question.question_id = quiz_question_choices.question_id\
-    WHERE quiz_question.quiz_id = '" + quizId + "'\
-    ORDER BY quiz_question.question_no",
-    async function(err, result, fields){
-  			if (!err) { //result = data recieve from database
-          handleDb.handleDecryption(result)
-          .then(outPlainResult => {
-            handleDb.handleRecieveQuestion(outPlainResult)
-            .then(outResult => {
-              objOutResult = {
-                data:{
-                  data : {
-                    id : quizId,
-                    question : outResult,
-                    reward : quizInfo.reward,
-                    author : quizInfo.name,
-                    creationDate : quizInfo.date_created,
-                    'public' : quizInfo.visibility,
-                    description : quizInfo.description
-                  },
-                  success : true
-                }
-              }
-              sendToServer(objOutResult, inputData);
-            })
-            .catch(reason => {
-              console.log(reason);
-            });
-          })
-          .catch(reason => {
-            console.log(reason);
-          });
+          sendToServer(objResult, inputData);
   			} else {
           var response = {
             data : {
@@ -1545,7 +1402,30 @@ async function searchQuiz(inputData){
 //If question type is a short ans, choice_arr will be null
 async function retrieveQuestions(inputData){
   var quizId = inputData.data.quizId;
-  var query = connection.query("SELECT quiz_question.quiz_id, quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices\
+  var quizInfo;
+  var query = connection.query("SELECT quiz.reward, user_account.name, quiz.date_created, quiz.visibility, quiz.description\
+  FROM quiz\
+  LEFT OUTER JOIN user_account\
+    ON user_account.user_id = quiz.user_id\
+  WHERE quiz.quiz_id = '" + quizId + "'", function(err, result){
+    if(err){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+
+    handleDb.handleDecryption(result)
+    .then(resultOut => {
+      quizInfo = resultOut[0]; //A really lazy way, but it works
+    });
+  });
+
+  var query = connection.query("SELECT quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices, quiz_question.reward, quiz_question.penalty\
   FROM quiz_question\
   LEFT OUTER JOIN quiz_question_choices\
     ON quiz_question.question_id = quiz_question_choices.question_id\
@@ -1559,7 +1439,15 @@ async function retrieveQuestions(inputData){
           .then(outResult => {
             objOutResult = {
               data:{
-                data : resultOut,
+                data : {
+                  id : quizId,
+                  question : outResult,
+                  reward : quizInfo.reward,
+                  author : quizInfo.name,
+                  creationDate : quizInfo.date_created,
+                  'public' : quizInfo.visibility,
+                  description : quizInfo.description
+                },
                 success : true
               }
             }
