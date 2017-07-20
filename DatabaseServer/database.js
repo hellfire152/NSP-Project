@@ -60,11 +60,10 @@ var server = net.createServer(function(conn){
         }
         case C.DB.CREATE.QUIZ : {
           await createQuiz(inputData);
-          console.log(inputData);
           break;
         }
         case C.DB.SELECT.ALL_QUIZ : {
-          await retrieveAllQuiz();
+          await retrieveAllQuiz(inputData);
           break;
         }
         case C.DB.SELECT.QUESTION : {
@@ -1067,7 +1066,7 @@ var server = net.createServer(function(conn){
   }
 
   //Retrieve all the quiz available in the database
-  async function retrieveAllQuiz(){
+  async function retrieveAllQuiz(inputData){
     var query = connection.query('SELECT * FROM quiz ORDER BY date_created DESC', function(err, result, fields){
   			if (err) {
           var response = {

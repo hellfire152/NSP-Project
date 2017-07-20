@@ -103,11 +103,19 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                     console.log(response.data.data[0]);
                     var encodedData = xssDefense.jsonEncode(response.data.data[0]);
                     if(response.data.success){
-                      console.log("SUCCESS");
-                      console.log(encodedData);
-                      res.cookie('user_info', JSON.stringify(encodedData));
-                      res.render('Loginindex',{
-                        data: encodedData
+
+                      appConn.send({
+                        'type' : C.REQ_TYPE.DATABASE,
+                        'data' : {
+                          type : C.DB.SELECT.ALL_QUIZ
+                        }
+                      } ,(response2) => {
+                        // var encodedQuiz = xssDefense.jsonEncode(response2.data.data);
+                        res.cookie('user_info', JSON.stringify(encodedData));
+                        res.render('Loginindex',{
+                          data: encodedData,
+                          quizzes : response2.data.data
+                        });
                       });
                     }
                     else{
