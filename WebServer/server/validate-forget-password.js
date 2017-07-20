@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator = require('password-validator');
-module.exports = function(cipher, appConn, C) {
+module.exports = function(cipher, appConn, C,emailServer) {
   return function(req, res){
     console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
@@ -14,6 +14,17 @@ module.exports = function(cipher, appConn, C) {
     var username = req.body.username;
     var email = req.body.email;
 
+    function randomNum() {
+    var text ="";
+    var random = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for(var i = 0; i < 12; i++) {
+      text += random.charAt(Math.floor(Math.random() *62));
+    }
+    return text;
+    }
+
+
+
         req.sanitize('username').escape();
         req.sanitize('email').escape();
         req.sanitize('username').trim();
@@ -22,6 +33,14 @@ module.exports = function(cipher, appConn, C) {
     console.log(username);
     if (username!=""  && email!=""){
       var error = req.validationErrors();
+
+            emailObj = {
+              username: req.body.username,
+              pin : randomNum(),
+              email : req.body.email
+            }
+
+            emailServer.forgetPasswordOtpEmail(emailObj);
 
         if(!error){
 
@@ -96,6 +115,9 @@ module.exports = function(cipher, appConn, C) {
         return;
 
     }
+
+
+
 
 
 
