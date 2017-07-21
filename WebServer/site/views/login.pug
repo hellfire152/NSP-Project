@@ -41,11 +41,11 @@ html
         });
         });
   body(onmousemove='canceltimer();', onclick='canceltimer();')
-
+    input(type='text', name='username', id='username', class='hi', autocomplete="off")
     form#login(onsubmit='/validate-login-room', method='POST', action='/login-room')
       div.form-group
         p username
-        input(type='text', name='username', id='username', autocomplete="off")
+        input(type='text', name='username', id='username', class='hi', autocomplete="off")
         p password
         input(type ='password' , name ='password', id ='password', autocomplete="off")
 
