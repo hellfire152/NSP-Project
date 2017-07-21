@@ -4,19 +4,14 @@
 
   Author: Jin Kuan
 */
-var data, C, allRooms, conn, sendToServer;
 module.exports = async function(input) {
-  ({data, C, allRooms, conn, sendToServer} = input);
-
-  switch(data.event) {
+  const C = input.C;
+  switch(input.data.event) {
     case C.EVENT.JOIN_ROOM : {
-      return await join_room();
+      return await join_room(input);
     }
     case C.EVENT.GAMEMODE_SET: {
-      return (await gamemode_set());
-    }
-    case C.EVENT.START: {
-      return await start();
+      return (await gamemode_set(input));
     }
     default: {
       console.log("App-handle-io.js: WebServer to AppServer EVENT is " + data.event +" not a preset case!");
@@ -27,7 +22,8 @@ module.exports = async function(input) {
 /*
   TODO::FINISH THIS SHIT
 */
-async function join_room() {
+async function join_room(input) {
+  let {data, C, allRooms, conn, sendToServer} = input;
   let r = allRooms[data.room];
   if(r !== undefined) {  //if room exists
     if(r.joinable) {
@@ -99,7 +95,9 @@ async function join_room() {
 
   Will throw ERR.NO_SPARE_ROOMS after 100 times of failing to find a free roomNo
 */
-async function gamemode_set() {
+async function gamemode_set(input) {
+  console.log(input);
+  let {data, C, allRooms, conn, sendToServer} = input;
   let response = {};
   validLogin = true /*TODO::VALID LOGIN*/
 

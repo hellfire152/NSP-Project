@@ -1,0 +1,47 @@
+html
+  head
+    script(src='/controller/game/play/game-end-test.js')
+    script.
+      window.onload = () => {
+        gameEnd({
+          'roundEndResults' : [
+              {
+                'name' : 'hellfire152',
+                'score' : 1000,
+                'answerStreak' : 2
+              },
+              {
+                'name' : 'player2',
+                'score': 500,
+                'answerStreak' : 3
+              },
+              {
+                'name' : 'player3',
+                'score' : 300,
+                'answerStreak' : 1
+              },
+          ],
+          'titlesAndAchievenments' : [
+            {
+              'recipient' : 'hellfire152',
+              'icon' : '',
+              'description' : 'random stuff',
+              'name' : 'HELLO'
+            },
+            {
+              'recipient' : 'player2',
+              'icon' : '',
+              'description' : 's stuff',
+              'name' : '222'
+            },
+            {
+              'recipient' : 'player3',
+              'icon' : '',
+              'description' : 'sdf stuff',
+              'name' : 'dfdf'
+            }
+          ]
+        });
+      }
+  body
+    canvas

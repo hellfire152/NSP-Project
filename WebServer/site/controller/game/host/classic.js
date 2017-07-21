@@ -18,30 +18,116 @@ var currentQuestion;
 var firstQuestion = true;
 console.log('HOST: Loaded: classic gamemode handler!');
 function handleGame(response) {
+  if(firstQuestion) initHost();
   console.log('HOST: Handling game response!');
   switch(response.game) {
+    case C.GAME_RES.GET_READY: {
+      document.getElementById('get-ready').style.display = true;
+    }
     case C.GAME_RES.ANSWER_CHOSEN: {
+      //updata answersObj
       if(answersObj[response.answer] === undefined)
         answersObj[response.answer] = 0;
       answersObj[response.answer]++;
-      updateResponseDisplay(answersObj);
+
+      //update display
+      if(S.showLiveResponse) {
+        updateDisplay();
+      }
+      break;
+    }
+    case C.GAME_RES.RESPONSE_DATA: {
+      document.getElementById('currentQuestion').style.display = 'block';
+      updateDisplay();
+      //show the next button
+      let nextButton = document.createElement('button');
+      nextButton.onclick = () => {
+        send({
+          'game' : C.GAME.NEXT_ROUND
+        });
+        document.getElementById('currentQuestion').style.display = 'none';
+      }
+      nextButton.id = 'next-button';
+
       break;
     }
     case C.GAME_RES.ROUND_END: {
-      displayResults(response.roundEndResults);
+      //show the current rankings on screen
+      document.getElementById('ranking').style.display = 'block';
+      document.getElementById('currentQuestion').style.display = 'none';
+
+      //show ranking
+      let rankingList = document.getElementById('ranking');
+      rankingList.innerHTML = "";
+      for(let player of response.roundEndResults) {
+        let playerLi = document.createElement('div');
+        let name = document.createElement('p');
+        name.appendChild(document.createTextNode(player.name));
+        name.class += ' ranking-name';
+
+        let score = document.createElement('p');
+        score.appendChild(document.createTextNode(player.score));
+        score.class += ' ranking-score';
+
+        let answerStreak = document.createElement('p');
+        answerStreak.appendChild(document.createTextNode(player.answerStreak));
+        answerStreak.class += ' ranking-answer-streak';
+      }
+      answersObj = {}; //clear answersObj for next round
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
-      loadQuestion(response.question);
+      document.getElementById('get-ready').style.display = 'none';
+
+      //hide the other divs and show the question one
+      document.getElementById('currentQuestion').style.display = 'block';
+      document.getElementById('ranking').style.display = 'none'
+      currentQuestion = response.question;
+
+      //create a div for the question
+      currentQuestionDiv.appendChild(document.createTextNode(response.question.prompt));
+
+      //a ordered list for the choices...
+      let responsesOl = document.createElement('ol');
+      responsesOl.id = 'response-list';
+
+      if(question.type == 0) {  //MCQ question
+
+        //append a list element for each choice in the question
+        let choiceCounter = 0;
+        for(let choice of response.question.choices) {
+          //create the li element to append to the list
+          let choiceLi = document.createElement('li');
+          choiceLi.id = `choice-${choiceCounter}`;
+          choiceLi.class = 'choice';
+          choiceLi.appendChild(document.createTextNode(choice)); //choice text
+
+          //to show the number of times this choices was chosen
+          let noTimesChosenSpan = document.createElement('span');
+          let noTimesChosenText = document.createTextNode();
+          noTimesChosenText.id = `choice-${choiceCounter}-chosen`;
+          noTimesChosenSpan.appendChild(noTimesChosenText);
+
+          //add to list
+          choiceLi.appendChild(noTimesChosenSpan);
+          responsesOl.appendChild(choicesLi);
+        }
+
+        //add to the display
+        currentQuestionDiv.appendChild(responsesOl);
+      }
+
+      document.body.appendChild(currentQuestionDiv);
       break;
     }
     case C.GAME_RES.GAME_END: {
-      //from common
-      showTitlesAndAchievements(response.titlesAndAchievenments);
-      initEndScene();
-      initRatingScene();
+      //show end results
 
-      displayGameEnd(response.roundEndResults);
+      //top rankings
+
+      //titles and achievements
+
+      //rating
       break;
     }
     default: {
@@ -50,108 +136,45 @@ function handleGame(response) {
   }
 }
 
-function updateResponseDisplay(answersObj) {
-  if(p.currentScene !== 'answering') swapScene('answering');
-  let data = {
-    'labels' : [],
-    'values' : []
-  };
-  for(let answer in answersObj) {
-    if(answersObj.hasOwnProperty(answer)) {
-      data.labels.push(answer);
-      data.values.push(answersObj[answer]);
-    }
-  }
-  let barGraph = new BarGraph(resources, data, {
-    'width': WIDTH,
-    'height' : HEIGHT / 2,
-    'paddingX' : 5,
-    'paddingY' : 5
-  });
-  p.answering.removeChild(p.answering.barGraph);
-  p.answering.barGraph = barGraph;
-  p.answering.addChild(barGraph);
+function initHost() {
+  let getReadyDiv = createNode('div', 'Starting game...', null, 'get-ready');
+
+  let currentQuestionDiv = document.createElement('div');
+  currentQuestionDiv.id = 'current-question';
+  firstQuestion = false;
+
+  //init ranking stuff
+  let gameRankingDiv = document.createElement('div');
+  gameRankingDiv.id = 'game-ranking';
+
+  gameRankingDiv.style.display = getReadyDiv.style.display =
+  currentQuestionDiv.style.display = 'none';
+
+  appendMultiple(document.body, getReadyDiv, rankingDiv);
 }
 
-//same as play, but with the buttons/textfield disabled.
-function loadQuestion(question) {
-  let p = pixiScenes.answering;
-
-  let timerEnd; //callback for when timer ends
-  //set both not visible (just in case)
-  p.mcqButtonHandler.visible = p.shortAnswerTextField.visible = false;
-  if(question.type == 0) { //mcq question
-    p.mcqButtonHandler.reset();
-    p.mcqButtonHandler.visible = true;
-    p.mcqButtonHandler.setNoOfChoices(question.choices.length);
-    p.mcqButtonHandler.choices = question.choices;
-    timerEnd = () => {};
-  } else {  //short answer
-    p.shortAnswerTextField.reset();
-    p.shortAnswerTextField.visible = true;
-    timerEnd = () => {};
-  }
-  p.questionDisplay.text = question.prompt;
-  setTimeout(timerEnd, question.time * 1000);
-  swapScene('answering');
-}
-
-//same as play for now
-function displayGameEnd(response) {
-  //shows two scenes, first is the ranking, next the titles/achievements
-  //allows for swapping via buttons
-  pixiScenes.titlesAndAchievenments = new PIXI.Container();
-  //updating the ranking list
-  displayResults(response.roundEndData);
-  //showing titles and achievements
-  showTitlesAndAchievements(response.titlesAndAchievenments); //in common
-  //initialize rating scene
-  initRatingScene();  //in common
-  //init end scene
-  initEndScene(); //in common
-
-  //defining next and previous page buttons
-  //order: ranking -> titlesAndAchievenments -> rating -> end
-  let next = new Button(allResources['next-button'].textures, WIDTH / 8, () => {
-    if(pixiScenes.currentScene === 'ranking') {
-      previous.enable();
-      swapScene('titlesAndAchievenments');
-    } else if(pixiScenes.currentScene === 'titlesAndAchievenments') {
-      swapScene('rating');
-    } else if(pixiScenes.currentScene === 'rating') {
-      swapScene('end');
-      this.disable();
-    } else {
-      throw new Error(`Cannot go to the next panel, currentScene = ${pixiScenes.currentScene}`);
+function updateDisplay() {
+  if(question.type == 0) {  //MCQ
+    //edit the field
+    for(let i = 0, answer = 8; i < question.choices.length; i++, answer /= 2) {
+      let chosenNo = (answersObj[answer] === undefined)? 0 : answersObj[answer];
+      document.getElementById(`choice-${i}-chosen`).nodeValue = chosenNo;
     }
-  }, null);
-  let previous = new Button(allResources['previous-button'].textures, WIDTH / 8, () => {
-    if(pixiScenes.currentScene === 'end') {
-      next.enable();
-      swapScene('rating');
-    } else if(pixiScenes.currentScene === 'rating') {
-      swapScene('titlesAndAchievenments');
-    } else if(pixiScenes.currentScene === 'titlesAndAchievenments') {
-      swapScene('ranking');
-      this.disable();
-    } else {
-      throw new Error(`Cannot go to the next panel, currentScene = ${pixiScenes.currentScene}`);
-    }
-  }, null);
-  swapScene('ranking');
-}
+  } else { //Short answer
+    //
+    document.getElementById('response-list').innerHTML = "";
+    for(let answer in answersObj) {
+      if(answersObj.hasOwnProperty(answer)) {
+        let responseLi = document.createElement('li');
+        let responseText = document.createTextNode(answer);
+        let responseNo = document.createTextNode(answersObj[answer]);
+        responseText.class += ' response';
+        responseNo.class += ' response-no';
 
-//sends the answer to the server
-function submitAnswer(type, ans) {
-  if (type == 0){
-    send({
-      'game': C.GAME.SUBMIT_ANSWER,
-      'answer': C.MCQ[ans]
-    });
-  } else {
-    send({
-      'game': C.GAME.SUBMIT_ANSWER,
-      'answer': ans //TODO::Validation against injection attacks
-    });
+        responseLi.appendChild(responseText);
+        responseLi.appendChild(responseNo);
+        document.getElementById('response-list').appendChild(responseLi);
+      }
+    }
   }
 }

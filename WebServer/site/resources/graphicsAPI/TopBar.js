@@ -41,7 +41,7 @@ class TopBar extends DisplayElement {
   updateCorrect(correctAnswers, score) {
     let p = this._pixiElements;
     //setting text
-    p.correctAnswers.text = `Correct Answers: ${correctAnswers}`;
+    p.correctAnswers.text = (correctAnswers === null)? ' ' : `Correct Answers: ${correctAnswers}`;
     p.score.text = `Score: ${score}`;
     //correct positioning
     p.score.x = this._width - 5;

@@ -37,6 +37,9 @@ class AllPlayerRanking extends DisplayElement {
     if(indivDisplayHeight < pd.minHeight) {
       indivDisplayHeight = pd.height / pd.minHeight;
     }
+
+    if(indivDisplayHeight > pd.maxHeight)
+      indivDisplayHeight = pd.maxHeight;
     for(let i = 0; i < playerData.length; i++) {
       let playerDisplay = new PlayerRanking(
         this._resources, playerData[i], {

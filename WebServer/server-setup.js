@@ -5,34 +5,37 @@
   This file does set most of the middleware used
   Author: Jin Kuan
 */
-
+//required modules
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var helmet = require('helmet');
 var uuid = require('uuid');
-var pendingResponses = {};
 var cookie = require('cookie');
 var ios = require('socket.io-express-session');
-const C = require('../custom-API/constants.json');
-var xssDefense = require('xss'); 
+var xssDefense = require('./server/setup/xss-defense.js');
+var emailServer = require('./server/setup/email.js');
 
 var socketOfUser = {};
+setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
+  socketOfUser = {};
+}, 2000);
 module.exports = function(data) {
   //extracting data
-  var app = data.app;
-  var io = data.io;
-  var pass = data.pass;
-  var appConn = data.appConn;
-  var cipher = data.cipher;
-  var express = data.express
-  var net = data.net;
-  var cookieParser = data.cookieParser;
-  const COOKIE_KEY = data.COOKIE_KEY;
+  let {app, io, pass, appConn, Cipher, express, net, cookieParser, pendingAppResponses,
+    decryptResponse, logResponse, runCallback} = data;
+  const S = data.S;
+  const C = data.C;
+
+  //cipher for cookies
+  var cookieCipher = new Cipher({
+    'password' : S.COOKIE.KEY,
+    'iv' : S.COOKIE.IV
+  });
 
   //express-session stuff
   var Session = require('express-session');
   var session = Session({
-        secret: COOKIE_KEY,
+        secret: S.COOKIE.KEY,
         resave: true,
         saveUninitialized: true,
         cookie : {
@@ -43,22 +46,6 @@ module.exports = function(data) {
   //enables my use of socket.handshake.session
   io.use(ios(session));
 
-  //handling app responses
-  pendingAppResponses = {};
-  appConn.send = (reqObj, callback) => {
-    let reqNo = uuid();
-    reqObj.reqNo = reqNo;
-
-    pendingAppResponses[reqNo] = {};
-    if(callback !== null)
-      pendingAppResponses[reqNo].callback = callback;
-
-    console.log("TO APPSERVER:");
-    console.log(reqObj);
-    appConn.write(JSON.stringify(reqObj));
-    return reqNo; //just in case
-  };
-
   //template engine used
   app.set('view engine', 'pug');
   //where the templates are located
@@ -66,36 +53,63 @@ module.exports = function(data) {
 
   //Various middleware
   app.use(session);
-  app.use(cookieParser(COOKIE_KEY));
+  app.use(cookieParser(S.COOKIE_KEY));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(expressValidator());
   app.use("/", express.static(__dirname));
-  app.use(helmet()); //adds a bunch of security features
+  //app.use(helmet()); //adds a bunch of security features
+  app.use(helmet.noSniff()); // content type should not be changed or followed
+  app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
+  app.use(helmet.xssFilter()); // protects against reflected XSS
+
+  //decrypt cookies
+  app.use(async (req, res, next) => {
+    for(let cookie in req.cookies) {
+      if(req.cookies.hasOwnProperty(cookie)) {
+        if(S.COOKIE.CIPHERED.indexOf(cookie) >= 0) {
+          req.cookies[cookie] = await cookieCipher.decryptJSON(req.cookies[cookie]);
+        }
+      }
+    }
+    next();
+  });
+
+  //implementing our own security stuff
+  var security = require('./server/setup/various-security.js')({
+    'app':  app,
+    'C' : C,
+    'S' : S,
+    'helmet' : helmet
+  });
 
   //setting routes
   require('./server/setup/routes.js')({
     'C' : C,
     'app' : app,
     'dirname' : __dirname,
-    'pendingResponses' : pendingResponses,
-    'cipher' : cipher,
+    'Cipher' : Cipher,
     'appConn' : appConn,
     'uuid' : uuid,
-    'pendingAppResponses' : pendingAppResponses
+    'pendingAppResponses' : pendingAppResponses,
+    'cookieCipher' : cookieCipher,
+    'xssDefense' : xssDefense,
+    'emailServer' : emailServer
   });
 
   //setting up the communication between the WebServer and AppServer
   require('./server/setup/io-forward.js')({
     'C' : C,
     'dirname' : __dirname,
-    'pass' : pass,
-    'pendingResponses' : pendingResponses,
     'pendingAppResponses' : pendingAppResponses,
-    'cipher' : cipher,
+    'Cipher' : Cipher,
     'appConn' : appConn,
     'io' : io,
     'cookie' : cookie,
-    'socketOfUser': socketOfUser
+    'cookieCipher' : cookieCipher,
+    'socketOfUser': socketOfUser,
+    'decryptResponse' : decryptResponse,
+    'logResponse' : logResponse,
+    'runCallback' : runCallback
   });
 }

@@ -54,6 +54,7 @@ function calculateTitles(currentRoom) {
   slowestPlayer.title = T.SLEEPY;
 
   //TODO::CALCULATE MORE TITLES
+  return [];
 }
 
 function removeSolution(question) {
@@ -113,6 +114,9 @@ function roundEndResults(players, sortByPoints) {
   return results;
 }
 
+/*
+  Returns true on a correct answer, false on wrong
+*/
 function checkCorrectAnswer(question, answer) {
   if((question.type == 0 && answer & question.solution)  //MCQ correct
     || (question.type == 1 && //short answer correct (case insensitive)
@@ -178,13 +182,18 @@ function getResponseData(currentRoom, data) {
 }
 /*
   Handles checking the answer, and calculating the score appropriately
+
+  Returns an object, with properties:
+    correct : boolean,
+    score : int
 */
 function handleScoring(input) {
   let {data, currentRoom, currentPlayer} = input;
   let question = currentRoom.quiz.questions[currentRoom.questionCounter];
 
   //calculating score
-  if(checkCorrectAnswer(question, data.answer)) {
+  let correct = checkCorrectAnswer(question, data.answer);
+  if(correct) {
     //getting question reward value
     let reward = getReward(currentRoom.quiz, question);
 
@@ -212,6 +221,10 @@ function handleScoring(input) {
     currentPlayer.answerStreak = 0;
     //set another tracking variable for correct in that round
     currentPlayer.roundCorrect = true;
+  }
+  return {
+    'correct' : correct,
+    'score' : currentPlayer.score
   }
 }
 

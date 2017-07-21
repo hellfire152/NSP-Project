@@ -3,48 +3,48 @@
 
   Author: Jin Kuan
 */
-let uuid;
-
-var checkMultipleOnSameMachine = require('./prevent_multiple_session.js');
+var uuid;
 
 var express = require('express');
 var nodemailer = require('nodemailer');
-var helmet = require('helmet');
-var app = express();
-var xssDefense = require('./xss-defense.js');
-var frameguard = require('frameguard');
-var emailServer = require('./email.js');
 
-
-app.use(helmet.noSniff()); // content type should not be changed or followed
-app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
-app.use(helmet.xssFilter()); // protects against reflected XSS
 module.exports = function(data) {
-
+  let {app, dirname, cipher, emailServer, appConn, queryOfUser, errors, cookieCipher, xssDefense}
+    = data;
   const C = data.C;
-  let app = data.app,
-    dirname = data.dirname,
-    cipher = data.cipher,
-    appConn = data.appConn,
-    queryOfUser = data.queryOfUser;
-    uuid = data.uuid;
-    errors=data.error;
-    uuid = data.uuid;
+  uuid = data.uuid;
 
-  //middleware
-  app.use('*', checkMultipleOnSameMachine);
+  //validators
+  var validators = {
+    'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
+    'join-room' : require('../validators/validate-join-room.js')(cookieCipher, appConn),
+    'host-room' : require('../validators/validate-host-room.js')(cookieCipher, appConn),
+    'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C),
+    'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer),
+    'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
+    'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
+    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C),
+    'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C),
+    'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C),
+    'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C)
+  };
+
   //routing
   //handling requests for .html, controller, css or resource files
-  app.get('((/resources|/controller|/css)*)|*.html|/favicon.ico', function(req, res) {
+  app.get('((/resources|/controller|/css)*)|/favicon.ico', function(req, res) {
     res.sendFile(`${dirname}/site${req.path}`);
   });
-  //sends index.html when someone sends a https request
+  //handling all .html file requests
+  app.get('*.html', function(req, res) {
+    res.sendFile(`${dirname}/site/html${req.path}`);
+  });
+  //sends index.html when someone sends a https request to the root directory
   app.get('/', function(req, res){
-    res.sendFile(dirname + "/site/index.html");
+    res.sendFile(dirname + "/site/html/index.html");
   });
 
   app.get('/data', function(req,res){
-      cipher.decryptJSON(req.cookies.encryptedDataReq)
+      cookieCipher.decryptJSON(req.cookies.encryptedDataReq)
         .catch(reason => {
           console.log(reason);
         })
@@ -64,39 +64,65 @@ module.exports = function(data) {
   //handling play path
   app.get('/play', function(req, res) { //submitted a form for playing in a room
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
-      console.log("Well someone's trying to cause an error...");
+      sendErrorPage(res, "Don't Think you can hack me!");
     } else {
+      //check for login cookie
+      if(req.cookies.login === undefined)
+        sendErrorPage(res, 'You are not logged in!');
+
       let roomNo = req.query.room;
-      cipher.decryptJSON(req.cookies.login)
-        .catch(reason => {
-          console.log(reason);
-        })
-        .then(function(cookieData) {
-          appConn.send({
-            'type': C.REQ_TYPE.JOIN_ROOM, //JOIN_ROOM
-            'id': cookieData.id,
-            'pass': cookieData.pass,
-            'roomNo': roomNo
-          }, (response) => {
-            //TODO::Valid Login
-            let errorMsg;
-            if(response.err) {
-              for(let e of Object.keys(C.ERR)) {
-                if(C.ERR[e] == response.err) {
-                  errorMsg = e;
-                }
-              }
-              res.render('error', {
-                'error' : `Encountered error ${errorMsg}`
-              });
-            } else {
-              res.render('play', {
-                'roomNo' : response.roomNo,
-                'gamemode': response.gamemode
-              });
+      appConn.send({
+        'type' : C.REQ_TYPE.JOIN_ROOM,
+        'id' : req.cookies.login.id,
+        'pass' : req.cookies.login.pass,
+        'roomNo' : roomNo
+      }, (response) => {
+        if(response.err) {
+          for(let e of Object.keys(C.ERR)) {
+            if(C.ERR[e] == response.err) {
+              sendErrorPage(res, e);
             }
+          }
+        } else {
+          res.render('play', {
+            'roomNo' : response.roomNo,
+            'gamemode' : response.gamemode,
+            'name' : response.id
           });
-        });
+        }
+      });
+      // cookieCipher.decryptJSON(req.cookies.login)
+      // .catch(reason => {
+      //   console.log(reason);
+      //   sendErrorPage(res, 'You are not logged in!');
+      // })
+      // .then(function(cookieData) {
+      //   appConn.send({
+      //     'type': C.REQ_TYPE.JOIN_ROOM, //JOIN_ROOM
+      //     'id': cookieData.id,
+      //     'pass': cookieData.pass,
+      //     'roomNo': roomNo
+      //   }, (response) => {
+      //     //TODO::Valid Login
+      //     let errorMsg;
+      //     if(response.err) {
+      //       for(let e of Object.keys(C.ERR)) {
+      //         if(C.ERR[e] == response.err) {
+      //           errorMsg = e;
+      //         }
+      //       }
+      //       res.render('error', {
+      //         'error' : `Encountered error ${errorMsg}`
+      //       });
+      //     } else {
+      //       res.render('play', {
+      //         'roomNo' : response.roomNo,
+      //         'gamemode': response.gamemode,
+      //         'name' : response.id
+      //       });
+      //     }
+      //   });
+      // });
     }
   });
 
@@ -106,60 +132,61 @@ module.exports = function(data) {
     if(req.query.quizId.constructor === Array) {
       console.log("Please don't mess with my webpage");
     } else {
+      if(req.cookies.login === undefined)
+        sendErrorPage(res, 'You are not logged in!');
+
       let quizId = req.query.quizId;
-      cipher.decryptJSON(req.cookies.login)
-        .catch(reason => {
-          console.log(reason);
-        })
-        .then(cookieData => {
-          console.log("COOKIE DATA: ");
-          console.log(cookieData);
-          appConn.send({
-            'type' : C.REQ_TYPE.HOST_ROOM,
-            'id': cookieData.id,
-            'pass': cookieData.pass,
-            'quizId': quizId
-          }, (response) => {
-            res.render('host', {
-              'roomNo' : response.roomNo,
-              'gamemode' : response.gamemode
-            });
+      appConn.send({
+        'type' : C.REQ_TYPE.HOST_ROOM,
+        'id' : req.cookies.login.id,
+        'pass' : req.cookies.login.pass,
+        'quizId' : quizId
+      }, (response) => {
+        if(response.err) {
+          for(let e of Object.keys(C.ERR)) {
+            if(C.ERR[e] == response.err)
+              sendErrorPage(res, e);
+          }
+        } else {
+          res.render('host', {
+            'roomNo' : response.roomNo,
+            'gamemode' : response.gamemode
           });
-        });
+        }
+      });
+      // cookieCipher.decryptJSON(req.cookies.login)
+      //   .catch(reason => {
+      //     console.log(reason);
+      //   })
+      //   .then(cookieData => {
+      //     console.log("COOKIE DATA: ");
+      //     console.log(cookieData);
+      //     appConn.send({
+      //       'type' : C.REQ_TYPE.HOST_ROOM,
+      //       'id': cookieData.id,
+      //       'pass': cookieData.pass,
+      //       'quizId': quizId
+      //     }, (response) => {
+      //       if(response.err) {
+      //         for(let e of Object.keys(C.ERR)) {
+      //           if(C.ERR[e] == response.err) {
+      //             errorMsg = e;
+      //           }
+      //         }
+      //         res.render('error', {
+      //           'error' : `Encountered error ${errorMsg}`
+      //         });
+      //       }
+      //       res.render('host', {
+      //         'roomNo' : response.roomNo,
+      //         'gamemode' : response.gamemode
+      //       });
+      //     });
+      //   });
     }
   });
 
-  // app.get('/login', function(req, res){
-  //   console.log("RESPONSE");
-  //   console.log(res);
-  //   res.render('login',{
-  //     title : 'Login',
-  //     data : res
-  //   });
-  //   req.session.errors=null;
-  // });
-  // app.get('/registerstud', function(req, res){
-  //   console.log("HEREHE");
-  //   res.render('register-student',{title: 'Register(Student)',success:req.session.success, errors:req.session.errors});
-  //   req.session.errors=null;
-  // });
-  // app.get('/registerteach', function(req, res){
-  //   res.render('register-teacher',{title: 'Register(Teacher)',success:req.session.success, errors:req.session.errors});
-  //   req.session.errors=null;
-  // });
-  //handling all other
-  /*TESTING*/
-  app.get('/test', function(req, res) {
-    res.render('test', {});
-  });
-
-  app.get('/add-quiz', function (req, res) {
-    res.render('add-quiz', {});
-})
-
-
   //handling all other requests (PUT THIS LAST)
-
   app.get('/*', function(req, res){
     //doing this just in case req.params has something defined for some reason
     console.log("OTHER PATH");
@@ -167,17 +194,17 @@ module.exports = function(data) {
     res.render(req.path.substring(1));
   });
   //handling form submits
-  app.post('/data-access', require('../validate-data-access.js')(cipher, appConn, C));
-  app.post('/join-room', require('../validate-join-room.js')(cipher, appConn));
-  app.post('/host-room', require('../validate-host-room.js')(cipher, appConn));
-  app.post('/add-quiz', require('../validate-add-quiz.js')(cipher, appConn, C));
-  app.post('/login-room', require('../validate-login-room.js')(cipher, appConn, C, xssDefense, emailServer));
-  app.post('/reg-room', require('../validate-register-student.js')(cipher, appConn, C, emailServer));
-  app.post('/reg-room-teach', require('../validate-register-teacher.js')(cipher, appConn,C, emailServer));
-  app.post('/change-password-room-success', require('../validate-change-password.js')(cipher, appConn,C));
-  app.post('/forget-password-room-success', require('../validate-forget-password.js')(cipher, appConn,C));
-  app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C, xssDefense));
-  app.post('/otp-register', require('../validate-otp-register.js') (cipher, appConn, C, xssDefense));
+  app.post('/data-access', validators["data-access"]);
+  app.post('/join-room', validators["join-room"]);
+  app.post('/host-room', validators["host-room"]);
+  app.post('/add-quiz', validators["add-quiz"]);
+  app.post('/login-room', validators["login-room"]);
+  app.post('/reg-room', validators["reg-room"]);
+  app.post('/reg-room-teach', validators["reg-room-teach"]);
+  app.post('/change-password-room-success', validators["change-password-room"]);
+  app.post('/forget-password-room-success', validators["forget-password-room"]);
+  app.post('/otp-check', validators["otp-check"]);
+  app.post('/otp-register', validators["otp-register"]);
 
 }
 

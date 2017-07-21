@@ -3,8 +3,10 @@ html
     script.
       var room = #{roomNo}
     script.
-      var gamemode = #{gamemode}
+      var gamemode = #{gamemode};
+      var name = "#{name}";
     script(src='/resources/pixi.js')
+    script(src='/resources/pixi-extra-filters.min.js')
     script(src='/socket.io/socket.io.js')
     script(src='/resources/constants.js')
     script(src='/resources/graphicsAPI/DisplayElement.js')
@@ -12,6 +14,7 @@ html
     script(src='/resources/graphicsAPI/BarGraph.js')
     script(src='/resources/graphicsAPI/PlayerRanking.js')
     script(src='/resources/graphicsAPI/LoadingBar.js')
+    script(src='/resources/graphicsAPI/ProgressBar.js')
     script(src='/resources/graphicsAPI/Button.js')
     script(src='/resources/graphicsAPI/Car.js')
     script(src='/resources/graphicsAPI/McqButtonHandler.js')

@@ -10,7 +10,14 @@
     "PUBLIC" : 0,
     "PRIVATE" : 1
   },
-
+  "AUTH" : {
+    "REQUEST_CONNECTION" : 0,
+    "CHALLENGE_STRING" : 1,
+    "RECEIVED_PUBLIC_KEY" : 2,
+    "ENCRYPTED_CHALLENGE" : 3,
+    "KEY_NEGOTIATION" : 4,
+    "AUTHENTICATED" : 5
+  },
 
   "SPECIAL" : {
     "SOCKET_DISCONNECT" : 500,

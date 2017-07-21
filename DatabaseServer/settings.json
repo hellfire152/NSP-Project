@@ -1,0 +1,24 @@
+{
+  "APPSERVER" : {
+    "PASSWORD" : "password2",
+    "INITIAL_IV" : "iv2",
+    "IP" : "localhost",
+    "PORT" : 9090
+  },
+  "KEYS" : {
+    "PUBLIC" : "./keys/Database-public.key",
+    "PRIVATE" : "./keys/Database-private.key"
+  },
+  "DATABASE" : {
+    "HOST" : "localhost",
+    "USER" : "root",
+    "PASSWORD" : "",
+    "DATABASE_NAME" : "exquizit",
+    "CIPHER_KEY" : "databaseKey",
+    "CIPHER_IV" : "databaseIV"
+  },
+  "DH_KEY_LENGTH" : 2048,
+  "CONSTANTS" : "../custom-API/constants.json",
+  "CIPHER" : "../custom-API/Cipher.js",
+  "AUTH_BYPASS" : true
+}

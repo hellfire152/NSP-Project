@@ -1,0 +1,22 @@
+{
+  "WEBSERVER" : {
+    "PASSWORD" : "password",
+    "INITIAL_IV" : "iv",
+    "IP" : "127.0.0.1",
+    "PORT" : 8080,
+    "KEY_LIFE" : 3600000
+  },
+  "DATABASE" : {
+    "IP" : "127.0.0.1",
+    "PORT" : 7070,
+    "PASSWORD" : "password2"
+  },
+  "KEYS" : {
+    "PUBLIC" : "./keys/AppServer-public.key",
+    "PRIVATE" : "./keys/AppServer-private.key"
+  },
+  "CONSTANTS" : "../custom-API/constants.json",
+  "CIPHER" : "../custom-API/cipher.js",
+  "DH_KEY_LENGTH" : 2048,
+  "AUTH_BYPASS" : true
+}

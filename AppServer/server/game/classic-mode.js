@@ -83,9 +83,9 @@ module.exports = async function(input) {
         currentRoom.answers[data.answer]++;
 
         common.handleScoring({
-          'data': data,
-          'currentRoom': currentRoom,
-          'currentPlayer': currentPlayer
+          'data' : data,
+          'currentRoom' : currentRoom,
+          'currentPlayer' : currentPlayer
         });
 
         //tracking variables
@@ -167,7 +167,6 @@ function sendQuestion(currentRoom, question, data) {
 }
 
 function sendGameEnd(players, data) {
-  console.log(players);
   common.setAllAnswered(players);
 
   let gameEndResults = {};
@@ -176,5 +175,6 @@ function sendGameEnd(players, data) {
   gameEndResults.sendTo = C.SEND_TO.ROOM;
   gameEndResults.roomNo = data.roomNo;
 
+  gameEndResults.titlesAndAchievenments = common.calculateTitles(currentRoom);
   return gameEndResults;
 }

@@ -36,7 +36,7 @@ app.loader  //load all
     p.answering = new PIXI.Container();
     p.getReady = new PIXI.Container();
     p.ranking = new PIXI.Container();
-    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by socket.io
+    let topBar = new TopBar(resources, WIDTH, 50, name); //name initialized by res.render
 
     //setting up the various scenes...
     //getReady scene
@@ -52,17 +52,24 @@ app.loader  //load all
     p.getReady.addChild(getReadyBackground, getReadyText);
 
     //ranking scene
+    let scoreText = new PIXI.Text('Score');
+    let scoreTextBackground = new PIXI.Graphics()
+      .beginFill()
+      .drawRect(0,0,WIDTH,100)
+      .endFill();
+    scoreTextBackground.addChild(scoreText);
     p.ranking.allPlayerRanking = new AllPlayerRanking(resources, null, {
       'width' : WIDTH,
-      'height' : HEIGHT - topBar.height,
+      'height' : HEIGHT - 100 - topBar.height,
       'paddingX' : 40,
       'paddingY' : 20,
-      'minHeight' : 50
+      'minHeight' : 50,
+      'maxHeight' : 100
     }, false);
     //positioning
-    p.ranking.allPlayerRanking.y = topBar.height;
+    p.ranking.allPlayerRanking.y = topBar.height + scoreTextBackground.height;
     //adding to scene
-    p.ranking.addChild(p.ranking.allPlayerRanking.view);
+    p.ranking.addChild(scoreTextBackground, p.ranking.allPlayerRanking.view);
 
     //answering scene
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
@@ -90,8 +97,9 @@ app.loader  //load all
     p.answering.answerResponses = answerResponses;
     p.answering.questionDisplay = questionDisplay;
     p.answering.addChild(
-      topBar.view, questionDisplay.view, answerResponses.view,
+      questionDisplay.view, answerResponses.view,
       mcqButtonHandler.view, shortAnswerTextField.view);
+    p.answering.addChild(topBar.view);
 
     //set all scenes not visible
     p.getReady.visible = p.answering.visible = p.ranking.visible = false;
@@ -108,6 +116,7 @@ function swapScene(scene) {
       }
     }
     pixiScenes[scene].visible = true; //set the specified one to be visible
+    pixiScenes.topBar.visible = true; //topBar visible
   } else {
     throw new Error(`Scene ${scene} does not exist!`);
   }
@@ -167,7 +176,164 @@ function initRatingScene() {
   app.stage.addChild(p.rating);
 }
 
+/*
+  Displays the results for round end using the ranking Class
+*/
 function displayResults(roundEndResults) {
-  p.ranking.data = roundEndResults;
+  pixiScenes.ranking.data = roundEndResults;
   swapScene('ranking');
+}
+
+/*
+  Displays the question that was sent to the client
+*/
+function loadQuestion(question) {
+  let p = pixiScenes.answering;
+
+  //display the prompt
+  p.questionDisplay.setPrompt(question.prompt, question.time);
+  p.questionDisplay.visible = true;
+
+  let timerEnd; //callback for when timer ends
+  //set both not visible (just in case)
+  p.mcqButtonHandler.visible = p.shortAnswerTextField.visible = false;
+  if(question.type == 0) { //mcq question
+    p.mcqButtonHandler.reset();
+    p.mcqButtonHandler.visible = true;
+    p.mcqButtonHandler.setNoOfChoices(question.choices.length);
+    p.mcqButtonHandler.choices = question.choices;
+    p.mcqButtonHandler.enableAll();
+    timerEnd = () => {p.mcqButtonHandler.disableAll()};
+  } else {  //short answer
+    p.shortAnswerTextField.reset();
+    p.shortAnswerTextField.enable();
+    p.shortAnswerTextField.visible = true;
+    timerEnd = () => {p.shortAnswerTextField.disable()};
+  }
+  p.questionDisplay.text = question.prompt;
+  setTimeout(timerEnd, question.time * 1000);
+}
+
+/*
+  Called at the end of the game. This will initlaize 3 divs:
+    1. The rankings and titles and achievements divs
+    2. The rating screen (will be filled in on each side separately)
+    3. The end screen (Thanks for playing!)
+  And 2 buttons, next and previous to show/hide the 3 things one at a time.
+*/
+function gameEnd(response) {
+  var currentScene;
+  //remove the PIXI canvas from the window
+  let appView = document.getElementsByTagName('canvas')[0];
+  appView.parentNode.removeChild(appView);
+
+  //initializing the various divs
+  let rankingDiv = createNode('div', null, null, 'ranking');
+  let taDiv = createNode('div', null, null, 'titles-achievements');
+  let ratingDiv = createNode('div', null, null, 'rating');
+  let endDiv = createNode('div', null, null, 'end');
+  rankingDiv.style.display = taDiv.style.display = ratingDiv.style.display
+    = endDiv.style.display = 'none';
+
+  //show rankings
+  //ranking header
+  let rankingHeader = createNode('h1', 'Final rankings:', 'ranking-header');
+  rankingDiv.appendChild(rankingHeader);
+  //generating a display for each player
+  for(let i = 0, player = response.roundEndResults[i];
+      i < response.roundEndResults.length;
+      i++, player = response.roundEndResults[i]) {
+    //generate new ranking display
+    let playerRankingDiv = createNode('div', null, 'player-ranking');
+
+    let rank = createNode('h2', `#${i + 1}`, 'player-rank', `rank-${i + 1}`);
+
+    //append the various data of the player
+    for(let playerAttr in player) {
+      if(player.hasOwnProperty(playerAttr)) {
+        let attr = createNode('p', player[playerAttr], `player-name`);
+        playerRankingDiv.appendChild(attr);
+      }
+    }
+
+    appendMultiple(rankingDiv, rank, playerRankingDiv);
+  }
+
+  //the display for people who got titles and/or achievements
+  let titleHeader = createNode('h2', 'Titles/Achievements gotten', 'title', 'title-header');
+  taDiv.appendChild(titleHeader);
+  for(let title of response.titlesAndAchievenments) {
+    let titleDisplay = createNode('div', null, 'title-display');
+    let titleName = createNode('p', title.name, 'title-name');
+    let titleIcon = createNode('img', null, 'title-icon');
+    titleIcon.src = `/resources/images/${title.icon}`;
+    let earningPlayer = createNode('p', title.recipient, 'title-recipient');
+    let description = createNode('p', title.description, 'title-description');
+    appendMultiple(titleDisplay, titleName, titleIcon, earningPlayer, description);
+    taDiv.appendChild(titleDisplay);
+  }
+
+  /*RATINGS DONE ON EACH GAME LOGIC FILE*/
+
+  //now for the end screen
+  let endScreen = createNode('h1', 'Thanks for playing!', 'end-header');
+  endDiv.appendChild(endScreen);
+
+  //buttons to toggle between the few scenes
+  //ranking + titles and achievements -> rating -> end
+  let nextButton = createNode('button', 'Next', null, 'next-button');
+  nextButton.onclick = () => {
+    rankingDiv.style.display = taDiv.style.display = ratingDiv.style.display
+      = endDiv.style.display = 'none';
+    if(currentScene == 'ranking') {
+      ratingDiv.style.display = 'block';
+      prevButton.style.display = 'block'; //show previous button
+      currentScene = 'rating';
+    } else if(currentScene == 'rating') {
+      document.getElementById('end').style.display = 'block';
+      nextButton.style.display = 'none'; //hide next button
+      currentScene = 'end';
+    } else throw new Error('No more scenes!');
+  }
+
+  let prevButton = createNode('button', 'Previous', null, 'prev-button');
+  prevButton.style.display = 'none';
+  prevButton.onclick = () => {
+    rankingDiv.style.display = taDiv.style.display = ratingDiv.style.display
+      = endDiv.style.display = 'none';
+    if(currentScene == 'end') {
+      endDiv.style.display = 'none';
+      ratingDiv.style.display = 'block';
+      nextButton.style.display = 'block'; //show next button
+      currentScene = 'rating';
+    }
+    else if(currentScene == 'rating') {
+      prevButton.style.display = 'none'; //hide previous button
+      rankingDiv.style.display = taDiv.style.display = 'block';
+      currentScene = 'ranking';
+    } else {
+      throw new Error('Cannot go back further!');
+    }
+  }
+
+  //show ranking and titles + achievements first
+  currentScene = 'ranking';
+  rankingDiv.style.display = taDiv.style.display = 'block';
+  appendMultiple(document.body,
+    rankingDiv, taDiv, ratingDiv, endDiv, nextButton, prevButton);
+}
+
+function createNode(type, text, cssClass, id) {
+  let n = document.createElement(type);
+  if(id) n.id = id;
+  if(cssClass) n.className += ' '+cssClass;
+  if(text)
+    n.appendChild(document.createTextNode(text));
+  return n;
+}
+
+function appendMultiple(parent, ...children) {
+  for(let child of children) {
+    parent.appendChild(child);
+  }
 }

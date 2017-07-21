@@ -51,7 +51,8 @@ let aprTestData = [
     'roundCorrect': true,
         'rank' : 1
   }
-]
+];
+var progressBar;
 app.loader  //load all
   .add('yellow-button', '/resources/graphics/buttons/yellow-button.json')
   .add('blue-button', '/resources/graphics/buttons/blue-button.json')
@@ -67,14 +68,9 @@ app.loader  //load all
   .load((loader, resources) => {
     allResources = resources;
 
-    let apr = new AllPlayerRanking(resources, aprTestData, {
-      'width' : WIDTH,
-      'height' : HEIGHT - 100,
-      'paddingX' : 50,
-      'paddingY' : 30
-    },true);
+    let topBar = new TopBar(resources, WIDTH, 50, 'hellfire152');
 
-    app.stage.addChild(apr.view);
+    app.stage.addChild(topBar.view);
   });
 
 window.onload = () => {

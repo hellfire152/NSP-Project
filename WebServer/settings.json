@@ -1,0 +1,37 @@
+{
+  "APPSERVER" : {
+    "PASSWORD" : "password",
+    "IP" : "localhost",
+    "PORT" : 9090
+  },
+  "KEYS" : {
+    "PUBLIC" : "./keys/WebServer-public.key",
+    "PRIVATE" : "./keys/WebServer-private.key"
+  },
+  "HTTPS" : {
+    "CERT" : "./cert/certificate.pem",
+    "KEY" : "./cert/private.key"
+  },
+  "COOKIE" : {
+    "CIPHERED" : ["login", "otp", "deviceIP", "user_info"],
+    "KEY" : "cookieKey",
+    "IV" : "cookieIv",
+    "MAPPINGS" : {
+      "login" : "asnsdavioasnviosanvoirviwh"
+    }
+  },
+  "EMAIL" : {
+    "SERVICE" : "gmail",
+    "AUTH" : {
+      "TYPE" : "OAuth2",
+      "USER" : "chloeangsl@gmail.com",
+      "CLIENT_ID" : "709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com",
+      "CLIENT_SECRET" : "aDT6KfKpSItfcGyHzsPQiOza",
+      "REFRESH_TOKEN" : "1/1GVyLb8PTdvJ7pOcoNGgFfyy57RlukHB6UJ_W22UTV4",
+      "ACCESS_TOKEN" : "ya29.GluLBIxQYjPTkuJBqVhtWukxOUB4HCKjfYIFNuNtNiEK0P_xFvttlL2Z61ezv4cvCGUYB-RP4nKkFuzXFtY_OfaHQYZi_Zl3RxaMpEhGCScsc7vYxk1kZSz-MFtV"
+    }
+  },
+  "CONSTANTS" : "../custom-API/constants.json",
+  "CIPHER" : "../custom-API/cipher.js",
+  "AUTH_BYPASS" : true
+}

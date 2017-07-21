@@ -10,7 +10,7 @@ module.exports = async function(input) {
     case C.GAME.START: {
       //prevent others from joining the room
       currentRoom.joinable = false;
-      currentRoom.completedPlayers = 0;
+      currentRoom.completedPlayers = [];
 
       //get the first question
       let question = currentRoom.quiz.questions[0];
@@ -19,46 +19,71 @@ module.exports = async function(input) {
       let players = currentRoom.players;
       for(let player in players) {
         if(players.hasOwnProperty(player)) {
+          players[player].score = 0;
           players[player].questionCounter = 0;
           players[player].answerable = true;
         }
       }
 
-      //send the first question to all players
-      // let question = currentRoom.quiz.questions[0];
-      return {
-        'game': C.GAME_RES.NEXT_QUESTION,
-        'question': common.removeSolution(question),
-        'sendTo': C.SEND_TO.ROOM,
-        'roomNo': data.roomNo
-      }
+      //send first question to everyone in the room 5 seconds after get ready
+      setTimeout(() => {
+        //set all players answertime
+        for(let player in players) {
+          if(players.hasOwnProperty(player)) {
+            players[player].answerTime = 0;
+            players[player].time = Date.now();
+          }
+        }
+        //send the first question
+        sendToServer(conn, {
+          'game' : C.GAME_RES.NEXT_QUESTION,
+          'question': common.removeSolution(
+            currentRoom.quiz.questions[0]
+          ),
+          'sendTo' : C.SEND_TO.ROOM,
+          'roomNo': data.roomNo,
+          'score' : 0
+        });
+      }, 5000);
 
-      //send the game start response to the host
-      sendToServer({
-        'game' : C.GAME_RES.START,
-        'playerList' : common.playersObjectToArray(currentRoom.players)
-      });
+      //send the get ready signal...
+      return {
+        'game' : C.GAME_RES.GET_READY,
+        'roomNo' : data.roomNo,
+        'sendTo' : C.SEND_TO.ROOM,
+        'totalQuestions' : currentRoom.quiz.questions.length
+      }
     }
     case C.GAME.SUBMIT_ANSWER: {
       if(currentPlayer.answerable) {
         let question = currentRoom.quiz.questions[currentPlayer.questionCounter];
 
-        if(common.checkCorrectAnswer(question, data.answer)) {
+        let correct = common.checkCorrectAnswer(question, data.answer);
+
+        if(correct) {
+          //calculate score
+          currentPlayer.score += common.getReward(currentRoom,
+            currentRoom.quiz.questions[currentPlayer.questionCounter]);
+            
           currentPlayer.answerable = true;  //just in case
           currentPlayer.questionCounter++;
 
+
           //finished the last question
           if(currentPlayer.questionCounter >= currentRoom.quiz.questions.length) {
-            currentRoom.completedPlayers++;
+            currentPlayer.answerable = false; //do not process answer submits anymore
+            currentRoom.completedPlayers.push(data.id);
             if(currentRoom.completedPlayers >= currentRoom.playerCount) {
               return {  //if all players completed
                 'game': C.GAME_RES.GAME_END,
+                'completedPlayers' : currentRoom.completedPlayers,
                 'sendTo': C.SEND_TO.ROOM,
                 'roomNo': data.roomNo
               }
             } else {  //send player finish event
-              sendToServer({
+              sendToServer(conn, {
                 'game': C.GAME_RES.PLAYER_FINISH,
+                'completedPlayers' : currentRoom.completedPlayers,
                 'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
                 'sourceId': data.id,
                 'roomNo': data.roomNo,
@@ -66,24 +91,33 @@ module.exports = async function(input) {
               });
             }
 
-            return {//send finish message to player
+            return {  //send finish message to player
               'game': C.GAME_RES.ROUND_END,
+              'scoreData' : {
+                'score' : currentPlayer.score,
+                'time' : currentPlayer.answerTime
+              },
+              'completedPlayers' : currentRoom.completedPlayers,
+              'remainingPlayers' : Object.keys(currentRoom.players).length
+                - currentRoom.completedPlayers.length,
               'sendTo': C.SEND_TO.USER,
               'targetId': data.id
             }
           } else {  //player hasn't finished
             //send correct answer event to everybody else
-            sendToServer({
+            sendToServer(conn, {
               'game': C.GAME_RES.ANSWER_CHOSEN,
               'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
               'roomNo': data.roomNo,
               'id': data.id,
+              'questionNo' : currentPlayer.questionCounter + 1,
               'sourceId': data.id,
               'roomNo': data.roomNo
             });
 
             return {  //send next question to player
               'game': C.GAME_RES.NEXT_QUESTION,
+              'score' : currentPlayer.score,
               'sendTo': C.SEND_TO.USER,
               'targetId': data.id,
               'question': common.removeSolution(
@@ -102,7 +136,6 @@ module.exports = async function(input) {
           }
         }
       } else {  //cannot answer
-
         return {
           'err': C.ERR.CANNOT_ANSWER,
           'sendTo': C.SEND_TO.USER,
@@ -110,6 +143,31 @@ module.exports = async function(input) {
         }
       }
     }
+    default : {
+      console.log(`RACE MODE: GAME value is ${response.game}, not a preset case!`);
+    }
     //ADD MORE CASES HERE
+  }
+}
+
+/*
+  Version of sendQuestion for race mode
+*/
+function sendNextQuestion(currentRoom, currentPlayer, data) {
+  currentPlayer.questionCounter++;
+  currentPlayer.answerable = true;
+
+  //set timer for time taken to a correct answer
+  currentPlayer.timeStart = Date.now();
+
+  return {
+    'game': C.GAME_RES.NEXT_QUESTION,
+    'score' : currentPlayer.score,
+    'sendTo': C.SEND_TO.USER,
+    'question': common.removeSolution(
+      currentRoom.quiz.questions[currentPlayer.questionCounter]
+    ),
+    'roomNo': data.roomNo,
+    'targetId' : data.id
   }
 }

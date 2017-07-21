@@ -147,6 +147,7 @@ class McqButtonHandler extends DisplayElement {
   enableAll() {
     for(let button of this._buttons) {
       button.interactive = true;
+      button.filters = [];
     }
   }
 
@@ -154,7 +155,7 @@ class McqButtonHandler extends DisplayElement {
   darkenAllExcept(index) {
     //filter to darken
     let darkenFilter = new PIXI.filters.ColorMatrixFilter();
-    darkenFilter.brightness = 0.3;
+    darkenFilter.brightness(0.3, true);
 
     //assigning the filter
     for(let i = 0; i < this._buttons.length; i++) {
@@ -169,21 +170,44 @@ class McqButtonHandler extends DisplayElement {
     outlined in red
   */
   showSolution(solution) {
+    this._showSolution = true;
     this.disableAll();
 
     //initializing filters
     let darkenFilter = new PIXI.filters.ColorMatrixFilter();
-    darkenFilter.brightness = 0.6;
+    darkenFilter.brightness(0.6, true);
     let outlineGreenFilter = new PIXI.filters.OutlineFilter(3, 0x00ff04);
     let outlineRedFilter = new PIXI.filters.OutlineFilter(3, 0xff0000);
 
     //applying filters
-    for(let i = 0, solutionCheck = 8; i < this._buttons.length; i++, solutionCheck / 2) {
+    for(let i = 0, solutionCheck = 8; i < this._buttons.length; i++, solutionCheck /= 2) {
       if(solution & solutionCheck) {  //correct
         this._buttons[i].filters = [outlineGreenFilter];
       } else {  //wrong
         this._buttons[i].filters = [darkenFilter, outlineRedFilter];
       }
+    }
+    this._solutionFilterTimer = setInterval(() => {
+      if(this._showSolution) {
+        //applying filters
+        for(let i = 0, solutionCheck = 8; i < this._buttons.length; i++, solutionCheck /= 2) {
+          if(solution & solutionCheck) {  //correct
+            this._buttons[i].filters = [outlineGreenFilter];
+          } else {  //wrong
+            this._buttons[i].filters = [darkenFilter, outlineRedFilter];
+          }
+        }
+      } else {
+        clearInterval(this._solutionFilterTimer);
+      }
+    }, 2000);
+  }
+
+  stopShowingSolution() {
+    this._showSolution = false; //stop the filter application loop
+    clearInterval(this._solutionFilterTimer);
+    for(let button of this._buttons) { //remove any existing filters
+      button.filters = [];
     }
   }
 
