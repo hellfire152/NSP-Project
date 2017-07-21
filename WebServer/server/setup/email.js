@@ -60,6 +60,7 @@ async function loginAccountOtpEmail(emailObj){
 
   transporter.sendMail(mailOptions, function (err, res) {
       if(err){
+        console.log(err);
           console.log('Email send error');
       } else {
           console.log('Email verification has been sent.');

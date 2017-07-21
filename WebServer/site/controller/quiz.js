@@ -1,57 +1,58 @@
 //Test data
 var name = "Bryan";
 var date = 22 / 6 / 2017;
-var Totalquiz = [{
-        quiz_id: 23,
-        user_id: 123,
-        quiz_title: "Test QUiz 1",
-        quiz_type: "Classic",
-        visibility: 1,
-        description: "This is test quiz 1",
-        quiz_rating: 5,
-        date_created: "2017-06-15"
-    },
-    {
-        quiz_id: 24,
-        user_id: 123,
-        quiz_title: "Test QUiz 2",
-        quiz_type: "Classic",
-        visibility: 1,
-        description: "This is test quiz 2",
-        quiz_rating: 3,
-        date_created: "2017-06-17"
-    },
-    {
-        quiz_id: 25,
-        user_id: 123,
-        quiz_title: "Test QUiz 3",
-        quiz_type: "Classic",
-        visibility: 1,
-        description: "This is test quiz 3",
-        quiz_rating: 4,
-        date_created: "2017-05-06"
-    },
-    {
-        quiz_id: 26,
-        user_id: 124,
-        quiz_title: "Test Quiz 4",
-        quiz_type: 'Classic',
-        visibility: 1,
-        description: 'NIDIDIMEIYOUMAO',
-        quiz_rating: 3,
-        date_created: "2017-06-17"
-    },
-    {
-        quiz_id: 27,
-        user_id: 124,
-        quiz_title: "Test Quiz 5",
-        quiz_type: 'Classic',
-        visibility: 1,
-        description: 'NIDIDIMEIYOUMAO',
-        quiz_rating: 3,
-        date_created: "2017-06-01"
-    }
-];
+//NOTE: Totalquiz have been declared at LoginIndex.pug
+// var Totalquiz = [{
+//         quiz_id: 23,
+//         user_id: 123,
+//         quiz_title: "Test QUiz 1",
+//         quiz_type: "Classic",
+//         visibility: 1,
+//         description: "This is test quiz 1",
+//         quiz_rating: 5,
+//         date_created: "2017-06-15"
+//     },
+//     {
+//         quiz_id: 24,
+//         user_id: 123,
+//         quiz_title: "Test QUiz 2",
+//         quiz_type: "Classic",
+//         visibility: 1,
+//         description: "This is test quiz 2",
+//         quiz_rating: 3,
+//         date_created: "2017-06-17"
+//     },
+//     {
+//         quiz_id: 25,
+//         user_id: 123,
+//         quiz_title: "Test QUiz 3",
+//         quiz_type: "Classic",
+//         visibility: 1,
+//         description: "This is test quiz 3",
+//         quiz_rating: 4,
+//         date_created: "2017-05-06"
+//     },
+//     {
+//         quiz_id: 26,
+//         user_id: 124,
+//         quiz_title: "Test Quiz 4",
+//         quiz_type: 'Classic',
+//         visibility: 1,
+//         description: 'NIDIDIMEIYOUMAO',
+//         quiz_rating: 3,
+//         date_created: "2017-06-17"
+//     },
+//     {
+//         quiz_id: 27,
+//         user_id: 124,
+//         quiz_title: "Test Quiz 5",
+//         quiz_type: 'Classic',
+//         visibility: 1,
+//         description: 'NIDIDIMEIYOUMAO',
+//         quiz_rating: 3,
+//         date_created: "2017-06-01"
+//     }
+// ];
 //End of Test Data
 function createNode1(){
     var total = Totalquiz.length;
