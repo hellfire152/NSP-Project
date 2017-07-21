@@ -14,7 +14,6 @@ html
       window.clearTimeout(tim);  // cancel the timer on each mousemove/click
       reload();  // and restart it
       }
-    script(src='https://code.jquery.com/jquery-1.11.0.min.js')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
@@ -25,14 +24,75 @@ html
          } else{
           return false;
          };
-       }, 'Please enter a valid phone number');
+       }, 'Please enter a valid phone number');   
+        
+    script.
+      $(function(){
+        $('#register-teacher').validate({
+          rules:{
+            name:{
+              required:true,
+              minlength:5
+            },
+            lusername:{
+              required:true,
+              minlength:5
+            },
+            lpassword:{
+              required:true,
+              minlength:8
+            },
+            cpassword:{
+              required:true,
+              minlength:8,
+              equalTo:"#lpassword"
+            },
+            number:{
+              checkphone:true
+            },
+            email:{
+              required:true,
+              email:true
+            },
+            school:{
+              required:true,
+              minlength:3
+            }
+          },
+          messages:{
+            name:{
+              required: "Please enter name"                        
+            },
+            lusername:{
+              required: "Please enter username",
+              minlength:"Your username must consist atleast 5 characters"
+            },
+            lpassword:{
+              required: "Please enter password",
+              minlength:"Your password must consist atleast 8 characters"
+            },
+            cpassword:{
+              required:"Please enter password",
+              minlength:"Your password must consist atleast 8 characters",
+              equalTo:"Passwords not match"
+            },
+            email:{
+              required:"Please enter email",
+              email:"Please enter a valid email"
+            },
+            school:{
+              required:"Please enter your school",
+              minlength:"Please enter a valid school"
+            }
+          }
+        });
+      });
     script.
       $(function(){
         $('#register-student').validate({
           rules:{
             name:{
-              required:true,
-              minlength:5
+              required:true              
             },
             username:{
               required:true,
@@ -65,8 +125,7 @@ html
           },
           messages:{
             name:{
-              required: "Please enter name",
-              minlength:"Your name must consist atleast 5 characters"
+              required: "Please enter name"
             },
             username:{
               required: "Please enter username",
@@ -150,35 +209,32 @@ html
           h1 Register Account
         // @ToDO add tool tips
         .form-content
-          form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
+          form#register-teacher(action='/reg-room-teach', method='post')
             .form-group
               label(for='name') Name
-              input#name(type='text', name='name', required='required' , autocomplete="off")
+              input#name(type='text', name='name', autocomplete="off")
             .form-group
-              label(for='username') Username
-              input#username(type='text', name='username', required='required')
+              label(for='lusername') Username
+              input#lusername(type='text', name='lusername',  autocomplete="off")
             .form-group
-              label(for='password') Password
-              input#password(type='password', name='password', required='required')
+              label(for='lpassword') Password
+              input#lpassword(type='password', name='lpassword',  autocomplete="off")
             .form-group
               label(for='cpassword') Confirm Password
-              input#cpassword(type='password', name='confirmPassword', required='required')
+              input#cpassword(type='password', name='cpassword',  autocomplete="off")
             .form-group
               label(for='email') Email Address
-              input#email(type='email', name='email', required='required', autocomplete="off")
+              input#email(type='email', name='email',  autocomplete="off")
             .form-group
-              label(for='number') School
-              input#number.checkphone(type='text', name='school' , autocomplete="off")
+              label(for='number') Phone Number
+              input#number.checkphone(type='text', name='number' , autocomplete="off")
             .form-group
-              label(for='school') Phone Number
-              input#school(type='text', name='phoneNumber' , autocomplete="off")
+              label(for='school') School
+              input#school(type='text', name='school' , autocomplete="off")
             //- .form-group/', type='date', name='DOB',min='1990-01-01',max='2011-01-15')
             .form-group
-              button(type='submit') Register
-    script(src='/resources/js/jquery.min.js')
+              button(onclick='document.getElementById("register-teacher").submit();') Register
     script(src='/resources/js/bootstrap.min.js')
-    script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/jquery.validate.min.js')
-    script(src='https://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/additional-methods.min.js')
     script.
       var userip;
     script(src='https://l2.io/ip.js?var=userip')
