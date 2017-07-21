@@ -78,102 +78,96 @@ html
                 }
               }
             });
+            $('#register-student').validate({
+              rules:{
+                name:{
+                  required:true,
+                  minlength:5
+                },
+                username:{
+                  required:true,
+                  minlength:5
+                },
+                password:{
+                  required:true,
+                  minlength:8
+                },
+                cpassword:{
+                  required:true,
+                  minlength:8,
+                  equalTo:"#password"
+                },
+                number:{
+                  checkphone:true
+                },
+                email:{
+                  required:true,
+                  email:true
+                },
+                DOB:{
+                  required:true,
+                  date:true
+                },
+                school:{
+                  required:true,
+                  minlength:3
+                }
+              },
+              messages:{
+                name:{
+                  required: "Please enter name",
+                  minlength:"Your name must consist atleast 5 characters"
+                },
+                username:{
+                  required: "Please enter username",
+                  minlength:"Your username must consist atleast 5 characters"
+                },
+                password:{
+                  required: "Please enter password",
+                  minlength:"Your password must consist atleast 8 characters"
+                },
+                cpassword:{
+                  required:"Please enter password",
+                  minlength:"Your password must consist atleast 8 characters",
+                  equalTo:"Passwords not match"
+                },
+                email:{
+                  required:"Please enter email",
+                  email:"Please enter a valid email"
+                },
+                DOB:{
+                  required:"Please enter your birthdate",
+                  date:"Please enter a valid date"
+                },
+                school:{
+                  required:"Please enter your school",
+                  minlength:"Please enter a valid school"
+                }
+              }
+            });
+            $("#login").validate({
+            rules:{
+            username:{
+            required:true,
+            minlength:5
+            },
+            password:{
+            required:true,
+            minlength:8
+            }
+            },
+            messages:{
+            username:{
+            required: "Please enter username",
+            minlength:"Your username must consist atleast 5 characters"
+            },
+            password:{
+            required: "Please enter password",
+            minlength:"Your password must consist atleast 8 characters"
+            },
+            }
+            });
           });
-    script.
-      $(function(){
-        $('#register-student').validate({
-          rules:{
-            name:{
-              required:true,
-              minlength:5
-            },
-            username:{
-              required:true,
-              minlength:5
-            },
-            password:{
-              required:true,
-              minlength:8
-            },
-            cpassword:{
-              required:true,
-              minlength:8,
-              equalTo:"#password"
-            },
-            number:{
-              checkphone:true
-            },
-            email:{
-              required:true,
-              email:true
-            },
-            DOB:{
-              required:true,
-              date:true
-            },
-            school:{
-              required:true,
-              minlength:3
-            }
-          },
-          messages:{
-            name:{
-              required: "Please enter name",
-              minlength:"Your name must consist atleast 5 characters"
-            },
-            username:{
-              required: "Please enter username",
-              minlength:"Your username must consist atleast 5 characters"
-            },
-            password:{
-              required: "Please enter password",
-              minlength:"Your password must consist atleast 8 characters"
-            },
-            cpassword:{
-              required:"Please enter password",
-              minlength:"Your password must consist atleast 8 characters",
-              equalTo:"Passwords not match"
-            },
-            email:{
-              required:"Please enter email",
-              email:"Please enter a valid email"
-            },
-            DOB:{
-              required:"Please enter your birthdate",
-              date:"Please enter a valid date"
-            },
-            school:{
-              required:"Please enter your school",
-              minlength:"Please enter a valid school"
-            }
-          }
-        });
-      });
-    script.
-        $(function(){
-        $("#login").validate({
-        rules:{
-        username:{
-        required:true,
-        minlength:5
-        },
-        password:{
-        required:true,
-        minlength:8
-        }
-        },
-        messages:{
-        username:{
-        required: "Please enter username",
-        minlength:"Your username must consist atleast 5 characters"
-        },
-        password:{
-        required: "Please enter password",
-        minlength:"Your password must consist atleast 8 characters"
-        },
-        }
-        });
-        });
     script.
       function setIp(){
         $('#userIp').val(userip);
@@ -197,13 +191,13 @@ html
             .form-group
               a.form-recovery(href='ForgetPassword.html') Forgot Password?
             .form-group
-              button(type='submit') Log In
+              input(type='submit' value='Log In')
       .form-panel.two
         .form-header
           h1 Register Account
         // @ToDO add tool tips
         .form-content
-          form#register-teacher(action='/reg-room-teach', method='post')
+          form#register-teacher(action='/reg-room-teach', method='post' onsubmit='console.log("SUBMITTING")')
             .form-group
               label(for='name') Name
               input#name(type='text', name='name',  autocomplete="off")
@@ -227,7 +221,7 @@ html
               input#school(type='text', name='school' , autocomplete="off")
             //- .form-group/', type='date', name='DOB',min='1990-01-01',max='2011-01-15')
             .form-group
-              button(onclick='document.getElementById("register-teacher").submit();') Register
+              button#teacher-submit(onclick='document.getElementById("register-teacher").submit();') Register
 
     script(src='/resources/js/bootstrap.min.js')
     script.
