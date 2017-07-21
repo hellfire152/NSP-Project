@@ -68,7 +68,11 @@ module.exports = function(data) {
     for(let cookie in req.cookies) {
       if(req.cookies.hasOwnProperty(cookie)) {
         if(S.COOKIE.CIPHERED.indexOf(cookie) >= 0) {
-          req.cookies[cookie] = await cookieCipher.decryptJSON(req.cookies[cookie]);
+          try {
+            req.cookies[cookie] = await cookieCipher.decryptJSON(req.cookies[cookie]);
+          } catch (e) { //unencrypted cookie (just continue on)
+            continue;
+          }
         }
       }
     }

@@ -137,6 +137,8 @@ var attemptConnection = setInterval(() => {
     appConn.encryption = 'none';
     if(!S.AUTH_BYPASS) {
       appConn.send({'publicKey' : KEYS.PUBLIC}, (response) => {
+        clearInterval(attemptConnection);
+
         //receiving public key of AppServer
         console.log("PUBLIC KEY RECEIVED");
         appConn.publicKey = response.publicKey;
@@ -170,7 +172,6 @@ var attemptConnection = setInterval(() => {
                 //send key to AppServer
                 appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
                   if(response.auth) {
-                    clearInterval(attemptConnection);
                     delete appConn.encryption; //no need this anymore
                     delete appConn.secret; //or this
                     delete appConn.dh //or that
@@ -192,7 +193,6 @@ var attemptConnection = setInterval(() => {
       appConn.removeAllListeners('data');
       initServer();
     }
-
     function initServer() {
       clearInterval(attemptConnection);
       console.log("INIT SERVER");
@@ -229,8 +229,7 @@ var attemptConnection = setInterval(() => {
       server.listen(8080);
       console.log("Listening on port 8080...");
     }
-  } catch (e) { //connection fails
-    console.log(e);
-    console.log('Connection failed (most likely), retrying in 10 seconds...');
+  } catch(e) {
+    console.log("Retrying connection in 10 seconds...");
   }
 }, 10000);
