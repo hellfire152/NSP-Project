@@ -137,6 +137,8 @@ var attemptConnection = setInterval(() => {
     appConn.encryption = 'none';
     if(!S.AUTH_BYPASS) {
       appConn.send({'publicKey' : KEYS.PUBLIC}, (response) => {
+        clearInterval(attemptConnection);
+
         //receiving public key of AppServer
         console.log("PUBLIC KEY RECEIVED");
         appConn.publicKey = response.publicKey;
@@ -170,7 +172,6 @@ var attemptConnection = setInterval(() => {
                 //send key to AppServer
                 appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
                   if(response.auth) {
-                    clearInterval(attemptConnection);
                     delete appConn.encryption; //no need this anymore
                     delete appConn.secret; //or this
                     delete appConn.dh //or that
@@ -192,40 +193,42 @@ var attemptConnection = setInterval(() => {
       appConn.removeAllListeners('data');
       initServer();
     }
+    function initServer() {
+      console.log("INIT SERVER");
+      var key = fs.readFileSync(S.HTTPS.KEY);
+      var cert = fs.readFileSync(S.HTTPS.CERT);
+
+      //https nonsense
+      var https_options = {
+        key: key,
+        cert: cert
+      };
+
+      //setting up the server + socket.io listening
+      var server = https.createServer(https_options, app);
+      var io = require('socket.io').listen(server);
+
+      require("./server-setup.js")({
+        "C" : C,
+        "S" : S,
+        "app": app,
+        "io": io,
+        "appConn": appConn,
+        "express": express,
+        "net": net,
+        "cookieParser": cookieParser,
+        "Cipher": Cipher,
+        "pendingAppResponses" : pendingAppResponses,
+        "decryptResponse" : decryptResponse,
+        "runCallback" : runCallback,
+        "logResponse" : logResponse
+      });
+
+      //start listening
+      server.listen(8080);
+      console.log("Listening on port 8080...");
+    }
+  } catch(e) {
+    console.log("Retrying connection in 10 seconds...");
+  }
 }, 10000);
-
-function initServer() {
-  console.log("INIT SERVER");
-  var key = fs.readFileSync(S.HTTPS.KEY);
-  var cert = fs.readFileSync(S.HTTPS.CERT);
-
-  //https nonsense
-  var https_options = {
-    key: key,
-    cert: cert
-  };
-
-  //setting up the server + socket.io listening
-  var server = https.createServer(https_options, app);
-  var io = require('socket.io').listen(server);
-
-  require("./server-setup.js")({
-    "C" : C,
-    "S" : S,
-    "app": app,
-    "io": io,
-    "appConn": appConn,
-    "express": express,
-    "net": net,
-    "cookieParser": cookieParser,
-    "Cipher": Cipher,
-    "pendingAppResponses" : pendingAppResponses,
-    "decryptResponse" : decryptResponse,
-    "runCallback" : runCallback,
-    "logResponse" : logResponse
-  });
-
-  //start listening
-  server.listen(8080);
-  console.log("Listening on port 8080...");
-}
