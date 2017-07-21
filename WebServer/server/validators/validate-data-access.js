@@ -52,7 +52,8 @@ module.exports = function(cipher, appConn, C) {
               email : req.body.email,
               password_hash : req.body.password,
               name : req.body.name,
-              username : req.body.username
+              username : req.body.username,
+              contact : req.body.number
             },
             details :{
               school : req.body.school,
