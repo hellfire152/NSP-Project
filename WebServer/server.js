@@ -192,44 +192,40 @@ var attemptConnection = setInterval(() => {
       appConn.removeAllListeners('data');
       initServer();
     }
-
-    function initServer() {
-      console.log("INIT SERVER");
-      var key = fs.readFileSync(S.HTTPS.KEY);
-      var cert = fs.readFileSync(S.HTTPS.CERT);
-
-      //https nonsense
-      var https_options = {
-        key: key,
-        cert: cert
-      };
-
-      //setting up the server + socket.io listening
-      var server = https.createServer(https_options, app);
-      var io = require('socket.io').listen(server);
-
-      require("./server-setup.js")({
-        "C" : C,
-        "S" : S,
-        "app": app,
-        "io": io,
-        "appConn": appConn,
-        "express": express,
-        "net": net,
-        "cookieParser": cookieParser,
-        "Cipher": Cipher,
-        "pendingAppResponses" : pendingAppResponses,
-        "decryptResponse" : decryptResponse,
-        "runCallback" : runCallback,
-        "logResponse" : logResponse
-      });
-
-      //start listening
-      server.listen(8080);
-      console.log("Listening on port 8080...");
-    }
-  } catch (e) { //connection fails
-    console.log(e);
-    console.log('Connection failed (most likely), retrying in 10 seconds...');
-  }
 }, 10000);
+
+function initServer() {
+  console.log("INIT SERVER");
+  var key = fs.readFileSync(S.HTTPS.KEY);
+  var cert = fs.readFileSync(S.HTTPS.CERT);
+
+  //https nonsense
+  var https_options = {
+    key: key,
+    cert: cert
+  };
+
+  //setting up the server + socket.io listening
+  var server = https.createServer(https_options, app);
+  var io = require('socket.io').listen(server);
+
+  require("./server-setup.js")({
+    "C" : C,
+    "S" : S,
+    "app": app,
+    "io": io,
+    "appConn": appConn,
+    "express": express,
+    "net": net,
+    "cookieParser": cookieParser,
+    "Cipher": Cipher,
+    "pendingAppResponses" : pendingAppResponses,
+    "decryptResponse" : decryptResponse,
+    "runCallback" : runCallback,
+    "logResponse" : logResponse
+  });
+
+  //start listening
+  server.listen(8080);
+  console.log("Listening on port 8080...");
+}
