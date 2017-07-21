@@ -9,8 +9,7 @@
   "DATABASE" : {
     "IP" : "127.0.0.1",
     "PORT" : 7070,
-    "PASSWORD" : "password2",
-    "INITIAL_IV" : "iv2"
+    "PASSWORD" : "password2"
   },
   "KEYS" : {
     "PUBLIC" : "./keys/AppServer-public.key",
@@ -19,5 +18,5 @@
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
   "DH_KEY_LENGTH" : 2048,
-  "AUTH_BYPASS" : false
+  "AUTH_BYPASS" : true
 }

@@ -170,6 +170,7 @@ var attemptConnection = setInterval(() => {
                 //send key to AppServer
                 appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
                   if(response.auth) {
+                    clearInterval(attemptConnection);
                     delete appConn.encryption; //no need this anymore
                     delete appConn.secret; //or this
                     delete appConn.dh //or that
@@ -223,8 +224,7 @@ var attemptConnection = setInterval(() => {
         "logResponse" : logResponse
       });
 
-      //clear connection interval and start Listening
-      clearInterval(attemptConnection);
+      //start listening
       server.listen(8080);
       console.log("Listening on port 8080...");
     }
