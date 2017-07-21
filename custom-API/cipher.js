@@ -131,12 +131,12 @@ class Cipher {
   }
 
   //Hash value with SHA256
-  hash(input) {
+  async hash(input) {
     var hash =  crypto.createHash('SHA256').update(input).digest('base64');
     return hash;
   }
   //Generate new salt value for newly created account
-  generateSalt(){
+  async generateSalt(){
     var saltValue = crypto.randomBytes(32).toString('base64');
     return saltValue;
   }
@@ -254,7 +254,7 @@ function _splitCipherBlock(cipher){
 
 //Data with the column name stated below will be encrypted
 var allowedValues = ["prompt", "solution", "choices", "password_hash", "dbPass",
-  "salt", "school", "organisation", "email", "about_me", "student_category"];
+  "salt", "school", "organisation", "email", "about_me", "student_category, name, contact"];
 function _allow(key){
   return (allowedValues.indexOf(key) >= 0)? true : false;
 }

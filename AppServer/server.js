@@ -68,6 +68,7 @@ function initServer() {
 
     // Handle data from client
     conn.on("data", async function(input) {
+      console.log(input);
       let data, encryption;
       if(!AUTH_BYPASS) { //Authentication bypass, set in settings
         if(conn.status != C.AUTH.AUTHENTICATED) {
@@ -230,7 +231,12 @@ function initServer() {
       console.log(response);
       response.reqNo = reqNo;
       if(S.AUTH_BYPASS) encryption = 'none';
-      sendToServer(conn, response, encryption);
+
+      if(data.type === C.REQ_TYPE.DATABASE){
+        dbConn.send(response, response.reqNo, encryption);
+      } else{
+        sendToServer(conn, response, encryption);
+      }
     });
   });
   server.listen(9090);

@@ -5,10 +5,13 @@
 
   Author : Nigel Chen Chin Hao
  */
+var cipher = require('../custom-API/cipher.js');
+var databaseCipher = new cipher({
+  'password': 'df',
+  'iv' : 'abc'
+});
 
-var databaseCipher;
-var C;
-
+var C = require('../custom-API/constants.json');
 //Input user data password will undergo hashing and salting before storing to database
 async function handlePassword(data){
   await databaseCipher.generateSalt()

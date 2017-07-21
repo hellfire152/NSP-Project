@@ -5,6 +5,7 @@ var mailchecker= require('mailchecker');
 var passwordValidator =require('password-validator');
 module.exports =function(cipher, appConn,C, emailServer){
   return function(req, res){
+    console.log(emailServer);
     var speakeasy = require("speakeasy");
     var secret = speakeasy.generateSecret({length: 20}); // Secret key is 20 characters long
     console.log(secret.base32); // Save this value to your DB for the user
