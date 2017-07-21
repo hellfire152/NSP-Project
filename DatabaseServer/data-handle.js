@@ -7,8 +7,8 @@
  */
 var cipher = require('../custom-API/cipher.js');
 var databaseCipher = new cipher({
-  'password': 'df',
-  'iv' : 'abc'
+  'password': 'aVaTyAzkOqweA',
+  'iv' : '5dZoC41JFwmLQMYo'
 });
 
 var C = require('../custom-API/constants.json');

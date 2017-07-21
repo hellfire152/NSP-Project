@@ -54,7 +54,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                 type : C.DB.SELECT.USER_ACCOUNT,
                 account : {
                   username : req.body.username,
-                  password : req.body.password
+                  hash_password : req.body.password
                 }
               }
             }, (response) => {
