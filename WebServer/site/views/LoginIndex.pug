@@ -13,6 +13,10 @@ html
     link(rel='stylesheet', type='text/css', href='/resources/css/animate.css')
     link(rel='stylesheet', type='text/css', href='/resources/css/mainstyle.css')
     link(rel='stylesheet', type='text/css', href='/resources/css/LoginHome.css')
+    script.
+      var data = !{JSON.stringify(data)} 
+      var Totalquiz = !{JSON.stringify(quizzes)};
+      console.log(data)
   body
     // Hidden Header
     .header-hidden.collapse
@@ -21,7 +25,7 @@ html
           .col-md-3
             h5
               | Welcome
-              span#user-name  Bryan
+              span#user-name  #{data.name}
               | ,
             p
               | Account description Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
@@ -82,7 +86,7 @@ html
       .row
         .col-md-8
           .greeting
-            h4 Hello UserName,
+            h4 Hello #{data.username},
             p You have 0 new quiz
         .col-md-4
           .statistics

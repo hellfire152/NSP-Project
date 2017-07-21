@@ -118,7 +118,6 @@ var server = net.createServer(function(conn){
           }
         case C.DB.CREATE.QUIZ : {
           await createQuiz(inputData);
-          console.log(inputData);
           break;
         }
         case C.AUTH.RECEIVED_PUBLIC_KEY: {
