@@ -22,8 +22,7 @@ function handleGame(response) {
   console.log('HOST: Handling game response!');
   switch(response.game) {
     case C.GAME_RES.GET_READY: {
-      //show a get ready message
-      break;
+      document.getElementById('get-ready').style.display = true;
     }
     case C.GAME_RES.ANSWER_CHOSEN: {
       //updata answersObj
@@ -74,9 +73,12 @@ function handleGame(response) {
         answerStreak.appendChild(document.createTextNode(player.answerStreak));
         answerStreak.class += ' ranking-answer-streak';
       }
+      answersObj = {}; //clear answersObj for next round
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
+      document.getElementById('get-ready').style.display = 'none';
+
       //hide the other divs and show the question one
       document.getElementById('currentQuestion').style.display = 'block';
       document.getElementById('ranking').style.display = 'none'
@@ -135,6 +137,8 @@ function handleGame(response) {
 }
 
 function initHost() {
+  let getReadyDiv = createNode('div', 'Starting game...', null, 'get-ready');
+
   let currentQuestionDiv = document.createElement('div');
   currentQuestionDiv.id = 'current-question';
   firstQuestion = false;
@@ -142,9 +146,11 @@ function initHost() {
   //init ranking stuff
   let gameRankingDiv = document.createElement('div');
   gameRankingDiv.id = 'game-ranking';
-  gameRankingDiv.style.display = 'none';
 
-  document.body.appendChild(rankingDiv);
+  gameRankingDiv.style.display = getReadyDiv.style.display =
+  currentQuestionDiv.style.display = 'none';
+
+  appendMultiple(document.body, getReadyDiv, rankingDiv);
 }
 
 function updateDisplay() {

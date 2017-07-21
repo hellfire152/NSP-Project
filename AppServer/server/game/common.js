@@ -54,6 +54,7 @@ function calculateTitles(currentRoom) {
   slowestPlayer.title = T.SLEEPY;
 
   //TODO::CALCULATE MORE TITLES
+  return [];
 }
 
 function removeSolution(question) {

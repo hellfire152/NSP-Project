@@ -1,7 +1,7 @@
 {
-  "AppServer" : {
-    "PASSWORD" : "appPassword",
-    "INITIAL_IV" : "appIV",
+  "APPSERVER" : {
+    "PASSWORD" : "password2",
+    "INITIAL_IV" : "iv2",
     "IP" : "localhost",
     "PORT" : 9090
   },
@@ -17,7 +17,8 @@
     "CIPHER_KEY" : "databaseKey",
     "CIPHER_IV" : "databaseIV"
   },
+  "DH_KEY_LENGTH" : 2048,
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/Cipher.js",
-  "AUTH_BYPASS" : true
+  "AUTH_BYPASS" : false
 }

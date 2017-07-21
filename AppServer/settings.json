@@ -2,12 +2,12 @@
   "WEBSERVER" : {
     "PASSWORD" : "password",
     "INITIAL_IV" : "iv",
-    "IP" : "localhost",
+    "IP" : "127.0.0.1",
     "PORT" : 8080,
     "KEY_LIFE" : 3600000
   },
   "DATABASE" : {
-    "IP" : "localhost",
+    "IP" : "127.0.0.1",
     "PORT" : 7070,
     "PASSWORD" : "password2",
     "INITIAL_IV" : "iv2"
@@ -19,5 +19,5 @@
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
   "DH_KEY_LENGTH" : 2048,
-  "AUTH_BYPASS" : true
+  "AUTH_BYPASS" : false
 }
