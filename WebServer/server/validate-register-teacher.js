@@ -15,7 +15,7 @@ module.exports =function(cipher, appConn, C){
     var username = req.body.lusername;
     var email = req.body.email;
     var password = req.body.lpassword;
-    var confirmPassword = req.body.cPassword;
+    var confirmPassword = req.body.cpassword;
     var school=req.body.school;
     var phoneNumber=req.body.number;
     var speakeasy = require("speakeasy");
@@ -149,7 +149,7 @@ module.exports =function(cipher, appConn, C){
 
               console.log("FAIL");
 
-              res.redirect('/registerstud');
+              res.redirect('/LoginForm');
             }
         }
 
@@ -160,7 +160,7 @@ module.exports =function(cipher, appConn, C){
             console.log(schema.validate('password',{list:true}));
             console.log("FAIL PW");
 
-            res.redirect('/registerteach');
+            res.redirect('/LoginForm');
 
 
           }
@@ -197,7 +197,7 @@ module.exports =function(cipher, appConn, C){
         }
         console.log("never fill in all");
 
-        res.redirect('/registerteach');
+        res.redirect('/LoginForm');
         return;
 
     }
