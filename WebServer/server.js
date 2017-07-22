@@ -194,6 +194,7 @@ var attemptConnection = setInterval(() => {
       initServer();
     }
     function initServer() {
+      clearInterval(attemptConnection);
       console.log("INIT SERVER");
       var key = fs.readFileSync(S.HTTPS.KEY);
       var cert = fs.readFileSync(S.HTTPS.CERT);

@@ -37,27 +37,26 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.RESPONSE_DATA: {
-      document.getElementById('currentQuestion').style.display = 'block';
+      document.getElementById('current-question').style.display = 'block';
       updateDisplay();
       //show the next button
-      let nextButton = document.createElement('button');
+      let nextButton = createNode('button', 'Next', null, 'next-button');
       nextButton.onclick = () => {
         send({
           'game' : C.GAME.NEXT_ROUND
         });
-        document.getElementById('currentQuestion').style.display = 'none';
+        document.getElementById('current-question').style.display = 'none';
       }
-      nextButton.id = 'next-button';
-
+      document.body.appendChild(nextButton);
       break;
     }
     case C.GAME_RES.ROUND_END: {
       //show the current rankings on screen
       document.getElementById('ranking').style.display = 'block';
-      document.getElementById('currentQuestion').style.display = 'none';
+      document.getElementById('current-question').style.display = 'none';
 
       //show ranking
-      let rankingList = document.getElementById('ranking');
+      let rankingList = document.getElementById('game-ranking');
       rankingList.innerHTML = "";
       for(let player of response.roundEndResults) {
         let playerLi = document.createElement('div');
@@ -80,37 +79,39 @@ function handleGame(response) {
       document.getElementById('get-ready').style.display = 'none';
 
       //hide the other divs and show the question one
-      document.getElementById('currentQuestion').style.display = 'block';
-      document.getElementById('ranking').style.display = 'none'
+      let currentQuestionDiv = document.getElementById('current-question');
+      //clear the current-question div first
+      currentQuestionDiv.innerHTML = "";
+      currentQuestionDiv.style.display = 'block';
+      document.getElementById('game-ranking').style.display = 'none'
       currentQuestion = response.question;
 
-      //create a div for the question
+      //show the question prompt
+      currentQuestionDiv.appendChild(
+        createNode('h1', 'Current Question:', 'header', 'current-question-text'));
       currentQuestionDiv.appendChild(document.createTextNode(response.question.prompt));
 
       //a ordered list for the choices...
       let responsesOl = document.createElement('ol');
       responsesOl.id = 'response-list';
 
-      if(question.type == 0) {  //MCQ question
+      if(response.question.type == 0) {  //MCQ question
 
         //append a list element for each choice in the question
         let choiceCounter = 0;
         for(let choice of response.question.choices) {
           //create the li element to append to the list
-          let choiceLi = document.createElement('li');
-          choiceLi.id = `choice-${choiceCounter}`;
-          choiceLi.class = 'choice';
-          choiceLi.appendChild(document.createTextNode(choice)); //choice text
+          let choiceLi = createNode('li', choice, 'choice', `choice-${choiceCounter}`);
 
           //to show the number of times this choices was chosen
+          let noTimesChosenSpan =
+            createNode('span', null, 'choice-chosen', `choice-${choiceCounter}-chosen`);
           let noTimesChosenSpan = document.createElement('span');
-          let noTimesChosenText = document.createTextNode();
-          noTimesChosenText.id = `choice-${choiceCounter}-chosen`;
-          noTimesChosenSpan.appendChild(noTimesChosenText);
 
           //add to list
           choiceLi.appendChild(noTimesChosenSpan);
-          responsesOl.appendChild(choicesLi);
+          responsesOl.appendChild(choiceLi);
+          choiceCounter++;
         }
 
         //add to the display
@@ -136,9 +137,12 @@ function handleGame(response) {
   }
 }
 
+/**
+  Initialize function for the host side
+  This creates a div to show the current question and its responses,
+  and a ranking div for the game
+*/
 function initHost() {
-  let getReadyDiv = createNode('div', 'Starting game...', null, 'get-ready');
-
   let currentQuestionDiv = document.createElement('div');
   currentQuestionDiv.id = 'current-question';
   firstQuestion = false;
@@ -147,21 +151,26 @@ function initHost() {
   let gameRankingDiv = document.createElement('div');
   gameRankingDiv.id = 'game-ranking';
 
-  gameRankingDiv.style.display = getReadyDiv.style.display =
-  currentQuestionDiv.style.display = 'none';
+  gameRankingDiv.style.display =
+    currentQuestionDiv.style.display = 'none';
 
-  appendMultiple(document.body, getReadyDiv, rankingDiv);
+  appendMultiple(document.body, gameRankingDiv, currentQuestionDiv);
 }
 
 function updateDisplay() {
+  console.log(answersObj);
+  let question = currentQuestion;
   if(question.type == 0) {  //MCQ
     //edit the field
     for(let i = 0, answer = 8; i < question.choices.length; i++, answer /= 2) {
       let chosenNo = (answersObj[answer] === undefined)? 0 : answersObj[answer];
-      document.getElementById(`choice-${i}-chosen`).nodeValue = chosenNo;
+      let responseSpan = document.getElementById(`choice-${i}-chosen`);
+      responseSpan.innerHTML = ""; //clear the responseSpan
+      //show the number of people that chose that as their answer
+      responseSpan.appendChild(document.createTextNode(chosenNo));
     }
   } else { //Short answer
-    //
+    //clear the whole list
     document.getElementById('response-list').innerHTML = "";
     for(let answer in answersObj) {
       if(answersObj.hasOwnProperty(answer)) {

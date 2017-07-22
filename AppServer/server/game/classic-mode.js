@@ -16,24 +16,33 @@ module.exports = async function(input) {
 
   switch(data.game) {
     case C.GAME.START: {
-      currentRoom.joinable = false; //room not joinable anymore
-      currentRoom.questionCounter = 0; //question counter for the whole room
-      let question = currentRoom.quiz.questions[0]; //get first question
+      if(data.id = currentRoom.host) {
+        currentRoom.joinable = false; //room not joinable anymore
+        currentRoom.questionCounter = 0; //question counter for the whole room
+        let question = currentRoom.quiz.questions[0]; //get first question
 
-      //store answer resutls
-      currentRoom.answers = {};
+        //store answer resutls
+        currentRoom.answers = {};
 
-      //send next question 5 seconds after get ready
-      setTimeout(() => {
-        let q = sendQuestion(currentRoom, question, data);
-        sendToServer(conn, q);
-      }, 5000);
+        //send next question 5 seconds after get ready
+        setTimeout(() => {
+          let q = sendQuestion(currentRoom, question, data);
+          sendToServer(conn, q);
+        }, 5000);
 
-      //send the get ready signal...
-      return {
-        'game' : C.GAME_RES.GET_READY,
-        'roomNo' : data.roomNo,
-        'sendTo' : C.SEND_TO.ROOM
+        //send the get ready signal...
+        return {
+          'game' : C.GAME_RES.GET_READY,
+          'roomNo' : data.roomNo,
+          'sendTo' : C.SEND_TO.ROOM
+        }
+      } else {
+        return {
+          'game' : C.ERR.NOT_THE_HOST,
+          'roomNo': data.roomNo,
+          'targetId' : data.id,
+          'id' : data.id
+        }
       }
     }
     case C.GAME.NEXT_ROUND: {
@@ -175,6 +184,7 @@ function sendGameEnd(players, data) {
   gameEndResults.sendTo = C.SEND_TO.ROOM;
   gameEndResults.roomNo = data.roomNo;
 
-  gameEndResults.titlesAndAchievenments = common.calculateTitles(currentRoom);
+  gameEndResults.titlesAndAchievenments
+    = common.calculateTitles(allRooms[data.roomNo]);
   return gameEndResults;
 }

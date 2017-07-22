@@ -54,7 +54,7 @@ app.loader  //load all
     //ranking scene
     let scoreText = new PIXI.Text('Score');
     let scoreTextBackground = new PIXI.Graphics()
-      .beginFill()
+      .beginFill(0xFFFFFF)
       .drawRect(0,0,WIDTH,100)
       .endFill();
     scoreTextBackground.addChild(scoreText);

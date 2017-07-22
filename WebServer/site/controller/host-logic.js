@@ -15,7 +15,7 @@ const GAMEMODE_NO_TO_STRING = {
   3: 'Tug of War'
 };
 
-var S;
+var S = {};
 
 var socket = io();
 socket.on('receive', function(input) {
@@ -102,12 +102,14 @@ function gameRoom(gamemode) {
 }
 
 function start(){
+  //create get-ready div
+  let getReadyDiv = createNode('div', 'Starting Game...!', null, 'get-ready');
+  document.body.innerHTML = ""; //clear body
+  document.body.appendChild(getReadyDiv);
+
   send({
     'game': C.GAME.START
   });
-  //remove the start button
-  let s = document.getElementById('start');
-  s.parentNode.removeChild(s);
 }
 //convenience function for encoding the json for sending
 async function encode(json) {
@@ -115,7 +117,8 @@ async function encode(json) {
 }
 
 function send(data) {
-  if (data.event === undefined && data.game === undefined) throw new Error("Event/game type not defined!");
+  if (data.event === undefined && data.game === undefined)
+    throw new Error("Event/game type not defined!");
   encode(data)
     .then(encodedData => {
       socket.emit('send', encodedData);

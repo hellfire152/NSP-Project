@@ -21,28 +21,11 @@ module.exports = async function(input) {
         'sendToServer': sendToServer
       });
     }
-    case C.GAMEMODE.TEAM_BATTLE: {
-      return handleTeamBattle({
-        'data': data,
-        'C': C,
-        'allRooms': allRooms,
-        'conn': conn,
-        'sendToServer': sendToServer
-      });
-    }
-    case C.GAMEMODE.TUG_OF_WAR: {
-      return handleTugOfWar({
-        'data': data,
-        'C': C,
-        'allRooms': allRooms,
-        'conn': conn,
-        'sendToServer': sendToServer
-      });
+    default: {
+      console.log('Undefined gamemode!');
     }
   }
 };
 
 var handleClassic = require('./game/classic-mode.js');
 var handleRace = require('./game/race-mode.js');
-var handleTeamBattle = require('./game/team-battle-mode.js');
-var handleTugOfWar = require('./game/tug-of-war-mode.js');

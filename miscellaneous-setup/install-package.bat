@@ -20,5 +20,7 @@ call npm install password-validator
 call npm install nodemailer
 call npm install mailchecker
 call npm install xoauth2
+call npm install speakeasy
+call npm install base32
 cls
 echo All required modules installed!
