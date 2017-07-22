@@ -11,23 +11,23 @@ module.exports =function(cipher, appConn,C, emailServer){
     console.log(cipher);
     errors=false;
     var name = req.body.name;
-    var username = req.body.username;
+    var username = req.body.lusername;
     var email = req.body.email;
-    var password = req.body.password;
-    var confirmPassword=req.body.confirmPassword;
+    var password = req.body.lpassword;
+    var confirmPassword=req.body.cpassword;
     var dateOfBirth=req.body.DOB;
     var school=req.body.school;
     var randomNum = Math.floor((Math.random() * 999999) + 10000);
 
     req.sanitize('name').escape();
-    req.sanitize('username').escape();
+    req.sanitize('lusername').escape();
     req.sanitize('email').escape();
-    req.sanitize('password').escape();
+    req.sanitize('lpassword').escape();
     req.sanitize('dateOfBirth').escape();
     req.sanitize('name').trim();
-    req.sanitize('username').trim();
+    req.sanitize('lusername').trim();
     req.sanitize('email').trim();
-    req.sanitize('password').trim();
+    req.sanitize('lpassword').trim();
     req.sanitize('dateOfBirth').trim();
 
     if (name!="" &&username!="" && email!="" && password!="" && confirmPassword!=""){
@@ -46,7 +46,7 @@ module.exports =function(cipher, appConn,C, emailServer){
         if (passwordCheck){
           if(password==confirmPassword){
             emailObj = {
-              username: req.body.username,
+              username: req.body.lusername,
               pin : randomNum,
               email : req.body.email
             }
@@ -61,9 +61,9 @@ module.exports =function(cipher, appConn,C, emailServer){
                   type:C.DB.CREATE.STUDENT_ACC,
                   account: {
                     name : req.body.name,
-                    username :req.body.username,
+                    username :req.body.lusername,
                     email : req.body.email,
-                    password_hash : req.body.password
+                    password_hash : req.body.lpassword
                   },
                   details : {
                     school : req.body.school,

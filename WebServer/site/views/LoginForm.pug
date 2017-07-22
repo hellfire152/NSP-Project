@@ -121,11 +121,11 @@ html
               required: "Please enter name",
               minlength:"Your name must consist atleast 5 characters"
             },
-            username:{
+            lusername:{
               required: "Please enter username",
               minlength:"Your username must consist atleast 5 characters"
             },
-            password:{
+            lpassword:{
               required: "Please enter password",
               minlength:"Your password must consist atleast 8 characters"
             },
@@ -227,7 +227,7 @@ html
               input#school(type='text', name='school' , autocomplete="off")
             //- .form-group/', type='date', name='DOB',min='1990-01-01',max='2011-01-15')
             .form-group
-              button(onclick='document.getElementById("register-teacher").submit();') Register
+              input#register-teacher-submit(type="submit" name="register-teacher-submit" value="Register")
 
     script(src='/resources/js/bootstrap.min.js')
     script.
