@@ -62,6 +62,18 @@ module.exports =function(cipher, appConn,C, emailServer){
 
 
     if (name!="" &&username!="" && email!="" && password!="" && confirmPassword!="" && dateOfBirth!="" && phoneNumber!="" && school!=""){
+    req.sanitize('name').escape();
+    req.sanitize('username').escape();
+    req.sanitize('email').escape();
+    req.sanitize('password').escape();
+    req.sanitize('dateOfBirth').escape();
+    req.sanitize('name').trim();
+    req.sanitize('username').trim();
+    req.sanitize('email').trim();
+    req.sanitize('password').trim();
+    req.sanitize('dateOfBirth').trim();
+
+    if (name!="" &&username!="" && email!="" && password!="" && confirmPassword!=""){
       if(mailchecker.isValid(email)){
         var schema = new passwordValidator();
         schema
