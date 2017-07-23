@@ -13,14 +13,16 @@ process.on('uncaughtException', (err) => {
 })
 
 //Check for setting obejct's existence
-var settings = process.argv[2];
+var appServerPassword = process.argv[2];
+var settings = process.argv[3];
 if(settings === undefined) {
   throw new Error("Usage: ./run-server.bat <path to settings>");
   process.exit(1);
 }
 
 var mysql = require('mysql');
-const S = require(settings);
+var S = require(settings);
+S.APPSERVER.PASSWORD = appServerPassword;
 const C = require(S.CONSTANTS);
 var Cipher = require(S.CIPHER);
 var net = require('net');

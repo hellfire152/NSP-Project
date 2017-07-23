@@ -17,14 +17,18 @@ process.on('uncaughtException', function (err) {
 
 
 //Check for setting obejct's existence
-var settings = process.argv[2];
+var databasePassword = process.argv[2]
+var webServerPassword = process.argv[3];
+var settings = process.argv[4];
 if(settings === undefined) {
 throw new Error("Usage: ./run-server.bat <path to settings>");
 process.exit(1);
 }
 
 //initialize settings object
-const S = require(settings);
+var S = require(settings);
+S.DATABASE.PASSWORD = databasePassword;
+S.WEBSERVER.PASSWORD = webServerPassword;
 const C = require(S.CONSTANTS);
 var sampleData = require('../DatabaseServer/dataSample.js'); //Sample data for database testing.
 var net = require('net');

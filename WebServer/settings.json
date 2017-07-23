@@ -1,6 +1,5 @@
 {
   "APPSERVER" : {
-    "PASSWORD" : "password",
     "IP" : "localhost",
     "PORT" : 9090
   },
