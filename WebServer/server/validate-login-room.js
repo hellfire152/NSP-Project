@@ -130,7 +130,6 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                     }
                   } ,(response2) => {
                     var email = response2.data.data.email
-                    //TODO: SEND THE DATA TO THE EMAIL SERVEVR
                     emailObj = {
                       pin : randomNum,
                       email : email

@@ -125,9 +125,9 @@ module.exports =function(cipher, appConn,C, emailServer){
                     type:C.DB.CREATE.STUDENT_ACC,
                     account:{
                       name : req.body.name,
-                      username :req.body.username,
+                      username :req.body.lusername,
                       email : req.body.email,
-                      password_hash : req.body.password,
+                      password_hash : req.body.lpassword,
                       contact : req.body.number
                     },
                     details :{

@@ -12,8 +12,8 @@ async function createAccountOtpEmail(emailObj){
               user: 'chloeangsl@gmail.com',
               clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
               clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-              refreshToken: '1/AsBsZtWG357nmbVUAVt1gFFf2pXy07fqxuRxFF2T5Qc',
-              accessToken: 'ya29.GluRBCZPyDVBTOYFTybenqTdZuDCJo1QaR7aJuxtvulM5LPmqRcJTqX5JE0RexamguyecoPEZgm0CUwK3Vde_ot4zhcaSvveKDG31FnIt2GrsQ0fdHT0OkL9WEAm'
+              refreshToken: '1/TN8qeuTtLEw36gC8f3ni_6UigCqBBZ8vWxchqjnIa7s',
+              accessToken: 'ya29.GluRBH5yPJK2zFaRd7HEHrhmAAIUiw65-aWSdohS5PyMIb2Av2gch-AEcfemJkrvl2GNFDzaRsszyh-BbGx9nAJKK4RKusEpGEC0zxjZKt8mbEp8X41sOEKr6t5V'
         }
     })
 
@@ -45,8 +45,9 @@ async function loginAccountOtpEmail(emailObj){
         user: 'chloeangsl@gmail.com',
         clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
         clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-        refreshToken: '1/AsBsZtWG357nmbVUAVt1gFFf2pXy07fqxuRxFF2T5Qc',
-        accessToken: 'ya29.GluRBCZPyDVBTOYFTybenqTdZuDCJo1QaR7aJuxtvulM5LPmqRcJTqX5JE0RexamguyecoPEZgm0CUwK3Vde_ot4zhcaSvveKDG31FnIt2GrsQ0fdHT0OkL9WEAm'              }
+        refreshToken: '1/TN8qeuTtLEw36gC8f3ni_6UigCqBBZ8vWxchqjnIa7s',
+        accessToken: 'ya29.GluRBH5yPJK2zFaRd7HEHrhmAAIUiw65-aWSdohS5PyMIb2Av2gch-AEcfemJkrvl2GNFDzaRsszyh-BbGx9nAJKK4RKusEpGEC0zxjZKt8mbEp8X41sOEKr6t5V'
+          }
     })
 
   var mailOptions = {
@@ -78,8 +79,8 @@ async function forgetPasswordOtpEmail(emailObj){
         user: 'chloeangsl@gmail.com',
         clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
         clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-        refreshToken: '1/AsBsZtWG357nmbVUAVt1gFFf2pXy07fqxuRxFF2T5Qc',
-        accessToken: 'ya29.GluRBCZPyDVBTOYFTybenqTdZuDCJo1QaR7aJuxtvulM5LPmqRcJTqX5JE0RexamguyecoPEZgm0CUwK3Vde_ot4zhcaSvveKDG31FnIt2GrsQ0fdHT0OkL9WEAm'
+        refreshToken: '1/TN8qeuTtLEw36gC8f3ni_6UigCqBBZ8vWxchqjnIa7s',
+        accessToken: 'ya29.GluRBH5yPJK2zFaRd7HEHrhmAAIUiw65-aWSdohS5PyMIb2Av2gch-AEcfemJkrvl2GNFDzaRsszyh-BbGx9nAJKK4RKusEpGEC0zxjZKt8mbEp8X41sOEKr6t5V'
          }
     })
 
@@ -87,7 +88,7 @@ async function forgetPasswordOtpEmail(emailObj){
       from: 'ExQuizIt! Admin <chloeangsl@gmail.com>',
       to: emailObj.email,
       subject: 'ExQuizIt! Forget Password',
-      html: '<p>Dear Sir/Mdm! \n\t You have requested for forget password. Your new password is: '+emailObj.pin+'\n\nLove,\nExQuizIt</p>'
+      html: '<p>Dear Sir/Mdm! \n\t You have requested for forget password. Your verification number is: '+emailObj.pin+'\n\nLove,\nExQuizIt</p>'
   }
 
   transporter.sendMail(mailOptions, function (err, res) {
