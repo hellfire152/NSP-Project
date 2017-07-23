@@ -20,8 +20,8 @@ module.exports =function(cipher, appConn,C, emailServer){
     var name = req.body.name;
     var username = req.body.lusername;
     var email = req.body.email;
-    var password = req.body.password;
-    var confirmPassword=req.body.cPassword;
+    var password = req.body.lpassword;
+    var confirmPassword=req.body.cpassword;
     var dateOfBirth=req.body.DOB;
     var school=req.body.school;
     var phoneNumber=req.body.number;
@@ -263,4 +263,5 @@ module.exports =function(cipher, appConn,C, emailServer){
 
 
   }
+}
 }

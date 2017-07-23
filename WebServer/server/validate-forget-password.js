@@ -77,7 +77,7 @@ module.exports = function(cipher, appConn, C,emailServer) {
               console.log("Validating");
               console.log(response.data.success);
               if(response.data.success==true){
-                res.render('otp',{
+                res.render('/otp',{
                   data: response.data.data
                 });
               }
