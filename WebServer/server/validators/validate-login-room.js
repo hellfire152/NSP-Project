@@ -47,6 +47,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
               var deviceIp = JSON.parse(req.cookies.deviceIP);
             }
 
+            console.log("SENDING");
             appConn.send({
               // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'type':C.REQ_TYPE.DATABASE,
@@ -58,6 +59,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                 }
               }
             }, (response) => {
+              console.log("RESPONGDING");
 
               console.log(req.body.userIp);
               // await cipher.hash(req.body.userIp)
