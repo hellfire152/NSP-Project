@@ -153,6 +153,17 @@ class Cipher {
     return decrypted.toString("utf8");
   }
 
+  xorString(str1, str2) {
+    let result = '';
+    for(let i = 0, j = 0; i < str1.length; i++, j++) {
+      if(j >= str2.length) {
+        str2 += " ";
+      }
+      result += String.fromCharCode(str1.charCodeAt(i) ^ str2.charCodeAt(j));
+    }
+    return result;
+  }
+
   set password(p) {
     this._password = p;
   }

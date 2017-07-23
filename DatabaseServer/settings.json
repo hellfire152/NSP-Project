@@ -11,9 +11,7 @@
   "DATABASE" : {
     "HOST" : "localhost",
     "USER" : "root",
-    "PASSWORD" : "",
     "DATABASE_NAME" : "exquizit",
-    "CIPHER_KEY" : "databaseKey",
     "CIPHER_IV" : "databaseIV"
   },
   "DH_KEY_LENGTH" : 2048,

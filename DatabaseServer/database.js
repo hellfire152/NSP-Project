@@ -14,15 +14,20 @@ process.on('uncaughtException', (err) => {
 
 //Check for setting obejct's existence
 var appServerPassword = process.argv[2];
-var settings = process.argv[3];
-if(settings === undefined) {
-  throw new Error("Usage: ./run-server.bat <path to settings>");
+var databasePassword = process.argv[3];
+var databaseKey = process.argv[4]
+var settings = process.argv[5];
+if(settings === undefined || databasePassword === undefined ||
+  databaseKey === undefined || appServerPassword === undefined) {
+  throw new Error("Usage: node ./database.js <appServerPassword> <databasePassword> <databaseKey> <path to settings>");
   process.exit(1);
 }
 
 var mysql = require('mysql');
 var S = require(settings);
 S.APPSERVER.PASSWORD = appServerPassword;
+S.DATABASE.PASSWORD = databasePassword;
+S.DATABASE.CIPHER_KEY = databaseKey;
 const C = require(S.CONSTANTS);
 var Cipher = require(S.CIPHER);
 var net = require('net');
@@ -151,7 +156,8 @@ var server = net.createServer(function(conn){
           try {
             if(conn.challengeString ==
               await conn.receiveCipher.decrypt(inputData.encryptedChallenge)) {
-                console.log("CHALLENGE STRING VALIDATED");
+              conn.encryptedChallenge = inputData.encryptedChallenge;
+              console.log("CHALLENGE STRING VALIDATED");
               //no need for the challenge string anymore...
               delete conn.challengeString;
 
@@ -184,8 +190,10 @@ var server = net.createServer(function(conn){
             let key = inputData.dhPublic;
             conn.secret = conn.dh.computeSecret(key, 'base64', 'base64');
             console.log("SECRET" +conn.secret);
-            let r = conn.secret.substring(0, ~~(conn.secret.length / 2));
-            let s =  conn.secret.substring(~~(conn.secret.length / 2));
+            let r = conn.sendCipher.hash(
+              conn.sendCipher.xorString(conn.secret, conn.encryptedChallenge));
+            let s = conn.sendCipher.hash(
+              conn.sendCipher.xorString(conn.secret, S.APPSERVER.PASSWORD));
             let sendPassword = s;
             let receivePassword = r;
 
@@ -197,6 +205,7 @@ var server = net.createServer(function(conn){
             conn.sendCipher.password = s;
             conn.receiveCipher.password = r;
             conn.status = C.AUTH.AUTHENTICATED;
+            delete conn.encryptedChallenge;
           } catch (e) {
             console.log(e);
           }

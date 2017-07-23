@@ -34,11 +34,27 @@ function handleGame(response) {
       if(S.showLiveResponse) {
         updateDisplay();
       }
+      answersObj = {};
       break;
     }
     case C.GAME_RES.RESPONSE_DATA: {
       document.getElementById('current-question').style.display = 'block';
-      updateDisplay();
+      //clear response list
+      document.getElementById('response-list').innerHTML = "";
+      //add the response data
+      for(let i = 0; i < response.responseData.labels.length; i++) {
+        let choiceLi =
+          createNode('li', response.responseData.labels[i], 'choice', `choice-${i}`);
+
+        //to show the number of times this choices was chosen
+        let noTimesChosenSpan =
+          createNode('span', null, 'choice-chosen', `choice-${i}-chosen`);
+
+        noTimesChosenSpan.appendChild(
+          document.createTextNode(': \t' + response.responseData.values[i]));
+        choiceLi.appendChild(noTimesChosenSpan);
+        document.getElementById('response-list').appendChild(choiceLi);
+      }
       //show the next button
       let nextButton = createNode('button', 'Next', null, 'next-button');
       nextButton.onclick = () => {
@@ -52,7 +68,7 @@ function handleGame(response) {
     }
     case C.GAME_RES.ROUND_END: {
       //show the current rankings on screen
-      document.getElementById('ranking').style.display = 'block';
+      document.getElementById('game-ranking').style.display = 'block';
       document.getElementById('current-question').style.display = 'none';
 
       //show ranking
@@ -60,17 +76,11 @@ function handleGame(response) {
       rankingList.innerHTML = "";
       for(let player of response.roundEndResults) {
         let playerLi = document.createElement('div');
-        let name = document.createElement('p');
-        name.appendChild(document.createTextNode(player.name));
-        name.class += ' ranking-name';
-
-        let score = document.createElement('p');
-        score.appendChild(document.createTextNode(player.score));
-        score.class += ' ranking-score';
-
-        let answerStreak = document.createElement('p');
-        answerStreak.appendChild(document.createTextNode(player.answerStreak));
-        answerStreak.class += ' ranking-answer-streak';
+        let name = createNode('p', player.name, 'ranking-name', null);
+        let score = createNode('p', player.score, 'ranking-score', null);
+        let answerStreak = createNode('p', player.answerStreak, 'ranking-streak', null);
+        appendMultiple(playerLi, name, score, answerStreak);
+        rankingList.appendChild(playerLi);
       }
       answersObj = {}; //clear answersObj for next round
       break;
@@ -106,7 +116,6 @@ function handleGame(response) {
           //to show the number of times this choices was chosen
           let noTimesChosenSpan =
             createNode('span', null, 'choice-chosen', `choice-${choiceCounter}-chosen`);
-          let noTimesChosenSpan = document.createElement('span');
 
           //add to list
           choiceLi.appendChild(noTimesChosenSpan);
@@ -167,7 +176,7 @@ function updateDisplay() {
       let responseSpan = document.getElementById(`choice-${i}-chosen`);
       responseSpan.innerHTML = ""; //clear the responseSpan
       //show the number of people that chose that as their answer
-      responseSpan.appendChild(document.createTextNode(chosenNo));
+      responseSpan.appendChild(document.createTextNode('\t' + chosenNo));
     }
   } else { //Short answer
     //clear the whole list

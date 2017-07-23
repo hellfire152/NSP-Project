@@ -133,7 +133,8 @@ function initServer() {
             try {
               if(conn.challengeString ==
                 await conn.receiveCipher.decrypt(data.encryptedChallenge)) {
-                  console.log("CHALLENGE STRING VALIDATED");
+                conn.encryptedChallenge = data.encryptedChallenge;
+                console.log("CHALLENGE STRING VALIDATED");
                 //no need for the challenge string anymore...
                 delete conn.challengeString;
 
@@ -166,10 +167,10 @@ function initServer() {
               let key = data.dhPublic;
               conn.secret = conn.dh.computeSecret(key, 'base64', 'base64');
               console.log("SECRET" +conn.secret);
-              let r = conn.secret.substring(0, ~~(conn.secret.length / 2));
-              let s =  conn.secret.substring(~~(conn.secret.length / 2));
-              let sendPassword = s;
-              let receivePassword = r;
+              let r = conn.sendCipher.hash(
+                conn.sendCipher.xorString(conn.secret, conn.encryptedChallenge));
+              let s = conn.sendCipher.hash(
+                conn.sendCipher.xorString(conn.secret, S.WEBSERVER.PASSWORD));
 
               response = {
                 'auth' : true
@@ -311,7 +312,10 @@ dbConn.send = (reqObj, callback, encryption) => {
   //storing the callback for later calling
   pendingDatabaseResponses[reqNo] = {};
   if(callback)
-    pendingDatabaseResponses[reqNo].callback = callback;
+    if(callback && {}.toString.call(callback) == '[object Function]') //IF FUNCTION
+      pendingDatabaseResponses[reqNo].callback = callback;
+    else
+      throw new Error('Callback is not a function!');
 
   //sending the request object
   console.log("TO DATABASE SERVER:");
@@ -352,8 +356,10 @@ if(!S.AUTH_BYPASS) {
             dbConn.dhKey = dbConn.dh.generateKeys('base64');
             dbConn.secret = dbConn.dh.computeSecret(response.key, 'base64', 'base64');
             console.log("SECRET" +dbConn.secret);
-            let s = dbConn.secret.substring(0, ~~(dbConn.secret.length / 2));
-            let r =  dbConn.secret.substring(~~(dbConn.secret.length / 2));
+            let s = dbConn.sendCipher.hash(
+              dbConn.sendCipher.xorString(dbConn.secret, challengeString));
+            let r = dbConn.sendCipher.hash(
+              dbConn.sendCipher.xorString(dbConn.secret, S.DATABASE.PASSWORD));
 
             //cipher change
             dbConn.prependOnceListener('data', () => {

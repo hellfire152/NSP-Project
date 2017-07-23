@@ -94,7 +94,10 @@ var attemptConnection = setInterval(() => {
       //storing the callback for later calling
       pendingAppResponses[reqNo] = {};
       if(callback)
-        pendingAppResponses[reqNo].callback = callback;
+        if(callback && {}.toString.call(callback) == '[object Function]') //IF FUNCTION
+          pendingAppResponses[reqNo].callback = callback;
+        else
+          throw new Error('Callback is not a function!');
 
       //sending the request object
       console.log("TO APPSERVER:");
@@ -162,8 +165,10 @@ var attemptConnection = setInterval(() => {
                 appConn.dhKey = appConn.dh.generateKeys('base64');
                 appConn.secret = appConn.dh.computeSecret(response.key, 'base64', 'base64');
                 console.log("SECRET" +appConn.secret);
-                let s = appConn.secret.substring(0, ~~(appConn.secret.length / 2));
-                let r =  appConn.secret.substring(~~(appConn.secret.length / 2));
+                let s = appConn.sendCipher.hash(
+                  appConn.sendCipher.xorString(appConn.secret, challengeString));
+                let r =  appConn.sendCipher.hash(
+                  appConn.sendCipher.xorString(appConn.secret, S.APPSERVER.PASSWORD));
 
                 //cipher change
                 appConn.prependOnceListener('data', () => {
