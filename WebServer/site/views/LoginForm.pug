@@ -26,7 +26,7 @@ html
          };
        }, 'Please enter a valid phone number');
     script.
-      $(function(){
+      $(function(){ 
          $('#register-teacher').validate({
             rules:{
               lusername:{
@@ -250,7 +250,8 @@ html
       e.preventDefault();
       $(this).removeClass('visible');
       $('.form-panel.one').removeClass('hidden');
-      $('.form-panel.two').removeClass('active');
+      console.log("testing");
+      $('.form-panel.two').removeClass('active'); 
       $('.form').animate({
       'height': panelOne
       }, 200);
