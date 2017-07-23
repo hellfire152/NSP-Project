@@ -452,6 +452,7 @@ async function userDetails(userId, details, type){
 //Else no personal data will be sent
 async function retrievePreAccount(inputData){
   var data = inputData.data;
+  console.log(data);
   data.account.email = data.account.username; // seperate email and username to provide encryption for email
   await handleDb.handleEncryption(data.account)
   .then(dataAccount => {
@@ -480,6 +481,8 @@ async function retrievePreAccount(inputData){
             handleDb.handleRecieveAccount(dataAccount)
             .then(dataOut => {
               //If user password input is equal to database password
+              console.log("INPUT: " + dataOut.hash_password);
+              console.log("DB: " + dataOut.dbPass);
               if(dataOut.hash_password === dataOut.dbPass){
                 console.log("Password correct");
                 var query = connection.query("SELECT user_account.user_id, ip_address\

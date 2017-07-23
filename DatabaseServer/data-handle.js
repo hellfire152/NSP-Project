@@ -82,14 +82,17 @@ async function handleDeleteAccount(data){
 
 async function handleRecieveAccount(data){
   var dataArr = [];
+  console.log(data);
   dataArr.push(data); // Push to array to follow the format of encryption
-
   var plainData;
 
   await handleDecryption(dataArr)
   .then(dataOut => {
-    databaseCipher.hash(dataOut[0].password + dataOut[0].salt)
+    console.log("SALT: " + dataOut[0].salt);
+    console.log(dataOut[0].hash_password);
+    databaseCipher.hash(dataOut[0].hash_password + dataOut[0].salt)
     .then(hashed => {
+      console.log("HASHED: " + hashed);
       dataOut[0].hash_password = hashed;
       plainData = dataOut[0];
     })

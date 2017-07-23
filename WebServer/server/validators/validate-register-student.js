@@ -52,7 +52,7 @@ module.exports =function(cipher, appConn,C, emailServer){
               email : req.body.email
             }
 
-            emailServer.createAccountOtpEmail(emailObj);
+            // emailServer.createAccountOtpEmail(emailObj);
 
             if(!error) {
             console.log("Creating an account: ");
@@ -64,7 +64,8 @@ module.exports =function(cipher, appConn,C, emailServer){
                     name : req.body.name,
                     username :req.body.username,
                     email : req.body.email,
-                    password_hash : req.body.password
+                    password_hash : req.body.password,
+                    contact : req.body.phoneNumber
                   },
                   details : {
                     school : req.body.school,
