@@ -21,9 +21,10 @@ module.exports =function(cipher, appConn,C, emailServer){
     var username = req.body.username;
     var email = req.body.email;
     var password = req.body.password;
-    var confirmPassword=req.body.confirmPassword;
+    var confirmPassword=req.body.cPassword;
     var dateOfBirth=req.body.DOB;
     var school=req.body.school;
+    var phoneNumber=req.body.number;
     var randomNum = Math.floor((Math.random() * 999999) + 10000);
 
 
@@ -48,15 +49,19 @@ module.exports =function(cipher, appConn,C, emailServer){
         req.sanitize('email').escape();
         req.sanitize('password').escape();
         req.sanitize('dateOfBirth').escape();
+        req.sanitize('phoneNumber').escape();
+        req.sanitize('school').escape();
         req.sanitize('name').trim();
         req.sanitize('username').trim();
         req.sanitize('email').trim();
         req.sanitize('password').trim();
         req.sanitize('dateOfBirth').trim();
+        req.sanitize('phoneNumber').trim();
+        req.sanitize('school').trim();
 
 
 
-    if (name!="" &&username!="" && email!="" && password!="" && confirmPassword!=""){
+    if (name!="" &&username!="" && email!="" && password!="" && confirmPassword!="" && dateOfBirth!="" && phoneNumber!="" && school!=""){
       if(mailchecker.isValid(email)){
         var schema = new passwordValidator();
         schema
@@ -110,7 +115,8 @@ module.exports =function(cipher, appConn,C, emailServer){
                       name : req.body.name,
                       username :req.body.username,
                       email : req.body.email,
-                      password_hash : req.body.password
+                      password_hash : req.body.password,
+                      contact : req.body.number
                     },
                     details :{
                       school : req.body.school,
@@ -204,6 +210,27 @@ module.exports =function(cipher, appConn,C, emailServer){
         }
         if(email==""){
           console.log("Please enter your email");
+          // res.render('register-student',{
+          //   error2:'Please enter your email'
+          // });
+
+        }
+        if(dateOfBirth==""){
+          console.log("Please enter your date of birth");
+          // res.render('register-student',{
+          //   error2:'Please enter your email'
+          // });
+
+        }
+        if(phoneNumber==""){
+          console.log("Please enter your phone number");
+          // res.render('register-student',{
+          //   error2:'Please enter your email'
+          // });
+
+        }
+        if(school==""){
+          console.log("Please enter your school");
           // res.render('register-student',{
           //   error2:'Please enter your email'
           // });
