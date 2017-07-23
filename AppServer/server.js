@@ -297,6 +297,7 @@ async function decryptResponse(response) {
 }
 
 function runCallback(response) {
+  console.log(pendingDatabaseResponses);
   if(pendingDatabaseResponses[response.reqNo]) {
     if(pendingDatabaseResponses[response.reqNo].callback){
       conn = pendingDatabaseResponses[response.reqNo].callback.connection;

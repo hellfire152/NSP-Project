@@ -118,6 +118,7 @@ var attemptConnection = setInterval(() => {
     }
 
     function runCallback(response) {
+      console.log(pendingAppResponses);
       if(pendingAppResponses[response.reqNo]) {
         if(pendingAppResponses[response.reqNo].callback)
           pendingAppResponses[response.reqNo].callback(response);
