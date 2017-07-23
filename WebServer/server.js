@@ -18,9 +18,10 @@
  });
 
  //Check for setting obejct's existence
- var settings = process.argv[2];
- if(settings === undefined) {
-   throw new Error("Usage: ./run-server.bat <path to settings>");
+ var appServerPassword = process.argv[2];
+ var settings = process.argv[3]
+ if(settings === undefined || appServerPassword === undefined) {
+   throw new Error("Usage: ./run-server.bat <appServerPassword> <path to settings>");
    process.exit(1);
  }
 
@@ -34,7 +35,8 @@ var crypto = require('crypto');
 var cookieParser = require('cookie-parser');
 var uuid = require('uuid');
 
-const S = require(settings);
+var S = require(settings);
+S.APPSERVER.PASSWORD = appServerPassword;
 const C = require(S.CONSTANTS);
 
 var Cipher = require(S.CIPHER);

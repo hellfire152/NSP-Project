@@ -31,6 +31,7 @@ module.exports = function(data) {
         'roomNo' : socket.roomNo
       }, null);
     });
+
     try {
       let loginCookie = await getLoginCookieS(socket, cookieCipher, cookie);
       console.log("SOCKET IO CONNECTION INITIATED BY");

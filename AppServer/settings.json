@@ -1,6 +1,5 @@
 {
   "WEBSERVER" : {
-    "PASSWORD" : "password",
     "INITIAL_IV" : "iv",
     "IP" : "127.0.0.1",
     "PORT" : 8080,
@@ -8,8 +7,7 @@
   },
   "DATABASE" : {
     "IP" : "127.0.0.1",
-    "PORT" : 7070,
-    "PASSWORD" : "password2"
+    "PORT" : 7070
   },
   "KEYS" : {
     "PUBLIC" : "./keys/AppServer-public.key",
