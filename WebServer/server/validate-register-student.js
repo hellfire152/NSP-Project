@@ -20,17 +20,17 @@ module.exports =function(cipher, appConn,C, emailServer){
     var randomNum = Math.floor((Math.random() * 999999) + 10000);
 
     req.sanitize('name').escape();
-    req.sanitize('lusername').escape();
+    req.sanitize('username').escape();
     req.sanitize('email').escape();
-    req.sanitize('lpassword').escape();
+    req.sanitize('password').escape();
     req.sanitize('dateOfBirth').escape();
     req.sanitize('name').trim();
-    req.sanitize('lusername').trim();
+    req.sanitize('username').trim();
     req.sanitize('email').trim();
-    req.sanitize('lpassword').trim();
+    req.sanitize('password').trim();
     req.sanitize('dateOfBirth').trim();
 
-    if (name!="" &&lusername!="" && email!="" && lpassword!="" && cpassword!=""){
+    if (name!="" &&username!="" && email!="" && password!="" && confirmPassword!=""){
       if(mailchecker.isValid(email)){
         var schema = new passwordValidator();
         schema
