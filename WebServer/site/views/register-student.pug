@@ -1,4 +1,4 @@
-html
+lpasswordhtml
   head
     title Register(student)
     script.
@@ -29,7 +29,7 @@ html
               required:true,
               minlength:5
             },
-            username:{
+            lusername:{
               required:true,
               minlength:5
             },
@@ -37,10 +37,10 @@ html
               required:true,
               minlength:8
             },
-            confirmPassword:{
+            cpassword:{
               required:true,
               minlength:8,
-              equalTo:"#password"
+              equalTo:"#lpassword"
             },
             phoneNumber:{
               checkphone:true
@@ -63,15 +63,15 @@ html
               required: "Please enter name",
               minlength:"Your name must consist atleast 5 characters"
             },
-            username:{
+            lusername:{
               required: "Please enter username",
               minlength:"Your username must consist atleast 5 characters"
             },
-            password:{
+            lpassword:{
               required: "Please enter password",
               minlength:"Your password must consist atleast 8 characters"
             },
-            confirmPassword:{
+            cpassword:{
               required:"Please enter password",
               minlength:"Your password must consist atleast 8 characters",
               equalTo:"Passwords not match"
@@ -97,16 +97,16 @@ html
       input#name(type='text', name='name', placeholder='name', autocomplete="off")
       br
       p
-      input#username(type='text', name='username', placeholder='username', autocomplete="off")
+      input#lusername(type='text', name='lusername', placeholder='username', autocomplete="off")
       br
       p
       input#Email.text(type='email', name='email', placeholder='Email', autocomplete="off")
       br
       p
-      input#password(type='password', name='password', placeholder='password')
+      input#lpassword(type='password', name='lpassword', placeholder='password')
       br
       p
-      input#confirmPassword(type='password', name='confirmPassword', placeholder='confirmPassword')
+      input#cpassword(type='password', name='cpassword', placeholder='confirmPassword')
       br
       p
       #dateOfBirth
