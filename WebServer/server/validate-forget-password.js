@@ -15,13 +15,13 @@ module.exports = function(cipher, appConn, C,emailServer) {
     var email = req.body.email;
 
     function randomNum() {
-    var text ="";
+      var text="";
     var random = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for(var i = 0; i < 12; i++) {
-      text += random.charAt(Math.floor(Math.random() *62));
+      text += random.charAt(Math.floor(Math.random() * random.length));
     }
     return text;
-    }
+  }
 
 
 
