@@ -12,14 +12,6 @@ module.exports = async function(input) {
   let dbConn = input.dbConn;
   console.log("REQ TYPE: " +data.type);
   switch(data.type) {
-    /**TESTING THE 3 WAY COMMUNICATION**/
-    // case 20000 : {
-    //   return new Promise((resolve, reject) => {
-    //     dbConn.send({'test' : true}, (response) => {
-    //       resolve(response);
-    //     });
-    //   });
-    // }
     case C.REQ_TYPE.JOIN_ROOM: {
       console.log("ALL ROOMS: ");
       console.log(allRooms);

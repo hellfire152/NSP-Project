@@ -215,8 +215,6 @@ var server = net.createServer(function(conn){
       sendToServer(response, inputData, encryption);
     } else {  //ALEADY AUTHENTICATED
       try {
-        // if(inputData.test)
-        //   sendToServer({'test' : 'abc'}, inputData);
         switch(inputData.data.type) {
           case C.DB.CREATE.STUDENT_ACC :
           case C.DB.CREATE.TEACHER_ACC : {

@@ -231,12 +231,7 @@ var attemptConnection = setInterval(() => {
         "runCallback" : runCallback,
         "logResponse" : logResponse
       });
-
-      //testing
-      appConn.send({'type' : 20000}, (response) => {
-        console.log(response);
-      });
-
+      
       //start listening
       server.listen(8080);
       console.log("Listening on port 8080...");
