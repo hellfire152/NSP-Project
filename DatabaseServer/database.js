@@ -36,6 +36,8 @@ var fs = require('fs');
 var uuid = require('uuid');
 var Promise = require('promise');
 
+//delete the decrypted settings file
+
 //getting keys
 //getting the RSA keys
 const KEYS = {

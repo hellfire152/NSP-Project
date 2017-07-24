@@ -73,7 +73,7 @@ app.loader  //load all
 
     //answering scene
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);
-    let shortAnswerTextField = new ShortAnswerTextField(WIDTH / 2, 100);
+    let shortAnswerTextField = new ShortAnswerTextField(WIDTH, 100);
     let questionDisplay = new QuestionDisplay(WIDTH, 20, 20,
       HEIGHT - mcqButtonHandler.height - topBar.height);
     let answerResponses = new BarGraph(resources, null, {
@@ -144,36 +144,6 @@ function initEndScene() {
   endText.y = HEIGHT / 2;
   p.end.addChild(endText);
   app.stage.addChild(p.end);
-}
-
-function initRatingScene() {
-  let p = pixiScenes;
-  p.rating = new PIXI.Container();
-  let like = new PIXI.Sprite(allResources['like'].texture);
-  let dislike = new PIXI.Sprite(allResources['dislike'].texture);
-  like.interactive = dislike.interactive = true;
-  like.on('pointertap', () => {
-    send({
-      'game' : C.GAME.RATING,
-      'rating' : 0
-    });
-  });
-  dislike.on('pointertap', () => {
-    send({
-      'game' : C.GAME.RATING,
-      'rating' : 1
-    });
-  });
-  //positioning
-  like.anchor.set(0.5,0.5);
-  dislike.anchor.set(0.5,0.5);
-  like.x = WIDTH / 2 - 100;
-  dislike.x = WIDTH / 2 - 100;
-  like.y = dislike.y = HEIGHT / 2;
-
-  //add to Container
-  p.rating.addChild(like, dislike);
-  app.stage.addChild(p.rating);
 }
 
 /*

@@ -31,10 +31,10 @@ class ShortAnswerTextField extends DisplayElement{
         if(textField.enabled) {
           if(e.which == 17 || e.which == 18); //ctrl or alt keys (do nothing)
           else if(e.which == 13) { //enter key
-            textfield.disable();
+            textField.disable();
             send({
               'game': C.GAME.SUBMIT_ANSWER,
-              'answer': textfield.text
+              'answer': textField.text
             });
           } else if(e.which == 8)textField.backspace(); //backspace key
           else {

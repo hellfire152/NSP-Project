@@ -231,7 +231,7 @@ var attemptConnection = setInterval(() => {
         "runCallback" : runCallback,
         "logResponse" : logResponse
       });
-      
+
       //start listening
       server.listen(8080);
       console.log("Listening on port 8080...");
@@ -240,4 +240,4 @@ var attemptConnection = setInterval(() => {
     console.log(e);
     console.log("Retrying connection in 10 seconds...");
   }
-}, 10000);
+}, 5000);
