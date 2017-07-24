@@ -123,8 +123,6 @@ var attemptConnection = setInterval(() => {
     }
 
     function runCallback(response) {
-      console.log(response);
-      console.log(pendingAppResponses);
       if(pendingAppResponses[response.reqNo]) {
         if(pendingAppResponses[response.reqNo].callback)
           pendingAppResponses[response.reqNo].callback(response);
@@ -232,6 +230,11 @@ var attemptConnection = setInterval(() => {
         "decryptResponse" : decryptResponse,
         "runCallback" : runCallback,
         "logResponse" : logResponse
+      });
+
+      //testing
+      appConn.send({'type' : 20000}, (response) => {
+        console.log(response);
       });
 
       //start listening

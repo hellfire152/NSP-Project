@@ -200,7 +200,8 @@ function initServer() {
             response = await handleReq({
                 'data' : data,
                 'C' : C,
-                'allRooms' : allRooms
+                'allRooms' : allRooms,
+                'dbConn' : dbConn
               });
           } else if (!(data.event === undefined)){ //event defined -> socket.io stuff
             response = await handleIo({
@@ -208,7 +209,8 @@ function initServer() {
               'C' : C,
               'allRooms' : allRooms,
               'sendToServer': sendToServer,
-              'conn': conn
+              'conn': conn,
+              'dbConn' : dbConn
             });
           } else if (!(data.game === undefined)){  //game stuff
             response = await handleGame({
@@ -216,13 +218,15 @@ function initServer() {
               'C' : C,
               'allRooms' : allRooms,
               'conn': conn,
-              'sendToServer': sendToServer
+              'sendToServer': sendToServer,
+              'dbConn' : dbConn
             });
           } else {
             response = await handleSpecial({  //special
               'data' : data,
               'C' : C,
-              'allRooms' : allRooms
+              'allRooms' : allRooms,
+              'dbConn' : dbConn
             });
           }
         } catch (err) {
@@ -232,18 +236,27 @@ function initServer() {
       }
 
       //logging and response
-      console.log("AppServer Response: ");
-      console.log(response);
-      response.reqNo = reqNo; // To web
-      if(S.AUTH_BYPASS) encryption = 'none';
+      if(response.then) { //if a promise is returned
+        response.then((r) => {
+          console.log("AppServer Response: ");
+          console.log(response);
+          r.reqNo = reqNo;
+          sendToServer(conn, response);
+        });
+      } else {
+        console.log("AppServer Response: ");
+        console.log(response);
+        response.reqNo = reqNo; // To web
+        if(S.AUTH_BYPASS) encryption = 'none';
 
-      if(data.type === C.REQ_TYPE.DATABASE){
-        dbConn.send(response, (databaseResponse) =>{
-          var appConnnection = conn;
-          sendToServer(appConnnection, databaseResponse);
-        }, encryption);
-      } else{
-        sendToServer(conn, response, encryption);
+        if(data.type === C.REQ_TYPE.DATABASE){
+          dbConn.send(response, (databaseResponse) =>{
+            var appConnnection = conn;
+            sendToServer(appConnnection, databaseResponse);
+          }, encryption);
+        } else{
+          sendToServer(conn, response, encryption);
+        }
       }
     });
   });
@@ -316,7 +329,6 @@ function runCallback(response) {
 dbConn.send = (reqObj, callback, encryption) => {
   //generating a unique id to identify the request
   let reqNo = uuid();
-  console.log(reqObj);
   reqObj.reqNo = reqNo;
 
   //storing the callback for later calling
