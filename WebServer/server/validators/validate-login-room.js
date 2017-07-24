@@ -47,6 +47,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
               var deviceIp = JSON.parse(req.cookies.deviceIP);
             }
 
+            console.log("SENDING");
             appConn.send({
               // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'type':C.REQ_TYPE.DATABASE,
@@ -54,10 +55,11 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                 type : C.DB.SELECT.USER_ACCOUNT,
                 account : {
                   username : req.body.username,
-                  password : req.body.password
+                  hash_password : req.body.password
                 }
               }
             }, (response) => {
+              console.log("RESPONGDING");
 
               console.log(req.body.userIp);
               // await cipher.hash(req.body.userIp)
@@ -103,19 +105,11 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                     console.log(response.data.data[0]);
                     var encodedData = xssDefense.jsonEncode(response.data.data[0]);
                     if(response.data.success){
-
-                      appConn.send({
-                        'type' : C.REQ_TYPE.DATABASE,
-                        'data' : {
-                          type : C.DB.SELECT.ALL_QUIZ
-                        }
-                      } ,(response2) => {
-                        // var encodedQuiz = xssDefense.jsonEncode(response2.data.data);
-                        res.cookie('user_info', JSON.stringify(encodedData));
-                        res.render('Loginindex',{
-                          data: encodedData,
-                          quizzes : response2.data.data
-                        });
+                      console.log("SUCCESS");
+                      console.log(encodedData);
+                      res.cookie('user_info', JSON.stringify(encodedData));
+                      res.render('Loginindex',{
+                        data: encodedData
                       });
                     }
                     else{
@@ -127,11 +121,6 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                   });
                 }
                 else{
-                  //TODO:
-                  //REDIRECT TO OTP WEBSITE TO VERIFY
-                  //Generate otp pin
-                  //Send the pin to email
-                  //Change 1234 - random no.
                   var randomNum = Math.floor((Math.random() * 999999) + 10000);
                   console.log("THIS IS THE PIN: " + randomNum);
 
@@ -143,7 +132,6 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                     }
                   } ,(response2) => {
                     var email = response2.data.data.email
-                    //TODO: SEND THE DATA TO THE EMAIL SERVEVR
                     emailObj = {
                       pin : randomNum,
                       email : email

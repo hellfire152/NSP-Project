@@ -123,6 +123,8 @@ var attemptConnection = setInterval(() => {
     }
 
     function runCallback(response) {
+      console.log(response);
+      console.log(pendingAppResponses);
       if(pendingAppResponses[response.reqNo]) {
         if(pendingAppResponses[response.reqNo].callback)
           pendingAppResponses[response.reqNo].callback(response);
@@ -237,6 +239,7 @@ var attemptConnection = setInterval(() => {
       console.log("Listening on port 8080...");
     }
   } catch(e) {
+    console.log(e);
     console.log("Retrying connection in 10 seconds...");
   }
 }, 10000);

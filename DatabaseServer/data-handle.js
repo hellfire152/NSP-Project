@@ -5,10 +5,13 @@
 
   Author : Nigel Chen Chin Hao
  */
+var cipher = require('../custom-API/cipher.js');
+var databaseCipher = new cipher({
+  'password': 'aVaTyAzkOqweA',
+  'iv' : '5dZoC41JFwmLQMYo'
+});
 
-var databaseCipher;
-var C;
-
+var C = require('../custom-API/constants.json');
 //Input user data password will undergo hashing and salting before storing to database
 async function handlePassword(data){
   await databaseCipher.generateSalt()
@@ -79,14 +82,17 @@ async function handleDeleteAccount(data){
 
 async function handleRecieveAccount(data){
   var dataArr = [];
+  console.log(data);
   dataArr.push(data); // Push to array to follow the format of encryption
-
   var plainData;
 
   await handleDecryption(dataArr)
   .then(dataOut => {
-    databaseCipher.hash(dataOut[0].password + dataOut[0].salt)
+    console.log("SALT: " + dataOut[0].salt);
+    console.log(dataOut[0].hash_password);
+    databaseCipher.hash(dataOut[0].hash_password + dataOut[0].salt)
     .then(hashed => {
+      console.log("HASHED: " + hashed);
       dataOut[0].hash_password = hashed;
       plainData = dataOut[0];
     })
