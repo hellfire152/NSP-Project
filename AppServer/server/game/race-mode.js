@@ -64,7 +64,7 @@ module.exports = async function(input) {
           //calculate score
           currentPlayer.score += common.getReward(currentRoom,
             currentRoom.quiz.questions[currentPlayer.questionCounter]);
-            
+
           currentPlayer.answerable = true;  //just in case
           currentPlayer.questionCounter++;
 
@@ -110,9 +110,8 @@ module.exports = async function(input) {
               'sendTo': C.SEND_TO.ROOM_EXCEPT_SENDER,
               'roomNo': data.roomNo,
               'id': data.id,
-              'questionNo' : currentPlayer.questionCounter + 1,
-              'sourceId': data.id,
-              'roomNo': data.roomNo
+              'questionNo' : currentPlayer.questionCounter,
+              'sourceId': data.id
             });
 
             return {  //send next question to player
