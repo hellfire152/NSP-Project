@@ -237,7 +237,10 @@ function initServer() {
       if(S.AUTH_BYPASS) encryption = 'none';
 
       if(data.type === C.REQ_TYPE.DATABASE){
-        dbConn.send(response, {"connection" : conn, "encryption" : encryption}, encryption);
+        dbConn.send(response, (databaseResponse) =>{
+          var appConnnection = conn;
+          sendToServer(appConnnection, databaseResponse);
+        }, encryption);
       } else{
         sendToServer(conn, response, encryption);
       }

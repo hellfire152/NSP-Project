@@ -1,4 +1,4 @@
-lpasswordhtml
+html
   head
     title Register(student)
     script.
@@ -33,7 +33,7 @@ lpasswordhtml
               required:true,
               minlength:5
             },
-            password:{
+            lpassword:{
               required:true,
               minlength:8
             },
@@ -42,7 +42,7 @@ lpasswordhtml
               minlength:8,
               equalTo:"#lpassword"
             },
-            phoneNumber:{
+            number:{
               checkphone:true
             },
             email:{
@@ -117,7 +117,7 @@ lpasswordhtml
       input#school(type='text', name='school', placeholder='school', autocomplete="off")
       br
       p
-      input#phoneNumber.checkphone(type='text', name='phoneNumber', placeholder='phoneNumber', autocomplete="off")
+      input#number.checkphone(type='text', name='number', placeholder='phoneNumber', autocomplete="off")
       br
       p
       input.submit(style='display:inline-block;', type='submit', value='Submit')
