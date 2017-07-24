@@ -10,6 +10,8 @@ var socketObj;  //object mapping socketIds to socketS
 var socketOfUser; //object mapping userIds to sockets
 var io;
 module.exports = async function(input) {
+  socketObj = input.socketObj;
+  socketOfUser = input.socketOfUser;
   io = input.io;
   const C = input.C;
   let response = input.response;

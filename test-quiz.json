@@ -2,6 +2,12 @@
   "id": "TEST",
   "questions": [
     {
+      "prompt" : "a + b =?",
+      "type" : 1,
+      "solution" : "ab",
+      "time" : 10,
+    },
+    {
       "prompt": "1+1=?",
       "type": 0,
       "choices": ["1", "2", "3", "4"],
