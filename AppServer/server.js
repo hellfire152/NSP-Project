@@ -233,7 +233,7 @@ function initServer() {
       //logging and response
       console.log("AppServer Response: ");
       console.log(response);
-      response.reqNo = reqNo;
+      response.reqNo = reqNo; // To web
       if(S.AUTH_BYPASS) encryption = 'none';
 
       if(data.type === C.REQ_TYPE.DATABASE){
@@ -304,14 +304,9 @@ async function decryptResponse(response) {
 }
 
 function runCallback(response) {
-  console.log(pendingDatabaseResponses);
   if(pendingDatabaseResponses[response.reqNo]) {
-    if(pendingDatabaseResponses[response.reqNo].callback){
-      conn = pendingDatabaseResponses[response.reqNo].callback.connection;
-      encryption = pendingDatabaseResponses[response.reqNo].callback.encryption;
-      sendToServer(conn, response, encryption)
-  }
-      // pendingDatabaseResponses[response.reqNo].callback(response);
+    if(pendingDatabaseResponses[response.reqNo].callback)
+      pendingDatabaseResponses[response.reqNo].callback(response);
     delete pendingDatabaseResponses[response.reqNo];
   }
 }
@@ -320,6 +315,7 @@ function runCallback(response) {
 dbConn.send = (reqObj, callback, encryption) => {
   //generating a unique id to identify the request
   let reqNo = uuid();
+  console.log(reqObj);
   reqObj.reqNo = reqNo;
 
   //storing the callback for later calling
