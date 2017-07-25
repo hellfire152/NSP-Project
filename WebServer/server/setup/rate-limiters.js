@@ -1,7 +1,7 @@
 var RateLimit = require('express-rate-limit');
 
 var join = new RateLimit({
-  'windowMs' : 1000 * 60 * 60 //1 hour
+  'windowMs' : 1000 * 60 * 60, //1 hour
   'delayAfter' : 2,
   'delayMs' : 1000,
   'message' : 'Too many join requests!',
@@ -12,7 +12,7 @@ var join = new RateLimit({
 });
 
 var host = new RateLimit({
-  'windowMs' : 1000 * 60 * 60 //1 hour
+  'windowMs' : 1000 * 60 * 60, //1 hour
   'delayAfter' : 1,
   'delayMs' : 2000,
   'message' : 'Too many host requests',
@@ -23,9 +23,9 @@ var host = new RateLimit({
 });
 
 var register = new RateLimit({
-  'windowMs' : 1000 * 60 * 60 //1 hour
+  'windowMs' : 1000 * 60 * 60, //1 hour
   'delayAfter' : 5,
-  'delayMs' : 1000 * 3 //3 seconds
+  'delayMs' : 1000 * 3, //3 seconds
   'message' : 'Too many register requests!',
   'max' : 200,
   'handler' : (req, res) => {
