@@ -44,8 +44,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
           console.log("HOST FORM DATA: ");
 
             if(req.cookies.deviceIP != undefined){
-              var deviceIp = JSON.parse(req.cookies.deviceIP);
-            }
+             }
 
             appConn.send({
               // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
