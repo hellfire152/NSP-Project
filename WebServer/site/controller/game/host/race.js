@@ -43,7 +43,12 @@ async function handleGame(data) {
       break;
     }
     case C.GAME_RES.GAME_END: {
-
+      //hide the other divs
+      document.getElementById('players-prompt').style.display = 'none';
+      document.getElementById('race-total-questions').style.display = 'none';
+      document.getElementById('race-header').style.display = 'none';
+      //show the game ranking div
+      document.getElementById('ranking').style.display = 'block';
       break;
     }
   }

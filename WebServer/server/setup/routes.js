@@ -7,7 +7,7 @@ var uuid;
 
 var express = require('express');
 var nodemailer = require('nodemailer');
-
+var rateLimiters = require('./rate-limiters.js');
 module.exports = function(data) {
   let {app, dirname, cipher, emailServer, appConn, queryOfUser, errors, cookieCipher, xssDefense}
     = data;
@@ -62,7 +62,7 @@ module.exports = function(data) {
     // }
   })
   //handling play path
-  app.get('/play', function(req, res) { //submitted a form for playing in a room
+  app.get('/play', rateLimiters.join, function(req, res) { //submitted a form for playing in a room
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
       sendErrorPage(res, "Don't Think you can hack me!");
     } else {
@@ -128,9 +128,9 @@ module.exports = function(data) {
 
   //handling hosting
 
-  app.get('/host', function(req, res) { //submit the form for hosting a room
+  app.get('/host', rateLimiters.host, function(req, res) { //submit the form for hosting a room
     if(req.query.quizId.constructor === Array) {
-      console.log("Please don't mess with my webpage");
+      sendErrorPage(res, 'Argument error!');
     } else {
       if(req.cookies.login === undefined)
         sendErrorPage(res, 'You are not logged in!');
@@ -199,13 +199,12 @@ module.exports = function(data) {
   app.post('/host-room', validators["host-room"]);
   app.post('/add-quiz', validators["add-quiz"]);
   app.post('/login-room', validators["login-room"]);
-  app.post('/reg-room', validators["reg-room"]);
-  app.post('/reg-room-teach', validators["reg-room-teach"]);
+  app.post('/reg-room', rateLimiters.register, validators["reg-room"]);
+  app.post('/reg-room-teach', rateLimiters.register, validators["reg-room-teach"]);
   app.post('/change-password-room-success', validators["change-password-room"]);
   app.post('/forget-password-room-success', validators["forget-password-room"]);
   app.post('/otp-check', validators["otp-check"]);
   app.post('/otp-register', validators["otp-register"]);
-
 }
 
 function sendErrorPage(res, errormsg) {
