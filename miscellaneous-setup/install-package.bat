@@ -22,5 +22,6 @@ call npm install mailchecker
 call npm install xoauth2
 call npm install speakeasy
 call npm install base32
+call npm install express-rate-limit
 cls
 echo All required modules installed!

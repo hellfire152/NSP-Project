@@ -40,7 +40,8 @@ function handleGame(response) {
     case C.GAME_RES.RESPONSE_DATA: {
       document.getElementById('current-question').style.display = 'block';
       //clear response list
-      document.getElementById('response-list').innerHTML = "";
+      if(currentQuestion.type == 0)
+        document.getElementById('response-list').innerHTML = "";
       //add the response data
       for(let i = 0; i < response.responseData.labels.length; i++) {
         let choiceLi =
@@ -123,9 +124,9 @@ function handleGame(response) {
           choiceCounter++;
         }
 
-        //add to the display
-        currentQuestionDiv.appendChild(responsesOl);
       }
+      //add to the display
+      currentQuestionDiv.appendChild(responsesOl);
 
       document.body.appendChild(currentQuestionDiv);
       break;

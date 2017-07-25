@@ -72,10 +72,14 @@ module.exports = async function(input) {
           //calculate score
           let reward = common.getReward(currentRoom,
             currentRoom.quiz.questions[currentPlayer.questionCounter]);
-          currentPlayer.score += common.calculateScore(
-            reward, currentPlayer.time, Date.now(), currentPlayer.answerStreak);
+
+          if(currentPlayer.score === undefined) {
+            currentPlayer.score += common.calculateScore(
+              reward, currentPlayer.time, Date.now(), currentPlayer.answerStreak);
+          }
 
           currentPlayer.answerable = true;  //just in case
+          currentPlayer.questionCounter++;
 
           //finished the last question
           if(currentPlayer.questionCounter >= currentRoom.quiz.questions.length) {
@@ -162,7 +166,6 @@ module.exports = async function(input) {
   Version of sendQuestion for race mode
 */
 function sendNextQuestion(currentRoom, currentPlayer, data) {
-  currentPlayer.questionCounter++;
   currentPlayer.answerable = true;
 
   //set timer for time taken to a correct answer
