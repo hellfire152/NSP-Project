@@ -18,9 +18,10 @@
  });
 
  //Check for setting obejct's existence
- var settings = process.argv[2];
- if(settings === undefined) {
-   throw new Error("Usage: ./run-server.bat <path to settings>");
+ var appServerPassword = process.argv[2];
+ var settings = process.argv[3]
+ if(settings === undefined || appServerPassword === undefined) {
+   throw new Error("Usage: ./run-server.bat <appServerPassword> <path to settings>");
    process.exit(1);
  }
 
@@ -34,7 +35,8 @@ var crypto = require('crypto');
 var cookieParser = require('cookie-parser');
 var uuid = require('uuid');
 
-const S = require(settings);
+var S = require(settings);
+S.APPSERVER.PASSWORD = appServerPassword;
 const C = require(S.CONSTANTS);
 
 var Cipher = require(S.CIPHER);
@@ -118,6 +120,8 @@ var attemptConnection = setInterval(() => {
     }
 
     function runCallback(response) {
+      console.log(response);
+      console.log(pendingAppResponses);
       if(pendingAppResponses[response.reqNo]) {
         if(pendingAppResponses[response.reqNo].callback)
           pendingAppResponses[response.reqNo].callback(response);
@@ -137,6 +141,8 @@ var attemptConnection = setInterval(() => {
     appConn.encryption = 'none';
     if(!S.AUTH_BYPASS) {
       appConn.send({'publicKey' : KEYS.PUBLIC}, (response) => {
+        clearInterval(attemptConnection);
+
         //receiving public key of AppServer
         console.log("PUBLIC KEY RECEIVED");
         appConn.publicKey = response.publicKey;
@@ -170,7 +176,6 @@ var attemptConnection = setInterval(() => {
                 //send key to AppServer
                 appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
                   if(response.auth) {
-                    clearInterval(attemptConnection);
                     delete appConn.encryption; //no need this anymore
                     delete appConn.secret; //or this
                     delete appConn.dh //or that
@@ -192,7 +197,6 @@ var attemptConnection = setInterval(() => {
       appConn.removeAllListeners('data');
       initServer();
     }
-
     function initServer() {
       clearInterval(attemptConnection);
       console.log("INIT SERVER");
@@ -229,8 +233,8 @@ var attemptConnection = setInterval(() => {
       server.listen(8080);
       console.log("Listening on port 8080...");
     }
-  } catch (e) { //connection fails
+  } catch(e) {
     console.log(e);
-    console.log('Connection failed (most likely), retrying in 10 seconds...');
+    console.log("Retrying connection in 10 seconds...");
   }
 }, 10000);

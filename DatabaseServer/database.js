@@ -13,14 +13,16 @@ process.on('uncaughtException', (err) => {
 })
 
 //Check for setting obejct's existence
-var settings = process.argv[2];
+var appServerPassword = process.argv[2];
+var settings = process.argv[3];
 if(settings === undefined) {
   throw new Error("Usage: ./run-server.bat <path to settings>");
   process.exit(1);
 }
 
 var mysql = require('mysql');
-const S = require(settings);
+var S = require(settings);
+S.APPSERVER.PASSWORD = appServerPassword;
 const C = require(S.CONSTANTS);
 var Cipher = require(S.CIPHER);
 var net = require('net');
@@ -452,6 +454,7 @@ async function userDetails(userId, details, type){
 //Else no personal data will be sent
 async function retrievePreAccount(inputData){
   var data = inputData.data;
+  console.log(data);
   data.account.email = data.account.username; // seperate email and username to provide encryption for email
   await handleDb.handleEncryption(data.account)
   .then(dataAccount => {
@@ -480,6 +483,8 @@ async function retrievePreAccount(inputData){
             handleDb.handleRecieveAccount(dataAccount)
             .then(dataOut => {
               //If user password input is equal to database password
+              console.log("INPUT: " + dataOut.hash_password);
+              console.log("DB: " + dataOut.dbPass);
               if(dataOut.hash_password === dataOut.dbPass){
                 console.log("Password correct");
                 var query = connection.query("SELECT user_account.user_id, ip_address\

@@ -9,10 +9,6 @@ class BarGraphBar extends DisplayElement {
     super();
     let {label, value, color, width, maxHeight, maxValue, padding} = data;
 
-    //check if any of the required arguments are undefined
-    if(!(!!maxValue && !!color && !!padding && !!label && !!maxHeight && !!width))
-      throw new Error("Missing arugments!");
-
     this._pixiELements = {};
     this._maxHeight = maxHeight;
     this._maxValue = maxValue;
