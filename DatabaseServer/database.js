@@ -140,8 +140,11 @@ var server = net.createServer(function(conn){
           break;
         }
         case C.DB.SELECT.EMAIL : {
-          console.log(inputData);
           await retrieveEmail(inputData);
+          break;
+        }
+        case C.DB.UPDATE.CHANGE_PASSWORD : {
+          await changePassword(inputData);
           break;
         }
         default : {
@@ -596,7 +599,8 @@ var server = net.createServer(function(conn){
           var response = {
             data : {
               success : true,
-              message : "Input correct"
+              message : "Input correct",
+              user_id : result[0].user_id
             }
           }
           sendToServer(response, inputData);
@@ -611,6 +615,57 @@ var server = net.createServer(function(conn){
           }
           sendToServer(response, inputData);
         }
+      });
+    });
+  }
+
+  async function changePassword(inputData){
+    var data = inputData.data;
+    await handleDb.handlePassword(data)
+    .then(dataOut => {
+      handleDb.handleEncryption(dataOut.account)
+      .then(dataOutAccountEncrypt => {
+        var query = connection.query("UPDATE user_account SET password_hash = ?, salt = ? WHERE user_id = ?",[dataOutAccountEncrypt.password_hash, dataOutAccountEncrypt.salt, dataOutAccountEncrypt.user_id] , function(error, result){
+          if(error){
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_SQL_QUERY,
+                message : error
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          if(result.affectedRows == 0){
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_UPDATE_FAILED,
+                message : "Password did not update"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          else if(result.affectedRows == 1){
+            var response = {
+              data : {
+                success : true,
+                message : "Password updated"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          else{
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_UNKNOWN,
+                message : "Updated multiple account"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+        });
       });
     });
   }

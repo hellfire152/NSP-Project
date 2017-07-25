@@ -178,6 +178,9 @@ module.exports = function(data) {
   app.post('/forget-password-room-success', require('../validate-forget-password.js')(cipher, appConn,C,emailServer));
   app.post('/otp-check', require('../validate-otp-check.js')(cipher, appConn,C, xssDefense));
   app.post('/otp-register', require('../validate-otp-register.js') (cipher, appConn, C, xssDefense));
+  app.post('/otp-forget-password', require('../validate-otp-forget-password.js') (cipher, appConn, C, xssDefense));
+  app.post('/change-forget-password', require('../validate-change-forget-password.js') (cipher, appConn, C, xssDefense));
+
 
 }
 

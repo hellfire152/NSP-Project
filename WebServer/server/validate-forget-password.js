@@ -23,7 +23,29 @@ module.exports = function(cipher, appConn, C,emailServer) {
         email : req.body.email
       }
 
-      emailServer.forgetPasswordOtpEmail(emailObj);
+      appConn.send({
+        'type' : C.REQ_TYPE.DATABASE,
+        'data' : {
+          type : C.DB.SELECT.RETRIEVE_USER_DETAILS,
+          username : username,
+          email : email
+        }
+      } ,(response) => {
+        if(response.data.success){
+          var otp = {
+            pin : randomNum,
+            user_id : response.data.user_id,
+            count : 0
+          }
+          res.cookie('otp', JSON.stringify(otp), {"maxAge": 1000*60*5}); //5 min
+          res.redirect('/otp-forget-password');
+        }
+        else{
+          res.redirect('/forget-password');
+        }
+      });
+
+      // emailServer.forgetPasswordOtpEmail(emailObj);
 
       /*
       0. Check if username and email match or not?
