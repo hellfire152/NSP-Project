@@ -91,6 +91,7 @@ function initServer() {
       }
 
       let reqNo = data.reqNo;
+      console.log("THIS IS THE REQ NO.: " + reqNo); // ==============================================================
       delete data.reqNo;  //hide reqNo from logs
       console.log("FROM WEBSERVER"); //Log all data received from the WebServer
       console.log(data);
@@ -330,6 +331,7 @@ dbConn.send = (reqObj, callback, encryption) => {
   //generating a unique id to identify the request
   let reqNo = uuid();
   reqObj.reqNo = reqNo;
+  console.log(callback);
 
   //storing the callback for later calling
   pendingDatabaseResponses[reqNo] = {};

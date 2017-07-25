@@ -90,7 +90,7 @@ var attemptConnection = setInterval(() => {
       //generating a unique id to identify the request
       let reqNo = uuid();
       reqObj.reqNo = reqNo;
-
+      
       //storing the callback for later calling
       pendingAppResponses[reqNo] = {};
       if(callback)
@@ -123,6 +123,7 @@ var attemptConnection = setInterval(() => {
     }
 
     function runCallback(response) {
+        console.log(pendingAppResponses);
       if(pendingAppResponses[response.reqNo]) {
         if(pendingAppResponses[response.reqNo].callback)
           pendingAppResponses[response.reqNo].callback(response);
