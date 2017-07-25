@@ -37,6 +37,9 @@ module.exports = function(cipher, appConn, C,emailServer) {
             user_id : response.data.user_id,
             count : 0
           }
+
+          //TODO: Send the randomNum to client email
+
           res.cookie('otp', JSON.stringify(otp), {"maxAge": 1000*60*5}); //5 min
           res.redirect('/otp-forget-password');
         }
