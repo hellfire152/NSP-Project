@@ -26,7 +26,7 @@ class ShortAnswerTextField extends DisplayElement{
     this._container.addChild(this._text);
 
     //listen for typing
-    document.onkeydown = ((textField) => {
+    document.onkeypress = ((textField) => {
       return (e) => {
         if(textField.enabled) {
           if(e.which == 17 || e.which == 18); //ctrl or alt keys (do nothing)
@@ -39,7 +39,6 @@ class ShortAnswerTextField extends DisplayElement{
           } else if(e.which == 8)textField.backspace(); //backspace key
           else {
             let char = String.fromCharCode(e.which);
-            if (e.shiftKey) char.toUpperCase(); //shift key pressed
             textField.append(char);
           }
         }

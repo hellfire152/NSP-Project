@@ -30,31 +30,42 @@ function calculateScore(reward, startTime, answerTime, answerStreak) {
 
 function calculateTitles(currentRoom) {
   let players = currentRoom.players;
-  let questionsNo = currentRoom.quiz.questions.length;
+  let titles = []; //object that will be returned
 
   //calculating "Speedy!" and "sleepy..."
   let fastestPlayer, fastestTime = Number.MAX_VALUE, slowestPlayer, slowestTime = 0;
   //get the fastest and the slowest
-  for(let player of players) {
-    if(player.title === undefined) {
-      if(player.answerTime) {
-        let ansTime = player.answerTime / questionsNo;
-        if(ansTime < fastestTime) {
-          fastestTime = ansTime;
-          fastestPlayer = player;
-        }
-        if(ansTime > slowestTime) {
-          slowestTime = ansTime;
-          slowestPlayer = player;
+  for(let player in players) {
+    if(players.hasOwnProperty(player)) {
+      if(players[player].title === undefined) {
+        if(players[player].answerTime) {
+          let ansTime = players[player].answerTime;
+          if(ansTime < fastestTime) {
+            fastestTime = ansTime;
+            fastestPlayer = player;
+          }
+          if(ansTime > slowestTime) {
+            slowestTime = ansTime;
+            slowestPlayer = player;
+          }
         }
       }
     }
   }
-  fastestPlayer.title = T.SPEEDY;
-  slowestPlayer.title = T.SLEEPY;
+  //assigning fastest and slowest titles
+  let fastestTitle = T.SPEEDY;
+  fastestTitle.recipient = fastestPlayer;
+  let slowestTitle = T.SLEEPY;
+  slowestTitle.recipient = slowestPlayer;
+
+  //CONFUSED title
+  
+
+  titles.push(fastestTitle);
+  titles.push(slowestTitle);
 
   //TODO::CALCULATE MORE TITLES
-  return [];
+  return titles;
 }
 
 function removeSolution(question) {
