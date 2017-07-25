@@ -103,7 +103,6 @@ module.exports =function(cipher, appConn,C){
           req.session.success=false;
 
           console.log("password not match");
-          // res.redirect('/registerstud');
         }
       }
 
@@ -114,13 +113,7 @@ module.exports =function(cipher, appConn,C){
           // res.redirect('/registerstud');
         }
       }
-    // else{
-    //     req.session.errors=error;
-    //     req.session.success=false;
-    //     console.log(schema.validate('password',{list:true}));
-    //     console.log("FAIL PW");
-    // }
-  // }
+
     else{
 
         req.session.errors=error;
@@ -128,25 +121,14 @@ module.exports =function(cipher, appConn,C){
         var errormsg = '';
         if(oldPassword==""){
           console.log("Please enter your current password");
-          // errormsg= "Please enter your username"
-          // sendErrorPage(res,errormsg);
-          // res.render('register-student',{
-          //   error1:
-          // });
+
         }
         if(newPassword==""){
           console.log("Please enter your new password");
-          // errormsg= "Please enter your passwor"
-          // sendErrorPage(res,errormsg);
-          // res.render('register-student',{
-          //   error3:'Please enter your password'
-          // });
+
         }
         if(confirmPassword==""){
           console.log("Please enter your new password");
-          // res.render('register-student',{
-          //   error2:'Please enter your email'
-          // });
 
         }
         console.log("never fill in all");

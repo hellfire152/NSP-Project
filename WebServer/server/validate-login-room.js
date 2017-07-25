@@ -74,6 +74,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                 //Check for identical IP address in user cookie
                 var valid = false; //Registered IP address in client PC
                 if(deviceIp != undefined && response.data.data.ip_address != undefined){
+                  var deviceIp = JSON.parse(req.cookies.deviceIP);
                   // await cipher.hash(req.body.userIp)
                   // .then(currentIpAddress => {
                   var currentIpAddress = crypto.createHash('SHA256').update(req.body.userIp).digest('base64'); //NOTE: Temp solution
