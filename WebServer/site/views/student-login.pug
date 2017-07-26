@@ -1,0 +1,194 @@
+doctype html
+html
+  head
+    title
+    link(rel='stylesheet', type='text/css', href='/resources/css/Login.css')
+    script.
+      var tim = 0;
+      function reload () {
+      tim = setTimeout("location.reload(true);",60000);   // 1 minute
+      }
+      function canceltimer() {
+      window.clearTimeout(tim);  // cancel the timer on each mousemove/click
+      reload();  // and restart it
+      }
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
+    script.
+        $(function(){
+        $("#login").validate({
+        rules:{
+        username:{
+        required:true,
+        minlength:5
+        },
+        password:{
+        required:true,
+        minlength:8
+        }
+        },
+        messages:{
+        username:{
+        required: "Please enter username",
+        minlength:"Your username must consist atleast 5 characters"
+        },
+        password:{
+        required: "Please enter password",
+        minlength:"Your password must consist atleast 8 characters"
+        },
+        }
+        });
+        });
+    script.
+      jQuery.validator.addMethod('checkphone', function(value){
+        if(/^[0-9]{8}$/.test(value)){
+          return true;
+         } else{
+          return false;
+         };
+       }, 'Please enter a valid phone number');
+    script.
+      $(function(){
+        $('#register-student').validate({
+          rules:{
+            name:{
+              required:true,
+              minlength:5
+            },
+            lusername:{
+              required:true,
+              minlength:5
+            },
+            lpassword:{
+              required:true,
+              minlength:8
+            },
+            cpassword:{
+              required:true,
+              minlength:8,
+              equalTo:"#lpassword"
+            },
+            number:{
+              checkphone:true
+            },
+            email:{
+              required:true,
+              email:true
+            },
+            DOB:{
+              required:true,
+              date:true
+            },
+            school:{
+              required:true,
+              minlength:3
+            }
+          },
+          messages:{
+            name:{
+              required: "Please enter name",
+              minlength:"Your name must consist atleast 5 characters"
+            },
+            lusername:{
+              required: "Please enter username",
+              minlength:"Your username must consist atleast 5 characters"
+            },
+            lpassword:{
+              required: "Please enter password",
+              minlength:"Your password must consist atleast 8 characters"
+            },
+            cpassword:{
+              required:"Please enter password",
+              minlength:"Your password must consist atleast 8 characters",
+              equalTo:"Passwords not match"
+            },
+            email:{
+              required:"Please enter email",
+              email:"Please enter a valid email"
+            },
+            DOB:{
+              required:"Please enter your birthdate",
+              date:"Please enter a valid date"
+            },
+            school:{
+              required:"Please enter your school",
+              minlength:"Please enter a valid school"
+            }
+          }
+        });
+      });
+
+    body(onmousemove='canceltimer();', onclick='canceltimer();')
+    // Mixins
+    // Pen Title
+    .pen-title
+      h1 Student Login Form
+    .container
+      .card
+      .card
+        h1.title Login
+        form#login(onsubmit='/validate-login-room', method='POST', action='/login-room')
+          .input-container
+            input#username(type='text', name="username")
+            label(for='Username') Username
+            .bar
+          .input-container
+            input#password(type='password', name ="password")
+            label(for='Password') Password
+            .bar
+          .button-container
+            button
+              span Go
+          .footer
+            a(href='#') Forgot your password
+            a(href='TeacherLogin.html') | Login as Teacher
+      .card.alt
+        .toggle
+        .toggle1
+        h1.title
+          | Register
+          .close
+        form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
+          .input-container
+            input#name(type='text', name='name', autocomplete="off")
+            label(for='name') Name
+            .bar
+          .input-container
+            input#lusername(type='text', name='lusername', autocomplete="off")
+            label(for='Username') Username
+            .bar
+          .input-container
+            input#lpassword(type='password', name='lpassword', autocomplete="off")
+            label(for='Password') Password
+            .bar
+          .input-container
+            input#cpassword(type='password',  name='cpassword', autocomplete="off")
+            label(for='Confirm Password') Confirm Password
+            .bar
+          .input-container
+            input#email(type='email', name='email', autocomplete="off")
+            label(for='email') Email
+            .bar
+          .input-container
+            input#DOB(style='width:230px;', type='date', name='DOB',min='1990-01-01',max='2011-01-15', autocomplete="off")
+            label(for='Dob') Date Of Birth
+            .bar
+          .input-container
+            input#school(type='text', name='school', autocomplete="off")
+            label(for='school') School
+            .bar
+          .input-container
+            input#number.checkphone(type='text',name='number', autocomplete="off")
+            label(for='phone') Phone Number
+            .bar
+          .button-container
+            button
+              span Next
+    script(type='text/javascript').
+      $('.toggle').on('click', function() {
+      $('.container').stop().addClass('active');
+      });
+      $('.close').on('click', function() {
+      $('.container').stop().removeClass('active');
+      });

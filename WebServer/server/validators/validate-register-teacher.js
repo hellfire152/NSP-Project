@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
 var mailchecker=require('mailchecker');
-module.exports =function(cipher, appConn, C, emailServer){
+module.exports =function(cipher, appConn, C){
   return function(req, res){
     // req.checkBody('username','Please enter username').notEmpty();
     //
@@ -21,6 +21,7 @@ module.exports =function(cipher, appConn, C, emailServer){
     var speakeasy = require("speakeasy");
     var secret = speakeasy.generateSecret({length: 20}); // Secret key is 20 characters long
     var randomNum = Math.floor((Math.random() * 999999) + 10000);
+    console.log(email);
 
     var otp = speakeasy.totp({
         secret: secret.base32,
@@ -34,6 +35,7 @@ module.exports =function(cipher, appConn, C, emailServer){
         encoding: 'base32',
         otp: otp
       });
+
 
       console.log(verified);
 
@@ -67,15 +69,39 @@ module.exports =function(cipher, appConn, C, emailServer){
 
 
         if (passwordCheck){
-          if(password==confirmPassword){
-              emailObj = {
-                username: req.body.username,
-                pin : randomNum,
-                email : req.body.email
+
+            if(!error){
+              // email authentication
+              const nodemailer = require('nodemailer');
+              const xoauth2 = require('xoauth2');
+
+              var transporter = nodemailer.createTransport({
+                  service: 'gmail',
+                  auth: {
+                    type: 'OAuth2',
+                          user: 'chloeangsl@gmail.com',
+                          clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
+                          clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
+                          refreshToken: '1/PqljSvhT5eVC59mMuJlSq3n-OXAC7t780142zdxSkuj0_lQqCwgeXxn7htzTCBmZ',
+                          accessToken: 'ya29.GluLBFitkUrt-trDc194r8hRXTSD4eUnvV2ZM1g2ARX5ug8SbCywqvGcjwRybPs7PIbYsi-7sJs5WG8ztMPUgOpMSBbEFEdudEywH8ouPH-QNZDvTVOuTgnWw_7C'
+                    }
+                })
+
+              var mailOptions = {
+                  from: 'My Name <chloeangsl@gmail.com>',
+                  to: req.body.email,
+                  subject: 'VERIFICATION EMAIL',
+                  html: '<p>hello! you have created an account with the Username: ' +req.body.lusername+ ', and Email: '+req.body.email+'. Your verification number is: '+randomNum+' </p>'
               }
 
-              emailServer.createAccountOtpEmail(emailObj);
-              if(!error){
+              transporter.sendMail(mailOptions, function (err, res) {
+                  if(err){
+                      console.log('Error');
+                  } else {
+                      console.log('Email verification has been sent.');
+                  }
+              })
+
 
               console.log(error);
               console.log("pass");
@@ -179,6 +205,6 @@ module.exports =function(cipher, appConn, C, emailServer){
     }
 
 
-}
+
   }
 }

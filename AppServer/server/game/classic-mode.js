@@ -55,6 +55,8 @@ module.exports = async function(input) {
           if(currentRoom.questionCounter >= questions.length) {
             //TODO::CAULCULATE TITLES
             console.log("GAME " +data.roomNo +" END");
+            //send
+
             return sendGameEnd(currentRoom.players, data);
           } else { //next question available
             return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);

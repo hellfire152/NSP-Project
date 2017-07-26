@@ -50,6 +50,23 @@ module.exports = function(data) {
       socket.disconnect();
     }
 
+    try{
+      let gameCookie = await getGameCookieS(socket,cookieCipher,cookie);
+      console.log("SOCKET IO GAME CONNECTION INITIATED BY");
+      console.log(gameCookie);
+      if(socketOfUser[gameCookie.username] !== undefined && socketOfUser[gameCookie.room] !==undefined){
+        console.log('User already exist in the game room');
+        socket.disconnect();
+      }
+      //store username together with room
+      socketOfUser[gameCookie.username] = socket;
+      socket.userId = gameCookie.username;
+
+    } catch(err){
+      console.log(err);
+      console.log("Invalid game cookie detected");
+      socket.disconnect();
+    }
     //adding listeners
     console.log("Request received: " +socket.id);
     socket.on('send', async function(input){ //from user
@@ -62,7 +79,7 @@ module.exports = function(data) {
           data.cookieData = cookieData;
         }
 
-        data.id = socket.userId;  //add userId to the sent data
+        data.id = socket.userId;  //add userId to  the sent data
         data.roomNo = socket.roomNo; //add roomNo (if applicable)
 
         appConn.send(data, null);
@@ -106,7 +123,6 @@ module.exports = function(data) {
     }
   });
 }
-
 //handlers for the different response types
 var handleIoResponse = require('./io-response.js');
 var handleSpecialResponse = require('./special-response.js');
@@ -115,6 +131,13 @@ var handleSpecialResponse = require('./special-response.js');
 async function getLoginCookieS(socket, cookieCipher, cookie) {
   let cookieData = await cookieCipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).login));
   console.log("decryptedLoginCookie");
+  console.log(cookieData);
+  return cookieData;
+}
+// get game cookie (for socket.io)
+async function getGameCookieS(socket,cookieCipher,cookie) {
+  let cookieData = await cookieCipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).game));
+  console.log("decryptedGameCookie");
   console.log(cookieData);
   return cookieData;
 }
