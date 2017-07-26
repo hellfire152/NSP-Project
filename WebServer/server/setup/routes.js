@@ -7,6 +7,7 @@ var uuid;
 var express = require('express');
 var nodemailer = require('nodemailer');
 var rateLimiters = require('./rate-limiters.js');
+var app = express();
 var helmet = require('helmet');
 var xss = require('xss');
 var frameguard = require('frameguard');
