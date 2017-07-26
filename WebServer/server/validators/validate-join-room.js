@@ -31,7 +31,12 @@ module.exports = function(cipher, appConn) {
           throw new Error('Error parsing JSON!');
         })
         .then(function(cookieData) {
+        var joinGame = {
+          username: req.body.id,
+          room: req.body.room
+        }
         res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
+        res.cookie('game',JSON.stringify(joinGame)); //game cookie?
         res.redirect('/play?room=' +req.body.room);
       });
     }

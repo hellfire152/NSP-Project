@@ -1,0 +1,148 @@
+doctype html
+html
+  head
+    title
+    link(rel='stylesheet', type='text/css', href='/resources/css/TeacherLogin.css')
+    script.
+      var tim = 0;
+      function reload () {
+      tim = setTimeout("location.reload(true);",60000);   // 1 minute
+      }
+      function canceltimer() {
+      window.clearTimeout(tim);  // cancel the timer on each mousemove/click
+      reload();  // and restart it
+      }
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
+    script.
+        jQuery.validator.addMethod('checkphone', function(value){
+          if(/^[0-9]{8}$/.test(value)){
+            return true;
+           } else{
+            return false;
+           };
+         }, 'Please enter a valid phone number');
+    script.
+        $(function(){
+          $('#register-teacher').validate({
+            rules:{
+              lusername:{
+                required:true,
+                minlength:5
+              },
+              lpassword:{
+                required:true,
+                minlength:8
+              },
+              cpassword:{
+                required:true,
+                minlength:8,
+                equalTo:"#lpassword"
+              },
+              number:{
+                checkphone:true
+              },
+              email:{
+                required:true,
+                email:true
+              },
+              school:{
+                required:true,
+                minlength:3
+              }
+            },
+            messages:{
+              lusername:{
+                required: "Please enter username",
+                minlength:"Your username must consist atleast 5 characters"
+              },
+              lpassword:{
+                required: "Please enter password",
+                minlength:"Your password must consist atleast 8 characters"
+              },
+              cpassword:{
+                required:"Please enter password",
+                minlength:"Your password must consist atleast 8 characters",
+                equalTo:"Passwords not match"
+              },
+              email:{
+                required:"Please enter email",
+                email:"Please enter a valid email"
+              },
+              school:{
+                required:"Please enter your school",
+                minlength:"Please enter a valid school"
+              }
+            }
+          });
+        });
+    body(onmousemove='canceltimer();', onclick='canceltimer();')
+        // Mixins
+        // Pen Title
+        .pen-title
+          h1 Teacher Login Form
+        .container
+          .card
+          .card
+            h1.title Login
+            form
+              .input-container
+                input#username(type='text', name='username')
+                label(for='Username') Username
+                .bar
+              .input-container
+                input#password(type='password', name ='password')
+                label(for='Password') Password
+                .bar
+              .button-container
+                button
+                  span Go
+              .footer
+                a(href='#') Forgot your password
+                a(href='#') | Login as Teacher
+          .card.alt
+            .toggle
+            .toggle1
+            h1.title
+              | Register
+              .close
+            form#register-teacher(action='/reg-room-teach', method='post', onsubmit='/validate-register-teacher')
+              .input-container
+                input#name(type='text', name='name')
+                label(for='Name') Name
+                .bar
+              .input-container
+                input#lusername(type='text', username='lusername')
+                label(for='Username') Username
+                .bar
+              .input-container
+                input#email(type='email', name='email')
+                label(for='') Email
+                .bar
+              .input-container
+                input#lpassword(type='password', name='lpassword')
+                label(for='Password') Password
+                .bar
+              .input-container
+                input#cpassword(type='password', name='cpassword')
+                label(for='Confirm Password') Confirm Password
+                .bar
+              .input-container
+                input#school(type='text', name='school')
+                label(for='school') School
+                .bar
+              .input-container
+                input#phone.checkphone(type='text', name='phone')
+                label(for='phone') Phone Number
+                .bar
+              .button-container
+                button
+                  span Next
+        script(type='text/javascript').
+          $('.toggle').on('click', function() {
+          $('.container').stop().addClass('active');
+          });
+          $('.close').on('click', function() {
+          $('.container').stop().removeClass('active');
+          });
