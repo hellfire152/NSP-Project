@@ -59,7 +59,7 @@ function calculateTitles(currentRoom) {
   slowestTitle.recipient = slowestPlayer;
 
   //CONFUSED title
-  
+
 
   titles.push(fastestTitle);
   titles.push(slowestTitle);
@@ -273,6 +273,7 @@ function handleEndGame(input){
 }
 module.exports = {
   'calculateScore': calculateScore,
+  'calculateTitles' : calculateTitles,
   'setAllUnanswered': setAllUnanswered,
   'setAllAnswered': setAllAnswered,
   'roundEndResults': roundEndResults,

@@ -122,30 +122,6 @@ function swapScene(scene) {
   }
 }
 
-function showTitlesAndAchievements(titlesAndAchievenments) {
-  let p = pixiScenes;
-  p.titlesAndAchievenments = new PIXI.Container();
-  p.titlesAndAchievenments.addChild(new SpecialShowcase(titlesAndAchievenments, {
-    'width' : WIDTH,
-    'height' : HEIGHT,
-    'paddingX' : 5,
-    'paddingY' : 5
-  }));
-}
-
-function initEndScene() {
-  let p = pixiScenes;
-  p.end = new PIXI.Container();
-  //shows one text with 'end' only
-  let endText = new PIXI.Text('End');
-  //positioning
-  endText.anchor.set(0.5,0.5);
-  endText.x = WIDTH / 2;
-  endText.y = HEIGHT / 2;
-  p.end.addChild(endText);
-  app.stage.addChild(p.end);
-}
-
 /*
   Displays the results for round end using the ranking Class
 */
@@ -157,7 +133,10 @@ function displayResults(roundEndResults) {
 /*
   Displays the question that was sent to the client
 */
+var timeOver;
 function loadQuestion(question) {
+  clearTimeout(timeOver);
+
   let p = pixiScenes.answering;
 
   //display the prompt
@@ -181,7 +160,7 @@ function loadQuestion(question) {
     timerEnd = () => {p.shortAnswerTextField.disable()};
   }
   p.questionDisplay.text = question.prompt;
-  setTimeout(timerEnd, question.time * 1000);
+  timeOver = setTimeout(timerEnd, question.time * 1000);
 }
 
 /*
@@ -194,8 +173,10 @@ function loadQuestion(question) {
 function gameEnd(response) {
   var currentScene;
   //remove the PIXI canvas from the window
-  let appView = document.getElementsByTagName('canvas')[0];
-  appView.parentNode.removeChild(appView);
+  try {
+    let appView = document.getElementsByTagName('canvas')[0];
+    appView.parentNode.removeChild(appView);
+  } catch (e) {console.log(e)};
 
   //initializing the various divs
   let rankingDiv = createNode('div', null, null, 'ranking');

@@ -36,11 +36,17 @@ class ShortAnswerTextField extends DisplayElement{
               'game': C.GAME.SUBMIT_ANSWER,
               'answer': textField.text
             });
-          } else if(e.which == 8)textField.backspace(); //backspace key
-          else {
+          } else {
             let char = String.fromCharCode(e.which);
             textField.append(char);
           }
+        }
+      }
+    })(this);
+    document.onkeydown = ((textField) => {
+      return (e) => {
+        if(textField.enabled) {
+          if(e.which == 8) textField.backspace();
         }
       }
     })(this);
@@ -61,10 +67,12 @@ class ShortAnswerTextField extends DisplayElement{
 
   enable() {
     this._enabled = true;
+    this._container.tint = (0xFFFFFF);
   }
 
   disable() {
     this._enabled = false;
+    this._container.tint = (0x3a3a3a);
   }
 
   reset() {
