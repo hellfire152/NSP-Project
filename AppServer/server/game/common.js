@@ -267,6 +267,10 @@ function getPenalty(currentRoom, question) {
   return __getRewardOrPenalty(currentRoom, question, false);
 }
 
+function handleEndGame(input){
+    let {currentRoom,currentPlayer} = input;
+
+}
 module.exports = {
   'calculateScore': calculateScore,
   'setAllUnanswered': setAllUnanswered,
