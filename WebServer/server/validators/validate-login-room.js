@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 var crypto = require('crypto'); // NOTE: TEMP SOLUTION
 var passwordValidator = require('password-validator');
-module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
+module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieValidator) {
   return function(req, res){
     console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
@@ -15,6 +15,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
     var username = req.body.username;
     var password = req.body.password;
     var randomNum = req.body.randomNum;
+    var userIP = req.body.userIp;
         req.sanitize('username').escape();
         req.sanitize('password').escape();
         req.sanitize('userIp').escape();
@@ -41,7 +42,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
           console.log("HOST FORM DATA: ");
 
             if(req.cookies.deviceIP != undefined){
-              var deviceIp = req.cookies.deviceIP;
+              if(cookieValidator.validateCookie(req.cookies.deviceIP))
+                var deviceIp = req.cookies.deviceIP.data;
             }
 
             appConn.send({
@@ -60,13 +62,10 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                 res.redirect('/LoginForm');
               }
               else{
-                // var currentIpAddress; //5555 temp way to get ip address, because site is not s
                 //Check for identical IP address in user cookie
                 var valid = false; //Registered IP address in client PC
                 if(deviceIp != undefined && response.data.data.ip_address != undefined){
-                  // await cipher.hash(req.body.userIp)
-                  // .then(currentIpAddress => {
-                  var currentIpAddress = crypto.createHash('SHA256').update(req.body.userIp).digest('base64'); //NOTE: Temp solution
+                  var currentIpAddress = crypto.createHash('SHA256').update(userIP).digest('base64'); //NOTE: Temp solution
                     outerloop:
                       for(i=0 ; i<response.data.data.ip_address.length ; i++){
                         for(j=0 ; j<deviceIp.length ; j++){
@@ -94,16 +93,16 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                     if(response.data.success){
                       console.log("SUCCESS");
                       console.log(encodedData);
-                      res.cookie('user_info', JSON.stringify(encodedData));
-                      res.render('Loginindex',{
-                        data: encodedData
-                      });
+                      cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
+                        .then((encryptedCookie) => {
+                          res.cookie('user_info', encryptedCookie);
+                          res.render('LoginIndex', {
+                            data : encodedData
+                          });
+                        });
                     }
                     else{
-                      res.cookie('user_info', JSON.stringify(encodedData));
-                      res.render('LoginForm',{
-                        data: encodedData
-                      });
+                      res.redirect('/LoginForm');
                     }
                   });
                 }
@@ -127,14 +126,15 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                     // emailServer.loginAccountOtpEmail(emailObj);
                   });
 
-                  //OTP JSON
                   console.log("THIS IS THE RANDOM NUM: " + randomNum);
-                  cipher.encryptJSON({
-                    'pin' : randomNum,
-                    'user_id' : response.data.data.user_id,
-                    'userIp' : req.body.userIp,
-                    'count' : 0
-                  })
+                  cipher.encryptJSON(
+                    cookieValidator.generateCheckCookie({ //Param: (jsonObj, user Ip address)
+                      'pin' : randomNum,
+                      'user_id' : response.data.data.user_id,
+                      'userIp' : req.body.userIp,
+                      'count' : 0
+                    }, req.body.userIp)
+                  )
                     .catch(function (err) {
                       throw new Error('Error parsing JSON!');
                     })
@@ -178,16 +178,4 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
         return;
     }
   }
-}
-
-async function handleHashIP(data){
-  cipher.hash(data)
-  .then(hashed => {
-    data = hashed;
-  })
-  .catch(reason => {
-    console.log(reason);
-  });
-
-return data;
 }

@@ -8,6 +8,7 @@ var uuid;
 var express = require('express');
 var nodemailer = require('nodemailer');
 var rateLimiters = require('./rate-limiters.js');
+var cookieValidator = require('./cookieValidation.js');
 module.exports = function(data) {
   let {app, dirname, cipher, emailServer, appConn, queryOfUser, errors, cookieCipher, xssDefense}
     = data;
@@ -20,12 +21,12 @@ module.exports = function(data) {
     'join-room' : require('../validators/validate-join-room.js')(cookieCipher, appConn),
     'host-room' : require('../validators/validate-host-room.js')(cookieCipher, appConn),
     'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C),
-    'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer),
+    'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer, cookieValidator),
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
     'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C),
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C),
-    'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C),
+    'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C , xssDefense, cookieValidator),
     'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C)
   };
 
