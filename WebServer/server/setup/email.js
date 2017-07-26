@@ -56,3 +56,4 @@ async function loginAccountOtpEmail(emailObj){
       subject: 'ExQuizIt! Verification',
       html: '<p>Dear Sir/Mdm! \n\t You have created an account with the Email: '+emailObj.email+'. Your verification number is: '+emailObj.pin+'\n\nLove,\nExQuizIt</p>'
   }
+}
