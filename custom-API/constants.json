@@ -108,7 +108,8 @@
       "USER_ACCOUNT" : 204,
       "RETRIEVE_USER_DETAILS" : 205,
       "FULL_USER_ACCOUNT" : 206,
-      "EMAIL" : 207
+      "EMAIL" : 207,
+      "CHECK_ACCOUNT" : 208
     },
     "UPDATE" : {
       "PASSWORD" : 301,
@@ -119,7 +120,8 @@
       "NAME" : 306,
       "SCHOOL" : 307,
       "ORGANISATION" : 308,
-      "STUDENT_CATEGORY" : 309
+      "STUDENT_CATEGORY" : 309,
+      "CHANGE_PASSWORD" : 310
     },
     "DELETE" : {
       "ACCOUNT" : 401,
@@ -159,6 +161,7 @@
     "DB_TWO_OR_MORE_ACCOUNT_DELETED" : 2007,
     "DB_NO_QUIZ_AVAILAVLE" : 2008,
     "DB_QUESTION_ID_NOT_FOUND" : 2009,
-    "DB_UNKNOWN" : 2010
+    "DB_UNKNOWN" : 2010,
+    "DB_UPDATE_FAILED" : 2011
   }
 }
