@@ -11,16 +11,14 @@ var helmet = require('helmet');
 var xss = require('xss');
 var frameguard = require('frameguard');
 var emailServer = require('./email.js');
+app.use(helmet.noSniff()); // content type should not be changed or followed
+app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame
+app.use(helmet.xssFilter()); // protects against reflected XSS
 module.exports = function(data) {
   let {app, dirname, cipher, emailServer, appConn, queryOfUser, errors, cookieCipher, xssDefense}
     = data;
   const C = data.C;
   uuid = data.uuid;
-
-  app.use(helmet.noSniff()); // content type should not be changed or followed
-  app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame
-  app.use(helmet.xssFilter()); // protects against reflected XSS
-
   //validators
   var validators = {
     'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
