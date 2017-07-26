@@ -308,6 +308,10 @@ var server = net.createServer(function(conn){
             await retrieveEmail(inputData);
             break;
           }
+          case C.DB.UPDATE.CHANGE_PASSWORD : {
+            await changePassword(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -474,6 +478,7 @@ async function retrievePreAccount(inputData){
       WHERE email = " + connection.escape(dataAccount.email) +
       " OR username = " + connection.escape(dataAccount.username),
       function(err, result){
+        console.log(query);
         if(err){
           console.error('[Error in query]: ' + err);
           var response = {
@@ -504,6 +509,8 @@ async function retrievePreAccount(inputData){
                   ON user_account.user_id = new_device.user_id\
                   WHERE user_account.user_id = " + connection.escape(dataOut.userId),
                 function(err, result){
+                  console.log(result);
+                  console.log(query);
                   if(err){
                     console.error('[Error in query]: ' + err);
                     var response = {

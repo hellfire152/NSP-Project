@@ -42,7 +42,7 @@ module.exports = async function(input) {
       break;
     }
     case C.REQ_TYPE.DATABASE: {
-      return (await databaseAccess(data));
+      return (await databaseAccess(data, dbConn));
       break;
     }
 
@@ -218,10 +218,17 @@ async function host_room(data) {
   return response;
 }
 
-async function databaseAccess(inputData){
-  return {
-    data : inputData.data
-  }
+async function databaseAccess(inputData, dbConn){
+  return new Promise((resolve, reject) => {
+    dbConn.send(inputData, (response) => {
+      console.log("DB RESPONSE");
+      console.log(response);
+      resolve(response)
+    });
+  });
+  // return {
+  //   data : inputData.data
+  // }
 }
 
 var handleSpecial = require('./app-handle-special.js');

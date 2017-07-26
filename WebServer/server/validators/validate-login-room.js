@@ -23,7 +23,6 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
         req.sanitize('password').trim();
         req.sanitize('userIp').trim();
         req.sanitize('randomNum').trim();
-
     console.log(username);
     if (username!=""  && password!=""){
       var schema = new passwordValidator();
@@ -39,15 +38,12 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
 
       if (passwordCheck){
         if(!error){
-
-          console.log("pass");
           console.log("HOST FORM DATA: ");
 
             if(req.cookies.deviceIP != undefined){
-              var deviceIp = JSON.parse(req.cookies.deviceIP);
+              var deviceIp = req.cookies.deviceIP;
             }
 
-            console.log("SENDING");
             appConn.send({
               // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'type':C.REQ_TYPE.DATABASE,
@@ -59,15 +55,6 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                 }
               }
             }, (response) => {
-              console.log("RESPONGDING");
-
-              console.log(req.body.userIp);
-              // await cipher.hash(req.body.userIp)
-              // .then(hashedIp => {
-              //   console.log("HERE");
-              //   console.log(hashedIp);
-              //   currentIpAddress = hashedIp;
-              // });
               //If incorrect user input return to login page
               if(!(response.data.success)){
                 res.redirect('/LoginForm');
@@ -137,17 +124,24 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
                       email : email
                     }
 
-                    emailServer.loginAccountOtpEmail(emailObj);
+                    // emailServer.loginAccountOtpEmail(emailObj);
                   });
 
-                  var otp = {
-                    pin : randomNum,
-                    user_id : response.data.data.user_id,
-                    userIp : req.body.userIp,
-                    count : 0
-                  }
-                  res.cookie('otp', JSON.stringify(otp), {"maxAge": 1000*60*5}); //5 min
-                  res.redirect('/otp');
+                  //OTP JSON
+                  console.log("THIS IS THE RANDOM NUM: " + randomNum);
+                  cipher.encryptJSON({
+                    'pin' : randomNum,
+                    'user_id' : response.data.data.user_id,
+                    'userIp' : req.body.userIp,
+                    'count' : 0
+                  })
+                    .catch(function (err) {
+                      throw new Error('Error parsing JSON!');
+                    })
+                    .then(function(cookieData) {
+                    res.cookie('otp', cookieData, {"maxAge": 1000*60*60}); //one hour
+                    res.redirect('/otp');
+                  });
                 }
               }
 

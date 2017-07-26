@@ -34,10 +34,12 @@ module.exports = function(cipher, appConn, C, xssDefense) {
                 }
               }
             }, (response2) => {
-              var encodedData = xssDefense.jsonEncode(response.data.data[0]);
+              console.log(response2);
+              // var encodedData = xssDefense.jsonEncode(response.data.data[0]);
+              var encodedData = response.data.data[0];
               res.clearCookie("otp");
               if(req.cookies.deviceIP !== undefined){
-                var ipArr = req.cookies.deviceIP
+                var ipArr = req.cookies.deviceIP;
                 console.log(ipArr);
                 ipArr.push(response2.data.data.hashedIpAddress);
                 cipher.encryptJSON(ipArr)
@@ -47,7 +49,9 @@ module.exports = function(cipher, appConn, C, xssDefense) {
               }
               else{
                 var newIpArr = [response2.data.data.hashedIpAddress];
-                cipher.encryptJSON(ipArr)
+                console.log("THIS IS THE NEW IP ARR");
+                console.log(newIpArr);
+                cipher.encryptJSON(newIpArr)
                   .then((encryptedCookie) => {
                     res.cookie('deviceIP', encryptedCookie, {"maxAge" : 1000 * 60 * 60 * 24 * 30}); //30 days
                   });
@@ -74,7 +78,6 @@ module.exports = function(cipher, appConn, C, xssDefense) {
             });
         }
         else{
-          console.log("OTP SUCCESS");
           res.clearCookie("otp");
           res.redirect('/LoginForm');
         }
