@@ -57,7 +57,7 @@ module.exports = async function(input) {
             console.log("GAME " +data.roomNo +" END");
             //send
 
-            return sendGameEnd(currentRoom.players, data);
+            return sendGameEnd(currentRoom.players, data, allRooms);
           } else { //next question available
             return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);
           }
@@ -177,7 +177,7 @@ function sendQuestion(currentRoom, question, data) {
   }
 }
 
-function sendGameEnd(players, data) {
+function sendGameEnd(players, data, allRooms) {
   common.setAllAnswered(players);
 
   let gameEndResults = {};

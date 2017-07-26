@@ -3,7 +3,7 @@
 */
 var playerObj = {};
 console.log('Loaded: Race gamemode handler!');
-async function handleGame(data) {
+function handleGame(data) {
   switch(data) {
     case C.GAME_RES.GET_READY: {
       let header = createNode('div', 'Race!', 'header', 'race-header');
