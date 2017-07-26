@@ -91,7 +91,7 @@ module.exports =function(cipher, appConn,C, emailServer){
               email : req.body.email
             }
 
-            // emailServer.createAccountOtpEmail(emailObj);
+            emailServer.createAccountOtpEmail(emailObj);
 
             if(!error) {
             console.log("Creating an account: ");
@@ -115,7 +115,7 @@ module.exports =function(cipher, appConn,C, emailServer){
                   // 'email':email,
                   // 'password':password,
                   // 'dateOfBirth':dateOfBirth,
-                  // 'school':school 
+                  // 'school':school
 
                 }, (response) => {
                   res.render('register-student',{
