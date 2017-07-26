@@ -73,7 +73,7 @@ module.exports =function(cipher, appConn, C, emailServer){
             if(!error){
               // email authentication
               emailObj = {
-                username: req.body.username,
+                username: req.body.lusername,
                 pin : randomNum,
                 email : req.body.email
               }
