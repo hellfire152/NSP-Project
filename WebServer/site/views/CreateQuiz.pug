@@ -6,6 +6,7 @@ html
     link(rel='stylesheet', type='text/css', href='/resources/css/LoginForm.css')
     link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
     link(rel='stylesheet', type='text/css', href='/resources/css/materialize.css')
+
   body
     nav
       .nav-wrapper
@@ -36,10 +37,10 @@ html
               label(for='private') No
             .form-group
               label Question No:
-              p Prompt (20 charaectors)
+              p Prompt (20 characters)
             .form-group
               label Question No:
-              p Prompt (20 charaectors)
+              p Prompt (20 characters)
             .form-group
               a.btn-floating.btn-large.waves-effect.waves-light.red.prompt-open(style='margin:auto;')
                 i.material-icons add
@@ -57,7 +58,7 @@ html
                         label(for='mcqchoice') MCQ
                         input#short-answer(type='radio', name='type')
                         label(for='shortchoice') Short-Ans
-                   #mcqSection.row.selection
+                  #mcqSection.row.selection
                     .row
                       .col-md-6
                         input#choice1.choices(type='textarea', name='choices')
@@ -94,13 +95,15 @@ html
                         label(for='penalty') Specific Penalty
                         input#penalty(type='number', name='penalty')
                     .col-md-7
-                      button.btn.waves-effect.waves-light(type='submit', name='action')
+                      button.btn.waves-effect.waves-light(type='submit', value='Submit' onclick = 'sendSetQuiz()')
                         | Submit
                         i.material-icons.right send
-                      button#cancel.btn.waves-effect.waves-light(name='action') Cancel
+                      button#cancel.btn.waves-effect.waves-light(type='reset', value='Add Question', onclick='addQuestion()') Cancel
             .col-md-3
       // Import jQuery before materialize.js
+      script(src='/resources/constants.js')
       script(type='text/javascript', src='https://code.jquery.com/jquery-2.1.1.min.js')
+      script(src='/resources/js/add-quiz.js')
       script(type='text/javascript', src='/resources/js/materialize.min.js')
       script(src='/resources/js/bootstrap.min.js')
       script(type='text/javascript').
