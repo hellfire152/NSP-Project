@@ -59,7 +59,7 @@ function calculateTitles(currentRoom) {
   slowestTitle.recipient = slowestPlayer;
 
   //CONFUSED title
-  
+
 
   titles.push(fastestTitle);
   titles.push(slowestTitle);
@@ -267,9 +267,14 @@ function getPenalty(currentRoom, question) {
   return __getRewardOrPenalty(currentRoom, question, false);
 }
 
-function handleEndGame(input){
-    let {currentRoom,currentPlayer} = input;
+function handleClearGameCookie(players){
+    //get all player name
+    let users = [];
+    for(let playerName in players) {
+      users.push(playerName);
+    }
 
+    return users;
 }
 module.exports = {
   'calculateScore': calculateScore,
@@ -282,5 +287,6 @@ module.exports = {
   'playersObjectToArray': playersObjectToArray,
   'removeSolution' : removeSolution,
   'getResponseData' : getResponseData,
-  'handleScoring' : handleScoring
+  'handleScoring' : handleScoring,
+  'handleClearGameCookie' : handleClearGameCookie
 };

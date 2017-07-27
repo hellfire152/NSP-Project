@@ -32,8 +32,8 @@ module.exports = function(cipher, appConn) {
         })
         .then(function(cookieData) {
         var joinGame = {
-          username: req.body.id,
-          room: req.body.room
+          userId: req.body.id,
+          id: req.body.room
         }
         res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
         res.cookie('game',JSON.stringify(joinGame)); //game cookie?

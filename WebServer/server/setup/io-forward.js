@@ -13,7 +13,7 @@ module.exports = function(data) {
   const C = data.C;
   let {dirname, io, pendingResponses, pendingAppResponses, Cipher, appConn,
     cookie, socketOfUser, roomOfUser, cookieCipher, decryptResponse, logResponse
-    ,  runCallback} = data;
+    ,  runCallback, pendingClearGameCookie} = data;
 
   //setting up forwarding of data between user and game server
   //short hand
@@ -50,23 +50,6 @@ module.exports = function(data) {
       socket.disconnect();
     }
 
-    try{
-      let gameCookie = await getGameCookieS(socket,cookieCipher,cookie);
-      console.log("SOCKET IO GAME CONNECTION INITIATED BY");
-      console.log(gameCookie);
-      if(socketOfUser[gameCookie.username] !== undefined && socketOfUser[gameCookie.room] !==undefined){
-        console.log('User already exist in the game room');
-        socket.disconnect();
-      }
-      //store username together with room
-      socketOfUser[gameCookie.username] = socket;
-      socket.userId = gameCookie.username;
-
-    } catch(err){
-      console.log(err);
-      console.log("Invalid game cookie detected");
-      socket.disconnect();
-    }
     //adding listeners
     console.log("Request received: " +socket.id);
     socket.on('send', async function(input){ //from user
@@ -103,7 +86,8 @@ module.exports = function(data) {
           'io' : io,
           'C' : C,
           'socketObj' : io.sockets.sockets,
-          'socketOfUser' : socketOfUser
+          'socketOfUser' : socketOfUser,
+          'pendingClearGameCookie' : pendingClearGameCookie
         });
       } else {  //others
         if(response.sendTo !== undefined) {

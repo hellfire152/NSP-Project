@@ -15,6 +15,7 @@ module.exports = async function(input) {
   io = input.io;
   const C = input.C;
   let response = input.response;
+  pendingClearGameCookie = input.pendingClearGameCookie;
 
   switch(response.special) {
     case C.SPECIAL.HOST_DISCONNECT: {
@@ -28,8 +29,17 @@ module.exports = async function(input) {
         'special': response.special,
         'id': response.id
       }, response.roomNo);
-
+      del=function(req,res){
+        console.log("Clear cookie")
+        res.clearCookie('gameCookie');
+        res.redirect('/joinroom');
+      }
       //TODO::Host disconnect
+    }
+    case C.SPECIAL.CLEAR_ALL_GAME_COOKIE : {
+      for(let user of response.users) {
+        pendingClearGameCookie[user] = true;
+      }
     }
     case C.SPECIAL.NULL: {
       console.log('null response');

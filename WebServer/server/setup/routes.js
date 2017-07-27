@@ -68,8 +68,16 @@ module.exports = function(data) {
       sendErrorPage(res, "Don't Think you can hack me!");
     } else {
       //check for login cookie
-      if(req.cookies.login === undefined)
+      if(req.cookies.login === undefined) {
         sendErrorPage(res, 'You are not logged in!');
+        return;
+      }
+
+      //block multiple on same machine
+      if(req.cookies.gameCookie) {
+        sendErrorPage(res, 'No multiple sessions on the same machine!');
+        return;
+      }
 
       let roomNo = req.query.room;
       appConn.send({

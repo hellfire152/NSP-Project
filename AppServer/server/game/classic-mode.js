@@ -57,7 +57,7 @@ module.exports = async function(input) {
             console.log("GAME " +data.roomNo +" END");
             //send
 
-            return sendGameEnd(currentRoom.players, data);
+            return sendGameEnd(currentRoom.players, data, allRooms);
           } else { //next question available
             return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);
           }
@@ -177,7 +177,7 @@ function sendQuestion(currentRoom, question, data) {
   }
 }
 
-function sendGameEnd(players, data) {
+function sendGameEnd(players, data, allRooms) {
   common.setAllAnswered(players);
 
   let gameEndResults = {};
@@ -188,5 +188,15 @@ function sendGameEnd(players, data) {
 
   gameEndResults.titlesAndAchievenments
     = common.calculateTitles(allRooms[data.roomNo]);
+
+  //send clear game cookie signal
+  setTimeout(() => {
+    let users = common.handleClearGameCookie(allRooms[data.roomNo].players);
+    sendToServer(conn, {
+      'special' : C.SPECIAL.CLEAR_ALL_GAME_COOKIE,
+      'users' : users
+    });
+  }, 1000);
+  
   return gameEndResults;
 }
