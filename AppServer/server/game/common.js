@@ -278,6 +278,7 @@ function handleClearGameCookie(players){
 }
 module.exports = {
   'calculateScore': calculateScore,
+  'calculateTitles' : calculateTitles,
   'setAllUnanswered': setAllUnanswered,
   'setAllAnswered': setAllAnswered,
   'roundEndResults': roundEndResults,

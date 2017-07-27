@@ -23,13 +23,17 @@ module.exports = function(cipher, appConn) {
     if(errors) {
       //TODO::Handle errors
     } else {
-      cipher.encryptJSON({
+      Promise.all([cipher.encryptJSON({
         "id": req.body.id,
         "pass": req.body.pass
-      })
-        .catch(function (err) {
-          throw new Error('Error parsing JSON!');
+      }), cipher.encryptJSON({
+        'username' : req.body.id,
+        'room' : req.body.room
+      })])
+        .catch((err) => {
+          console.log(err);
         })
+<<<<<<< HEAD
         .then(function(cookieData) {
         var joinGame = {
           userId: req.body.id,
@@ -39,7 +43,13 @@ module.exports = function(cipher, appConn) {
         res.cookie('game',JSON.stringify(joinGame)); //game cookie?
         res.redirect('/play?room=' +req.body.room);
       });
+=======
+        .then((cookies) => {
+          res.cookie('login', cookies[0], {"maxAge": 1000*60*60}); //one hour
+          res.cookie('game', cookies[1]); //game cookie
+          res.redirect('/play?room=' +req.body.room);
+        });
+>>>>>>> origin/master
     }
-
   }
 }
