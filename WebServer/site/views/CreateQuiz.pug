@@ -54,9 +54,9 @@ html
                     .col-md-5
                       .form-group
                         label Visibility:
-                        input#mcq(name='radio', type='type')
+                        input#mcq(type='radio', name='type', onclick='setMCQ()')
                         label(for='mcqchoice') MCQ
-                        input#short-answer(type='radio', name='type')
+                        input#short-answer(type='radio', name='type', onclick='setShort()')
                         label(for='shortchoice') Short-Ans
                   #mcqSection.row.selection
                     .row
@@ -79,12 +79,13 @@ html
                         label(for='filled-in-box') Filled in
                   .row
                     .input-field.col-md-5
-                      select
+                      select#time(name='time')
                         option(value='', disabled='', selected='') Choose your option
-                        option(value='1') Option 1
-                        option(value='2') Option 2
-                        option(value='3') Option 3
-                      label Materialize Select
+                        option(value='5') 5 seconds
+                        option(value='10') 10 seconds
+                        option(value='15') 15 seconds
+                        option(value='20') 20 seconds
+                      label Time
                     .col-md-7
                       .form-group
                         label(for='reward') Specific Reward
