@@ -30,7 +30,6 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
               user_id : otpObj.user_id
             }
           } ,(response) => {
-              console.log("SUCCESS");
               appConn.send({
                 'type' : C.REQ_TYPE.DATABASE,
                 'data' : {
@@ -42,24 +41,20 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                   }
                 }
               }, (response2) => {
-                console.log(response2);
                 var encodedData = xssDefense.jsonEncode(response.data.data[0]);
                 var encodedData = response.data.data[0];
                 res.clearCookie("otp");
-                if(req.cookies.deviceIP.data !== undefined){
+                if(req.cookies.deviceIP != undefined){
                   var ipArr = req.cookies.deviceIP.data;
-                  console.log(ipArr);
                   ipArr.push(response2.data.data.hashedIpAddress);
-                  cipher.encryptJSON(cookieValidator.generateCheckCookieNoIP(ipArr))
+                  cipher.encryptJSON(cookieValidator.generateCheckCookie(ipArr))
                     .then((encryptedCookie) => {
                       res.cookie('deviceIP', encryptedCookie, {"maxAge" : 1000 * 60 * 60 * 24 * 30}); //30 days
                     });
                 }
                 else{
                   var newIpArr = [response2.data.data.hashedIpAddress];
-                  console.log("THIS IS THE NEW IP ARR");
-                  console.log(newIpArr);
-                  cipher.encryptJSON(cookieValidator.generateCheckCookieNoIP(newIpArr))
+                  cipher.encryptJSON(cookieValidator.generateCheckCookie(newIpArr))
                     .then((encryptedCookie) => {
                       res.cookie('deviceIP', encryptedCookie, {"maxAge" : 1000 * 60 * 60 * 24 * 30}); //30 days
                     });
