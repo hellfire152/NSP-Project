@@ -26,10 +26,6 @@ function handleGame(data) {
       break;
     }
     case C.GAME_RES.NEXT_QUESTION : {
-      //do nothing
-      break;
-    }
-    case C.GAME_RES.ANSWER_CHOSEN: {
       let playerSpan = document.getElementById(`player-${data.id}-progress`);
       playerSpan.innerHTML = ""; //clear span
       //re add counter
