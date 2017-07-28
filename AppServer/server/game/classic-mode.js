@@ -46,6 +46,7 @@ module.exports = async function(input) {
       }
     }
     case C.GAME.NEXT_ROUND: {
+      clearTimeout(currentRoom.timer);
       if(currentRoom.summarySent) { //first next press, send summary screen
         currentRoom.summarySent = false;
         if(currentRoom.questionCounter !== undefined) {

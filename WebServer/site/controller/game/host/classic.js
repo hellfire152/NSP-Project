@@ -90,7 +90,9 @@ function handleGame(response) {
     }
     case C.GAME_RES.NEXT_QUESTION: {
       document.getElementById('get-ready').style.display = 'none';
-
+      let nextButton = document.getElementById('next-button');
+      nextButton.parentNode.removeChild(nextChild);
+      
       //hide the other divs and show the question one
       let currentQuestionDiv = document.getElementById('current-question');
       //clear the current-question div first
