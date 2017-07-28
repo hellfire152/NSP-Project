@@ -1,23 +1,25 @@
 var crypto = require('crypto');
 
 function generateCheckCookie(jsonObj, ipAddress){
-  return {
-    'data' : jsonObj,
-    'check' : {
-      'hash' : crypto.createHash('SHA256').update(JSON.stringify(jsonObj)).digest('base64'), //NOTE: Temp solution,
-      'ipAddress' : crypto.createHash('SHA256').update(ipAddress).digest('base64')
+  if(ipAddress != undefined){
+    return {
+      'data' : jsonObj,
+      'check' : {
+        'hash' : crypto.createHash('SHA256').update(JSON.stringify(jsonObj)).digest('base64'), //NOTE: Temp solution,
+        'ipAddress' : crypto.createHash('SHA256').update(ipAddress).digest('base64')
+      }
     }
   }
-}
+  else{
+    return {
+      'data' : jsonObj,
+      'check' : {
+        'hash' : crypto.createHash('SHA256').update(JSON.stringify(jsonObj)).digest('base64') //NOTE: Temp solution
+        // 'hash' : crypto.createHash('SHA256').update(JSON.stringify(jsonObj)).digest('base64') + '123'; //ALWAYS GIVE FALSE INTEGRITY
+      }
+    }
+  }
 
-function generateCheckCookieNoIP(jsonObj){
-  return {
-    'data' : jsonObj,
-    'check' : {
-      'hash' : crypto.createHash('SHA256').update(JSON.stringify(jsonObj)).digest('base64') //NOTE: Temp solution
-      // 'hash' : crypto.createHash('SHA256').update(JSON.stringify(jsonObj)).digest('base64') + '123'; //ALWAYS GIVE FALSE INTEGRITY
-    }
-  }
 }
 
 function validateCookie(jsonObj, currentIp){
@@ -57,6 +59,5 @@ function ipAddressCheck(currentIp, checkIp){
 
 module.exports = {
   'validateCookie' : validateCookie,
-  'generateCheckCookie' : generateCheckCookie,
-  'generateCheckCookieNoIP' : generateCheckCookieNoIP
+  'generateCheckCookie' : generateCheckCookie
 };
