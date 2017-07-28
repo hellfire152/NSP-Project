@@ -746,6 +746,63 @@ async function addIpAddress(inputData){
   });
 }
 
+  async function changePassword(inputData){
+    var data = inputData.data;
+    await handleDb.handlePassword(data)
+    .then(dataOut => {
+      handleDb.handleEncryption(dataOut.account)
+      .then(dataOutAccountEncrypt => {
+        var query = connection.query("UPDATE user_account SET password_hash = ?, salt = ? WHERE user_id = ?",[dataOutAccountEncrypt.password_hash, dataOutAccountEncrypt.salt, dataOutAccountEncrypt.user_id] , function(error, result){
+          if(error){
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_SQL_QUERY,
+                message : error
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          if(result.affectedRows == 0){
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_UPDATE_FAILED,
+                message : "Password did not update"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          else if(result.affectedRows == 1){
+            var response = {
+              data : {
+                success : true,
+                message : "Password updated"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          else{
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_UNKNOWN,
+                message : "Updated multiple account"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+        });
+      });
+    });
+  }
+
+  //Update password,
+  //New salt will be generated and hash accordingly.
+  //All new data will be encrypted.
+  async function updatePassword(inputData){
+    var data = inputData.data;
+    var query = connection.query("SELECT salt FROM user_account WHERE user_id = " + connection.escape(data.verify.user_id), function(error, result){
 
 async function retrieveUserDetails(inputData){
   var data = inputData.data;
