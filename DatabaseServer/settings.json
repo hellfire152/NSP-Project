@@ -17,5 +17,5 @@
   "DH_KEY_LENGTH" : 2048,
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/Cipher.js",
-  "AUTH_BYPASS" : true
+  "AUTH_BYPASS" : false
 }

@@ -89,6 +89,18 @@ async function forgetPasswordOtpEmail(emailObj){
       to: emailObj.email,
       subject: 'ExQuizIt! Forget Password',
       html: '<p>Dear Sir/Mdm! \n\t You have requested for forget password. Your verification number is: '+emailObj.pin+'\n\nLove,\nExQuizIt</p>'
+    }
+
+    transporter.sendMail(mailOptions, function (err, res) {
+        if(err){
+            console.log('Email send error');
+        } else {
+            console.log('OTP email has been sent.');
+        }
+    });
+  return true;
+}
+
 module.exports = function(s) {
   S = s;
   return {

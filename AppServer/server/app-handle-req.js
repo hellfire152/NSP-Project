@@ -99,7 +99,6 @@ async function join_room(data) {
   Login account
 */
 async function account_login(data){
-  console.log("hi");
   response = {
     'type':C.RES_TYPE.ACCOUNT_LOGGED_IN,
     'username' :data.username,
