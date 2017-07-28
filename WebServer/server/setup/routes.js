@@ -27,7 +27,8 @@ module.exports = function(data) {
     'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C),
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C),
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C , xssDefense, cookieValidator),
-    'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C)
+    'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
+    'spam-area' : require('../validators/validate-spam.js')(appConn, C),
   };
 
   //routing
@@ -206,6 +207,7 @@ module.exports = function(data) {
   app.post('/forget-password-room-success', validators["forget-password-room"]);
   app.post('/otp-check', validators["otp-check"]);
   app.post('/otp-register', validators["otp-register"]);
+  app.post('/spamming-in-progress', validators["spam-area"]);
 }
 
 function sendErrorPage(res, errormsg) {

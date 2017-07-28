@@ -1,3 +1,9 @@
+/*
+This module provide a checksum for every cookie. All data inside will be hashed and stored seperately
+Upon receive cookie, data will compare with the hash value and check if there is any lost of integrity.
+This module also check weather the cookie belongs to the specific IP address.
+ */
+
 var crypto = require('crypto');
 
 function generateCheckCookie(jsonObj, ipAddress){
