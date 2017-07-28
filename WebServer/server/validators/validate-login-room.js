@@ -17,15 +17,48 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     var randomNum = req.body.randomNum;
     // var userIP = req.body.userIp;
     var userIP = req.connection.remoteAddress;
-        req.sanitize('username').escape();
-        req.sanitize('password').escape();
-        req.sanitize('userIp').escape();
-        req.sanitize('randomNum').escape();
-        req.sanitize('username').trim();
-        req.sanitize('password').trim();
-        req.sanitize('userIp').trim();
-        req.sanitize('randomNum').trim();
-    console.log(username);
+
+    req.sanitize('username').escape();
+    req.sanitize('password').escape();
+    req.sanitize('userIp').escape();
+    req.sanitize('randomNum').escape();
+    req.sanitize('username').trim();
+    req.sanitize('password').trim();
+    req.sanitize('userIp').trim();
+    req.sanitize('randomNum').trim();
+
+    // TODO: AUTO LOGIN FUNCTION
+    // Check the integrity if the cookie
+    if(req.cookies.tempToken != undefined){
+      cipher.decryptJSON(req.cookies.tempToken) //NOTE: AUTO DECRYPT DOES NOT SEEM TO WORK TODO: NEED TO FIX THIS
+      .then(tempTokenData => {
+        if(cookieValidator.validateCookie(tempTokenData)){
+          var tempData = tempTokenData.data;
+          appConn.send({
+            // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+            'type':C.REQ_TYPE.DATABASE,
+            'data': {
+              'type' : C.DB.SELECT.TEMP_TOKEN,
+              'temp_token' : tempData.temp_token,
+              'ip_address' : tempData.ip_address,
+              'user_id' : tempData.user_id,
+              'new_device_id' : tempData.new_device_id
+            }
+          }, (response) => {
+            //NOTE: If authenticate pass, response.data.success = true
+            //NOTE: If authenticate fail, response.data.success = false
+            console.log(response.data.success);
+            if(response.data.success){
+              //PROCESS DATA
+            }
+            else{
+              res.clearCookie("tempToken");
+            }
+          });
+        }
+      });
+    }
+
     if (username!=""  && password!=""){
       var schema = new passwordValidator();
       schema
@@ -90,6 +123,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                       user_id : response.data.data.user_id
                     }
                   } ,(response) => {
+
+                    //TODO: WILL INSERT AN REMEMBER ME FUNCCTION OVER HERE TOO TIRED TO IMPLEMENT, CURRENTLY WORKING AT OTP CHECK
 
                     console.log(response.data.data[0]);
                     var encodedData = xssDefense.jsonEncode(response.data.data[0]);

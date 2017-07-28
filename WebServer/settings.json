@@ -32,5 +32,5 @@
   },
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
-  "AUTH_BYPASS" : false
+  "AUTH_BYPASS" : true
 }

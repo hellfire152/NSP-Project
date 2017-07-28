@@ -313,6 +313,14 @@ var server = net.createServer(function(conn){
             await addSpam(inputData);
             break;
           }
+          case C.DB.UPDATE.TEMP_TOKEN : {
+            await updateTempToken(inputData);
+            break;
+          }
+          case C.DB.SELECT.TEMP_TOKEN : {
+            await selectTempToken(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -369,7 +377,6 @@ async function createAccount(inputData){
         "SELECT user_id FROM user_account\
         WHERE email = " + connection.escape(dataAccount.email) +
         " OR username = " + connection.escape(dataAccount.username), function(error, result){
-        // console.log(query);
         if(error){
           console.error('[Error in query]: ' + error);
           var response = {
@@ -479,7 +486,6 @@ async function retrievePreAccount(inputData){
       WHERE email = " + connection.escape(dataAccount.email) +
       " OR username = " + connection.escape(dataAccount.username),
       function(err, result){
-        console.log(query);
         if(err){
           console.error('[Error in query]: ' + err);
           var response = {
@@ -496,7 +502,8 @@ async function retrievePreAccount(inputData){
             dataAccount.salt = result[0].salt;
             dataAccount.dbPass = result[0].password_hash;
             delete dataAccount.username; //Remove username to improve data processing
-
+            console.log("THIS IS DATAACCOUNT");
+            console.log(dataAccount);
             handleDb.handleRecieveAccount(dataAccount)
             .then(dataOut => {
               //If user password input is equal to database password
@@ -510,8 +517,6 @@ async function retrievePreAccount(inputData){
                   ON user_account.user_id = new_device.user_id\
                   WHERE user_account.user_id = " + connection.escape(dataOut.userId),
                 function(err, result){
-                  console.log(result);
-                  console.log(query);
                   if(err){
                     console.error('[Error in query]: ' + err);
                     var response = {
@@ -744,7 +749,8 @@ async function addIpAddress(inputData){
           data : {
             success : true,
             data : {
-              hashedIpAddress : dataOut.inputData.ip_address
+              hashedIpAddress : dataOut.inputData.ip_address,
+              newDeviceId : result.insertId
             }
           }
         }
@@ -752,6 +758,101 @@ async function addIpAddress(inputData){
       }
     });
   });
+}
+
+async function updateTempToken(inputData){
+  var data = inputData.data;
+  var query = connection.query("UPDATE new_device SET temp_token = ?\
+  WHERE new_device_id = ?", [data.temp_token, data.new_device_id], function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    if(result.affectedRows == 1){
+      var response = {
+        data : {
+          success : true,
+          message : "temp token updated"
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    else{
+      var response = {
+        data : {
+          success : false,
+          message : "temp token not updated"
+        }
+      }
+      sendToServer(response, inputData);
+    }
+  })
+}
+
+async function selectTempToken(inputData){
+  var data = inputData.data;
+  var query = connection.query("SELECT COUNT(user_id) AS count_user FROM new_device\
+  WHERE new_device_id = ? AND user_id = ? AND ip_address = ? AND temp_token = ?", [data.new_device_id, data.user_id, data.ip_address, data.temp_token]
+  ,function(error, result){
+    console.log(query);
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    if(result[0].count_user == 1){
+      var response = {
+        data : {
+          success : true,
+          message : "Authentication success"
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    else{
+      var query2 = connection.query("UPDATE new_device SET temp_token = NULL WHERE new_device_id = ?", data.new_device_id, function(error, result){
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_SQL_QUERY,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        if(result.affectedRows == 1){
+          var response = {
+            data : {
+              success : false,
+              message : "Authentication failed, database temp_token removed"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else{
+          var response = {
+            data : {
+              success : false,
+              message : "Authentication failed, database temp_token have not been removed"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+      });
+    }
+  })
 }
 
 
@@ -1169,7 +1270,6 @@ async function createQuiz(inputData){
   console.log("Eadfhjhgfyuiudahfycohasdkgiofhcuds");
   console.log(data.quiz);
   var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
-    console.log(query);
     if(error){
       console.error('[Error in query]: ' + error);
       var response = {
