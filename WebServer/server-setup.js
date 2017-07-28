@@ -85,7 +85,7 @@ module.exports = function(data) {
       //TODO::Switch login cookie
       if(pendingClearGameCookie[req.cookies.login.id]) {
         res.clearCookie('gameCookie');
-        delete pendingClearGameCookie(req.cookies.login.id);
+        delete pendingClearGameCookie[req.cookies.login.id];
       }
     }
     next();

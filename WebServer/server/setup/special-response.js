@@ -29,17 +29,13 @@ module.exports = async function(input) {
         'special': response.special,
         'id': response.id
       }, response.roomNo);
-      del=function(req,res){
-        console.log("Clear cookie")
-        res.clearCookie('gameCookie');
-        res.redirect('/joinroom');
-      }
-      //TODO::Host disconnect
+      break;
     }
     case C.SPECIAL.CLEAR_ALL_GAME_COOKIE : {
       for(let user of response.users) {
         pendingClearGameCookie[user] = true;
       }
+      break;
     }
     case C.SPECIAL.NULL: {
       console.log('null response');

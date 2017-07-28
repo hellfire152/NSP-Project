@@ -74,9 +74,16 @@ module.exports = function(data) {
       }
 
       //block multiple on same machine
-      if(req.cookies.gameCookie) {
+      if(req.cookies.gameCookie !== undefined) {
         sendErrorPage(res, 'No multiple sessions on the same machine!');
         return;
+      } else {
+        cookieCipher.encryptJSON({
+          'username' : req.cookies.login.id,
+          'room' : req.query.room
+        }).then(gameCookie => {
+          res.cookie('gameCookie', gameCookie);
+        })
       }
 
       let roomNo = req.query.room;
@@ -87,6 +94,9 @@ module.exports = function(data) {
         'roomNo' : roomNo
       }, (response) => {
         if(response.err) {
+          setTimeout(() => {
+            res.clearCookie('gameCookie');
+          }, 5000);
           for(let e of Object.keys(C.ERR)) {
             if(C.ERR[e] == response.err) {
               sendErrorPage(res, e);
