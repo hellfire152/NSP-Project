@@ -147,7 +147,6 @@ module.exports = function(data) {
   });
 
   //handling hosting
-
   app.get('/host', rateLimiters.host, function(req, res) { //submit the form for hosting a room
     if(req.query.quizId.constructor === Array) {
       sendErrorPage(res, 'Argument error!');
