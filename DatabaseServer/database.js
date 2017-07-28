@@ -312,6 +312,10 @@ var server = net.createServer(function(conn){
             await changePassword(inputData);
             break;
           }
+          case C.DB.CREATE.SPAM_AREA : {
+            await addSpam(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -1578,6 +1582,33 @@ async function addLogQuestion(logQuestion, data, quizId){
         addChoices(data.choices, questionId, questionData.question_no);
       }
     });
+  })
+}
+
+//This is a showcase of spambot fucnction
+async function addSpam(inputData){
+  var data = inputData.data
+
+  var query = connection.query("INSERT INTO spam_area SET ?", data.info, function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    else{
+      var response = {
+        data : {
+          success : true,
+          message : "Spam input successful"
+        }
+      }
+      sendToServer(response, inputData);
+    }
   })
 }
 

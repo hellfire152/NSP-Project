@@ -15,7 +15,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     var username = req.body.username;
     var password = req.body.password;
     var randomNum = req.body.randomNum;
-    var userIP = req.body.userIp;
+    // var userIP = req.body.userIp;
+    var userIP = req.connection.remoteAddress;
         req.sanitize('username').escape();
         req.sanitize('password').escape();
         req.sanitize('userIp').escape();
@@ -44,6 +45,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
             if(req.cookies.deviceIP != undefined){
               if(cookieValidator.validateCookie(req.cookies.deviceIP))
                 var deviceIp = req.cookies.deviceIP.data;
+              else
+                res.clearCookie("deviceIP");
             }
 
             appConn.send({
@@ -131,9 +134,9 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                     cookieValidator.generateCheckCookie({ //Param: (jsonObj, user Ip address)
                       'pin' : randomNum,
                       'user_id' : response.data.data.user_id,
-                      'userIp' : req.body.userIp,
+                      'userIp' : userIP,
                       'count' : 0
-                    }, req.body.userIp)
+                    }, userIP)
                   )
                     .catch(function (err) {
                       throw new Error('Error parsing JSON!');

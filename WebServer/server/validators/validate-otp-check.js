@@ -11,7 +11,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       //TODO::Handle errors
     } else {
       var userOTP = req.body.otp;
-      var userIP = req.body.userIp;
+      // var userIP = req.body.userIp;
+      var userIP = req.connection.remoteAddress;
       var otpObj = req.cookies.otp.data;
 
       //Check if cookie is valid or not
