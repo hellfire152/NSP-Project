@@ -72,7 +72,8 @@ socket.on('receive', function(input) {
           console.log("Event response value is " +response.event +"not a preset case!");
         }
       }
-    } else if (response.game !== undefined) {  //special events
+    } else if (response.game >= 0) {
+      console.log("HANDLING GAME");
       handleGame(response); //delegate to the handleGame function defined in the gamemode js files
     } else {
       switch(response.special) {

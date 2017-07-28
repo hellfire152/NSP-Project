@@ -196,18 +196,15 @@ var server = net.createServer(function(conn){
               conn.sendCipher.xorString(conn.secret, conn.encryptedChallenge));
             let s = conn.sendCipher.hash(
               conn.sendCipher.xorString(conn.secret, S.APPSERVER.PASSWORD));
-            let sendPassword = s;
-            let receivePassword = r;
-
-            response = {
-              'auth' : true
-            };
-            encryption = 'aes';
 
             conn.sendCipher.password = s;
             conn.receiveCipher.password = r;
             conn.status = C.AUTH.AUTHENTICATED;
             delete conn.encryptedChallenge;
+            response = {
+              'auth' : true
+            };
+            encryption = 'aes';
           } catch (e) {
             console.log(e);
           }

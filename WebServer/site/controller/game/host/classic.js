@@ -1,5 +1,7 @@
 /*
   handleGame function for the classic gamemode (HOST)
+
+  Author: Jin Kuan
 */
 const MCQ_NO_TO_LETTER = {
   8: 'A',
@@ -133,7 +135,7 @@ function handleGame(response) {
     }
     case C.GAME_RES.GAME_END: {
       //show end results
-
+      gameEnd(response);
       //top rankings
 
       //titles and achievements

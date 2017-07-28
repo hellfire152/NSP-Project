@@ -1,0 +1,122 @@
+doctype html
+html
+  head
+    title
+    link(rel='stylesheet', type='text/css', href='/resources/css/bootstrap.min.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/LoginForm.css')
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+    link(rel='stylesheet', type='text/css', href='/resources/css/materialize.css')
+  body
+    nav
+      .nav-wrapper
+        a.brand-logo(href='#') Logo
+        ul#nav-mobile.right.hide-on-med-and-down
+          li
+            a(href='sass.html') Sass
+          li
+            a(href='badges.html') Components
+          li
+            a(href='collapsible.html') JavaScript
+    .container-fluid
+      .row
+        form#createQuiz
+          .col-md-3
+          .col-md-6
+            .form-group
+              label(for='nameofQuiz') Quiz title:
+              input#nameofQuiz(type='text', name='nameofQuiz', required='required', autocomplete='off')
+            .form-group
+              label(for='desc') Description:
+              desc#textarea1.materialize-textarea
+            .form-group
+              label Visibility:
+              input#public(name='typeOfQuiz', type='radio')
+              label(for='public') Yes
+              input#private(type='radio', name='typeOfQuiz')
+              label(for='private') No
+            .form-group
+              label Question No:
+              p Prompt (20 charaectors)
+            .form-group
+              label Question No:
+              p Prompt (20 charaectors)
+            .form-group
+              a.btn-floating.btn-large.waves-effect.waves-light.red.prompt-open(style='margin:auto;')
+                i.material-icons add
+              .wrap
+                .content
+                  .row
+                    .col-md-7
+                      .form-group
+                        label(for='nameofQuiz') Prompt:
+                        input#nameofQuiz(type='text', name='nameofQuiz', required='required', autocomplete='off')
+                    .col-md-5
+                      .form-group
+                        label Visibility:
+                        input#mcq(name='radio', type='type')
+                        label(for='mcqchoice') MCQ
+                        input#short-answer(type='radio', name='type')
+                        label(for='shortchoice') Short-Ans
+                   #mcqSection.row.selection
+                    .row
+                      .col-md-6
+                        input#choice1.choices(type='textarea', name='choices')
+                        input#choice1Ans(type='checkbox', name='solution')
+                        label(for='filled-in-box') Filled in
+                      .col-md-6
+                        input#choice2.choices(type='textarea', name='choices', disabled='disabled')
+                        input#choice2Ans(type='checkbox', name='solution')
+                        label(for='filled-in-box') Filled in
+                    .row
+                      .col-md-6
+                        input#choice3.choices(type='textarea', name='choices', disabled='disabled')
+                        input#choice3Ans(type='checkbox', name='solution')
+                        label(for='filled-in-box') Filled in
+                      .col-md-6
+                        input#choice4.choices(type='textarea', name='choices', disabled='disabled')
+                        input#choice4Ans(type='checkbox', name='solution')
+                        label(for='filled-in-box') Filled in
+                  .row
+                    .input-field.col-md-5
+                      select
+                        option(value='', disabled='', selected='') Choose your option
+                        option(value='1') Option 1
+                        option(value='2') Option 2
+                        option(value='3') Option 3
+                      label Materialize Select
+                    .col-md-7
+                      .form-group
+                        label(for='reward') Specific Reward
+                        input#reward(type='number', name='reward')
+                  .row
+                    .col-md-5
+                      .form-group
+                        label(for='penalty') Specific Penalty
+                        input#penalty(type='number', name='penalty')
+                    .col-md-7
+                      button.btn.waves-effect.waves-light(type='submit', name='action')
+                        | Submit
+                        i.material-icons.right send
+                      button#cancel.btn.waves-effect.waves-light(name='action') Cancel
+            .col-md-3
+      // Import jQuery before materialize.js
+      script(type='text/javascript', src='https://code.jquery.com/jquery-2.1.1.min.js')
+      script(type='text/javascript', src='/resources/js/materialize.min.js')
+      script(src='/resources/js/bootstrap.min.js')
+      script(type='text/javascript').
+        $(document).ready(function() {
+        $('select').material_select();
+        });
+        $('a').on('click', function(){
+        $('.wrap, a').toggleClass('active');
+        return false;
+        });
+        $('.prompt-open').on('click', function(){
+        if($('.wrap').hasClass('active')){
+        $('.prompt-open').attr('z-index', '-1');
+        }
+        });
+        $('#cancel').on('click',function(){
+        $('.wrap').removeClass('active');
+        });
+        //Selection Choice

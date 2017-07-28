@@ -111,17 +111,11 @@ function playersObjectToArray(players) {
   Returns a sorted array of players, and their results,
   sorted either by points or correct answers, decided by the second argument
 */
-function roundEndResults(players, sortByPoints) {
+function roundEndResults(players, sortBy) {
   let results = playersObjectToArray(players);
-  if(sortByPoints) {
-    results.sort((a, b) => {  //sort by points
-      return parseInt(a.score) - parseInt(b.score);
-    });
-  } else {
-    results.sort((a, b) => {  //sort by correct answers
-      return parseInt(a.correctAnswers) - parseInt(b.correctAnswers);
-    });
-  }
+  results.sort((a, b) => {  //sort by points
+    return parseInt(a[sortBy]) - parseInt(b[sortBy]);
+  });
   return results;
 }
 

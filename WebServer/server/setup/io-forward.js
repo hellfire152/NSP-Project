@@ -93,36 +93,39 @@ module.exports = function(data) {
 
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
-    let response = await decryptResponse(input);
-    logResponse(response);
-    try {
-      if(response.special !== undefined){ //handling special stuff
-        await handleSpecialResponse({
-          'pendingResponses' : pendingResponses,
-          'response' : response,
-          'io' : io,
-          'C' : C,
-          'socketObj' : io.sockets.sockets,
-          'socketOfUser' : socketOfUser
-        });
-      } else {  //others
-        if(response.sendTo !== undefined) {
-          await handleIoResponse({
+    let responses = await decryptResponse(input);
+    for(let response of responses) {
+      logResponse(response);
+      try {
+        if(response.special !== undefined){ //handling special stuff
+          await handleSpecialResponse({
+            'pendingResponses' : pendingResponses,
             'response' : response,
             'io' : io,
             'C' : C,
             'socketObj' : io.sockets.sockets,
             'socketOfUser' : socketOfUser
           });
+        } else {  //others
+          if(response.sendTo !== undefined) {
+            await handleIoResponse({
+              'response' : response,
+              'io' : io,
+              'C' : C,
+              'socketObj' : io.sockets.sockets,
+              'socketOfUser' : socketOfUser
+            });
+          }
+          runCallback(response);
         }
-        runCallback(response);
+      } catch (err) {
+        console.log(err);
+        console.log('Error Processing AppServer to WebServer input!');
       }
-    } catch (err) {
-      console.log(err);
-      console.log('Error Processing AppServer to WebServer input!');
     }
   });
 }
+
 //handlers for the different response types
 var handleIoResponse = require('./io-response.js');
 var handleSpecialResponse = require('./special-response.js');

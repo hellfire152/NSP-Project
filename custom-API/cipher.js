@@ -131,7 +131,7 @@ class Cipher {
   }
 
   //Hash value with SHA256
-  async hash(input) {
+  hash(input) {
     var hash =  crypto.createHash('SHA256').update(input).digest('base64');
     return hash;
   }

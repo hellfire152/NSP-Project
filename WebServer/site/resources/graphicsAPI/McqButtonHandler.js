@@ -139,14 +139,14 @@ class McqButtonHandler extends DisplayElement {
 
   disableAll() {
     for(let button of this._buttons) {
-      button.interactive = false;
+      button.disable();
     }
     this.darkenAllExcept(-1); //darken all
   }
 
   enableAll() {
     for(let button of this._buttons) {
-      button.interactive = true;
+      button.enable();
       button.filters = [];
     }
   }

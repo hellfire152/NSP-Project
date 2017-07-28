@@ -22,8 +22,14 @@ class ShortAnswerTextField extends DisplayElement{
     });
     this._text.anchor.set(0.5,0.5);
     this._text.x = this._container.width / 2;
-    this._text.y = this._container.height / 2;
-    this._container.addChild(this._text);
+    this._text.y = this._container.height * 2 / 3;
+
+    this._prompt = new PIXI.Text('Type your answer!');
+    this._prompt.anchor.set(0.5, 0.5);
+    this._prompt.x = this._container.width / 2;
+    this._prompt.y = this._container.height / 3;
+
+    this._container.addChild(this._prompt, this._text);
 
     //listen for typing
     document.onkeypress = ((textField) => {
