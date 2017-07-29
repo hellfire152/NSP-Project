@@ -34,7 +34,8 @@ module.exports = async function(input) {
         return {
           'game' : C.GAME_RES.GET_READY,
           'roomNo' : data.roomNo,
-          'sendTo' : C.SEND_TO.ROOM
+          'sendTo' : C.SEND_TO.ROOM,
+          'totalQuestions' : currentRoom.quiz.questions.length
         }
       } else {
         return {

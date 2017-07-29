@@ -74,5 +74,5 @@ function send(data) {
 function appendToWaitingList(playerId) {
   let playerLi = createNode('li', playerId, 'waiting-player', `player-${playerId}`);
   document.getElementById('waiting-list')
-    .appendChild(li);
+    .appendChild(playerLi);
 }
