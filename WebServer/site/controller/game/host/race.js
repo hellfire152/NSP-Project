@@ -4,7 +4,7 @@
 var playerObj = {};
 console.log('Loaded: Race gamemode handler!');
 function handleGame(response) {
-  switch(response.game) {
+  switch(response) {
     case C.GAME_RES.GET_READY: {
       let header = createNode('div', 'Race!', 'header', 'race-header');
       header.style.display = 'none';
@@ -15,22 +15,21 @@ function handleGame(response) {
 
       initHost(response.players);
 
-      appendMultiple(document.body, header, totalQuestions);
+      appendMultiple(document.body(header.totalQuestions));
       break;
     }
     case C.GAME_RES.START: {
-      break;
-    }
-    case C.GAME_RES.ANSWER_CHOSEN : {
-      //make sure the get-ready div is hidden
-      document.getElementById('get-ready').style.display = 'none';
-
       //show all the relevant divs
       document.getElementById('race-header').style.display = 'block';
       document.getElementById('race-total-questions').style.display = 'block';
       document.getElementById('players-prompt').style.display = 'block';
-
-      document.getElementById('players').style.display = 'block';
+      break;
+    }
+    case C.GAME_RES.NEXT_QUESTION : {
+      //do nothing
+      break;
+    }
+    case C.GAME_RES.ANSWER_CHOSEN: {
       let playerSpan = document.getElementById(`player-${response.id}-progress`);
       playerSpan.innerHTML = ""; //clear span
       //re add counter
@@ -44,7 +43,12 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.GAME_END: {
-      gameEnd(response);
+      //hide the other divs
+      document.getElementById('players-prompt').style.display = 'none';
+      document.getElementById('race-total-questions').style.display = 'none';
+      document.getElementById('race-header').style.display = 'none';
+      //show the game ranking div
+      document.getElementById('ranking').style.display = 'block';
       break;
     }
   }
@@ -60,7 +64,7 @@ function initHost(players) {
 
   let playersDiv = createNode('div', null, 'players', 'players-prompt');
   let playersUl = createNode('ul', 'Players:', 'players-list', 'players-list-header');
-  playersDiv.appendChild(playersUl);
+  playersDiv.appendChild(playersUi);
 
   //create a list element for each player
   for(let player in players) {
@@ -70,7 +74,7 @@ function initHost(players) {
       let playerProgressSpan = createNode(
         'span', 0, 'players-list', `player-${player}-progress`);
       playerLi.appendChild(playerProgressSpan);
-      playersUl.appendChild(playerLi);
+      playersUi.appendChild(playerLi);
     }
   }
 
@@ -78,7 +82,8 @@ function initHost(players) {
   let gameRankingDiv = document.createElement('div');
   gameRankingDiv.id = 'game-ranking';
 
-  gameRankingDiv.style.display = playersDiv.style.display = 'none';
+  gameRankingDiv.style.display =
+    currentQuestionDiv.style.display = 'none';
 
   appendMultiple(document.body, gameRankingDiv, playersDiv);
 }
