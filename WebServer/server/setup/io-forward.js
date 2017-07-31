@@ -13,7 +13,7 @@ module.exports = function(data) {
   const C = data.C;
   let {dirname, io, pendingResponses, pendingAppResponses, Cipher, appConn,
     cookie, socketOfUser, roomOfUser, cookieCipher, decryptResponse, logResponse
-    ,  runCallback} = data;
+    ,  runCallback, pendingClearGameCookie} = data;
 
   //setting up forwarding of data between user and game server
   //short hand
@@ -25,6 +25,7 @@ module.exports = function(data) {
     socket.on('disconnect', () => {
       console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
       delete socketOfUser[socket.userId];
+      pendingClearGameCookie[socket.userId] = true;
       appConn.send({
         'special': C.SPECIAL.SOCKET_DISCONNECT,
         'id': socket.userId,
@@ -50,23 +51,6 @@ module.exports = function(data) {
       socket.disconnect();
     }
 
-    try{
-      let gameCookie = await getGameCookieS(socket,cookieCipher,cookie);
-      console.log("SOCKET IO GAME CONNECTION INITIATED BY");
-      console.log(gameCookie);
-      if(socketOfUser[gameCookie.username] !== undefined && socketOfUser[gameCookie.room] !==undefined){
-        console.log('User already exist in the game room');
-        socket.disconnect();
-      }
-      //store username together with room
-      socketOfUser[gameCookie.username] = socket;
-      socket.userId = gameCookie.username;
-
-    } catch(err){
-      console.log(err);
-      console.log("Invalid game cookie detected");
-      socket.disconnect();
-    }
     //adding listeners
     console.log("Request received: " +socket.id);
     socket.on('send', async function(input){ //from user
@@ -93,13 +77,22 @@ module.exports = function(data) {
 
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
-    let responses = await decryptResponse(input);
-    for(let response of responses) {
-      logResponse(response);
-      try {
-        if(response.special !== undefined){ //handling special stuff
-          await handleSpecialResponse({
-            'pendingResponses' : pendingResponses,
+    let response = await decryptResponse(input);
+    logResponse(response);
+    try {
+      if(response.special !== undefined){ //handling special stuff
+        await handleSpecialResponse({
+          'pendingResponses' : pendingResponses,
+          'response' : response,
+          'io' : io,
+          'C' : C,
+          'socketObj' : io.sockets.sockets,
+          'socketOfUser' : socketOfUser,
+          'pendingClearGameCookie' : pendingClearGameCookie
+        });
+      } else {  //others
+        if(response.sendTo !== undefined) {
+          await handleIoResponse({
             'response' : response,
             'io' : io,
             'C' : C,

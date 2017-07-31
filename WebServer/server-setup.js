@@ -16,6 +16,7 @@ var xssDefense = require('./server/setup/xss-defense.js');
 var emailServer = require('./server/setup/email.js');
 
 var socketOfUser = {};
+var pendingClearGameCookie = {};
 setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
   socketOfUser = {};
 }, 2000);
@@ -78,6 +79,17 @@ module.exports = function(data) {
     }
     next();
   });
+  //for clearing game cookie
+  app.use("*", function(req, res, next) {
+    if(req.cookies.login) {
+      //TODO::Switch login cookie
+      if(pendingClearGameCookie[req.cookies.login.id]) {
+        res.clearCookie('gameCookie');
+        delete pendingClearGameCookie[req.cookies.login.id];
+      }
+    }
+    next();
+  });
 
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({
@@ -97,6 +109,7 @@ module.exports = function(data) {
     'uuid' : uuid,
     'pendingAppResponses' : pendingAppResponses,
     'cookieCipher' : cookieCipher,
+    'pendingClearGameCookie' : pendingClearGameCookie,
     'xssDefense' : xssDefense,
     'emailServer' : emailServer
   });
@@ -114,6 +127,7 @@ module.exports = function(data) {
     'socketOfUser': socketOfUser,
     'decryptResponse' : decryptResponse,
     'logResponse' : logResponse,
-    'runCallback' : runCallback
+    'runCallback' : runCallback,
+    'pendingClearGameCookie' : pendingClearGameCookie
   });
 }

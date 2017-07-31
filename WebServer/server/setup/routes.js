@@ -69,8 +69,23 @@ module.exports = function(data) {
       sendErrorPage(res, "Don't Think you can hack me!");
     } else {
       //check for login cookie
-      if(req.cookies.login === undefined)
+      if(req.cookies.login === undefined) {
         sendErrorPage(res, 'You are not logged in!');
+        return;
+      }
+
+      //block multiple on same machine
+      if(req.cookies.gameCookie !== undefined) {
+        sendErrorPage(res, 'No multiple sessions on the same machine!');
+        return;
+      } else {
+        cookieCipher.encryptJSON({
+          'username' : req.cookies.login.id,
+          'room' : req.query.room
+        }).then(gameCookie => {
+          res.cookie('gameCookie', gameCookie);
+        })
+      }
 
       let roomNo = req.query.room;
       appConn.send({
@@ -80,6 +95,9 @@ module.exports = function(data) {
         'roomNo' : roomNo
       }, (response) => {
         if(response.err) {
+          setTimeout(() => {
+            res.clearCookie('gameCookie');
+          }, 5000);
           for(let e of Object.keys(C.ERR)) {
             if(C.ERR[e] == response.err) {
               sendErrorPage(res, e);
@@ -129,7 +147,6 @@ module.exports = function(data) {
   });
 
   //handling hosting
-
   app.get('/host', rateLimiters.host, function(req, res) { //submit the form for hosting a room
     if(req.query.quizId.constructor === Array) {
       sendErrorPage(res, 'Argument error!');

@@ -23,6 +23,7 @@
     "SOCKET_DISCONNECT" : 500,
     "HOST_DISCONNECT": 501,
 
+    "CLEAR_ALL_GAME_COOKIE" : 502,
     "NULL": 0
   },
   "SEND_TO": {
