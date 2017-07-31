@@ -7,8 +7,6 @@ This module also check weather the cookie belongs to the specific IP address.
 var crypto = require('crypto');
 
 function generateCheckCookie(jsonObj, ipAddress){
-  console.log("generateCheckCookie:");
-  console.log(jsonObj);
   if(ipAddress != undefined){
     return {
       'data' : jsonObj,

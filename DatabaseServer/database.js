@@ -301,7 +301,6 @@ var server = net.createServer(function(conn){
             break;
           }
           case C.DB.SELECT.EMAIL : {
-            console.log(inputData);
             await retrieveEmail(inputData);
             break;
           }
@@ -477,7 +476,6 @@ async function userDetails(userId, details, type){
 //Else no personal data will be sent
 async function retrievePreAccount(inputData){
   var data = inputData.data;
-  console.log(data);
   data.account.email = data.account.username; // seperate email and username to provide encryption for email
   await handleDb.handleEncryption(data.account)
   .then(dataAccount => {
@@ -501,14 +499,10 @@ async function retrievePreAccount(inputData){
             dataAccount.userId = result[0].user_id;
             dataAccount.salt = result[0].salt;
             dataAccount.dbPass = result[0].password_hash;
-            delete dataAccount.username; //Remove username to improve data processing
-            console.log("THIS IS DATAACCOUNT");
-            console.log(dataAccount);
+            delete dataAccount.username; //Remove username to improve data processing\
             handleDb.handleRecieveAccount(dataAccount)
             .then(dataOut => {
               //If user password input is equal to database password
-              console.log("INPUT: " + dataOut.hash_password);
-              console.log("DB: " + dataOut.dbPass);
               if(dataOut.hash_password === dataOut.dbPass){
                 console.log("Password correct");
                 var query = connection.query("SELECT user_account.user_id, ip_address\
@@ -591,8 +585,6 @@ async function retrievePreAccount(inputData){
 
 async function retrieveFullAccount(inputData){
   var data = inputData.data
-  console.log("HERE");
-  console.log(data.user_id);
   var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
     FROM user_account\
     LEFT OUTER JOIN student_details\
@@ -1020,12 +1012,10 @@ async function updateName(inputData){
 
 async function updateAboutMe(inputData){
   data = inputData.data;
-  console.log(data);
   handleDb.handleEncryption(data)
   .then(dataOut => {
     var query = connection.query("UPDATE user_account SET about_me = " + connection.escape(dataOut.about_me) +
     "WHERE user_id = " + connection.escape(dataOut.user_id), function(error, result){
-      console.log("COMPLETED");
       if(error){
         var response = {
           data : {
@@ -1267,8 +1257,6 @@ async function deleteAccount(inputData){
 async function createQuiz(inputData){
   var data = inputData.data;
   data.quiz.date_created = new Date();
-  console.log("Eadfhjhgfyuiudahfycohasdkgiofhcuds");
-  console.log(data.quiz);
   var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
     if(error){
       console.error('[Error in query]: ' + error);
@@ -1282,7 +1270,6 @@ async function createQuiz(inputData){
       sendToServer(response, inputData);
     }
 
-    console.log('[Query successful]');
     var quizId = result.insertId; //Get the quizId form quiz
 
     data.question.forEach(function(question){

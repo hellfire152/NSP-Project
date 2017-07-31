@@ -111,10 +111,10 @@ module.exports = function(data) {
           }
           runCallback(response);
         }
-      } catch (err) {
-        console.log(err);
-        console.log('Error Processing AppServer to WebServer input!');
       }
+    }catch (err) {
+      console.log(err);
+      console.log('Error Processing AppServer to WebServer input!');
     }
   });
 }

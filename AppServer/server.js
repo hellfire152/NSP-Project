@@ -94,7 +94,6 @@ function initServer() {
       }
 
       let reqNo = data.reqNo;
-      console.log("THIS IS THE REQ NO.: " + reqNo); // ==============================================================
       delete data.reqNo;  //hide reqNo from logs
       console.log("FROM WEBSERVER"); //Log all data received from the WebServer
       console.log(data);

@@ -123,7 +123,10 @@ var attemptConnection = setInterval(() => {
     }
 
     function runCallback(response) {
-        console.log(pendingAppResponses);
+      console.log("[This is the pending app response]: ");
+      console.log(pendingAppResponses);
+      console.log("[This is the req no]: " + response.reqNo);
+      console.log(response);
       if(pendingAppResponses[response.reqNo]) {
         if(pendingAppResponses[response.reqNo].callback)
           pendingAppResponses[response.reqNo].callback(response);
@@ -177,7 +180,7 @@ var attemptConnection = setInterval(() => {
                   appConn.sendCipher.password = s;
                   appConn.receiveCipher.password = r;
                 });
-                  
+
                 //send key to AppServer
                 appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
                   if(response.auth) {
