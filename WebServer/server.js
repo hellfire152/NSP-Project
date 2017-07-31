@@ -122,15 +122,12 @@ var attemptConnection = setInterval(() => {
       }
     }
 
+    //NOTE: TEMP SOLUTION data[0] somehow did not get the first element of the array
     function runCallback(response) {
-      console.log("[This is the pending app response]: ");
-      console.log(pendingAppResponses);
-      console.log("[This is the req no]: " + response.reqNo);
-      console.log(response);
-      if(pendingAppResponses[response.reqNo]) {
-        if(pendingAppResponses[response.reqNo].callback)
-          pendingAppResponses[response.reqNo].callback(response);
-        delete pendingAppResponses[response.reqNo];
+      if(pendingAppResponses[response[0].reqNo]) {
+        if(pendingAppResponses[response[0].reqNo].callback)
+          pendingAppResponses[response[0].reqNo].callback(response[0]);
+        delete pendingAppResponses[response[0].reqNo];
       }
     }
 
@@ -138,6 +135,7 @@ var attemptConnection = setInterval(() => {
 
     appConn.on("data", async (response) => {
       let data = await decryptResponse(response);
+      console.log(response);
       //the authentication stage should have no problems with simultaneous responses
       logResponse(data[0]);
       runCallback(data[0]);

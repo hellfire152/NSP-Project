@@ -320,6 +320,10 @@ var server = net.createServer(function(conn){
             await selectTempToken(inputData);
             break;
           }
+          case C.DB.SELECT.NEW_DEVICE_ID : {
+            await retrieveNewDeviceId(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -844,6 +848,36 @@ async function selectTempToken(inputData){
         }
       });
     }
+  })
+}
+
+async function retrieveNewDeviceId(inputData){
+  var data = inputData.data;
+  handleDb.handleHashIP(data)
+  .then(dataOut => {
+    var query = connection.query("SELECT new_device_id FROM new_device WHERE user_id = ? AND ip_address = ?",[dataOut.inputData.user_id, dataOut.inputData.ip_address], function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      else{
+        console.log(result);
+        console.log(query);
+        objOutResult = {
+          data:{
+            data : result[0],
+            success : true
+          }
+        }
+        sendToServer(objOutResult, inputData);
+      }
+    });
   })
 }
 
