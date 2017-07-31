@@ -23,6 +23,7 @@ module.exports = function(cipher, appConn) {
     if(errors) {
       //TODO::Handle errors
     } else {
+      req.session.hosting = true;
       Promise.all([cipher.encryptJSON({
         "id": req.body.id,
         "pass": req.body.pass

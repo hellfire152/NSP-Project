@@ -61,26 +61,55 @@ module.exports = function(data) {
         });
     // }
   })
+
+  //handling profile pages
+  app.get('/profile/:username', (req, res) => {
+    appConn.send({
+      'type' : C.REQ_TYPE.ACCOUNT_DETAILS,
+      'username' : req.params.username
+    }, (response) => {
+      let profileDetails =  {
+        'username' : response.username,
+        'email' : response.email,
+        'category' : response.category,
+        'completedQuizzes' : response.completedQuizzes,
+        'creationDate' : response.creationDate,
+        'aboutMe' : response.aboutMe,
+        'quizList' : response.quizList,
+        'achievementsList' : response.achievementsList
+      };
+
+      //viewing own profile
+      if(req.validLogin && req.session.id === req.params.username) {
+        //display editable version
+        res.render('editable-profile', profileDetails);
+      } else {
+        //display non-editable version
+        res.render('profile', profileDetails);
+      }
+    })
+  });
+
   //handling play path
   app.get('/play', rateLimiters.join, function(req, res) { //submitted a form for playing in a room
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
-      sendErrorPage(res, "Don't Think you can hack me!");
-    } else {
+      res.sendErrorPage("Don't Think you can hack me!");
+    } else if(req.session.joining) {
       //check for login cookie
-      if(req.cookies.login === undefined)
-        sendErrorPage(res, 'You are not logged in!');
+      if(false /*!req.validLogin*/)
+        res.sendErrorPage('You are not logged in!');
 
       let roomNo = req.query.room;
       appConn.send({
         'type' : C.REQ_TYPE.JOIN_ROOM,
-        'id' : req.cookies.login.id,
+        'id' : req.session.username,  //TESTING
         'pass' : req.cookies.login.pass,
         'roomNo' : roomNo
       }, (response) => {
         if(response.err) {
           for(let e of Object.keys(C.ERR)) {
             if(C.ERR[e] == response.err) {
-              sendErrorPage(res, e);
+              res.sendErrorPage(e);
             }
           }
         } else {
@@ -91,38 +120,9 @@ module.exports = function(data) {
           });
         }
       });
-      // cookieCipher.decryptJSON(req.cookies.login)
-      // .catch(reason => {
-      //   console.log(reason);
-      //   sendErrorPage(res, 'You are not logged in!');
-      // })
-      // .then(function(cookieData) {
-      //   appConn.send({
-      //     'type': C.REQ_TYPE.JOIN_ROOM, //JOIN_ROOM
-      //     'id': cookieData.id,
-      //     'pass': cookieData.pass,
-      //     'roomNo': roomNo
-      //   }, (response) => {
-      //     //TODO::Valid Login
-      //     let errorMsg;
-      //     if(response.err) {
-      //       for(let e of Object.keys(C.ERR)) {
-      //         if(C.ERR[e] == response.err) {
-      //           errorMsg = e;
-      //         }
-      //       }
-      //       res.render('error', {
-      //         'error' : `Encountered error ${errorMsg}`
-      //       });
-      //     } else {
-      //       res.render('play', {
-      //         'roomNo' : response.roomNo,
-      //         'gamemode': response.gamemode,
-      //         'name' : response.id
-      //       });
-      //     }
-      //   });
-      // });
+    } else {
+      res.sendErrorPage('Please join via the home page or...??');
+       //I don't know what other ways there are yet
     }
   });
 
@@ -130,10 +130,10 @@ module.exports = function(data) {
 
   app.get('/host', rateLimiters.host, function(req, res) { //submit the form for hosting a room
     if(req.query.quizId.constructor === Array) {
-      sendErrorPage(res, 'Argument error!');
-    } else {
+      res.sendErrorPage('Argument error!');
+    } else if(req.session.hosting) {
       if(req.cookies.login === undefined)
-        sendErrorPage(res, 'You are not logged in!');
+        res.sendErrorPage('You are not logged in!');
 
       let quizId = req.query.quizId;
       appConn.send({
@@ -145,7 +145,7 @@ module.exports = function(data) {
         if(response.err) {
           for(let e of Object.keys(C.ERR)) {
             if(C.ERR[e] == response.err)
-              sendErrorPage(res, e);
+              res.sendErrorPage(e);
           }
         } else {
           res.render('host', {
@@ -154,35 +154,8 @@ module.exports = function(data) {
           });
         }
       });
-      // cookieCipher.decryptJSON(req.cookies.login)
-      //   .catch(reason => {
-      //     console.log(reason);
-      //   })
-      //   .then(cookieData => {
-      //     console.log("COOKIE DATA: ");
-      //     console.log(cookieData);
-      //     appConn.send({
-      //       'type' : C.REQ_TYPE.HOST_ROOM,
-      //       'id': cookieData.id,
-      //       'pass': cookieData.pass,
-      //       'quizId': quizId
-      //     }, (response) => {
-      //       if(response.err) {
-      //         for(let e of Object.keys(C.ERR)) {
-      //           if(C.ERR[e] == response.err) {
-      //             errorMsg = e;
-      //           }
-      //         }
-      //         res.render('error', {
-      //           'error' : `Encountered error ${errorMsg}`
-      //         });
-      //       }
-      //       res.render('host', {
-      //         'roomNo' : response.roomNo,
-      //         'gamemode' : response.gamemode
-      //       });
-      //     });
-      //   });
+    } else {
+      res.sendErrorPage('Not valid hosting thing...?')
     }
   });
 
@@ -205,10 +178,4 @@ module.exports = function(data) {
   app.post('/forget-password-room-success', validators["forget-password-room"]);
   app.post('/otp-check', validators["otp-check"]);
   app.post('/otp-register', validators["otp-register"]);
-}
-
-function sendErrorPage(res, errormsg) {
-  res.render('error', {
-    'error': errormsg
-  });
 }

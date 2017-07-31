@@ -35,38 +35,28 @@ module.exports = function(data) {
     /**CHECK MULTIPLE ON SAME MACHINE**/
 
     try {
-      let loginCookie = await getLoginCookieS(socket, cookieCipher, cookie);
+      //let loginCookie = await getLoginCookieS(socket, cookieCipher, cookie);
+      let id = socket.handshake.session.username;
       console.log("SOCKET IO CONNECTION INITIATED BY");
-      console.log(loginCookie);
-      if(socketOfUser[loginCookie.id] !== undefined) { //if user with that id already exists
+      console.log(id);
+      if(socketOfUser[id] !== undefined) { //if user with that id already exists
         console.log('User with that ID already logged in!');
         socket.disconnect();
       }
-      socketOfUser[loginCookie.id] = socket;
-      socket.userId = loginCookie.id;
+      socketOfUser[id] = socket;
+      socket.userId = id;
     } catch (err) {
       console.log(err);
       console.log("Invalid login cookie detected");
       socket.disconnect();
     }
 
-    try{
-      let gameCookie = await getGameCookieS(socket,cookieCipher,cookie);
-      console.log("SOCKET IO GAME CONNECTION INITIATED BY");
-      console.log(gameCookie);
-      if(socketOfUser[gameCookie.username] !== undefined && socketOfUser[gameCookie.room] !==undefined){
-        console.log('User already exist in the game room');
-        socket.disconnect();
-      }
-      //store username together with room
-      socketOfUser[gameCookie.username] = socket;
-      socket.userId = gameCookie.username;
-
-    } catch(err){
-      console.log(err);
-      console.log("Invalid game cookie detected");
+    //preventing outsiders from randomly connecting
+    if(!socket.handshake.session.joining && !socket.handshake.session.hosting) {
+      console.log('Illegal connection!');
       socket.disconnect();
     }
+
     //adding listeners
     console.log("Request received: " +socket.id);
     socket.on('send', async function(input){ //from user

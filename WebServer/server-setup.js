@@ -62,6 +62,11 @@ module.exports = function(data) {
   app.use(helmet.noSniff()); // content type should not be changed or followed
   app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
   app.use(helmet.xssFilter()); // protects against reflected XSS
+  //make sendErrorPage available for every request
+  app.use((req, res, next) => {
+    res.sendErrorPage = sendErrorPage;
+    next();
+  });
 
   //decrypt cookies
   app.use(async (req, res, next) => {
@@ -78,14 +83,7 @@ module.exports = function(data) {
     }
     next();
   });
-
-  //TESTING::req.session
-  app.use((req, res, next) => {
-    console.log("SESSION:");
-    console.log(req.session);
-    next();
-  })
-
+  
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({
     'app':  app,
@@ -123,4 +121,12 @@ module.exports = function(data) {
     'logResponse' : logResponse,
     'runCallback' : runCallback
   });
+}
+
+function sendErrorPage(errormsg) {
+  this.render('error', {
+    'error': errormsg
+  });
+  //stop anymore responses
+  this.end();
 }

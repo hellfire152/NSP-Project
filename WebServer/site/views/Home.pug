@@ -52,13 +52,13 @@ html
               small Selection is not persistent
     nav
       .nav-wrapper
-        a.brand-logo(href='home.pug')
+        a.brand-logo(href='home')
           img.logo(src='/resources/images/logo.png')
         ul#nav-mobile.right.hide-on-med-and-down
           li
             a(href='#') Join Quiz
           li
-            a(href='LoginForm.pug') Login
+            a(href='LoginForm') Login
           li
             a.btn.btn-primary.btn-hh-trigger(role='button', data-toggle='collapse', data-target='.header-hidden') Open
     .hero
@@ -66,9 +66,10 @@ html
         div(layout='column')
           span Learning Has Just Started
           .form__field
-            label(for='game-pin') Game Pin
-            input#game-pin(type='textbox')
-          a.waves-effect.waves-light.btn.createAccount(style='margin-top:20px;') Enter
+            form(action='/join-room', method='POST')
+              label(for='game-pin') Room No
+              input#game-pin(type='textbox', name='room')
+              input.waves-effect.waves-light.btn.createAccount(style='margin-top:20px;', type='submit', value='Enter')
           .HomeHero__aquaOval.fadeInRight
           .HomeHero__purpleOval.fadeInUp
           .HomeHero__blueOval.fadeInLeft
@@ -154,7 +155,7 @@ html
           p.medium-small.grey-text
             | We are committed to providing a flexible, scalable and powerful platform to help you learn with velocity
         .col-md-4
-          a.waves-effect.waves-light.btn.black.createAccount(href='LoginForm.pug')
+          a.waves-effect.waves-light.btn.black.createAccount(href='LoginForm')
             | Create Free Account
             i.material-icons fast_forward
         .col-md-1

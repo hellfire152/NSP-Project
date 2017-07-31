@@ -3,15 +3,6 @@ var crypto = require('crypto'); // NOTE: TEMP SOLUTION
 var passwordValidator = require('password-validator');
 module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
   return function(req, res){
-    console.log(`CIPHER MODULE: ${cipher}`);
-    // req.checkBody('username','Please enter username').notEmpty();
-    //
-    // req.checkBody('email','Please enter email').notEmpty();
-    // req.checkBody('email','Invalid email address').isEmail();
-    //
-    // req.checkBody('password','Please enter password').notEmpty();
-    // req.checkBody('password','Invalid password').isLength({min:8});
-    // console.log("hi");
     var username = req.body.username;
     var password = req.body.password;
     var randomNum = req.body.randomNum;
