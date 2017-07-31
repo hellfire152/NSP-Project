@@ -15,7 +15,7 @@ var emailServer = require('./email.js');
 app.use(helmet.noSniff()); // content type should not be changed or followed
 app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame
 app.use(helmet.xssFilter()); // protects against reflected XSS
-=======
+
 var cookieValidator = require('./cookieValidation.js');
 module.exports = function(data) {
   let {app, dirname, cipher, emailServer, appConn, queryOfUser, errors, cookieCipher, xssDefense}
