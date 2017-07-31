@@ -29,35 +29,41 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
 
     // TODO: AUTO LOGIN FUNCTION
     // Check the integrity if the cookie
-    // if(req.cookies.tempToken != undefined){
-    //   cipher.decryptJSON(req.cookies.tempToken) //NOTE: AUTO DECRYPT DOES NOT SEEM TO WORK TODO: NEED TO FIX THIS
-    //   .then(tempTokenData => {
-    //     if(cookieValidator.validateCookie(tempTokenData)){
-    //       var tempData = tempTokenData.data;
-    //       appConn.send({
-    //         // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
-    //         'type':C.REQ_TYPE.DATABASE,
-    //         'data': {
-    //           'type' : C.DB.SELECT.TEMP_TOKEN,
-    //           'temp_token' : tempData.temp_token,
-    //           'ip_address' : tempData.ip_address,
-    //           'user_id' : tempData.user_id,
-    //           'new_device_id' : tempData.new_device_id
-    //         }
-    //       }, (response) => {
-    //         //NOTE: If authenticate pass, response.data.success = true
-    //         //NOTE: If authenticate fail, response.data.success = false
-    //         console.log(response.data.success);
-    //         if(response.data.success){
-    //           //PROCESS DATA
-    //         }
-    //         else{
-    //           res.clearCookie("tempToken");
-    //         }
-    //       });
-    //     }
-    //   });
-    // }
+    if(req.cookies.tempToken != undefined){
+      cipher.decryptJSON(req.cookies.tempToken) //NOTE: AUTO DECRYPT DOES NOT SEEM TO WORK TODO: NEED TO FIX THIS
+      .then(tempTokenData => {
+        if(cookieValidator.validateCookie(tempTokenData)){
+          var tempData = tempTokenData.data;
+          console.log(tempData);
+          appConn.send({
+            // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+            'type':C.REQ_TYPE.DATABASE,
+            'data': {
+              'type' : C.DB.SELECT.TEMP_TOKEN,
+              //This is just the cookie obj
+              'inputData' : {
+                'temp_token' : tempData.temp_token,
+                'ip_address' : tempData.ip_address,
+                'user_id' : tempData.user_id,
+                'new_device_id' : tempData.new_device_id
+              }
+            }
+          }, (response) => {
+            //NOTE: If authenticate pass, response.data.success = true
+            //NOTE: If authenticate fail, response.data.success = false
+            console.log("SUCCESS YAY");
+            console.log(response.data.success);
+            if(response.data.success){
+              //PROCESS DATA
+            }
+            else{
+              res.clearCookie("tempToken");
+            }
+          });
+        }
+      });
+    }
+    //END OF AUTO LOGIN FUNCTION
 
     if (username!=""  && password!=""){
       var schema = new passwordValidator();

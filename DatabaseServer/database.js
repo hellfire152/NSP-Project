@@ -793,61 +793,64 @@ async function updateTempToken(inputData){
 
 async function selectTempToken(inputData){
   var data = inputData.data;
-  var query = connection.query("SELECT COUNT(user_id) AS count_user FROM new_device\
-  WHERE new_device_id = ? AND user_id = ? AND ip_address = ? AND temp_token = ?", [data.new_device_id, data.user_id, data.ip_address, data.temp_token]
-  ,function(error, result){
-    console.log(query);
-    if(error){
-      var response = {
-        data : {
-          success : false,
-          reason : C.ERR.DB_SQL_QUERY,
-          message : error
+  handleDb.handleHashIP(data)
+  .then(dataOut => {
+    var query = connection.query("SELECT COUNT(user_id) AS count_user FROM new_device\
+    WHERE new_device_id = ? AND user_id = ? AND ip_address = ? AND temp_token = ?", [dataOut.inputData.new_device_id, dataOut.inputData.user_id, dataOut.inputData.ip_address, dataOut.inputData.temp_token]
+    ,function(error, result){
+      console.log(query);
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
         }
+        sendToServer(response, inputData);
       }
-      sendToServer(response, inputData);
-    }
-    if(result[0].count_user == 1){
-      var response = {
-        data : {
-          success : true,
-          message : "Authentication success"
+      if(result[0].count_user == 1){
+        var response = {
+          data : {
+            success : true,
+            message : "Authentication success"
+          }
         }
+        sendToServer(response, inputData);
       }
-      sendToServer(response, inputData);
-    }
-    else{
-      var query2 = connection.query("UPDATE new_device SET temp_token = NULL WHERE new_device_id = ?", data.new_device_id, function(error, result){
-        if(error){
-          var response = {
-            data : {
-              success : false,
-              reason : C.ERR.DB_SQL_QUERY,
-              message : error
+      else{
+        var query2 = connection.query("UPDATE new_device SET temp_token = NULL WHERE new_device_id = ?", dataOut.inputData.new_device_id, function(error, result){
+          if(error){
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_SQL_QUERY,
+                message : error
+              }
             }
+            sendToServer(response, inputData);
           }
-          sendToServer(response, inputData);
-        }
-        if(result.affectedRows == 1){
-          var response = {
-            data : {
-              success : false,
-              message : "Authentication failed, database temp_token removed"
+          if(result.affectedRows == 1){
+            var response = {
+              data : {
+                success : false,
+                message : "Authentication failed, database temp_token removed"
+              }
             }
+            sendToServer(response, inputData);
           }
-          sendToServer(response, inputData);
-        }
-        else{
-          var response = {
-            data : {
-              success : false,
-              message : "Authentication failed, database temp_token have not been removed"
+          else{
+            var response = {
+              data : {
+                success : false,
+                message : "Authentication failed, database temp_token have not been removed"
+              }
             }
+            sendToServer(response, inputData);
           }
-          sendToServer(response, inputData);
-        }
-      });
-    }
+        });
+      }
+    })
   })
 }
 
