@@ -10,11 +10,20 @@ var checkMultipleOnSameMachine = require('./prevent_multiple_session.js');
 var express = require('express');
 var nodemailer = require('nodemailer');
 var helmet = require('helmet');
+var csrf = require('csurf');
 var app = express();
 var xssDefense = require('./xss-defense.js');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 var frameguard = require('frameguard');
 var emailServer = require('./email.js');
 
+
+var csrfProtection = csrf({
+  cookie : true
+});
+
+app.use(csrfProtection);
 
 app.use(helmet.noSniff()); // content type should not be changed or followed
 app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame
@@ -31,6 +40,12 @@ module.exports = function(data) {
     errors=data.error;
     uuid = data.uuid;
 
+var parseForm = bodyParser.urlencoded({extended: false});
+
+app.use(cookieParser());
+app.use(bodyParser.json());
+
+
   //middleware
   app.use('*', checkMultipleOnSameMachine);
   //routing
@@ -41,6 +56,12 @@ module.exports = function(data) {
   //sends index.html when someone sends a https request
   app.get('/', function(req, res){
     res.sendFile(dirname + "/site/index.html");
+  });
+
+  app.get('/form', csrfProtection, function(req,res){
+    res.render('form', {
+      csrfToken: req.csrfToken()
+    });
   });
 
   app.get('/data', function(req,res){
@@ -180,7 +201,9 @@ module.exports = function(data) {
   app.post('/otp-register', require('../validate-otp-register.js') (cipher, appConn, C, xssDefense));
   app.post('/otp-forget-password', require('../validate-otp-forget-password.js') (cipher, appConn, C, xssDefense));
   app.post('/change-forget-password', require('../validate-change-forget-password.js') (cipher, appConn, C, xssDefense));
-
+  app.post('/process', parseForm, csrfProtection, function(req,res){
+    res.redirect('/');
+  })
 
 }
 
