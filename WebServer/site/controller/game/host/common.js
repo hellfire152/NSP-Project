@@ -28,7 +28,7 @@ function gameEnd(response) {
 
   //show rankings
   //ranking header
-  let rankingHeader = createNode('h1', 'Final rankings:', 'ranking-header');
+  let rankingHeader = createNode('h1', 'Final rankings:', null, 'ranking-header');
   rankingDiv.appendChild(rankingHeader);
   //generating a display for each player
   for(let i = 0, player = response.roundEndResults[i];
@@ -42,12 +42,13 @@ function gameEnd(response) {
     //append the various data of the player
     for(let playerAttr in player) {
       if(player.hasOwnProperty(playerAttr)) {
-        let attr = createNode('p', player[playerAttr], `player-name`);
-        playerRankingDiv.appendChild(attr);
+        let attr = createNode(
+          'p', `${playerAttr}:\t${player[playerAttr]}`, 'player-attr', `player-${player[playerAttr]}`);
+        appendMultiple(playerRankingDiv, rank, attr);
       }
     }
 
-    appendMultiple(rankingDiv, rank, playerRankingDiv);
+    appendMultiple(rankingDiv, playerRankingDiv);
   }
 
   //the display for people who got titles and/or achievements

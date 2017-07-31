@@ -130,10 +130,8 @@ function appendToWaitingList(playerId) {
   //append to ul
   let waitingList = document.getElementById('waiting-list');
   console.log(playerId +" joined");
-  let li = document.createElement('li');
-  li.id = playerId;
-  li.appendChild(document.createTextNode(playerId));
-  waitingList.appendChild(li);
+  let playerLi = createNode('li', playerId, 'waiting-player', `player-${playerId}`);
+  waitingList.appendChild(playerLi);
 
   //enable start button if at least one player is in the room, else disable
   if(waitingList.childNodes.length > 0) {

@@ -91,6 +91,13 @@ module.exports = function(data) {
     next();
   });
 
+  //TESTING::req.session
+  app.use((req, res, next) => {
+    console.log("SESSION:");
+    console.log(req.session);
+    next();
+  })
+
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({
     'app':  app,

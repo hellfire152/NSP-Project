@@ -34,7 +34,8 @@ module.exports = async function(input) {
         return {
           'game' : C.GAME_RES.GET_READY,
           'roomNo' : data.roomNo,
-          'sendTo' : C.SEND_TO.ROOM
+          'sendTo' : C.SEND_TO.ROOM,
+          'totalQuestions' : currentRoom.quiz.questions.length
         }
       } else {
         return {
@@ -46,6 +47,7 @@ module.exports = async function(input) {
       }
     }
     case C.GAME.NEXT_ROUND: {
+      clearTimeout(currentRoom.timer);
       if(currentRoom.summarySent) { //first next press, send summary screen
         currentRoom.summarySent = false;
         if(currentRoom.questionCounter !== undefined) {
