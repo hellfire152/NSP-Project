@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 var crypto = require('crypto'); // NOTE: TEMP SOLUTION
 var passwordValidator = require('password-validator');
-module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieValidator) {
+module.exports = function(cipher, appConn, C, xssDefense, emailServer) {
   return function(req, res){
     console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
@@ -15,50 +15,16 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     var username = req.body.username;
     var password = req.body.password;
     var randomNum = req.body.randomNum;
-    // var userIP = req.body.userIp;
-    var userIP = req.connection.remoteAddress;
+        req.sanitize('username').escape();
+        req.sanitize('password').escape();
+        req.sanitize('userIp').escape();
+        req.sanitize('randomNum').escape();
+        req.sanitize('username').trim();
+        req.sanitize('password').trim();
+        req.sanitize('userIp').trim();
+        req.sanitize('randomNum').trim();
 
-    req.sanitize('username').escape();
-    req.sanitize('password').escape();
-    req.sanitize('userIp').escape();
-    req.sanitize('randomNum').escape();
-    req.sanitize('username').trim();
-    req.sanitize('password').trim();
-    req.sanitize('userIp').trim();
-    req.sanitize('randomNum').trim();
-
-    // TODO: AUTO LOGIN FUNCTION
-    // Check the integrity if the cookie
-    // if(req.cookies.tempToken != undefined){
-    //   cipher.decryptJSON(req.cookies.tempToken) //NOTE: AUTO DECRYPT DOES NOT SEEM TO WORK TODO: NEED TO FIX THIS
-    //   .then(tempTokenData => {
-    //     if(cookieValidator.validateCookie(tempTokenData)){
-    //       var tempData = tempTokenData.data;
-    //       appConn.send({
-    //         // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
-    //         'type':C.REQ_TYPE.DATABASE,
-    //         'data': {
-    //           'type' : C.DB.SELECT.TEMP_TOKEN,
-    //           'temp_token' : tempData.temp_token,
-    //           'ip_address' : tempData.ip_address,
-    //           'user_id' : tempData.user_id,
-    //           'new_device_id' : tempData.new_device_id
-    //         }
-    //       }, (response) => {
-    //         //NOTE: If authenticate pass, response.data.success = true
-    //         //NOTE: If authenticate fail, response.data.success = false
-    //         console.log(response.data.success);
-    //         if(response.data.success){
-    //           //PROCESS DATA
-    //         }
-    //         else{
-    //           res.clearCookie("tempToken");
-    //         }
-    //       });
-    //     }
-    //   });
-    // }
-
+    console.log(username);
     if (username!=""  && password!=""){
       var schema = new passwordValidator();
       schema
@@ -73,14 +39,12 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
 
       if (passwordCheck){
         if(!error){
+
+          console.log("pass");
           console.log("HOST FORM DATA: ");
 
             if(req.cookies.deviceIP != undefined){
-              if(cookieValidator.validateCookie(req.cookies.deviceIP))
-                var deviceIp = req.cookies.deviceIP.data;
-              else
-                res.clearCookie("deviceIP");
-            }
+             }
 
             appConn.send({
               // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
@@ -89,21 +53,31 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                 type : C.DB.SELECT.USER_ACCOUNT,
                 account : {
                   username : req.body.username,
-                  hash_password : req.body.password
+                  password : req.body.password
                 }
               }
             }, (response) => {
 
-              console.log("[Before validating ip address]");
+              console.log(req.body.userIp);
+              // await cipher.hash(req.body.userIp)
+              // .then(hashedIp => {
+              //   console.log("HERE");
+              //   console.log(hashedIp);
+              //   currentIpAddress = hashedIp;
+              // });
               //If incorrect user input return to login page
               if(!(response.data.success)){
                 res.redirect('/LoginForm');
               }
               else{
+                // var currentIpAddress; //5555 temp way to get ip address, because site is not s
                 //Check for identical IP address in user cookie
                 var valid = false; //Registered IP address in client PC
                 if(deviceIp != undefined && response.data.data.ip_address != undefined){
-                  var currentIpAddress = crypto.createHash('SHA256').update(userIP).digest('base64'); //NOTE: Temp solution
+                  var deviceIp = JSON.parse(req.cookies.deviceIP);
+                  // await cipher.hash(req.body.userIp)
+                  // .then(currentIpAddress => {
+                  var currentIpAddress = crypto.createHash('SHA256').update(req.body.userIp).digest('base64'); //NOTE: Temp solution
                     outerloop:
                       for(i=0 ; i<response.data.data.ip_address.length ; i++){
                         for(j=0 ; j<deviceIp.length ; j++){
@@ -126,23 +100,21 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                     }
                   } ,(response) => {
 
-                    //TODO: WILL INSERT AN REMEMBER ME FUNCCTION OVER HERE TOO TIRED TO IMPLEMENT, CURRENTLY WORKING AT OTP CHECK
-
                     console.log(response.data.data[0]);
                     var encodedData = xssDefense.jsonEncode(response.data.data[0]);
                     if(response.data.success){
                       console.log("SUCCESS");
                       console.log(encodedData);
-                      cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
-                        .then((encryptedCookie) => {
-                          res.cookie('user_info', encryptedCookie);
-                          res.render('LoginIndex', {
-                            data : encodedData
-                          });
-                        });
+                      res.cookie('user_info', JSON.stringify(encodedData));
+                      res.render('Loginindex',{
+                        data: encodedData
+                      });
                     }
                     else{
-                      res.redirect('/LoginForm');
+                      res.cookie('user_info', JSON.stringify(encodedData));
+                      res.render('LoginForm',{
+                        data: encodedData
+                      });
                     }
                   });
                 }
@@ -163,25 +135,17 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                       email : email
                     }
 
-                    // emailServer.loginAccountOtpEmail(emailObj);
+                    emailServer.loginAccountOtpEmail(emailObj);
                   });
 
-                  console.log("THIS IS THE RANDOM NUM: " + randomNum);
-                  cipher.encryptJSON(
-                    cookieValidator.generateCheckCookie({ //Param: (jsonObj, user Ip address)
-                      'pin' : randomNum,
-                      'user_id' : response.data.data.user_id,
-                      'userIp' : userIP,
-                      'count' : 0
-                    }, userIP)
-                  )
-                    .catch(function (err) {
-                      throw new Error('Error parsing JSON!');
-                    })
-                    .then(function(cookieData) {
-                    res.cookie('otp', cookieData, {"maxAge": 1000*60*60}); //one hour
-                    res.redirect('/otp');
-                  });
+                  var otp = {
+                    pin : randomNum,
+                    user_id : response.data.data.user_id,
+                    userIp : req.body.userIp,
+                    count : 0
+                  }
+                  res.cookie('otp', JSON.stringify(otp), {"maxAge": 1000*60*5}); //5 min
+                  res.redirect('/otp');
                 }
               }
 
@@ -218,4 +182,16 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
         return;
     }
   }
+}
+
+async function handleHashIP(data){
+  cipher.hash(data)
+  .then(hashed => {
+    data = hashed;
+  })
+  .catch(reason => {
+    console.log(reason);
+  });
+
+return data;
 }

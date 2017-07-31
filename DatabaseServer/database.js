@@ -196,18 +196,15 @@ var server = net.createServer(function(conn){
               conn.sendCipher.xorString(conn.secret, conn.encryptedChallenge));
             let s = conn.sendCipher.hash(
               conn.sendCipher.xorString(conn.secret, S.APPSERVER.PASSWORD));
-            let sendPassword = s;
-            let receivePassword = r;
-
-            response = {
-              'auth' : true
-            };
-            encryption = 'aes';
 
             conn.sendCipher.password = s;
             conn.receiveCipher.password = r;
             conn.status = C.AUTH.AUTHENTICATED;
             delete conn.encryptedChallenge;
+            response = {
+              'auth' : true
+            };
+            encryption = 'aes';
           } catch (e) {
             console.log(e);
           }
@@ -304,12 +301,23 @@ var server = net.createServer(function(conn){
             break;
           }
           case C.DB.SELECT.EMAIL : {
-            console.log(inputData);
             await retrieveEmail(inputData);
             break;
           }
           case C.DB.UPDATE.CHANGE_PASSWORD : {
             await changePassword(inputData);
+            break;
+          }
+          case C.DB.CREATE.SPAM_AREA : {
+            await addSpam(inputData);
+            break;
+          }
+          case C.DB.UPDATE.TEMP_TOKEN : {
+            await updateTempToken(inputData);
+            break;
+          }
+          case C.DB.SELECT.TEMP_TOKEN : {
+            await selectTempToken(inputData);
             break;
           }
           default : {
@@ -368,7 +376,6 @@ async function createAccount(inputData){
         "SELECT user_id FROM user_account\
         WHERE email = " + connection.escape(dataAccount.email) +
         " OR username = " + connection.escape(dataAccount.username), function(error, result){
-        // console.log(query);
         if(error){
           console.error('[Error in query]: ' + error);
           var response = {
@@ -469,7 +476,6 @@ async function userDetails(userId, details, type){
 //Else no personal data will be sent
 async function retrievePreAccount(inputData){
   var data = inputData.data;
-  console.log(data);
   data.account.email = data.account.username; // seperate email and username to provide encryption for email
   await handleDb.handleEncryption(data.account)
   .then(dataAccount => {
@@ -478,7 +484,6 @@ async function retrievePreAccount(inputData){
       WHERE email = " + connection.escape(dataAccount.email) +
       " OR username = " + connection.escape(dataAccount.username),
       function(err, result){
-        console.log(query);
         if(err){
           console.error('[Error in query]: ' + err);
           var response = {
@@ -494,13 +499,10 @@ async function retrievePreAccount(inputData){
             dataAccount.userId = result[0].user_id;
             dataAccount.salt = result[0].salt;
             dataAccount.dbPass = result[0].password_hash;
-            delete dataAccount.username; //Remove username to improve data processing
-
+            delete dataAccount.username; //Remove username to improve data processing\
             handleDb.handleRecieveAccount(dataAccount)
             .then(dataOut => {
               //If user password input is equal to database password
-              console.log("INPUT: " + dataOut.hash_password);
-              console.log("DB: " + dataOut.dbPass);
               if(dataOut.hash_password === dataOut.dbPass){
                 console.log("Password correct");
                 var query = connection.query("SELECT user_account.user_id, ip_address\
@@ -509,8 +511,6 @@ async function retrievePreAccount(inputData){
                   ON user_account.user_id = new_device.user_id\
                   WHERE user_account.user_id = " + connection.escape(dataOut.userId),
                 function(err, result){
-                  console.log(result);
-                  console.log(query);
                   if(err){
                     console.error('[Error in query]: ' + err);
                     var response = {
@@ -585,8 +585,6 @@ async function retrievePreAccount(inputData){
 
 async function retrieveFullAccount(inputData){
   var data = inputData.data
-  console.log("HERE");
-  console.log(data.user_id);
   var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
     FROM user_account\
     LEFT OUTER JOIN student_details\
@@ -743,7 +741,8 @@ async function addIpAddress(inputData){
           data : {
             success : true,
             data : {
-              hashedIpAddress : dataOut.inputData.ip_address
+              hashedIpAddress : dataOut.inputData.ip_address,
+              newDeviceId : result.insertId
             }
           }
         }
@@ -751,6 +750,101 @@ async function addIpAddress(inputData){
       }
     });
   });
+}
+
+async function updateTempToken(inputData){
+  var data = inputData.data;
+  var query = connection.query("UPDATE new_device SET temp_token = ?\
+  WHERE new_device_id = ?", [data.temp_token, data.new_device_id], function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    if(result.affectedRows == 1){
+      var response = {
+        data : {
+          success : true,
+          message : "temp token updated"
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    else{
+      var response = {
+        data : {
+          success : false,
+          message : "temp token not updated"
+        }
+      }
+      sendToServer(response, inputData);
+    }
+  })
+}
+
+async function selectTempToken(inputData){
+  var data = inputData.data;
+  var query = connection.query("SELECT COUNT(user_id) AS count_user FROM new_device\
+  WHERE new_device_id = ? AND user_id = ? AND ip_address = ? AND temp_token = ?", [data.new_device_id, data.user_id, data.ip_address, data.temp_token]
+  ,function(error, result){
+    console.log(query);
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    if(result[0].count_user == 1){
+      var response = {
+        data : {
+          success : true,
+          message : "Authentication success"
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    else{
+      var query2 = connection.query("UPDATE new_device SET temp_token = NULL WHERE new_device_id = ?", data.new_device_id, function(error, result){
+        if(error){
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_SQL_QUERY,
+              message : error
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        if(result.affectedRows == 1){
+          var response = {
+            data : {
+              success : false,
+              message : "Authentication failed, database temp_token removed"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else{
+          var response = {
+            data : {
+              success : false,
+              message : "Authentication failed, database temp_token have not been removed"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+      });
+    }
+  })
 }
 
 
@@ -918,12 +1012,10 @@ async function updateName(inputData){
 
 async function updateAboutMe(inputData){
   data = inputData.data;
-  console.log(data);
   handleDb.handleEncryption(data)
   .then(dataOut => {
     var query = connection.query("UPDATE user_account SET about_me = " + connection.escape(dataOut.about_me) +
     "WHERE user_id = " + connection.escape(dataOut.user_id), function(error, result){
-      console.log("COMPLETED");
       if(error){
         var response = {
           data : {
@@ -1165,10 +1257,7 @@ async function deleteAccount(inputData){
 async function createQuiz(inputData){
   var data = inputData.data;
   data.quiz.date_created = new Date();
-  console.log("Eadfhjhgfyuiudahfycohasdkgiofhcuds");
-  console.log(data.quiz);
   var query = connection.query("INSERT INTO quiz SET ?", data.quiz, function(error, result){
-    console.log(query);
     if(error){
       console.error('[Error in query]: ' + error);
       var response = {
@@ -1181,7 +1270,6 @@ async function createQuiz(inputData){
       sendToServer(response, inputData);
     }
 
-    console.log('[Query successful]');
     var quizId = result.insertId; //Get the quizId form quiz
 
     data.question.forEach(function(question){
@@ -1578,6 +1666,33 @@ async function addLogQuestion(logQuestion, data, quizId){
         addChoices(data.choices, questionId, questionData.question_no);
       }
     });
+  })
+}
+
+//This is a showcase of spambot fucnction
+async function addSpam(inputData){
+  var data = inputData.data
+
+  var query = connection.query("INSERT INTO spam_area SET ?", data.info, function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    else{
+      var response = {
+        data : {
+          success : true,
+          message : "Spam input successful"
+        }
+      }
+      sendToServer(response, inputData);
+    }
   })
 }
 

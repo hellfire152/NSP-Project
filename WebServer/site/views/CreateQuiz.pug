@@ -6,7 +6,6 @@ html
     link(rel='stylesheet', type='text/css', href='/resources/css/LoginForm.css')
     link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
     link(rel='stylesheet', type='text/css', href='/resources/css/materialize.css')
-
   body
     nav
       .nav-wrapper
@@ -38,9 +37,7 @@ html
             .form-group
               label Question No:
               p Prompt (20 characters)
-            .form-group
-              label Question No:
-              p Prompt (20 characters)
+
             .form-group
               a.btn-floating.btn-large.waves-effect.waves-light.red.prompt-open(style='margin:auto;')
                 i.material-icons add
@@ -54,11 +51,11 @@ html
                     .col-md-5
                       .form-group
                         label Visibility:
-                        input#mcq(type='radio', name='type', onclick='setMCQ()')
+                        input#mcq(name='radio', type='type')
                         label(for='mcqchoice') MCQ
-                        input#short-answer(type='radio', name='type', onclick='setShort()')
+                        input#short-answer(type='radio', name='type')
                         label(for='shortchoice') Short-Ans
-                  #mcqSection.row.selection
+                   #mcqSection.row.selection
                     .row
                       .col-md-6
                         input#choice1.choices(type='textarea', name='choices')

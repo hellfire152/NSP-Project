@@ -58,6 +58,7 @@ async function loginAccountOtpEmail(emailObj){
   }
 }
 
+
 async function forgetPasswordOtpEmail(emailObj){
   console.log("INSIDE EMAIL SERVER");
   console.log(emailObj);
@@ -69,8 +70,8 @@ async function forgetPasswordOtpEmail(emailObj){
         user: 'chloeangsl@gmail.com',
         clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
         clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-        refreshToken: '1/VN_pwv07Fuz_i6hhsuBx0T3-COzXpavT3TvuQYKMChY',
-        accessToken: 'ya29.GluVBLcqeSRIg7hdGe2jH6n4MgtrRd0DHcUOV9o_QJr1WObBNkwtCTvbz5RWx-9F4zkKHU0d3pMFnIq04p06H_xjaDRJjhA0u1tT4pnD0pldUK3t44OkudF9Vq3o'
+        refreshToken: '1/isumV_3zp2XprLuLbtlRh2Cg-vIurXpuaGFjbCYi4ZI',
+        accessToken: 'ya29.GluUBAWLc6T3nE8hYTATPSI2lBUqckZdTwNT24uaVJ3a2vvc9Psuhb-mrUAdDkqmjRsLHAHl18h4OXD51yM8LJQH-1O7MJ43EJ9bTqmRbEUsHpzb3AcNy0eMzFRY'
          }
     })
 
@@ -79,22 +80,22 @@ async function forgetPasswordOtpEmail(emailObj){
       to: emailObj.email,
       subject: 'ExQuizIt! Forget Password',
       html: '<p>Dear Sir/Mdm! \n\t You have requested for forget password. Your verification number is: '+emailObj.pin+'\n\nLove,\nExQuizIt</p>'
-  }
+    }
 
-  transporter.sendMail(mailOptions, function (err, res) {
-      if(err){
-          console.log('Email send error');
-      } else {
-          console.log('Email verification has been sent.');
-      }
-  })
-  console.log("EMAIL SENT");
+    transporter.sendMail(mailOptions, function (err, res) {
+        if(err){
+            console.log('Email send error');
+        } else {
+            console.log('OTP email has been sent.');
+        }
+    });
   return true;
 }
 
-
-module.exports = {
-  'createAccountOtpEmail' : createAccountOtpEmail,
-  'loginAccountOtpEmail' : loginAccountOtpEmail,
-  'forgetPasswordOtpEmail' : forgetPasswordOtpEmail
+module.exports = function(s) {
+  S = s;
+  return {
+    'createAccountOtpEmail' : createAccountOtpEmail,
+    'loginAccountOtpEmail' : loginAccountOtpEmail
+  }
 }

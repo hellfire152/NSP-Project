@@ -1,5 +1,7 @@
 /*
   handleGame function for the classic gamemode (HOST)
+
+  Author: Jin Kuan
 */
 const MCQ_NO_TO_LETTER = {
   8: 'A',
@@ -77,9 +79,9 @@ function handleGame(response) {
       rankingList.innerHTML = "";
       for(let player of response.roundEndResults) {
         let playerLi = document.createElement('div');
-        let name = createNode('p', player.name, 'ranking-name', null);
-        let score = createNode('p', player.score, 'ranking-score', null);
-        let answerStreak = createNode('p', player.answerStreak, 'ranking-streak', null);
+        let name = createNode('p', `Name:\t${player.name}`, 'ranking-name', null);
+        let score = createNode('p', `Score:\t${player.score}`, 'ranking-score', null);
+        let answerStreak = createNode('p', `Streak:\t${player.answerStreak}`, 'ranking-streak', null);
         appendMultiple(playerLi, name, score, answerStreak);
         rankingList.appendChild(playerLi);
       }
@@ -88,6 +90,10 @@ function handleGame(response) {
     }
     case C.GAME_RES.NEXT_QUESTION: {
       document.getElementById('get-ready').style.display = 'none';
+      let nextButton = document.getElementById('next-button');
+      nextButton.parentNode.removeChild(nextChild);
+
+      currentQuestion = response.question;
 
       //hide the other divs and show the question one
       let currentQuestionDiv = document.getElementById('current-question');
@@ -133,7 +139,7 @@ function handleGame(response) {
     }
     case C.GAME_RES.GAME_END: {
       //show end results
-
+      gameEnd(response);
       //top rankings
 
       //titles and achievements

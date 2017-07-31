@@ -26,20 +26,13 @@ module.exports = function(cipher, appConn) {
       cipher.encryptJSON({
         "id": req.body.id,
         "pass": req.body.pass
-      })
-        .catch(function (err) {
-          throw new Error('Error parsing JSON!');
+      }).catch((err) => {
+          console.log(err);
         })
-        .then(function(cookieData) {
-        var joinGame = {
-          username: req.body.id,
-          room: req.body.room
-        }
-        res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-        res.cookie('game',JSON.stringify(joinGame)); //game cookie?
-        res.redirect('/play?room=' +req.body.room);
-      });
+        .then((cookie) => {
+          res.cookie('login', cookie, {"maxAge": 1000*60*60}); //one hour
+          res.redirect('/play?room=' +req.body.room);
+        });
     }
-
   }
 }

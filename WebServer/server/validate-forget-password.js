@@ -12,6 +12,9 @@ module.exports = function(cipher, appConn, C, xssDefense) {
     } else {
       var userOTP = req.body.otp;
       var otpObj = JSON.parse(req.cookies.otp);
+          //TODO: Send the randomNum to client email
+          emailServer.forgetPasswordOtpEmail(emailObj);
+
 
       if(userOTP == otpObj.pin){
         res.cookie('temp_user_id', JSON.stringify({user_id : otpObj.user_id}), {"maxAge": 1000*60*5});

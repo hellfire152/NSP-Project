@@ -72,9 +72,7 @@ function send(data) {
 }
 
 function appendToWaitingList(playerId) {
-  let li = document.createElement('li');
-  li.id = playerId;
-  li.appendChild(document.createTextNode(playerId));
+  let playerLi = createNode('li', playerId, 'waiting-player', `player-${playerId}`);
   document.getElementById('waiting-list')
-    .appendChild(li);
+    .appendChild(playerLi);
 }

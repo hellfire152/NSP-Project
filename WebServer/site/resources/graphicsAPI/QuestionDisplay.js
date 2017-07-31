@@ -23,7 +23,7 @@ class QuestionDisplay extends DisplayElement {
     this._timer = new PIXI.Text('', this._fontStyle);
     this._timer.anchor.set(1, 0.5);
     this._timer.x = width - paddingX;  //last element from the right
-  
+
     this._background = new PIXI.Graphics();
     this._background  //draw a white square for a background
       .beginFill(0xffffff)
@@ -72,16 +72,26 @@ class QuestionDisplay extends DisplayElement {
   }
 
   setPrompt(t, timer) {
+    clearInterval(this._timerFunction);
     this._text.text = t;
-    let time = timer;
-    this._timer.text = timer;
-    let timerFunction = setInterval(() => {
-      if(!(--time < 1)) { //countdown to 1
-        this._timer.text = time;
-      } else {  //timer stops at 1
-        clearInterval(timerFunction);
-      }
-    }, 1000);
+    this.timer = timer;
     this.resize();
+  }
+
+  set timer(t) {
+    clearInterval(this._timerFunction);
+    if(t === null) {
+      this._timer.text = '';
+    } else {
+      this._timer.text = t;
+      let time = t;
+      this._timerFunction = setInterval(() => {
+        if(--time >= 1) { //countdown to 1
+          this._timer.text = time;
+        } else {  //timer stops at 1
+          clearInterval(this._timerFunction);
+        }
+      }, 1000);
+    }
   }
 }

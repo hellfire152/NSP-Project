@@ -72,7 +72,8 @@ socket.on('receive', function(input) {
           console.log("Event response value is " +response.event +"not a preset case!");
         }
       }
-    } else if (response.game != undefined) {  //special events
+    } else if (response.game >= 0) {
+      console.log("HANDLING GAME");
       handleGame(response); //delegate to the handleGame function defined in the gamemode js files
     } else {
       switch(response.special) {
@@ -129,10 +130,8 @@ function appendToWaitingList(playerId) {
   //append to ul
   let waitingList = document.getElementById('waiting-list');
   console.log(playerId +" joined");
-  let li = document.createElement('li');
-  li.id = playerId;
-  li.appendChild(document.createTextNode(playerId));
-  waitingList.appendChild(li);
+  let playerLi = createNode('li', playerId, 'waiting-player', `player-${playerId}`);
+  waitingList.appendChild(playerLi);
 
   //enable start button if at least one player is in the room, else disable
   if(waitingList.childNodes.length > 0) {

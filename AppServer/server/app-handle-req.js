@@ -99,7 +99,6 @@ async function join_room(data) {
   Login account
 */
 async function account_login(data){
-  console.log("hi");
   response = {
     'type':C.RES_TYPE.ACCOUNT_LOGGED_IN,
     'username' :data.username,
@@ -219,6 +218,7 @@ async function host_room(data) {
 }
 
 async function databaseAccess(inputData, dbConn){
+  console.log(inputData);
   return new Promise((resolve, reject) => {
     dbConn.send(inputData, (response) => {
       console.log("DB RESPONSE");

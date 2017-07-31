@@ -5,7 +5,7 @@
 */
 
 const uuid = require('uuid');
-module.exports = function(cookieCipher, appConn) {
+module.exports = function(cipher, appConn) {
   return function(req, res) {
     req.checkBody('id', 'Username must be specified').notEmpty();
     req.checkBody('pass', 'Password must be specified').notEmpty();
@@ -23,19 +23,21 @@ module.exports = function(cookieCipher, appConn) {
     if(errors) {
       //TODO::Handle errors
     } else {
-      console.log("HOST FORM DATA: ");
-      console.log(req.body);
-      cookieCipher.encryptJSON({
+      Promise.all([cipher.encryptJSON({
         "id": req.body.id,
         "pass": req.body.pass
-      })
-        .catch(function (err) {
-          throw new Error('Error parsing JSON!');
+      }), cipher.encryptJSON({
+        'username' : req.body.id,
+        'room' : req.body.room
+      })])
+        .catch((err) => {
+          console.log(err);
         })
-        .then(function(cookieData) {
-        res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-        res.redirect('/host?quizId=' +req.body.quizId);
-      });
+        .then((cookies) => {
+          res.cookie('login', cookies[0], {"maxAge": 1000*60*60}); //one hour
+          res.cookie('game', cookies[1]); //game cookie
+          res.redirect('/host?quizId=' +req.body.quizId);
+        });
     }
   }
 }
