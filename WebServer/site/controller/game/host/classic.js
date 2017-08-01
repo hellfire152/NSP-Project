@@ -19,8 +19,8 @@ var answersObj = {};
 var currentQuestion;
 var firstQuestion = true;
 console.log('HOST: Loaded: classic gamemode handler!');
+initHost();
 function handleGame(response) {
-  if(firstQuestion) initHost();
   console.log('HOST: Handling game response!');
   switch(response.game) {
     case C.GAME_RES.GET_READY: {
@@ -89,9 +89,13 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
-      document.getElementById('get-ready').style.display = 'none';
-      let nextButton = document.getElementById('next-button');
-      nextButton.parentNode.removeChild(nextChild);
+      if(firstQuestion) {
+        firstQuestion = false;
+        document.getElementById('get-ready').style.display = 'none';
+      } else {
+        let nextButton = document.getElementById('next-button');
+        nextButton.parentNode.removeChild(nextChild);
+      }
 
       currentQuestion = response.question;
 
@@ -161,7 +165,6 @@ function handleGame(response) {
 function initHost() {
   let currentQuestionDiv = document.createElement('div');
   currentQuestionDiv.id = 'current-question';
-  firstQuestion = false;
 
   //init ranking stuff
   let gameRankingDiv = document.createElement('div');

@@ -16,7 +16,6 @@ var xssDefense = require('./server/setup/xss-defense.js');
 var emailServer = require('./server/setup/email.js');
 
 var socketOfUser = {};
-var pendingClearGameCookie = {};
 setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
   socketOfUser = {};
 }, 2000);
@@ -59,10 +58,6 @@ module.exports = function(data) {
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(expressValidator());
   app.use("/", express.static(__dirname));
-  //app.use(helmet()); //adds a bunch of security features
-  app.use(helmet.noSniff()); // content type should not be changed or followed
-  app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
-  app.use(helmet.xssFilter()); // protects against reflected XSS
   //make sendErrorPage available for every request
   app.use((req, res, next) => {
     res.sendErrorPage = sendErrorPage;
@@ -84,7 +79,7 @@ module.exports = function(data) {
     }
     next();
   });
-  
+
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({
     'app':  app,
@@ -95,6 +90,7 @@ module.exports = function(data) {
 
   //setting routes
   require('./server/setup/routes.js')({
+    'S' : S,
     'C' : C,
     'app' : app,
     'dirname' : __dirname,
@@ -103,7 +99,6 @@ module.exports = function(data) {
     'uuid' : uuid,
     'pendingAppResponses' : pendingAppResponses,
     'cookieCipher' : cookieCipher,
-    'pendingClearGameCookie' : pendingClearGameCookie,
     'xssDefense' : xssDefense,
     'emailServer' : emailServer
   });
@@ -121,8 +116,7 @@ module.exports = function(data) {
     'socketOfUser': socketOfUser,
     'decryptResponse' : decryptResponse,
     'logResponse' : logResponse,
-    'runCallback' : runCallback,
-    'pendingClearGameCookie' : pendingClearGameCookie
+    'runCallback' : runCallback
   });
 }
 
