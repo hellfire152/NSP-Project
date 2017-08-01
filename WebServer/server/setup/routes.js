@@ -204,6 +204,20 @@ module.exports = function(data) {
       //   });
     }
   });
+  //handling Logout
+  app.get('/logout', function(req,res){
+    console.log("You have logged out!");
+    if(req.session.validLogin === true){
+      res.clearCookie('loginCookie');
+      req.session.validLogin === false;
+      res.redirect('/student-login');
+    }
+    else{
+      console.log('HUMAN.Why are you even landing here');
+    }
+
+
+  });
 
   //handling all other requests (PUT THIS LAST)
   app.get('/*', function(req, res){
@@ -212,12 +226,13 @@ module.exports = function(data) {
     console.log("GET FILE: " +req.path.substring(1));
     res.render(req.path.substring(1));
   });
+
   //handling form submits
   app.post('/data-access', validators["data-access"]);
   app.post('/join-room', validators["join-room"]);
   app.post('/host-room', validators["host-room"]);
   app.post('/add-quiz', validators["add-quiz"]);
-  app.post('/login-room', validators["login-room"]);
+  app.post('/LoginIndex', validators["login-room"]);
   app.post('/reg-room', rateLimiters.register, validators["reg-room"]);
   app.post('/reg-room-teach', rateLimiters.register, validators["reg-room-teach"]);
   app.post('/change-password-room-success', validators["change-password-room"]);

@@ -27,6 +27,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
         req.sanitize('randomNum').trim();
     console.log(username);
     if (username!=""  && password!=""){
+      console.log(username + "CAN COME IN");
       var schema = new passwordValidator();
       schema
       .is().min(8)
@@ -62,7 +63,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
             }, (response) => {
               //If incorrect user input return to login page
               if(!(response.data.success)){
-                res.redirect('/LoginForm');
+                res.redirect('/student-login');
               }
               else{
                 //Check for identical IP address in user cookie
@@ -105,7 +106,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                         });
                     }
                     else{
-                      res.redirect('/LoginForm');
+                      console.log("Cannot post");
+                      res.redirect('/student-login');
                     }
                   });
                 }
@@ -152,7 +154,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
         }
         else{
           console.log("FAIL");
-          res.redirect('/LoginForm');
+          res.redirect('/student-login');
         }
       }
       else{
@@ -162,7 +164,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.redirect('/LoginForm');
+          res.redirect('/student-login');
         }
     }
     else{
@@ -177,7 +179,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
 
         console.log("never fill in all");
 
-        res.redirect('/LoginForm');
+        res.redirect('/student-login');
         return;
     }
   }
