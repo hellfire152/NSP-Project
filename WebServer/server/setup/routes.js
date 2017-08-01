@@ -187,7 +187,7 @@ module.exports = function(data) {
   app.post('/otp-register', validators["otp-register"]);
   app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
   app.post('/change-forget-password', require('../validate-change-forget-password.js')(cipher, appConn, C, xssDefense));
-  app.post('/process', csrfProtection, function(req,res){
+  app.post('/process', function(req,res){
     res.redirect('/');
   })
 }
