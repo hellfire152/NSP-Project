@@ -21,6 +21,9 @@ module.exports = function(cipher, appConn) {
       res.sendErrorPage('Invalid form input!');
     } else {
       req.session.hosting = true;
+      setTimeout(() => {
+        req.session.hosting = undefined;
+      }, 5000);
       req.session.username = req.body.id;
       res.redirect('/host?quizId=' + req.body.quizId);
     }
