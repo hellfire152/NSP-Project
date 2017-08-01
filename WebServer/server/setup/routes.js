@@ -29,6 +29,7 @@ module.exports = function(data) {
     'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C)
   };
 
+var parseForm = bodyParser.urlencoded({extended: false});
   //routing
   //handling requests for .html, controller, css or resource files
   app.get('((/resources|/controller|/css)*)|/favicon.ico', function(req, res) {
@@ -41,6 +42,12 @@ module.exports = function(data) {
   //sends index.html when someone sends a https request to the root directory
   app.get('/', function(req, res){
     res.sendFile(dirname + "/site/html/index.html");
+  });
+
+  app.get('/form', csrfProtection, function(req,res){
+    res.render('form', {
+      csrfToken: req.csrfToken()
+    });
   });
 
   app.get('/data', function(req,res){
@@ -178,4 +185,9 @@ module.exports = function(data) {
   app.post('/forget-password-room-success', validators["forget-password-room"]);
   app.post('/otp-check', validators["otp-check"]);
   app.post('/otp-register', validators["otp-register"]);
+  app.post('/otp-forget-password', require('../validate-otp-forget-password.js') (cipher, appConn, C, xssDefense));
+  app.post('/change-forget-password', require('../validate-change-forget-password.js') (cipher, appConn, C, xssDefense));
+  app.post('/process', parseForm, csrfProtection, function(req,res){
+    res.redirect('/');
+  })
 }
