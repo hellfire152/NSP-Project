@@ -252,14 +252,14 @@ function initServer() {
         response.reqNo = reqNo; // To web
         if(S.AUTH_BYPASS) encryption = 'none';
 
-        if(data.type === C.REQ_TYPE.DATABASE){
-          dbConn.send(response, (databaseResponse) =>{
-            var appConnnection = conn;
-            sendToServer(appConnnection, databaseResponse);
-          }, encryption);
-        } else{
+        // if(data.type === C.REQ_TYPE.DATABASE){
+        //   dbConn.send(response, (databaseResponse) =>{
+        //     var appConnnection = conn;
+        //     sendToServer(appConnnection, databaseResponse);
+        //   }, encryption);
+        // } else{
           sendToServer(conn, response, encryption);
-        }
+        // }
       }
     });
   });
@@ -333,6 +333,7 @@ dbConn.send = (reqObj, callback, encryption) => {
   //generating a unique id to identify the request
   let reqNo = uuid();
   reqObj.reqNo = reqNo;
+  console.log(callback);
 
   //storing the callback for later calling
   pendingDatabaseResponses[reqNo] = {};

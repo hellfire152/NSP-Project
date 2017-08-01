@@ -131,7 +131,7 @@ class Cipher {
   }
 
   //Hash value with SHA256
-  hash(input) {
+  async hash(input) {
     var hash =  crypto.createHash('SHA256').update(input).digest('base64');
     return hash;
   }
@@ -265,7 +265,7 @@ function _splitCipherBlock(cipher){
 
 //Data with the column name stated below will be encrypted
 var allowedValues = ["prompt", "solution", "choices", "password_hash", "dbPass",
-  "salt", "school", "organisation", "email", "about_me", "student_category", "username", "name", "contact"];
+  "salt", "school", "organisation", "email", "about_me", "student_category", "name", "contact"];
 function _allow(key){
   return (allowedValues.indexOf(key) >= 0)? true : false;
 }

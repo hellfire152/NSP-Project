@@ -4,15 +4,6 @@ var option = {
 }
 
 function entityEncoding(inputData){
-  // var value = "";
-  // for(i=0 ; i<inputData.length ; i++){
-  //   if(inputData.charAt(i) === "/"){
-  //     value += '&#x2F;';
-  //   }
-  //   else{
-  //     value += inputData.charAt(i);
-  //   }
-  // }
   return xss(inputData);
 }
 

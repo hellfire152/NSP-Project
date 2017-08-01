@@ -10,7 +10,7 @@
   },
   "DATABASE" : {
     "HOST" : "localhost",
-    "USER" : "root",
+    "USER" : "user",
     "DATABASE_NAME" : "exquizit",
     "CIPHER_IV" : "databaseIV"
   },
