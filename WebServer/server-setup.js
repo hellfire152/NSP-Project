@@ -79,6 +79,7 @@ module.exports = function(data) {
     }
     next();
   });
+  app.use(csrfProtection);
 
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({

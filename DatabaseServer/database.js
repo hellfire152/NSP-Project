@@ -215,6 +215,10 @@ var server = net.createServer(function(conn){
     } else {  //ALEADY AUTHENTICATED
       try {
         switch(inputData.data.type) {
+          case C.DB.VALIDATE_LOGIN : {
+            validateAccount(inputData);
+            break;
+          }
           case C.DB.CREATE.STUDENT_ACC :
           case C.DB.CREATE.TEACHER_ACC : {
             await createAccount(inputData);

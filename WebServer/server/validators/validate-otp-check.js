@@ -19,7 +19,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       if(!cookieValidator.validateCookie(req.cookies.otp, userIP)){
         console.log("Cookie Modification detected");
         res.clearCookie("otp");
-        res.redirect('/LoginForm');
+        res.sendErrorPage("Cookie modification detected");
       }
       else{
         if(userOTP == otpObj.pin){
@@ -90,6 +90,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                               cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                                 .then((encryptedCookie) => {
                                   res.cookie('user_info', encryptedCookie);
+                                  validLoginSession(req, otpObj);
                                   res.render('LoginIndex', {
                                     data : response.data
                                   });
@@ -99,6 +100,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                               cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                                 .then((encryptedCookie) => {
                                   res.cookie('user_info', encryptedCookie);
+                                  validLoginSession(req, otpObj);
                                   res.render('LoginIndex', {
                                     data : response.data
                                   });
@@ -113,6 +115,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                   cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                     .then((encryptedCookie) => {
                       res.cookie('user_info', encryptedCookie);
+                      validLoginSession(req, otpObj);
                       res.render('LoginIndex', {
                         data : response.data
                       });
@@ -140,4 +143,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       }
     }
   }
+}
+function validLoginSession(req, otpObj) {
+  req.session.validLogin = true;
+  req.session.username = otpObj['user_id'];
 }

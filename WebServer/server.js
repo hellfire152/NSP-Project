@@ -249,7 +249,7 @@ var attemptConnection = setInterval(() => {
     console.log(e);
     console.log("Retrying connection in 10 seconds...");
   }
-}, 5000);
+}, 3000);
 
 /*
   Takes in a string of any number of concatenated JSON strings,
