@@ -96,6 +96,7 @@ module.exports = function(s) {
   S = s;
   return {
     'createAccountOtpEmail' : createAccountOtpEmail,
-    'loginAccountOtpEmail' : loginAccountOtpEmail
+    'loginAccountOtpEmail' : loginAccountOtpEmail,
+    'forgetPasswordOtpEmail' : forgetPasswordOtpEmail
   }
 }

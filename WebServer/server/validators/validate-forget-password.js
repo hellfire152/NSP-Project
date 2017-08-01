@@ -46,20 +46,20 @@ module.exports = function(cipher, appConn, C) {
             }
             else {
               console.log("FAIL");
-              res.redirect('/forget-password');
+              res.redirect('/ForgetPassword');
             }
           });
         }
         else {
           console.log("FAIL");
-          res.redirect('/forget-password');
+          res.redirect('/ForgetPassword');
         }
       }
 
     else{
         req.session.errors=error;
         req.session.success=false;
-        res.redirect('/forget-password');
+        res.redirect('/ForgetPassword');
         return;
     }
   }
