@@ -58,29 +58,29 @@ html
                     .row
                       .col-md-6
                         input#choice1.choices(type='textarea', name='choices')
-                        input#choice1Ans.filled-in(type='checkbox', name='solution')
+                        input#choice1Ans(type='checkbox', name='solution')
                         label(for='filled-in-box') Filled in
                       .col-md-6
                         input#mcqChoice2.choices(type='textarea', name='choices')
-                        input#choice2Ans.filled-in(type='checkbox', name='solution', disabled='disabled')
+                        input#choice2Ans(type='checkbox', name='solution')
                         label(for='filled-in-box') Filled in
                     .row
                       .col-md-6
                         input#mcqChoice1.choices(type='textarea', name='choices')
-                        input#choice3Ans.filled-in(type='checkbox', name='solution', disabled='disabled')
+                        input#choice3Ans(type='checkbox', name='solution')
                         label(for='filled-in-box') Filled in
                       .col-md-6
                         input#mcqChoice2.choices(type='textarea', name='choices')
-                        input#choice4Ans.filled-in(type='checkbox', name='solution', disabled='disabled')
+                        input#choice4Ans(type='checkbox', name='solution')
                         label(for='filled-in-box') Filled in
                   .row
                     .input-field.col-md-5
-                        select
-                          option(value='', disabled='', selected='') Choose your option
-                          option(value='1') Option 1
-                          option(value='2') Option 2
-                          option(value='3') Option 3
-                        label Materialize Select
+                      select#time(name='time')
+                        option(value='5') 5 seconds
+                        option(value='10') 10 seconds
+                        option(value='15') 15 seconds
+                        option(value='20') 20 seconds
+                      label Time
                     .col-md-7
                       .form-group
                         label(for='reward') Specific Reward

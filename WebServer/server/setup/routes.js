@@ -16,7 +16,7 @@ app.use(helmet.noSniff()); // content type should not be changed or followed
 app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame
 app.use(helmet.xssFilter()); // protects against reflected XSS
 
-var cookieValidator = require('./cookieValidation.js');
+// var cookieValidator = require('./cookieValidation.js');
 var cookieValidation = require('./cookie-validation.js');
 var S;
 module.exports = function(data) {
