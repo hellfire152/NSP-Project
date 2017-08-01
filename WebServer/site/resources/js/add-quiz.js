@@ -115,10 +115,10 @@ $('#next').click(function(){
    //using constants
    $("#mcq").val(0);
    $("#short-answer").val(1);
-   $("#choice1Ans").val(C.MCQ.A);
-   $("#choice2Ans").val(C.MCQ.B);
-   $("#choice3Ans").val(C.MCQ.C);
-   $("#choice4Ans").val(C.MCQ.D);
+   $("#filled-in-box").val(C.MCQ.A);
+   $("#filled-in-box2").val(C.MCQ.B);
+   $("#filled-in-box3").val(C.MCQ.C);
+   $("#filled-in-box4").val(C.MCQ.D);
 
  }
 
