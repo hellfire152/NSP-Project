@@ -101,7 +101,7 @@ module.exports =function(cipher, appConn,C){
         }
         console.log("never fill in all");
 
-        res.redirect('/ForgetPassword');
+        res.redirect('/ChangePassword');
       }
 
     }
