@@ -14,7 +14,7 @@ var cookie = require('cookie');
 var ios = require('socket.io-express-session');
 var xssDefense = require('./server/setup/xss-defense.js');
 var emailServer = require('./server/setup/email.js');
-
+var csrfProtection = require('csurf')({'cookie' : true});
 var socketOfUser = {};
 setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
   socketOfUser = {};
@@ -79,6 +79,7 @@ module.exports = function(data) {
     }
     next();
   });
+  app.use(csrfProtection);
 
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({
@@ -100,7 +101,8 @@ module.exports = function(data) {
     'pendingAppResponses' : pendingAppResponses,
     'cookieCipher' : cookieCipher,
     'xssDefense' : xssDefense,
-    'emailServer' : emailServer
+    'emailServer' : emailServer,
+    'csrfProtection' : csrfProtection
   });
 
   //setting up the communication between the WebServer and AppServer

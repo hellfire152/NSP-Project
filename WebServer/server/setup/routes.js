@@ -8,11 +8,10 @@ var uuid;
 var express = require('express');
 var nodemailer = require('nodemailer');
 var rateLimiters = require('./rate-limiters.js');
-var csrfProtection = require('csurf')({'cookie':true});
 var S;
 module.exports = function(data) {
   S = data.S;
-  let {app, dirname, cipher, emailServer, appConn, queryOfUser, errors, cookieCipher, xssDefense}
+  let {app, dirname, cipher, emailServer, appConn, cookieCipher, xssDefense, csrfProtection}
     = data;
   const C = data.C;
   uuid = data.uuid;
