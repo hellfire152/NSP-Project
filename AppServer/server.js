@@ -72,7 +72,10 @@ function initServer() {
 
     // Handle data from client
     conn.on("data", async function(input) {
-      console.log(input);
+      if(S.LOG_RAW) {
+        console.log("RAW RESPONSE");
+        console.log(input);
+      }
       let data, encryption;
       if(!AUTH_BYPASS) { //Authentication bypass, set in settings
         if(conn.status != C.AUTH.AUTHENTICATED) {
@@ -91,7 +94,6 @@ function initServer() {
       }
 
       let reqNo = data.reqNo;
-      console.log("THIS IS THE REQ NO.: " + reqNo); // ==============================================================
       delete data.reqNo;  //hide reqNo from logs
       console.log("FROM WEBSERVER"); //Log all data received from the WebServer
       console.log(data);
@@ -174,14 +176,14 @@ function initServer() {
               let s = conn.sendCipher.hash(
                 conn.sendCipher.xorString(conn.secret, S.WEBSERVER.PASSWORD));
 
+              conn.sendCipher.password = s;
+              conn.receiveCipher.password = r;
+              conn.status = C.AUTH.AUTHENTICATED;
+
               response = {
                 'auth' : true
               };
               encryption = 'aes';
-
-              conn.sendCipher.password = s;
-              conn.receiveCipher.password = r;
-              conn.status = C.AUTH.AUTHENTICATED;
             } catch (e) {
               console.log(e);
             }
@@ -438,5 +440,5 @@ function sendToServer(conn, json, encryption) {
 
 var handleIo = require('./server/app-handle-io.js');
 var handleReq = require('./server/app-handle-req.js');
-var handleGame = require('./server/app-handle-game.js')
+var handleGame = require('./server/app-handle-game.js');
 var handleSpecial = require('./server/app-handle-special.js');

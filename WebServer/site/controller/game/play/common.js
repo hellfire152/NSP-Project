@@ -51,13 +51,6 @@ app.loader  //load all
     ([getReadyText.x, getReadyText.y] = [WIDTH / 2, HEIGHT / 2]);
     p.getReady.addChild(getReadyBackground, getReadyText);
 
-    //ranking scene
-    let scoreText = new PIXI.Text('Score');
-    let scoreTextBackground = new PIXI.Graphics()
-      .beginFill(0xFFFFFF)
-      .drawRect(0,0,WIDTH,100)
-      .endFill();
-    scoreTextBackground.addChild(scoreText);
     p.ranking.allPlayerRanking = new AllPlayerRanking(resources, null, {
       'width' : WIDTH,
       'height' : HEIGHT - 100 - topBar.height,
@@ -67,9 +60,9 @@ app.loader  //load all
       'maxHeight' : 100
     }, false);
     //positioning
-    p.ranking.allPlayerRanking.y = topBar.height + scoreTextBackground.height;
+    p.ranking.allPlayerRanking.y = topBar.height;
     //adding to scene
-    p.ranking.addChild(scoreTextBackground, p.ranking.allPlayerRanking.view);
+    p.ranking.addChild(topBar.view, p.ranking.allPlayerRanking.view);
 
     //answering scene
     let mcqButtonHandler = new McqButtonHandler(resources, WIDTH, 4);

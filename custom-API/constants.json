@@ -111,7 +111,9 @@
       "RETRIEVE_USER_DETAILS" : 205,
       "FULL_USER_ACCOUNT" : 206,
       "EMAIL" : 207,
-      "CHECK_ACCOUNT" : 208
+      "CHECK_ACCOUNT" : 208,
+      "TEMP_TOKEN" : 209,
+      "NEW_DEVICE_ID" : 210
     },
     "UPDATE" : {
       "PASSWORD" : 301,
@@ -123,7 +125,8 @@
       "SCHOOL" : 307,
       "ORGANISATION" : 308,
       "STUDENT_CATEGORY" : 309,
-      "CHANGE_PASSWORD" : 310
+      "CHANGE_PASSWORD" : 310,
+      "TEMP_TOKEN" : 311
     },
     "DELETE" : {
       "ACCOUNT" : 401,

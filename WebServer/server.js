@@ -114,20 +114,20 @@ var attemptConnection = setInterval(() => {
     async function decryptResponse(response) {
       if(appConn.encryption == 'none') {
         console.log("NO ENCRYPTION");
-        return JSON.parse(response);
+        return splitJsons(response);
       } else if(appConn.encryption == 'rsa')  {
-        return JSON.parse(appConn.receiveCipher.rsaDecrypt(response, KEYS.PRIVATE));
+        return splitJsons(appConn.receiveCipher.rsaDecrypt(response, KEYS.PRIVATE));
       } else {
-        return JSON.parse(await appConn.receiveCipher.decrypt(response));
+        return splitJsons(await appConn.receiveCipher.decrypt(response));
       }
     }
 
+    //NOTE: TEMP SOLUTION data[0] somehow did not get the first element of the array
     function runCallback(response) {
-        console.log(pendingAppResponses);
-      if(pendingAppResponses[response.reqNo]) {
-        if(pendingAppResponses[response.reqNo].callback)
-          pendingAppResponses[response.reqNo].callback(response);
-        delete pendingAppResponses[response.reqNo];
+      if(pendingAppResponses[response[0].reqNo]) {
+        if(pendingAppResponses[response[0].reqNo].callback)
+          pendingAppResponses[response[0].reqNo].callback(response[0]);
+        delete pendingAppResponses[response[0].reqNo];
       }
     }
 
@@ -135,8 +135,10 @@ var attemptConnection = setInterval(() => {
 
     appConn.on("data", async (response) => {
       let data = await decryptResponse(response);
-      logResponse(data);
-      runCallback(data);
+      console.log(response);
+      //the authentication stage should have no problems with simultaneous responses
+      logResponse(data[0]);
+      runCallback(data[0]);
     });
 
     /****AUTHENTICATION******/
@@ -242,3 +244,25 @@ var attemptConnection = setInterval(() => {
     console.log("Retrying connection in 10 seconds...");
   }
 }, 5000);
+
+/*
+  Takes in a string of any number of concatenated JSON strings,
+  and returns an array of parsed JSON objects
+*/
+function splitJsons(jsons) {
+  if(jsons[0] !== '{') throw new Error('Invalid response!');
+  let s = [];
+  let r = [];
+  for(let i = 0, j = 0; i < jsons.length; i++) {
+    if(jsons[i] === '{') s.push(1);
+    else if(jsons[i] === '}') {
+      let b = s.pop();
+      if(b === undefined) throw new Error('Invalid response, expected "{" !');
+      if(s.length === 0) {
+        r.push(JSON.parse(jsons.substr(j, i + 1)));
+        j = i + 1;
+      }
+    }
+  }
+  return r;
+}

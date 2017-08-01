@@ -74,15 +74,24 @@ class QuestionDisplay extends DisplayElement {
   setPrompt(t, timer) {
     clearInterval(this._timerFunction);
     this._text.text = t;
-    let time = timer;
-    this._timer.text = timer;
-    this._timerFunction = setInterval(() => {
-      if(--time >= 1) { //countdown to 1
-        this._timer.text = time;
-      } else {  //timer stops at 1
-        clearInterval(this._timerFunction);
-      }
-    }, 1000);
+    this.timer = timer;
     this.resize();
+  }
+
+  set timer(t) {
+    clearInterval(this._timerFunction);
+    if(t === null) {
+      this._timer.text = '';
+    } else {
+      this._timer.text = t;
+      let time = t;
+      this._timerFunction = setInterval(() => {
+        if(--time >= 1) { //countdown to 1
+          this._timer.text = time;
+        } else {  //timer stops at 1
+          clearInterval(this._timerFunction);
+        }
+      }, 1000);
+    }
   }
 }

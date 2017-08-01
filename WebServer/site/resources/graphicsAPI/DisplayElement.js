@@ -25,7 +25,7 @@ class DisplayElement {
   get y() {
     return this._container.y;
   }
-  
+
   get view() {
     return this._container;
   }
@@ -40,6 +40,10 @@ class DisplayElement {
 
   get height() {
     return this._container.height;
+  }
+
+  get visible() {
+    return this._container.visible;
   }
 
   set height(h) {

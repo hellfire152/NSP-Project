@@ -68,6 +68,39 @@ async function loginAccountOtpEmail(emailObj){
   return true;
 }
 
+async function forgetPasswordOtpEmail(emailObj){
+  console.log("INSIDE EMAIL SERVER");
+  console.log(emailObj);
+
+  var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: 'chloeangsl@gmail.com',
+        clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
+        clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
+        refreshToken: '1/isumV_3zp2XprLuLbtlRh2Cg-vIurXpuaGFjbCYi4ZI',
+        accessToken: 'ya29.GluUBAWLc6T3nE8hYTATPSI2lBUqckZdTwNT24uaVJ3a2vvc9Psuhb-mrUAdDkqmjRsLHAHl18h4OXD51yM8LJQH-1O7MJ43EJ9bTqmRbEUsHpzb3AcNy0eMzFRY'
+         }
+    })
+
+  var mailOptions = {
+      from: 'ExQuizIt! Admin <chloeangsl@gmail.com>',
+      to: emailObj.email,
+      subject: 'ExQuizIt! Forget Password',
+      html: '<p>Dear Sir/Mdm! \n\t You have requested for forget password. Your verification number is: '+emailObj.pin+'\n\nLove,\nExQuizIt</p>'
+    }
+
+    transporter.sendMail(mailOptions, function (err, res) {
+        if(err){
+            console.log('Email send error');
+        } else {
+            console.log('OTP email has been sent.');
+        }
+    });
+  return true;
+}
+
 module.exports = function(s) {
   S = s;
   return {

@@ -85,7 +85,7 @@ async function handleRecieveAccount(data){
   console.log(data);
   dataArr.push(data); // Push to array to follow the format of encryption
   var plainData;
-
+  
   await handleDecryption(dataArr)
   .then(dataOut => {
     console.log("SALT: " + dataOut[0].salt);

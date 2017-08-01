@@ -35,6 +35,7 @@ function handleGame(response) {
       pixiScenes.topBar.updateCorrect(null, response.score); //update top bar
 
       let p = pixiScenes.answering;
+
       if(response.question.type) { //MCQ question
         p.mcqButtonHandler.visble = true; //show mcq buttons
         p.mcqButtonHandler.enableAll();
@@ -45,6 +46,7 @@ function handleGame(response) {
       }
 
       loadQuestion(response.question);
+      p.questionDisplay.timer = null; //Don't show timer
       clearTimeout(timeOver);
       swapScene('answering');
       break;
@@ -55,13 +57,17 @@ function handleGame(response) {
       let p = pixiScenes.answering;
       p.mcqButtonHandler.disableAll();
       p.shortAnswerTextField.disable();
+      p.questionDisplay.timer = 3;
+      //timer to re-enable the answering things
       if(p.mcqButtonHandler.visible) {
         setTimeout(() => {
           p.mcqButtonHandler.enableAll();
+          p.questionDisplay.timer = null;
         }, 3000);
       } else {
         setTimeout(() => {
           p.shortAnswerTextField.enable();
+          p.questionDisplay.timer = null;
         }, 3000);
       }
       break;

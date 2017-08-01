@@ -99,15 +99,26 @@ module.exports = function(data) {
             'socketObj' : io.sockets.sockets,
             'socketOfUser' : socketOfUser
           });
+        } else {  //others
+          if(response.sendTo !== undefined) {
+            await handleIoResponse({
+              'response' : response,
+              'io' : io,
+              'C' : C,
+              'socketObj' : io.sockets.sockets,
+              'socketOfUser' : socketOfUser
+            });
+          }
+          runCallback(response);
         }
-        runCallback(response);
       }
-    } catch (err) {
+    }catch (err) {
       console.log(err);
       console.log('Error Processing AppServer to WebServer input!');
     }
   });
 }
+
 //handlers for the different response types
 var handleIoResponse = require('./io-response.js');
 var handleSpecialResponse = require('./special-response.js');

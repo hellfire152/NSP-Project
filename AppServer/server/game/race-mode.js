@@ -73,10 +73,9 @@ module.exports = async function(input) {
           let reward = common.getReward(currentRoom,
             currentRoom.quiz.questions[currentPlayer.questionCounter]);
 
-          if(currentPlayer.score === undefined) {
-            currentPlayer.score += common.calculateScore(
-              reward, currentPlayer.time, Date.now(), currentPlayer.answerStreak);
-          }
+          //add score
+          currentPlayer.score += common.calculateScore(
+            reward, currentPlayer.time, Date.now(), currentPlayer.answerStreak);
 
           currentPlayer.answerable = true;  //just in case
           currentPlayer.questionCounter++;
@@ -86,17 +85,20 @@ module.exports = async function(input) {
             currentPlayer.completed = true;
             currentPlayer.answerable = false; //do not process answer submits anymore
             currentRoom.completedPlayers.push(data.id);
-            if(currentRoom.completedPlayers >= currentRoom.playerCount) {
+            if(currentRoom.completedPlayers.length >= currentRoom.playerCount) {
               //get time to finish for every player
               let speed = {};
               for(let player in currentRoom.players) {
                 if(currentRoom.players.hasOwnProperty(player)) {
-                  speed[player] = currentRoom.players[answerTime];
+                  speed[player] = currentRoom.players.answerTime;
                 }
               }
+              let ta = common.calculateTitles(currentRoom);
+
               return {  //if all players completed
                 'game': C.GAME_RES.GAME_END,
-                'completedPlayers' : currentRoom.completedPlayers,
+                'titlesAndAchievenments' : ta,
+                'roundEndResults' : common.roundEndResults(currentRoom.players, 'answerTime'),
                 'speed' : speed,
                 'sendTo': C.SEND_TO.ROOM,
                 'roomNo': data.roomNo
@@ -137,10 +139,12 @@ module.exports = async function(input) {
             return sendNextQuestion(currentRoom, currentPlayer, data);
           }
         } else {  //wrong answer
-          currentPlayer.answerable = false;
-          currentPlayer.timer = setTimeout(() => {  //3 second penalty on wrong answer
-            currentPlayer.answerable = true;
-          }, 3000);
+          if(currentPlayer.answerable) {
+            currentPlayer.answerable = false;
+            currentPlayer.timer = setTimeout(() => {  //3 second penalty on wrong answer
+              currentPlayer.answerable = true;
+            }, 3000);
+          }
           return {
             'game': C.GAME_RES.WRONG_ANSWER,
             'sendTo': C.SEND_TO.USER,

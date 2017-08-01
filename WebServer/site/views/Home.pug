@@ -65,9 +65,9 @@ html
       .hero-wrapper(layout='row', layout-align='center center')
         div(layout='column')
           span Learning Has Just Started
-          .form__field
+          form.form__field(method='POST', action='/login-room')
             label(for='game-pin') Game Pin
-            input#game-pin(type='textbox')
+            input#game-pin(type='textfield')
           a.waves-effect.waves-light.btn.createAccount(style='margin-top:20px;') Enter
           .HomeHero__aquaOval.fadeInRight
           .HomeHero__purpleOval.fadeInUp

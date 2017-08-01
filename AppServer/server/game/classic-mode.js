@@ -34,7 +34,8 @@ module.exports = async function(input) {
         return {
           'game' : C.GAME_RES.GET_READY,
           'roomNo' : data.roomNo,
-          'sendTo' : C.SEND_TO.ROOM
+          'sendTo' : C.SEND_TO.ROOM,
+          'totalQuestions' : currentRoom.quiz.questions.length
         }
       } else {
         return {
@@ -46,6 +47,7 @@ module.exports = async function(input) {
       }
     }
     case C.GAME.NEXT_ROUND: {
+      clearTimeout(currentRoom.timer);
       if(currentRoom.summarySent) { //first next press, send summary screen
         currentRoom.summarySent = false;
         if(currentRoom.questionCounter !== undefined) {
@@ -73,7 +75,7 @@ module.exports = async function(input) {
         currentRoom.summarySent = true;
         return {
           'game' : C.GAME_RES.ROUND_END,
-          'roundEndResults' : common.roundEndResults(currentRoom.players, true),
+          'roundEndResults' : common.roundEndResults(currentRoom.players, 'score'),
           'sendTo' : C.SEND_TO.ROOM,
           'roomNo' : data.roomNo
         }
@@ -151,7 +153,7 @@ function sendRoundEnd(currentRoom, data, answers, solution) {
     'game': C.GAME_RES.ROUND_END,
     'sendTo': C.SEND_TO.ROOM,
     'roomNo': data.roomNo,
-    'roundEndResults': common.roundEndResults(currentRoom.players, true),
+    'roundEndResults': common.roundEndResults(currentRoom.players, 'score'),
     'answers': answers,
     'solution': solution
   };
@@ -159,11 +161,18 @@ function sendRoundEnd(currentRoom, data, answers, solution) {
 
 function sendQuestion(currentRoom, question, data) {
   currentRoom.answerCount = 0;
-  common.setAllUnanswered(currentRoom.players);
+  common.setAllUnanswered(currentRoom.players)
   //set timer
   currentRoom.timer = setTimeout(() => {
     console.log(`ROOM ${data.roomNo} RAN OUT OF TIME`);
-    common.setAllAnswered(currentRoom.players);
+    for(let player in currentRoom.players) {
+      if(currentRoom.players.hasOwnProperty(player)) {
+        if(!player.answered) { //player has NOT answered
+          player.score -= common.getPenalty(currentRoom, question);
+          player.answered = true;
+        }
+      }
+    }
     sendToServer(conn,
       common.getResponseData(currentRoom, data)
     );
@@ -181,7 +190,7 @@ function sendGameEnd(players, data, allRooms) {
   common.setAllAnswered(players);
 
   let gameEndResults = {};
-  gameEndResults.roundEndResults = common.roundEndResults(players, true);
+  gameEndResults.roundEndResults = common.roundEndResults(players, 'score');
   gameEndResults.game = C.GAME_RES.GAME_END;
   gameEndResults.sendTo = C.SEND_TO.ROOM;
   gameEndResults.roomNo = data.roomNo;

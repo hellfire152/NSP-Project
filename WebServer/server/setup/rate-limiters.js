@@ -1,3 +1,9 @@
+/*
+  The various limiters to be implemented in GET / POST requests
+
+  Author: Jin Kuan
+*/
+
 var RateLimit = require('express-rate-limit');
 
 var join = new RateLimit({

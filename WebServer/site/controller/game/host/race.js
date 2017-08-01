@@ -3,17 +3,17 @@
 */
 var playerObj = {};
 console.log('Loaded: Race gamemode handler!');
-function handleGame(data) {
-  switch(data) {
+function handleGame(response) {
+  switch(response) {
     case C.GAME_RES.GET_READY: {
       let header = createNode('div', 'Race!', 'header', 'race-header');
       header.style.display = 'none';
 
       let totalQuestions =
-        createNode('div', `Total questions: ${data.totalQuestions}`, 'header', 'race-total-questions');
+        createNode('div', `Total questions: ${response.totalQuestions}`, 'header', 'race-total-questions');
       totalQuestions.style.display = 'none';
 
-      initHost(data.players);
+      initHost(response.players);
 
       appendMultiple(document.body(header.totalQuestions));
       break;
@@ -30,14 +30,14 @@ function handleGame(data) {
       break;
     }
     case C.GAME_RES.ANSWER_CHOSEN: {
-      let playerSpan = document.getElementById(`player-${data.id}-progress`);
+      let playerSpan = document.getElementById(`player-${response.id}-progress`);
       playerSpan.innerHTML = ""; //clear span
       //re add counter
       playerProgress.appendChild(document.createTextNode(response.questionNo));
       break;
     }
     case C.GAME_RES.PLAYER_FINISH : {
-      let playerLi = document.getElementById(`player-${data.id}`);
+      let playerLi = document.getElementById(`player-${response.id}`);
       //do something with it
       playerLi.style.border = '3px solid green';
       break;
