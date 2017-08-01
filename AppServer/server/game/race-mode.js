@@ -22,6 +22,7 @@ module.exports = async function(input) {
           players[player].score = 0;
           players[player].questionCounter = 0;
           players[player].answerable = true;
+          players[player].highestStreak = 0;
         }
       }
 
@@ -62,6 +63,7 @@ module.exports = async function(input) {
         let correct = common.checkCorrectAnswer(question, data.answer);
 
         if(correct) {
+          currentPlayer.correctAnswers++;
           //get time difference
           let timeDiff = (Date.now() - currentPlayer.timeStart) / 1000;
           if(currentPlayer.answerTime === undefined)
@@ -69,13 +71,21 @@ module.exports = async function(input) {
           currentPlayer.answerTime += timeDiff;
 
           currentPlayer.answerStreak++;
+          if(currentPlayer.answerStreak > currentPlayer.highestStreak)
+            currentPlayer.highestStreak = currentPlayer.answerStreak;
+
           //calculate score
           let reward = common.getReward(currentRoom,
             currentRoom.quiz.questions[currentPlayer.questionCounter]);
 
           //add score
+          console.log(currentPlayer);
+          console.log(common.calculateScore(
+            reward, currentPlayer.timeStart, Date.now(), currentPlayer.answerStreak));
+          console.log(currentPlayer.score + common.calculateScore(
+                      reward, currentPlayer.timeStart, Date.now(), currentPlayer.answerStreak));
           currentPlayer.score += common.calculateScore(
-            reward, currentPlayer.time, Date.now(), currentPlayer.answerStreak);
+            reward, currentPlayer.timeStart, Date.now(), currentPlayer.answerStreak);
 
           currentPlayer.answerable = true;  //just in case
           currentPlayer.questionCounter++;
@@ -95,6 +105,7 @@ module.exports = async function(input) {
               }
               let ta = common.calculateTitles(currentRoom);
 
+              deleteUnnecessary(currentPlayer);
               return {  //if all players completed
                 'game': C.GAME_RES.GAME_END,
                 'titlesAndAchievenments' : ta,
@@ -104,6 +115,7 @@ module.exports = async function(input) {
                 'roomNo': data.roomNo
               }
             } else {  //send player finish event
+              deleteUnnecessary(currentPlayer);
               sendToServer(conn, {
                 'game': C.GAME_RES.PLAYER_FINISH,
                 'completedPlayers' : currentRoom.completedPlayers,
@@ -139,6 +151,8 @@ module.exports = async function(input) {
             return sendNextQuestion(currentRoom, currentPlayer, data);
           }
         } else {  //wrong answer
+          currentPlayer.wrongAnswers++;
+          currentPlayer.answerStreak = 0;
           if(currentPlayer.answerable) {
             currentPlayer.answerable = false;
             currentPlayer.timer = setTimeout(() => {  //3 second penalty on wrong answer
@@ -185,4 +199,14 @@ function sendNextQuestion(currentRoom, currentPlayer, data) {
     'roomNo': data.roomNo,
     'targetId' : data.id
   }
+}
+
+function deleteUnnecessary(currentPlayer) {
+  delete currentPlayer.answerStreak;
+  delete currentPlayer.timeStart;
+  delete currentPlayer.answerable;
+  delete currentPlayer.questionCounter;
+  delete currentPlayer.completed;
+  currentPlayer.answerTime =
+    Math.round((currentPlayer.answerTime + 0.00001) * 100) / 100; //2 d.p.
 }

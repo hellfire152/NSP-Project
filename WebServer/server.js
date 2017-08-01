@@ -51,7 +51,10 @@ const KEYS = {
 //keeps trying every 5 seconds until it connects
 var attemptConnection = setInterval(() => {
   try {
-    var appConn = net.connect(9090);
+    var appConn = net.connect({
+      'port' : S.APPSERVER.PORT,
+      'host' : S.APPSERVER.HOST
+    });
 
     //cipher classes for 2 way encryption and decryption
     appConn.sendCipher = new Cipher({
@@ -91,13 +94,18 @@ var attemptConnection = setInterval(() => {
       let reqNo = uuid();
       reqObj.reqNo = reqNo;
 
+      //check if reqObj is valid
+      if(reqObj === undefined || reqObj === null ||
+        !(reqObj === Object(reqObj))) {
+          throw new Error('Invalid request Object');
+        }
       //storing the callback for later calling
       pendingAppResponses[reqNo] = {};
       if(callback)
         if(callback && {}.toString.call(callback) == '[object Function]') //IF FUNCTION
           pendingAppResponses[reqNo].callback = callback;
         else
-          throw new Error('Callback is not a function!');
+          throw new Error('Callback is not a function');
 
       //sending the request object
       console.log("TO APPSERVER:");
@@ -123,10 +131,6 @@ var attemptConnection = setInterval(() => {
     }
 
     function runCallback(response) {
-      console.log("[This is the pending app response]: ");
-      console.log(pendingAppResponses);
-      console.log("[This is the req no]: " + response.reqNo);
-      console.log(response);
       if(pendingAppResponses[response.reqNo]) {
         if(pendingAppResponses[response.reqNo].callback)
           pendingAppResponses[response.reqNo].callback(response);
@@ -139,8 +143,8 @@ var attemptConnection = setInterval(() => {
     appConn.on("data", async (response) => {
       let data = await decryptResponse(response);
       //the authentication stage should have no problems with simultaneous responses
-      logResponse(data[0]);
-      runCallback(data[0]);
+      logResponse(response[0]);
+      runCallback(response[0]);
     });
 
     /****AUTHENTICATION******/

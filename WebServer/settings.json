@@ -12,7 +12,7 @@
     "KEY" : "./cert/private.key"
   },
   "COOKIE" : {
-    "CIPHERED" : ["login", "otp", "deviceIP", "user_info", "game", "gameCookie"],
+    "CIPHERED" : ["login", "otp", "deviceIP", "user_info", "tempToken"],
     "KEY" : "cookieKey",
     "IV" : "cookieIv",
     "MAPPINGS" : {
@@ -30,6 +30,7 @@
       "ACCESS_TOKEN" : "ya29.GluLBIxQYjPTkuJBqVhtWukxOUB4HCKjfYIFNuNtNiEK0P_xFvttlL2Z61ezv4cvCGUYB-RP4nKkFuzXFtY_OfaHQYZi_Zl3RxaMpEhGCScsc7vYxk1kZSz-MFtV"
     }
   },
+  "NO_SIMULTANEOUS_HOST_JOIN" : false,
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
   "AUTH_BYPASS" : true

@@ -14,9 +14,8 @@ var cookie = require('cookie');
 var ios = require('socket.io-express-session');
 var xssDefense = require('./server/setup/xss-defense.js');
 var emailServer = require('./server/setup/email.js');
-
+var csrfProtection = require('csurf')({'cookie' : true});
 var socketOfUser = {};
-var pendingClearGameCookie = {};
 setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
   socketOfUser = {};
 }, 2000);
@@ -59,10 +58,11 @@ module.exports = function(data) {
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(expressValidator());
   app.use("/", express.static(__dirname));
-  //app.use(helmet()); //adds a bunch of security features
-  app.use(helmet.noSniff()); // content type should not be changed or followed
-  app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
-  app.use(helmet.xssFilter()); // protects against reflected XSS
+  //make sendErrorPage available for every request
+  app.use((req, res, next) => {
+    res.sendErrorPage = sendErrorPage;
+    next();
+  });
 
   //decrypt cookies
   app.use(async (req, res, next) => {
@@ -79,24 +79,6 @@ module.exports = function(data) {
     }
     next();
   });
-  //for clearing game cookie
-  app.use("*", function(req, res, next) {
-    if(req.cookies.login) {
-      //TODO::Switch login cookie
-      if(pendingClearGameCookie[req.cookies.login.id]) {
-        res.clearCookie('gameCookie');
-        delete pendingClearGameCookie[req.cookies.login.id];
-      }
-    }
-    next();
-  });
-
-  //TESTING::req.session
-  app.use((req, res, next) => {
-    console.log("SESSION:");
-    console.log(req.session);
-    next();
-  })
 
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({
@@ -108,6 +90,7 @@ module.exports = function(data) {
 
   //setting routes
   require('./server/setup/routes.js')({
+    'S' : S,
     'C' : C,
     'app' : app,
     'dirname' : __dirname,
@@ -116,9 +99,9 @@ module.exports = function(data) {
     'uuid' : uuid,
     'pendingAppResponses' : pendingAppResponses,
     'cookieCipher' : cookieCipher,
-    'pendingClearGameCookie' : pendingClearGameCookie,
     'xssDefense' : xssDefense,
-    'emailServer' : emailServer
+    'emailServer' : emailServer,
+    'csrfProtection' : csrfProtection
   });
 
   //setting up the communication between the WebServer and AppServer
@@ -134,7 +117,14 @@ module.exports = function(data) {
     'socketOfUser': socketOfUser,
     'decryptResponse' : decryptResponse,
     'logResponse' : logResponse,
-    'runCallback' : runCallback,
-    'pendingClearGameCookie' : pendingClearGameCookie
+    'runCallback' : runCallback
   });
+}
+
+function sendErrorPage(errormsg) {
+  this.render('error', {
+    'error': errormsg
+  });
+  //stop anymore responses
+  this.end();
 }

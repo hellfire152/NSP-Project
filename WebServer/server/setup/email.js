@@ -70,8 +70,8 @@ async function forgetPasswordOtpEmail(emailObj){
         user: 'chloeangsl@gmail.com',
         clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
         clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-        refreshToken: '1/isumV_3zp2XprLuLbtlRh2Cg-vIurXpuaGFjbCYi4ZI',
-        accessToken: 'ya29.GluUBAWLc6T3nE8hYTATPSI2lBUqckZdTwNT24uaVJ3a2vvc9Psuhb-mrUAdDkqmjRsLHAHl18h4OXD51yM8LJQH-1O7MJ43EJ9bTqmRbEUsHpzb3AcNy0eMzFRY'
+        refreshToken: '1/M7zS8IIbmaPJ2HKKWkii2vaj51E_hSweitd_zPfhG58',
+        accessToken: 'ya29.GluVBOBREr9j3nAShHYKRHXAaU2KIk8SiEoQLGWNLN6lfejiEWE9Ji_ulE4yvhei1vpY2FUndqwsajW9XCwZAnonsvqIKMD-NZEpcXljFKA9XrEe7kyV3KEeSMFV'
          }
     })
 
