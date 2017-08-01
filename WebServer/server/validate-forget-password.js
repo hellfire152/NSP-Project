@@ -19,7 +19,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
       if(userOTP == otpObj.pin){
         res.cookie('temp_user_id', JSON.stringify({user_id : otpObj.user_id}), {"maxAge": 1000*60*5});
         res.clearCookie("otp");
-        res.redirect('/changeForgetPassword');
+        res.redirect('/ChangePassword');
       }
       else{
         //Go back to OTP page and try again

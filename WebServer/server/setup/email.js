@@ -56,8 +56,17 @@ async function loginAccountOtpEmail(emailObj){
       subject: 'ExQuizIt! Verification',
       html: '<p>Dear Sir/Mdm! \n\t You have created an account with the Email: '+emailObj.email+'. Your verification number is: '+emailObj.pin+'\n\nLove,\nExQuizIt</p>'
   }
-}
 
+  transporter.sendMail(mailOptions, function (err, res) {
+      if(err){
+          console.log('Email send error');
+      } else {
+          console.log('Email verification has been sent.');
+      }
+  })
+  console.log("EMAIL SENT");
+  return true;
+}
 
 async function forgetPasswordOtpEmail(emailObj){
   console.log("INSIDE EMAIL SERVER");
@@ -80,23 +89,22 @@ async function forgetPasswordOtpEmail(emailObj){
       to: emailObj.email,
       subject: 'ExQuizIt! Forget Password',
       html: '<p>Dear Sir/Mdm! \n\t You have requested for forget password. Your verification number is: '+emailObj.pin+'\n\nLove,\nExQuizIt</p>'
-    }
+  }
 
-    transporter.sendMail(mailOptions, function (err, res) {
-        if(err){
-            console.log('Email send error');
-        } else {
-            console.log('OTP email has been sent.');
-        }
-    });
+  transporter.sendMail(mailOptions, function (err, res) {
+      if(err){
+          console.log('Email send error');
+      } else {
+          console.log('Email verification has been sent.');
+      }
+  })
+  console.log("EMAIL SENT");
   return true;
 }
 
-module.exports = function(s) {
-  S = s;
-  return {
-    'createAccountOtpEmail' : createAccountOtpEmail,
-    'loginAccountOtpEmail' : loginAccountOtpEmail,
-    'forgetPasswordOtpEmail' : forgetPasswordOtpEmail
-  }
+
+module.exports = {
+  'createAccountOtpEmail' : createAccountOtpEmail,
+  'loginAccountOtpEmail' : loginAccountOtpEmail,
+  'forgetPasswordOtpEmail' : forgetPasswordOtpEmail
 }
