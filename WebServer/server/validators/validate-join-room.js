@@ -8,31 +8,18 @@ const uuid = require('uuid');
 module.exports = function(cipher, appConn) {
   return function(req, res) {
     console.log("===Validate-Join-Room.js");
-    req.checkBody('id', 'Username must be specified').notEmpty();
-    req.checkBody('pass', 'Password must be specified').notEmpty();
-    req.checkBody('room', 'Room ID must be specified').notEmpty();
+    if(/*req.validLogin*/ true) {
+      req.checkBody('room', 'Room ID must be specified').notEmpty();
 
-    req.sanitize('id').escape();
-    req.sanitize('pass').escape();
-    req.sanitize('room').escape();
-    req.sanitize('id').trim();
-    req.sanitize('pass').trim`();`
-    req.sanitize('room').trim();
+      req.sanitize('room').escape();
+      req.sanitize('room').trim();
 
-    var errors = req.validationErrors();
-    if(errors) {
-      //TODO::Handle errors
+      req.session.joining = true;
+      //TEST ID
+      req.session.username = req.body.id;
+      res.redirect(`/play?room=${req.body.room}`);
     } else {
-      cipher.encryptJSON({
-        "id": req.body.id,
-        "pass": req.body.pass
-      }).catch((err) => {
-          console.log(err);
-        })
-        .then((cookie) => {
-          res.cookie('login', cookie, {"maxAge": 1000*60*60}); //one hour
-          res.redirect('/play?room=' +req.body.room);
-        });
+      res.sendErrorPage('You are not logged in!');
     }
   }
 }

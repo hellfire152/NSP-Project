@@ -42,4 +42,9 @@ class ProgressBar extends DisplayElement {
   increment() {
     this._progressMask.width += this._incrementLength;
   }
+
+  set y(a) {
+    super.y = a;
+    this._progressMask.y = a;
+  }
 }

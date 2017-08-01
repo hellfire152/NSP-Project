@@ -45,7 +45,17 @@ module.exports = async function(input) {
       return (await databaseAccess(data, dbConn));
       break;
     }
-
+    case C.REQ_TYPE.ACCOUNT_DETAILS: {
+      return new Promise((resolve, reject) => {
+        dbConn.send({
+          'type' : null,//retrive account details
+          'username' : data.username
+        })
+          .then(response => {
+            resolve(response);
+          });
+      })
+    }
   }
 }
 

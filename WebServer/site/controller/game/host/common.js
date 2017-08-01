@@ -40,11 +40,12 @@ function gameEnd(response) {
     let rank = createNode('h2', `#${i + 1}`, 'player-rank', `rank-${i + 1}`);
 
     //append the various data of the player
+    playerRankingDiv.appendChild(rank);
     for(let playerAttr in player) {
       if(player.hasOwnProperty(playerAttr)) {
         let attr = createNode(
           'p', `${playerAttr}:\t${player[playerAttr]}`, 'player-attr', `player-${player[playerAttr]}`);
-        appendMultiple(playerRankingDiv, rank, attr);
+        appendMultiple(playerRankingDiv, attr);
       }
     }
 

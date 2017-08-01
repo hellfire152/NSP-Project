@@ -195,7 +195,7 @@ function gameEnd(response) {
     //append the various data of the player
     for(let playerAttr in player) {
       if(player.hasOwnProperty(playerAttr)) {
-        let attr = createNode('p', player[playerAttr], `player-name`);
+        let attr = createNode('p',`${playerAttr}:\t${player[playerAttr]}`, `player-name`);
         playerRankingDiv.appendChild(attr);
       }
     }

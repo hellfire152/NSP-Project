@@ -13,7 +13,7 @@ module.exports = function(data) {
   const C = data.C;
   let {dirname, io, pendingResponses, pendingAppResponses, Cipher, appConn,
     cookie, socketOfUser, roomOfUser, cookieCipher, decryptResponse, logResponse
-    ,  runCallback, pendingClearGameCookie} = data;
+    ,  runCallback} = data;
 
   //setting up forwarding of data between user and game server
   //short hand
@@ -25,7 +25,6 @@ module.exports = function(data) {
     socket.on('disconnect', () => {
       console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
       delete socketOfUser[socket.userId];
-      pendingClearGameCookie[socket.userId] = true;
       appConn.send({
         'special': C.SPECIAL.SOCKET_DISCONNECT,
         'id': socket.userId,
@@ -36,18 +35,25 @@ module.exports = function(data) {
     /**CHECK MULTIPLE ON SAME MACHINE**/
 
     try {
-      let loginCookie = await getLoginCookieS(socket, cookieCipher, cookie);
+      //let loginCookie = await getLoginCookieS(socket, cookieCipher, cookie);
+      let id = socket.handshake.session.username;
       console.log("SOCKET IO CONNECTION INITIATED BY");
-      console.log(loginCookie);
-      if(socketOfUser[loginCookie.id] !== undefined) { //if user with that id already exists
+      console.log(id);
+      if(socketOfUser[id] !== undefined) { //if user with that id already exists
         console.log('User with that ID already logged in!');
         socket.disconnect();
       }
-      socketOfUser[loginCookie.id] = socket;
-      socket.userId = loginCookie.id;
+      socketOfUser[id] = socket;
+      socket.userId = id;
     } catch (err) {
       console.log(err);
       console.log("Invalid login cookie detected");
+      socket.disconnect();
+    }
+
+    //preventing outsiders from randomly connecting
+    if(!socket.handshake.session.joining && !socket.handshake.session.hosting) {
+      console.log('Illegal connection!');
       socket.disconnect();
     }
 
@@ -56,16 +62,11 @@ module.exports = function(data) {
     socket.on('send', async function(input){ //from user
       try {
         var data = JSON.parse(input);
-        console.log("User to WebServer: ");
+        console.log("User to WebServer (SOCKET): ");
         console.log(data);
-        if (data.sendLoginCookie) {  //Sends the cookie data as well.
-          let cookieData = await getLoginCookieS(socket, cookieCipher, cookie);
-          data.cookieData = cookieData;
-        }
 
         data.id = socket.userId;  //add userId to  the sent data
         data.roomNo = socket.roomNo; //add roomNo (if applicable)
-
         appConn.send(data, null);
       } catch (err) {
         console.log(err);
@@ -77,22 +78,13 @@ module.exports = function(data) {
 
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
-    let response = await decryptResponse(input);
-    logResponse(response);
-    try {
-      if(response.special !== undefined){ //handling special stuff
-        await handleSpecialResponse({
-          'pendingResponses' : pendingResponses,
-          'response' : response,
-          'io' : io,
-          'C' : C,
-          'socketObj' : io.sockets.sockets,
-          'socketOfUser' : socketOfUser,
-          'pendingClearGameCookie' : pendingClearGameCookie
-        });
-      } else {  //others
-        if(response.sendTo !== undefined) {
-          await handleIoResponse({
+    let responses = await decryptResponse(input);
+    for(let response of responses) {
+      logResponse(response);
+      try {
+        if(response.special !== undefined){ //handling special stuff
+          await handleSpecialResponse({
+            'pendingResponses' : pendingResponses,
             'response' : response,
             'io' : io,
             'C' : C,
@@ -111,10 +103,10 @@ module.exports = function(data) {
           }
           runCallback(response);
         }
+      } catch (err) {
+        console.log(err);
+        console.log('Error Processing AppServer to WebServer input!');
       }
-    }catch (err) {
-      console.log(err);
-      console.log('Error Processing AppServer to WebServer input!');
     }
   });
 }
