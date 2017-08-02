@@ -16,7 +16,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       var otpObj = req.cookies.otp.data;
 
       //Check if cookie is valid or not
-      if(!cookieValidator.validateCookie(req.cookies.otp, userIP)){
+      if(!cookieValidator.validateCookie(req.cookies.otp)){
         console.log("Cookie Modification detected");
         res.clearCookie("otp");
         res.sendErrorPage("Cookie modification detected");
@@ -92,7 +92,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                                   res.cookie('user_info', encryptedCookie);
                                   req.session.otpSession = true;
                                   validLoginSession(req, otpObj);
-                                  res.render('LoginIndex', {
+                                  res.render('user-home', {
                                     data : response.data
                                   });
                                 });
@@ -103,7 +103,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                                   res.cookie('user_info', encryptedCookie);
                                   req.session.otpSession = true;
                                   validLoginSession(req, otpObj);
-                                  res.render('LoginIndex', {
+                                  res.render('user-home', {
                                     data : response.data
                                   });
                                 });
@@ -119,7 +119,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                       res.cookie('user_info', encryptedCookie);
                       req.session.otpSession = undefined; //Close the session
                       validLoginSession(req, otpObj);
-                      res.render('LoginIndex', {
+                      res.render('user-home', {
                         data : response.data
                       });
                     });
@@ -136,14 +136,14 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
               .then((encryptedCookie) => {
                 req.session.otpSession = true; //Open the session
                 res.cookie('otp', encryptedCookie, {"maxAge" : 1000 * 60 * 5}) //5 min
-                res.redirect('/OTP_Final');
+                res.redirect('/otp');
               });
           }
           else{
             res.clearCookie("otp");
             // Close the session
             req.session.otpSession = undefined;
-            res.redirect('/LoginForm');
+            res.redirect('/student-login');
           }
         }
       }

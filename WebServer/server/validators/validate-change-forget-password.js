@@ -73,7 +73,7 @@ module.exports =function(cipher, appConn,C,emailServer){
                   //NOTE: You can do any form of validation as you wish
 
                   res.clearCookie("temp_user_id");
-                  res.redirect('/loginform')
+                  res.redirect('/student-login')
                 });
 
             } else {

@@ -19,7 +19,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
         res.cookie('temp_user_id', JSON.stringify({user_id : otpObj.user_id}), {"maxAge": 1000*60*5});
         req.session.otpSession = undefined; //Open the session
         res.clearCookie("otp");
-        res.redirect('/changeForgetPassword');
+        res.redirect('/ChangePassword');
       }
       else{
         //Go back to OTP page and try again
@@ -34,7 +34,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
           console.log("HERE");
           res.clearCookie("otp");
           req.session.otpSession = undefined;
-          res.redirect('/LoginForm');
+          res.redirect('/student-login');
         }
       }
     }
