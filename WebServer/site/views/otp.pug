@@ -25,7 +25,8 @@ html
             | Welcome, 
             span#acc_name Bryan Tan
       .col.s2
-    form(onsubmit='/validate-otp-check', method='POST', action='/LoginIndex')
+    form(onsubmit='/validate-otp-check', method='POST', action='/otp-check')
+      input(type='hidden', name='_csrf', value=`${csrfToken}`)
       .otp-tab
         .row
           .col.s12
