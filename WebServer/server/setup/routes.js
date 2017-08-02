@@ -172,7 +172,10 @@ module.exports = function(data) {
     //doing this just in case req.params has something defined for some reason
     console.log("OTHER PATH");
     console.log("GET FILE: " +req.path.substring(1));
-    res.render(req.path.substring(1));
+    let c = (S.INCLUDE_CSRF_TOKEN.indexOf(req.path.substring(1)) >= 0)? true : false;
+    res.render(req.path.substring(1), {
+      'csrfToken' : (c) ? req.csrfToken() : null
+    });
   });
   //handling form submits
   app.post('/data-access', validators["data-access"]);
