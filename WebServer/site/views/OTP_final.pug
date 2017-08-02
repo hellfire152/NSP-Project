@@ -26,6 +26,7 @@ html
             | Welcome,
             span#acc_name Bryan Tan
       .col.s2
+  form(onsubmit='/validate-otp-check', method='POST', action='/LoginIndex')
     .otp-tab
       .row
         .col.s12
@@ -46,10 +47,10 @@ html
         #test2.col.s12
           p Enter the 6 digit One-Time-Password (OTP) sent to your email address
           .input-field.col.s3
-            input#sms_otp.validate(placeholder='OTP', type='text')
+            input#otp.validate(placeholder='OTP', type='text')
             label(for='first_name') OTP
             a#resend_sms_otp.waves-effect.waves-light.btn Resend OTP
-          button.btn.waves-effect.waves-light.submit-otp(type='submit', name='action')
+          button.btn.waves-effect.waves-light.submit-otp(type='submit')
             | Submit
             i.material-icons.right send
     script(type='text/javascript', src='/resources/js/jquery.min.js')

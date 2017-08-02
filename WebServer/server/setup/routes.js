@@ -29,7 +29,9 @@ module.exports = function(data) {
     'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer),
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer),
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, xssDefense, cookieValidation),
-    'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C)
+    'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
+    'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer)
+
   };
 
   //routing
@@ -199,7 +201,7 @@ module.exports = function(data) {
   app.post('/forget-password-room-success', validators["forget-password-room"]);
   app.post('/otp-check', validators["otp-check"]);
   app.post('/otp-register', validators["otp-register"]);
-  app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
+  app.post('/otp-forget-password', validators["otp-forget-password"]);
 }
 
 function gameSessionCheck(req, isPlaying) {

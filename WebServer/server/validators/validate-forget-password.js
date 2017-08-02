@@ -40,12 +40,12 @@ module.exports = function(cipher, appConn, C,emailServer) {
 
           //TODO: Send the randomNum to client email
           emailServer.forgetPasswordOtpEmail(emailObj);
-
-
+          req.session.otpSession = true; //Open the session
           res.cookie('otp', JSON.stringify(otp), {"maxAge": 1000*60*5}); //5 min
           res.redirect('/otp-forget-password');
         }
         else{
+          req.session.otpSession = undefined; //Close the session
           res.redirect('/ForgetPassword');
         }
       });

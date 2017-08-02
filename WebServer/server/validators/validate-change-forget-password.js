@@ -7,7 +7,6 @@ module.exports =function(cipher, appConn,C,emailServer){
     var confirmPassword = req.body.confirmPassword;
     var userId = JSON.parse(req.cookies.temp_user_id).user_id;
 
-
     req.sanitize('newPassword').escape();
     req.sanitize('confirmPassword').escape();
     req.sanitize('userId').escape();

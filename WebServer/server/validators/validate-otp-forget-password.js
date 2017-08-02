@@ -17,6 +17,7 @@ module.exports = function(cipher, appConn, C, xssDefense) {
 
       if(userOTP == otpObj.pin){
         res.cookie('temp_user_id', JSON.stringify({user_id : otpObj.user_id}), {"maxAge": 1000*60*5});
+        req.session.otpSession = undefined; //Open the session
         res.clearCookie("otp");
         res.redirect('/changeForgetPassword');
       }
@@ -25,12 +26,14 @@ module.exports = function(cipher, appConn, C, xssDefense) {
         //More than 3 time boot out and clear cookies
         if(otpObj.count < 3){
           otpObj.count++;
+          req.session.otpSession = true; //Open the session
           res.cookie('otp', JSON.stringify(otpObj), {"maxAge": 1000*60*5}); //5 min
           res.redirect('/otp');
         }
         else{
           console.log("HERE");
           res.clearCookie("otp");
+          req.session.otpSession = undefined;
           res.redirect('/LoginForm');
         }
       }

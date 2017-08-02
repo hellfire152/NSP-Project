@@ -90,6 +90,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                               cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                                 .then((encryptedCookie) => {
                                   res.cookie('user_info', encryptedCookie);
+                                  req.session.otpSession = true;
                                   validLoginSession(req, otpObj);
                                   res.render('LoginIndex', {
                                     data : response.data
@@ -100,6 +101,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                               cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                                 .then((encryptedCookie) => {
                                   res.cookie('user_info', encryptedCookie);
+                                  req.session.otpSession = true;
                                   validLoginSession(req, otpObj);
                                   res.render('LoginIndex', {
                                     data : response.data
@@ -115,6 +117,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                   cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                     .then((encryptedCookie) => {
                       res.cookie('user_info', encryptedCookie);
+                      req.session.otpSession = undefined; //Close the session
                       validLoginSession(req, otpObj);
                       res.render('LoginIndex', {
                         data : response.data
@@ -131,12 +134,15 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
             otpObj.count++;
             cipher.encryptJSON(cookieValidator.generateCheckCookie(otpObj, userIP))
               .then((encryptedCookie) => {
+                req.session.otpSession = true; //Open the session
                 res.cookie('otp', encryptedCookie, {"maxAge" : 1000 * 60 * 5}) //5 min
-                res.redirect('/otp');
+                res.redirect('/OTP_Final');
               });
           }
           else{
             res.clearCookie("otp");
+            // Close the session
+            req.session.otpSession = undefined;
             res.redirect('/LoginForm');
           }
         }

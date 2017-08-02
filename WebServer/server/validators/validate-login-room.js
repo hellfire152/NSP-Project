@@ -231,6 +231,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                       throw new Error('Error parsing JSON!');
                     })
                     .then(function(cookieData) {
+                      //TODO: OPEN SESSION
                     res.cookie('otp', cookieData, {"maxAge": 1000*60*60}); //one hour
                     res.redirect('/otp');
                   });
