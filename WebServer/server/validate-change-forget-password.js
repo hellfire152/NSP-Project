@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn,C){
+module.exports =function(cipher, appConn,C,emailServer){
   return function(req, res){
     //TODO: Please do all sort of validation here
     var newPassword = req.body.newPassword;

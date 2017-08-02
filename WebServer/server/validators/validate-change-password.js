@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn,C){
+module.exports =function(cipher, appConn,C,emailServer){
   return function(req, res){
       console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
