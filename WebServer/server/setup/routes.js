@@ -35,11 +35,15 @@ module.exports = function(data) {
   //routing
   //handling requests for .html, controller, css or resource files
   app.get('((/resources|/controller|/css)*)|/favicon.ico', function(req, res) {
-    res.sendFile(`${dirname}/site${req.path}`);
+    res.sendFile(`${dirname}/site${req.path}`, (err) => {
+      if(err) res.send('Error 404: Not Found!');
+    });
   });
   //handling all .html file requests
   app.get('*.html', function(req, res) {
-    res.sendFile(`${dirname}/site/html${req.path}`);
+    res.sendFile(`${dirname}/site/html${req.path}`, (err) => {
+      res.sendErrorPage('Error 404: Not Found!');
+    });
   });
   //redirect to home page
   app.get('/', function(req, res){
@@ -160,14 +164,19 @@ module.exports = function(data) {
     //doing this just in case req.params has something defined for some reason
     console.log("OTHER PATH");
     console.log("GET FILE: " +req.path.substring(1));
+    //handling csrf token
     let c = (S.INCLUDE_CSRF_TOKEN.indexOf(req.path.substring(1)) >= 0)? true : false;
-    try {
-      res.render(req.path.substring(1), {
-        'csrfToken' : (c) ? req.csrfToken() : null
-      });
-    } catch (e) {
-      res.sendErrorPage('Error 404: Not Found.');
-    }
+    res.render(req.path.substring(1), {
+      'csrfToken' : (c) ? req.csrfToken() : null
+    }, (err, html) => {
+      if(err) {
+        console.log(err);
+        if (err.message.indexOf('Failed to lookup view') !== -1) {
+          return res.sendErrorPage('Error 404: Not Found!');
+        }
+        throw err;
+      } else res.send(html);
+    });
   });
   //handling form submits
   app.post('/data-access', validators["data-access"]);

@@ -33,9 +33,11 @@
   "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room"],
   "REQUIRE_VALID_LOGIN" : ["createquiz", "host", "play", "report", "hostreport", "forgetpassword", "userhome"],
   "USE_TEST_ACCOUNT" : true,
-  "TEST_ACCOUNT" : {
-    "USERNAME" : "hellfire152"
-  },
+  "TEST_ACCOUNTS" : [{
+      "USERNAME" : "hellfire152"
+    }, {
+      "USERNAME" : "psidra"
+    }],
   "NO_SIMULTANEOUS_HOST_JOIN" : false,
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
