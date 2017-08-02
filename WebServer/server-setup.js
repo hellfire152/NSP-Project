@@ -6,6 +6,7 @@
   Author: Jin Kuan
 */
 //required modules
+var testAccountCounter = 0;
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var helmet = require('helmet');
@@ -79,7 +80,32 @@ module.exports = function(data) {
     }
     next();
   });
+  //for the test account
+  if(S.USE_TEST_ACCOUNT) {
+    app.use((req, res, next) => {
+      //use the next test account for each new session
+      if(req.session.validLogin === undefined) {
+        req.session.validLogin = true;
+        let acc = S.TEST_ACCOUNTS[testAccountCounter++];
+        for(let attr in acc) {
+          if(acc.hasOwnProperty(attr)) {
+            req.session[attr] = acc[attr];
+          }
+        }
+      }
+      next();
+    });
+  }
+  //block access to some pages if not logged in
+  app.use((req, res, next) => {
+    if(S.REQUIRE_VALID_LOGIN.indexOf(req.path.substring(1)) >= 0
+        && !req.session.validLogin) { //not logged in
+      req.session.attempedAccess = req.path;
+      res.redirect('/student-login');
+    } else next();  //proceed if logged in
+  })
   app.use(csrfProtection);
+
 
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({

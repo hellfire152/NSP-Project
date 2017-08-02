@@ -4,19 +4,10 @@
   Author: Jin Kuan
 */
 var uuid;
+
 var express = require('express');
 var nodemailer = require('nodemailer');
 var rateLimiters = require('./rate-limiters.js');
-var app = express();
-var helmet = require('helmet');
-var xss = require('xss');
-var frameguard = require('frameguard');
-var emailServer = require('./email.js');
-app.use(helmet.noSniff()); // content type should not be changed or followed
-app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame
-app.use(helmet.xssFilter()); // protects against reflected XSS
-
-// var cookieValidator = require('./cookieValidation.js');
 var cookieValidation = require('./cookie-validation.js');
 var S;
 module.exports = function(data) {
@@ -25,6 +16,7 @@ module.exports = function(data) {
     = data;
   const C = data.C;;
   uuid = data.uuid;
+
   //validators
   var validators = {
     'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
@@ -43,44 +35,36 @@ module.exports = function(data) {
   //routing
   //handling requests for .html, controller, css or resource files
   app.get('((/resources|/controller|/css)*)|/favicon.ico', function(req, res) {
-    res.sendFile(`${dirname}/site${req.path}`);
+    res.sendFile(`${dirname}/site${req.path}`, (err) => {
+      if(err) res.send('Error 404: Not Found!');
+    });
   });
   //handling all .html file requests
   app.get('*.html', function(req, res) {
-    res.sendFile(`${dirname}/site/html${req.path}`);
-  });
-  //sends index.html when someone sends a https request to the root directory
-  app.get('/', function(req, res){
-    res.sendFile(dirname + "/site/html/index.html");
-  });
-
-  app.get('/form', csrfProtection, function(req,res){
-    res.render('form', {
-      csrfToken: req.csrfToken()
+    res.sendFile(`${dirname}/site/html${req.path}`, (err) => {
+      res.sendErrorPage('Error 404: Not Found!');
     });
   });
-
-  app.get('/data', function(req,res){
-      cookieCipher.decryptJSON(req.cookies.encryptedDataReq)
-        .catch(reason => {
-          console.log(reason);
-        })
-        .then(function(cookieData) {
-          console.log(cookieData);
-          appConn.send({
-            'type': C.REQ_TYPE.DATABASE, //JOIN_ROOM
-            'data': cookieData.data
-          }, (response) => {
-            res.render('dbTest', {
-              data: response.data
-            });
-          });
-        });
-    // }
-  })
+  //redirect to home page
+  app.get('/', function(req, res){
+    if(req.session.validLogin) {
+      res.render('user-home');
+    } else {
+      res.render('home');
+    }
+  });
 
   //handling profile pages
   app.get('/profile/:username', (req, res) => {
+    //go to own profile page if logged in + no specified user profile
+    if(req.params.username == "" || req.params.username === undefined) {
+      if(req.session.validLogin) {
+        res.redirect(`/profile/${req.session.username}`);
+      } else {
+        res.sendErrorPage('No username specified!');
+      }
+    }
+
     appConn.send({
       'type' : C.REQ_TYPE.DATABASE,
       'data' : {
@@ -189,9 +173,18 @@ module.exports = function(data) {
     //doing this just in case req.params has something defined for some reason
     console.log("OTHER PATH");
     console.log("GET FILE: " +req.path.substring(1));
+    //handling csrf token
     let c = (S.INCLUDE_CSRF_TOKEN.indexOf(req.path.substring(1)) >= 0)? true : false;
     res.render(req.path.substring(1), {
       'csrfToken' : (c) ? req.csrfToken() : null
+    }, (err, html) => {
+      if(err) {
+        console.log(err);
+        if (err.message.indexOf('Failed to lookup view') !== -1) {
+          return res.sendErrorPage('Error 404: Not Found!');
+        }
+        throw err;
+      } else res.send(html);
     });
   });
   //handling form submits
@@ -207,10 +200,6 @@ module.exports = function(data) {
   app.post('/otp-check', validators["otp-check"]);
   app.post('/otp-register', validators["otp-register"]);
   app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
-  app.post('/change-forget-password', require('../validate-change-forget-password.js')(cipher, appConn, C, xssDefense));
-  app.post('/process', function(req,res){
-    res.redirect('/');
-  })
 }
 
 function gameSessionCheck(req, isPlaying) {

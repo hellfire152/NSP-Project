@@ -75,7 +75,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
               else
                 res.clearCookie("deviceIP");
             }
-            
+
             appConn.send({
               // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
               'type':C.REQ_TYPE.DATABASE,
@@ -159,7 +159,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                                     .then((encryptedCookie) => {
                                       res.cookie('user_info', encryptedCookie);
                                       validLoginSession(req);
-                                      res.render('LoginIndex', {
+                                      res.render('user-home', {
                                         data : encodedData
                                       });
                                     });
@@ -169,7 +169,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                                     .then((encryptedCookie) => {
                                       res.cookie('user_info', encryptedCookie);
                                       validLoginSession(req);
-                                      res.render('LoginIndex', {
+                                      res.render('user-home', {
                                         data : encodedData
                                       });
                                     });
@@ -187,7 +187,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                       .then((encryptedCookie) => {
                         res.cookie('user_info', encryptedCookie);
                         validLoginSession(req);
-                        res.render('LoginIndex', {
+                        res.render('user-home', {
                           data : encodedData
                         });
                       });
