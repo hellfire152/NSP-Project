@@ -547,8 +547,9 @@ p {
   bottom: 85px;
   left: 3%;
   padding: 20px 50px;
-  height: 400px;
+  height: 550px;
   width:600px;
+  z-index: 999;
   display: block;
   border-radius: 4px;
   transform: translateY(20px);
@@ -622,7 +623,8 @@ a.button.active {
   transform: rotate(135deg);
   transition: transform 0.5s;
 }
-.selection{
-    height:120px;
-    border:1px solid #606060;
+
+
+.prompt-open{
+  z-index:0;
 }

@@ -4,10 +4,19 @@
   Author: Jin Kuan
 */
 var uuid;
-
 var express = require('express');
 var nodemailer = require('nodemailer');
 var rateLimiters = require('./rate-limiters.js');
+var app = express();
+var helmet = require('helmet');
+var xss = require('xss');
+var frameguard = require('frameguard');
+var emailServer = require('./email.js');
+app.use(helmet.noSniff()); // content type should not be changed or followed
+app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame
+app.use(helmet.xssFilter()); // protects against reflected XSS
+
+// var cookieValidator = require('./cookieValidation.js');
 var cookieValidation = require('./cookie-validation.js');
 var S;
 module.exports = function(data) {
@@ -16,7 +25,6 @@ module.exports = function(data) {
     = data;
   const C = data.C;;
   uuid = data.uuid;
-
   //validators
   var validators = {
     'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
