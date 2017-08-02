@@ -53,7 +53,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     }
     //END OF AUTO LOGIN FUNCTION
 
-    if (username!=""  && password!=""){
+    if (username != "" && password != ""){
       var schema = new passwordValidator();
       schema
       .is().min(8)
@@ -68,7 +68,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
       if (passwordCheck){
         if(!error){
           console.log("HOST FORM DATA: ");
-
+            //check for a valid deviceIP cookie
             if(req.cookies.deviceIP != undefined){
               if(cookieValidator.validateCookie(req.cookies.deviceIP))
                 var deviceIp = req.cookies.deviceIP.data;
@@ -89,13 +89,13 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
             }, (response) => {
               //If incorrect user input return to login page
               if(!(response.data.success)){
-                res.redirect('/LoginForm');
+                res.sendErrorPage('Invalid login details!');
               }
-              else{
+              else {
                 //Check for identical IP address in user cookie
                 var valid = false; //Registered IP address in client PC
                 if(deviceIp != undefined && response.data.data.ip_address != undefined){
-                  var currentIpAddress = crypto.createHash('SHA256').update(userIP).digest('base64'); //NOTE: Temp solution
+                  var currentIpAddress = crypto.createHash('SHA256').update(userIP).digest('base64');
                     outerloop:
                       for(i=0 ; i<response.data.data.ip_address.length ; i++){
                         for(j=0 ; j<deviceIp.length ; j++){
@@ -158,7 +158,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                                     cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                                     .then((encryptedCookie) => {
                                       res.cookie('user_info', encryptedCookie);
-                                      res.render('LoginIndex', {
+                                      validLoginSession(req);
+                                      res.render('user-home', {
                                         data : encodedData
                                       });
                                     });
@@ -167,7 +168,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                                     cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                                     .then((encryptedCookie) => {
                                       res.cookie('user_info', encryptedCookie);
-                                      res.render('LoginIndex', {
+                                      validLoginSession(req);
+                                      res.render('user-home', {
                                         data : encodedData
                                       });
                                     });
@@ -184,7 +186,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                       cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                       .then((encryptedCookie) => {
                         res.cookie('user_info', encryptedCookie);
-                        res.render('LoginIndex', {
+                        validLoginSession(req);
+                        res.render('user-home', {
                           data : encodedData
                         });
                       });
@@ -195,7 +198,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                   }
                   });
                 }
-                else{
+                else {
                   var randomNum = Math.floor((Math.random() * 999999) + 10000);
                   console.log("THIS IS THE PIN: " + randomNum);
 
@@ -267,4 +270,9 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
         return;
     }
   }
+}
+
+function validLoginSession(req) {
+  req.session.validLogin = true;
+  req.session.username = req.body.username;
 }

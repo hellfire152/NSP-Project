@@ -129,6 +129,7 @@ html
       .card
         h1.title Login
         form#login(onsubmit='/validate-login-room', method='POST', action='/login-room')
+          input(type='hidden', name='_csrf', value=`${csrfToken}`)
           .input-container
             input#username(type='text', name="username")
             label(for='Username') Username
@@ -150,6 +151,7 @@ html
           | Register
           .close
         form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
+          input(type='hidden', name='_csrf', value=`${csrfToken}`)
           .input-container
             input#name(type='text', name='name', autocomplete="off")
             label(for='name') Name
