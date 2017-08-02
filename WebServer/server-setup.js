@@ -79,7 +79,22 @@ module.exports = function(data) {
     }
     next();
   });
+  //block access to some pages if not logged in
+  app.use((req, res, next) => {
+    if(S.REQUIRE_VALID_LOGIN.indexOf(req.path.substring(1)) >= 0
+        && !req.session.validLogin) {
+      res.redirect('/student-login');
+    } else next();
+  })
   app.use(csrfProtection);
+
+  //for the test account
+  if(S.USE_TEST_ACCOUNT) {
+    app.use((req, res, next) => {
+      req.session.validLogin = true;
+      req.session.username = S.TEST_ACCOUNT.USERNAME;
+    });
+  }
 
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({
