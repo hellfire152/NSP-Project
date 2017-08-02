@@ -1,38 +1,56 @@
+doctype html
 html
   head
-    title OTP
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
-    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
-    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
-    script.
-      var tim = 0;
-      var userip;
-      console.log("start timer");
-      function reload () {
-      tim = setTimeout("location.reload(true);",180000);   // 1 minute
-      }
-      console.log("stop timer");
-      function canceltimer() {
-      window.clearTimeout(tim);  // cancel the timer on each mousemove/click
-      reload();  // and restart it
-      }
-
-      function validate() {
-      var inputCode = document.getElementById("input").value.toUpperCase();
-      }
-      
-      function setIp(){
-        $('#userIp').val(userip);
-      }
-
-  body(onmousemove='canceltimer();', onclick='canceltimer();')
-    h1 OTP
-    form(onsubmit = 'setIp()', action='/otp-check', method='POST')
-      input(type='hidden', name='_csrf', value=`${csrfToken}`)
-      input#otp(type='text' name='otp')
-      input#userIp(type='hidden' name='userIp')
-      input(type='submit', value=' Verification ')
-          
-    //- script.
-    //-   var userip;
-    script(src='https://l2.io/ip.js?var=userip')
+    title
+    link(rel='stylesheet', type='text/css', href='/resources/css/materialize.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/otp.css')
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+  body
+    nav
+      .nav-wrapper
+        .col.s12
+          a.breadcrumb(href='#!') Home
+          a.breadcrumb(href='#!') Login
+          a.breadcrumb(href='#!') Verification
+    .row
+      .col.s2
+      .col.s8
+        .card.green.accent-2
+          .card-content.darken-text
+            span.card-title Note
+            p
+              | Your account contains lots of personal data. Please do not share your username, password and 2FA details (SMS-OTP and Email-OTP)
+        .acc-details
+          p
+            | Welcome, 
+            span#acc_name Bryan Tan
+      .col.s2
+    .otp-tab
+      .row
+        .col.s12
+          ul.tabs
+            li.tab.col.s3
+              a.active(href='#test1') SMS OTP
+            li.tab.col.s3
+              a(href='#test2') Email OTP
+        #test1.col.s12
+          p Enter the 6 digit One-Time-Password (OTP) sent to your mobile number
+          .input-field.col.s3
+            input#sms_otp.validate(placeholder='OTP', type='text')
+            label(for='first_name') OTP
+            a#resend_sms_otp.waves-effect.waves-light.btn Resend OTP
+          button.btn.waves-effect.waves-light(type='submit', name='action')
+            | Submit
+            i.material-icons.right send
+        #test2.col.s12
+          p Enter the 6 digit One-Time-Password (OTP) sent to your email address
+          .input-field.col.s3
+            input#sms_otp.validate(placeholder='OTP', type='text')
+            label(for='first_name') OTP
+            a#resend_sms_otp.waves-effect.waves-light.btn Resend OTP
+          button.btn.waves-effect.waves-light(type='submit', name='action')
+            | Submit
+            i.material-icons.right send
+    script(type='text/javascript', src='/resources/js/jquery.min.js')
+    script(type='text/javascript', src='/resources/js/bootstrap.min.js')
+    script(type='text/javascript', src='/resources/js/materialize.min.js')

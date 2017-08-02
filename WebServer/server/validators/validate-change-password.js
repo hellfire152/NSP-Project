@@ -83,7 +83,7 @@ module.exports =function(cipher, appConn,C){
                 }
                 else{
                   console.log("Change password has failed.");
-                  res.redirect('/change-password');
+                  res.redirect('/ChangePassword');
                 }
               });
             });
@@ -92,7 +92,7 @@ module.exports =function(cipher, appConn,C){
 
             console.log("FAIL");
 
-            res.redirect('/change-password');
+            res.redirect('/ChangePassword');
           }
         }
         else{
@@ -115,11 +115,11 @@ module.exports =function(cipher, appConn,C){
         req.session.errors=error;
         req.session.success=false;
 
-        res.redirect('/change-password');
+        res.redirect('/ChangePassword');
         return;
     }
     function sendErrorPage(res, errormsg) {
-      res.render('change-password', {
+      res.render('ChangePassword', {
         'error': errormsg
       });
     }

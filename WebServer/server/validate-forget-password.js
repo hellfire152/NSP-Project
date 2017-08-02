@@ -1,65 +1,40 @@
 const uuid = require('uuid');
-var passwordValidator = require('password-validator');
-module.exports = function(cipher, appConn, C,emailServer) {
-  return function(req, res){
-    console.log(`CIPHER MODULE: ${cipher}`);
-    var username = req.body.username;
-    var email = req.body.email;
-    var randomNum = req.body.randomNum;
-    var randomNum = Math.floor((Math.random() * 999999) + 10000);
+module.exports = function(cipher, appConn, C, xssDefense) {
+  return function(req, res) {
+    req.sanitize('otp').escape();
 
-    req.sanitize('username').escape();
-    req.sanitize('email').escape();
-    req.sanitize('username').trim();
-    req.sanitize('email').trim();
 
-    console.log(username);
-    if (username!=""  && email!=""){
-      var error = req.validationErrors();
+    var errors = req.validationErrors();
 
-      emailObj = {
-        username: req.body.username,
-        pin : randomNum,
-        email : req.body.email
-      }
 
-      appConn.send({
-        'type' : C.REQ_TYPE.DATABASE,
-        'data' : {
-          type : C.DB.SELECT.RETRIEVE_USER_DETAILS,
-          username : username,
-          email : email
-        }
-      } ,(response) => {
-        if(response.data.success){
-          var otp = {
-            pin : randomNum,
-            user_id : response.data.user_id,
-            count : 0
-          }
-
+    if(errors) {
+      //TODO::Handle errors
+    } else {
+      var userOTP = req.body.otp;
+      var otpObj = JSON.parse(req.cookies.otp);
           //TODO: Send the randomNum to client email
           emailServer.forgetPasswordOtpEmail(emailObj);
 
 
-          res.cookie('otp', JSON.stringify(otp), {"maxAge": 1000*60*5}); //5 min
-          res.redirect('/otp-forget-password');
+      if(userOTP == otpObj.pin){
+        res.cookie('temp_user_id', JSON.stringify({user_id : otpObj.user_id}), {"maxAge": 1000*60*5});
+        res.clearCookie("otp");
+        res.redirect('/ChangePassword');
+      }
+      else{
+        //Go back to OTP page and try again
+        //More than 3 time boot out and clear cookies
+        if(otpObj.count < 3){
+          otpObj.count++;
+          res.cookie('otp', JSON.stringify(otpObj), {"maxAge": 1000*60*5}); //5 min
+          res.redirect('/otp');
         }
         else{
-          res.redirect('/forget-password');
+          console.log("HERE");
+          res.clearCookie("otp");
+          res.redirect('/LoginForm');
         }
-      });
-
-      // emailServer.forgetPasswordOtpEmail(emailObj);
-
-      /*
-      0. Check if username and email match or not?
-      1. Send pin to user
-      2. Put the pin to the cookie
-      3. pin in the cookie must be able to verify the pin
-      4. Verify redirect to change new passowrd page
-      5. User is able to change the password from there
-       */
+      }
     }
   }
 }

@@ -24,10 +24,10 @@ html
           .col-md-6
             .form-group
               label(for='nameofQuiz') Quiz title:
-              input#nameofQuiz(type='text', name='nameofQuiz', required='required', autocomplete='off')
+              input#nameofQuiz(type='text', name='nameofQuiz', autocomplete='off')
             .form-group
               label(for='desc') Description:
-              desc#textarea1.materialize-textarea
+              input#desc(type='textarea', name='desc', autocomplete='off')
             .form-group
               label Visibility:
               input#public(name='typeOfQuiz', type='radio')
@@ -36,71 +36,79 @@ html
               label(for='private') No
             .form-group
               label Question No:
-              p Prompt (20 charaectors)
-            .form-group
-              label Question No:
-              p Prompt (20 charaectors)
-            .form-group
+              p Prompt
+            #next.form-group
               a.btn-floating.btn-large.waves-effect.waves-light.red.prompt-open(style='margin:auto;')
                 i.material-icons add
               .wrap
                 .content
                   .row
-                    .col-md-7
-                      .form-group
-                        label(for='nameofQuiz') Prompt:
-                        input#nameofQuiz(type='text', name='nameofQuiz', required='required', autocomplete='off')
-                    .col-md-5
-                      .form-group
-                        label Visibility:
-                        input#mcq(name='radio', type='type')
-                        label(for='mcqchoice') MCQ
-                        input#short-answer(type='radio', name='type')
-                        label(for='shortchoice') Short-Ans
-                   #mcqSection.row.selection
+                    form#addQuestion
+                      .col-md-7
+                        .form-group
+                          label Prompt:
+                          input#prompt(type='text', name='prompt', autocomplete='off')
+                      .col-md-5
+                        .form-group
+                          label Visibility:
+                          input#mcq(name='type', type='radio', onclick='setMCQ()')
+                          label(for='mcq') MCQ
+                          input#short-answer(type='radio', name='type', onclick='setShort()')
+                          label(for='short-answer') Short-Ans
+                    #mcqSection.row.selection
+                      .row
+                        .col-md-6
+                          input#choice1.choices(type='textarea', name='choices')
+                          input#filled-in-box.filled-in(type='checkbox')
+                          label(for='filled-in-box') Filled in
+                        .col-md-6
+                          input#choice2.choices(type='textarea', name='choices', disabled='disabled')
+                          input#filled-in-box2.filled-in(type='checkbox')
+                          label(for='filled-in-box2') Filled in
+                      .row
+                        .col-md-6
+                          input#choice3.choices(type='textarea', name='choices', disabled='disabled')
+                          input#filled-in-box3.filled-in(type='checkbox', name='solution')
+                          label(for='filled-in-box3') Filled in
+                        .col-md-6
+                          input#choice4.choices(type='textarea', name='choices')
+                          input#filled-in-box4.filled-in(type='checkbox', name='solution')
+                          label(for='filled-in-box4') Filled in
+                    #shortSection.row.selection
+                      .row
+                        .col-md-12
+                          label(for='shortAns') Short Answer:
+                          textarea#shortAns.materialize-textarea(name='shortAns')
                     .row
-                      .col-md-6
-                        input#choice1.choices(type='textarea', name='choices')
-                        input#choice1Ans(type='checkbox', name='solution')
-                        label(for='filled-in-box') Filled in
-                      .col-md-6
-                        input#choice2.choices(type='textarea', name='choices', disabled='disabled')
-                        input#choice2Ans(type='checkbox', name='solution')
-                        label(for='filled-in-box') Filled in
+                      .input-field.col-md-5
+                        select#time.browser-default(name='time')
+                          option(value='', disabled='', selected='') Select your timing
+                          option(value='5') 5 seconds
+                          option(value='10') 10 seconds
+                          option(value='15') 15 seconds
+                          option(value='20') 20 seconds
+                      .col-md-7
+                        .form-group
+                          label(for='reward') Specific Reward
+                          input#reward(type='number', name='reward')
                     .row
-                      .col-md-6
-                        input#choice3.choices(type='textarea', name='choices', disabled='disabled')
-                        input#choice3Ans(type='checkbox', name='solution')
-                        label(for='filled-in-box') Filled in
-                      .col-md-6
-                        input#choice4.choices(type='textarea', name='choices', disabled='disabled')
-                        input#choice4Ans(type='checkbox', name='solution')
-                        label(for='filled-in-box') Filled in
-                  .row
-                    .input-field.col-md-5
-                      select
-                        option(value='', disabled='', selected='') Choose your option
-                        option(value='1') Option 1
-                        option(value='2') Option 2
-                        option(value='3') Option 3
-                      label Materialize Select
-                    .col-md-7
-                      .form-group
-                        label(for='reward') Specific Reward
-                        input#reward(type='number', name='reward')
-                  .row
-                    .col-md-5
-                      .form-group
-                        label(for='penalty') Specific Penalty
-                        input#penalty(type='number', name='penalty')
-                    .col-md-7
-                      button.btn.waves-effect.waves-light(type='submit', name='action')
-                        | Submit
-                        i.material-icons.right send
-                      button#cancel.btn.waves-effect.waves-light(name='action') Cancel
-            .col-md-3
+                      .col-md-5
+                        .form-group
+                          label(for='penalty') Specific Penalty
+                          input#penalty(type='number', name='penalty')
+                      .col-md-7
+                        input.cancel(type='reset', value='Add Question', onclick='addQuestion()')
+                        button#submit.btn.waves-effect.waves-light(type='button', name='action', onclick='sendSetQuiz()')
+                          | Submit
+                          i.material-icons.right send
+                  form#sendQuiz(method='POST', name='sendQuiz', action='/add-quiz')
+                    input#quizSet(type='hidden', name='quizSet')
       // Import jQuery before materialize.js
+      script(src='socket.io/socket.io.js')
+      script(src='resources/pixi.js')
       script(type='text/javascript', src='https://code.jquery.com/jquery-2.1.1.min.js')
+      script(src='/resources/constants.js')
+      script(src='/resources/js/add-quiz.js')
       script(type='text/javascript', src='/resources/js/materialize.min.js')
       script(src='/resources/js/bootstrap.min.js')
       script(type='text/javascript').
