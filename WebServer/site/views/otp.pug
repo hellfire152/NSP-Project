@@ -28,6 +28,7 @@ html
   body(onmousemove='canceltimer();', onclick='canceltimer();')
     h1 OTP
     form(onsubmit = 'setIp()', action='/otp-check', method='POST')
+      input(type='hidden', name='_csrf', value=`${csrfToken}`)
       input#otp(type='text' name='otp')
       input#userIp(type='hidden' name='userIp')
       input(type='submit', value=' Verification ')

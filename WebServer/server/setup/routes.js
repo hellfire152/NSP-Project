@@ -74,19 +74,28 @@ module.exports = function(data) {
   //handling profile pages
   app.get('/profile/:username', (req, res) => {
     appConn.send({
-      'type' : C.REQ_TYPE.ACCOUNT_DETAILS,
-      'username' : req.params.username
+      'type' : C.REQ_TYPE.DATABASE,
+      'data' : {
+        'type' : C.DB.SELECT.ACCOUNT_DETAILS,
+        'username' : req.params.username
+      }
     }, (response) => {
-      let profileDetails =  {
-        'username' : response.username,
-        'email' : response.email,
-        'category' : response.category,
-        'completedQuizzes' : response.completedQuizzes,
-        'creationDate' : response.creationDate,
-        'aboutMe' : response.aboutMe,
-        'quizList' : response.quizList,
-        'achievementsList' : response.achievementsList
+      console.log(response);
+      // let profileDetails =  {
+      //   // 'username' : response.username,
+      //   // 'email' : response.email,
+      //   // 'category' : response.category,
+      //   // 'completedQuizzes' : response.completedQuizzes,
+      //   // 'creationDate' : response.creationDate,
+      //   // 'aboutMe' : response.aboutMe,
+      //   // 'quizList' : response.quizList,
+      //   // 'achievementsList' : response.achievementsList
+      // };
+      let profileDetails = {
+        'profile' : response.data.data[0]
       };
+
+      console.log(profileDetails);
 
       //viewing own profile
       if(req.validLogin && req.session.id === req.params.username) {

@@ -113,7 +113,8 @@
       "EMAIL" : 207,
       "CHECK_ACCOUNT" : 208,
       "TEMP_TOKEN" : 209,
-      "NEW_DEVICE_ID" : 210
+      "NEW_DEVICE_ID" : 210,
+      "ACCOUNT_DETAILS" : 211
     },
     "UPDATE" : {
       "PASSWORD" : 301,
