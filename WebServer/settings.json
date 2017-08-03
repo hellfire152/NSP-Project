@@ -30,7 +30,7 @@
       "ACCESS_TOKEN" : "ya29.GluLBIxQYjPTkuJBqVhtWukxOUB4HCKjfYIFNuNtNiEK0P_xFvttlL2Z61ezv4cvCGUYB-RP4nKkFuzXFtY_OfaHQYZi_Zl3RxaMpEhGCScsc7vYxk1kZSz-MFtV"
     }
   },
-  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login"],
+  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login", "spam"],
   "REQUIRE_VALID_LOGIN" : ["createquiz", "host", "play", "report", "hostreport", "forgetpassword", "userhome"],
   "USE_TEST_ACCOUNT" : true,
   "TEST_ACCOUNTS" : [{

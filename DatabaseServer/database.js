@@ -332,6 +332,10 @@ var server = net.createServer(function(conn){
             await retrieveAccountDetails(inputData);
             break;
           }
+          case C.DB.SELECT.LOG_QUIZ : {
+            await getLogQuiz(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -733,13 +737,51 @@ async function retrieveAccountDetails(inputData){
         .then(formatResult => {
           handleDb.handleDecryption([formatResult])
           .then(resultOut => {
-            objOutResult = {
-              data:{
-                data : resultOut,
-                success : true
-              }
-            }
-            sendToServer(objOutResult, inputData);
+
+            var query2 = connection.query("SELECT quiz.quiz_id, quiz.quiz_title, quiz.visibility, quiz.description, quiz.reward, quiz.quiz_rating, quiz.date_created \
+              FROM quiz \
+              JOIN user_account\
+              ON user_account.user_id  = quiz.user_id \
+              WHERE user_account.username = ? ", data.username, function(error, quizResult){
+                if(error){
+                  var response = {
+                    data : {
+                      success : false,
+                      reason : C.ERR.DB_SQL_QUERY,
+                      message : error
+                    }
+                  }
+                  sendToServer(response, inputData);
+                }
+                resultOut[0].hostedQuiz = quizResult;
+
+                var query3 = connection.query("SELECT quiz.quiz_id, quiz.visibility, quiz.description, quiz.quiz_title, quiz.reward, quiz.quiz_rating, quiz.date_created\
+                  FROM quiz\
+                  JOIN user_account\
+                  ON quiz.user_id = user_account.user_id\
+                  JOIN log_quiz\
+                  ON log_quiz.user_id = quiz.user_id AND log_quiz.quiz_id = quiz.quiz_id\
+                  WHERE user_account.username = ?", data.username, function(error, completedQuizResult){
+                    if(error){
+                      var response = {
+                        data : {
+                          success : false,
+                          reason : C.ERR.DB_SQL_QUERY,
+                          message : error
+                        }
+                      }
+                      sendToServer(response, inputData);
+                    }
+                    resultOut[0].completedQuiz = completedQuizResult;
+                    objOutResult = {
+                      data:{
+                        data : resultOut,
+                        success : true
+                      }
+                    }
+                    sendToServer(objOutResult, inputData);
+                  });
+              });
           });
         });
       }
@@ -1762,6 +1804,28 @@ async function addLogQuestion(logQuestion, data, quizId){
       }
     });
   })
+}
+
+async function getLogQuiz(inputData){
+  var data = inputData.data;
+  var query3 = connection.query("SELECT quiz.quiz_id, quiz.visibility, quiz.description, quiz.quiz_title, quiz.reward, quiz.quiz_rating, quiz.date_created\
+    FROM quiz\
+    JOIN user_account\
+    ON quiz.user_id = user_account.user_id\
+    JOIN log_quiz\
+    ON log_quiz.user_id = quiz.user_id AND log_quiz.quiz_id = quiz.quiz_id\
+    WHERE user_account.username = ?", data.username, function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+    });
 }
 
 //This is a showcase of spambot fucnction
