@@ -31,7 +31,7 @@ module.exports = function(data) {
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, xssDefense, cookieValidation),
     'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer)
-
+    'spamm-bot' : require('../validators/validate-spam.js')(appConn, C)
   };
 
   //routing
@@ -202,7 +202,7 @@ module.exports = function(data) {
   app.post('/otp-check', validators["otp-check"]);
   app.post('/otp-register', validators["otp-register"]);
   app.post('/otp-forget-password', validators["otp-forget-password"]);
-}
+  app.post('/spamming-in-progress', validators["spamm-bot"]);}
 
 function gameSessionCheck(req, isPlaying) {
   //either hosting or joining, not both

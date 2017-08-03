@@ -14,7 +14,6 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       // var userIP = req.body.userIp;
       var userIP = req.connection.remoteAddress;
       var otpObj = req.cookies.otp.data;
-
       //Check if cookie is valid or not
       if(!cookieValidator.validateCookie(req.cookies.otp)){
         console.log("Cookie Modification detected");

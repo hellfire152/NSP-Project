@@ -205,16 +205,24 @@ function addQuestion() {
       choice.push($('#choice4').val());
   }
 
+  // function solution(){
+  //   if($('input[name="solution"]:checked').val() != undefined){
+  //     return $('input[name="solution"]:checked').val();
+  //   }
+  //   else if ($('input[name="shortAns"]').val() != undefined){
+  //     return $('input[name="shortAns"]').val();
+  //   }
+  //   else {
+  //     console.log("NO SOLUTION");
+  //     return null;
+  //   }
+  // }
   function solution(){
-    if($('input[name="solution"]:checked').val() != undefined){
-      return $('input[name="solution"]:checked').val();
+    if($("#mcq").is(":checked")){
+      
     }
-    else if ($('input[name="shortAns"]').val() != undefined){
-      return $('input[name="shortAns"]').val();
-    }
-    else {
-      console.log("NO SOLUTION");
-      return null;
+    else{
+
     }
   }
 
