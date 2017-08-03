@@ -202,7 +202,7 @@ module.exports = function(data) {
   app.post('/forget-password-room-success', validators["forget-password-room"]);
   app.post('/otp-check', validators["otp-check"]);
   app.post('/otp-forget-password', validators["otp-forget-password"]);
-  app.post('/change-forget-password-room-success', validators["change-forget-password"]);
+  app.post('/change-forget-password', validators["change-forget-password"]);
   // app.post('/spamming-in-progress', validators["spamm-bot"]);}
 }
 function gameSessionCheck(req, isPlaying) {
