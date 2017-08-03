@@ -12,7 +12,11 @@
     "KEY" : "./cert/private.key"
   },
   "COOKIE" : {
+<<<<<<< HEAD
+    "CIPHERED" : ["login", "otp", "deviceIP", "user_info", "tempToken", "temp_user_id"],
+=======
     "CIPHERED" : ["otp", "deviceIP", "user_info", "tempToken"],
+>>>>>>> a2c297cd1b686fedb28d4a748d0d6b3cda92ab2d
     "KEY" : "cookieKey",
     "IV" : "cookieIv"
   },
@@ -27,7 +31,11 @@
       "ACCESS_TOKEN" : "ya29.GluLBIxQYjPTkuJBqVhtWukxOUB4HCKjfYIFNuNtNiEK0P_xFvttlL2Z61ezv4cvCGUYB-RP4nKkFuzXFtY_OfaHQYZi_Zl3RxaMpEhGCScsc7vYxk1kZSz-MFtV"
     }
   },
+<<<<<<< HEAD
+  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login", "ForgetPassword", "otp-ForgetPassword", "ChangePassword"],
+=======
   "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam"],
+>>>>>>> a2c297cd1b686fedb28d4a748d0d6b3cda92ab2d
   "REQUIRE_VALID_LOGIN" : ["createquiz", "host", "play", "report", "hostreport", "forgetpassword", "userhome"],
   "USE_TEST_ACCOUNT" : true,
   "TEST_ACCOUNTS" : [{
