@@ -88,7 +88,7 @@ html
             h1.title Login
             form
               .input-container
-                input#username(type='text', name='username')
+                input#username(type='text', name='username', value=`${csrfToken}`)
                 label(for='Username') Username
                 .bar
               .input-container
@@ -109,11 +109,11 @@ html
               .close
             form#register-teacher(action='/reg-room-teach', method='post', onsubmit='/validate-register-teacher')
               .input-container
-                input#name(type='text', name='name')
+                input#name(type='text', name='name', value=`${csrfToken}`)
                 label(for='Name') Name
                 .bar
               .input-container
-                input#lusername(type='text', name='lusername')
+                input#lusername(type='text', name='lusername', value=`${csrfToken}`)
                 label(for='Username') Username
                 .bar
               .input-container
@@ -129,7 +129,7 @@ html
                 label(for='Confirm Password') Confirm Password
                 .bar
               .input-container
-                input#school(type='text', name='school')
+                input#school(type='text', name='school', value=`${csrfToken}`)
                 label(for='school') School
                 .bar
               .input-container

@@ -39,6 +39,10 @@ var register = new RateLimit({
   }
 });
 
+// var login = new RateList({
+//   'windowMS' : 1000 * 60 * 60,
+//
+// });
 function sendErrorPage(res, error) {
   res.render('error', {
     'error' : (error === undefined)?

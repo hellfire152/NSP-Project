@@ -130,7 +130,7 @@ html
         h1.title Login
         form#login(onsubmit='/validate-login-room', method='POST', action='/LoginIndex')
           .input-container
-            input#username(type='text', name="username")
+            input#username(type='text', name="username", value=`${csrfToken}`)
             label(for='Username') Username
             .bar
           .input-container
@@ -151,11 +151,11 @@ html
           .close
         form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
           .input-container
-            input#name(type='text', name='name', autocomplete="off")
+            input#name(type='text', name='name', autocomplete="off", value=`${csrfToken}`)
             label(for='name') Name
             .bar
           .input-container
-            input#lusername(type='text', name='lusername', autocomplete="off")
+            input#lusername(type='text', name='lusername', autocomplete="off", value=`${csrfToken}`)
             label(for='Username') Username
             .bar
           .input-container
@@ -175,7 +175,7 @@ html
             label(for='Dob') Date Of Birth
             .bar
           .input-container
-            input#school(type='text', name='school', autocomplete="off")
+            input#school(type='text', name='school', autocomplete="off", value=`${csrfToken}`)
             label(for='school') School
             .bar
           .input-container
