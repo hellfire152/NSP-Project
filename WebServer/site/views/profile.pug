@@ -83,7 +83,7 @@ html
                 p#email.medium-small.grey-text Test
               .col.s2.center-align
                 h4.card-title.grey-text.text-darken-4
-                  | University
+                  | #{profile.student_category}
                 p.medium-small.grey-text Category
               .col.s2.center-align
                 h4#numOfQuiz.card-title.grey-text.text-darken-4
@@ -122,10 +122,7 @@ html
         .card.aboutMe.deep-purple
           .card-content.white-text
             span.card-title About Me!
-            p
-              | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-              | quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+            p #{profile.about_me}
         ul#profile-page-about-details.collection.z-depth-1
           li.collection-item
             .row

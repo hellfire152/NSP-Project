@@ -293,14 +293,14 @@ book.saveAs("demo.xlsx");
 
 }
 
-function displayClientCompletedQuiz(){
+function displayClientCompletedQuiz(client_completed_quizzes){
 
     for(var i =0;i<client_completed_quizzes.length;i++){
         var records = document.createElement('tr');
         records.className = 'records';
         var cell = document.createElement('td');
         var obj = client_completed_quizzes[i];
-        cell.innerHTML = obj.quiz_type.substr(0,1);
+        // cell.innerHTML = obj.quiz_type.substr(0,1);
 
         records.appendChild(cell);
 
@@ -355,12 +355,12 @@ function displayClientCompletedQuiz(){
 
     }
 
-    displayClientHostedQuiz();
-    displayAchievement();
 }
 
 
-function displayClientHostedQuiz(){
+function displayClientHostedQuiz(hostedQuiz){
+  console.log("HERE IS THE HOSTED QUIZ");
+  console.log(hostedQuiz);
     for(var i = 0;i<hostedQuiz.length;i++){
 
         var records = document.createElement('tr');
@@ -369,7 +369,7 @@ function displayClientHostedQuiz(){
         var cell = document.createElement('td');
 
         var obj = hostedQuiz[i];
-        cell.innerHTML = obj.quiz_type.substr(0,1);
+        // cell.innerHTML = obj.quiz_type.substr(0,1);
         records.appendChild(cell);
 
         var cell1 = document.createElement('td');
@@ -539,7 +539,9 @@ function displayProfile(clientProfile){
     document.getElementById('emailAdd').innerHTML = clientProfile.email;
     // document.getElementById('organisation').innerHTML = teachAccount[teachIndex].organisation;
 
-    displayClientCompletedQuiz();
+    displayClientCompletedQuiz(clientProfile.completedQuiz);
+    displayClientHostedQuiz(clientProfile.hostedQuiz);
+    displayAchievement();
 }
 var _MS_PER_DAY = 1000* 60* 60 * 24;
 /* a is the value that you want to minus
