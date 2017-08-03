@@ -441,7 +441,7 @@ async function createAccount(inputData){
           var response = {
             data : {
               success : false,
-              reason : ERR.DB_USERNAME_TAKEN,
+              reason : C.ERR.DB_USERNAME_TAKEN,
               message : "Username or Email have been taken"
             }
           }
@@ -498,8 +498,7 @@ async function retrievePreAccount(inputData){
             }
           }
           sendToServer(response, inputData);
-        }
-        if(result.length > 0){
+        } else if(result.length > 0){
             dataAccount.userId = result[0].user_id;
             dataAccount.salt = result[0].salt;
             dataAccount.dbPass = result[0].password_hash;

@@ -40,7 +40,7 @@ html
                 minlength:8,
                 equalTo:"#lpassword"
               },
-              number:{
+              phone:{
                 checkphone:true
               },
               email:{
@@ -113,12 +113,12 @@ html
                 label(for='Name') Name
                 .bar
               .input-container
-                input#lusername(type='text', username='lusername')
+                input#lusername(type='text', name='lusername')
                 label(for='Username') Username
                 .bar
               .input-container
                 input#email(type='email', name='email')
-                label(for='') Email
+                label(for='Email') Email
                 .bar
               .input-container
                 input#lpassword(type='password', name='lpassword')

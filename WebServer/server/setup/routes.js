@@ -204,7 +204,7 @@ module.exports = function(data) {
   app.post('/change-forget-password', require('../validate-change-forget-password.js')(cipher, appConn, C, xssDefense));
   app.post('/process', function(req,res){
     res.redirect('/');
-  })
+  });
 }
 
 function gameSessionCheck(req, isPlaying) {
