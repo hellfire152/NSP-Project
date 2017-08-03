@@ -29,13 +29,9 @@ module.exports = function(data) {
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidation),
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, xssDefense, cookieValidation),
     'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
-<<<<<<< HEAD
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidation),
     'change-forget-password' : require('../validators/validate-change-forget-password.js')(cookieCipher, appConn,C)
     // 'spam-bot' : require('../validators/validate-spam.js')(appConn, C)
-=======
-    // 'spamm-bot' : require('../validators/validate-spam.js')(appConn, C)
->>>>>>> a2c297cd1b686fedb28d4a748d0d6b3cda92ab2d
   };
 
   //routing
@@ -215,20 +211,6 @@ module.exports = function(data) {
     });
   });
   //handling form submits
-<<<<<<< HEAD
-  app.post('/data-access', validators["data-access"]);
-  app.post('/join-room', validators["join-room"]);
-  app.post('/host-room', validators["host-room"]);
-  app.post('/add-quiz', validators["add-quiz"]);
-  app.post('/login-room', validators["login-room"]);
-  app.post('/reg-room', rateLimiters.register, validators["reg-room"]);
-  app.post('/reg-room-teach', rateLimiters.register, validators["reg-room-teach"]);
-  app.post('/forget-password-room-success', validators["forget-password-room"]);
-  app.post('/otp-check', validators["otp-check"]);
-  app.post('/otp-forget-password', validators["otp-forget-password"]);
-  app.post('/change-forget-password', validators["change-forget-password"]);
-  // app.post('/spamming-in-progress', validators["spamm-bot"]);}
-=======
   // app.post('/data-access', validators["data-access"]);
   app.post('/join-room', rateLimiters.join, validators["join-room"]);
   app.post('/host-room', rateLimiters.host, validators["host-room"]);
@@ -236,13 +218,14 @@ module.exports = function(data) {
   app.post('/user-home',rateLimiters.login, validators["login-room"]);
   app.post('/student-login', rateLimiters.register, validators["reg-room"]);
   app.post('/teacher-login', rateLimiters.register, validators["reg-room-teach"]);
-  app.post('/change-password-room-success', rateLimiters.changePassword, validators["change-password-room"]);
+  // app.post('/change-password-room-success', rateLimiters.changePassword, validators["change-password-room"]); //NOTE: Chloe say its not needed
   app.post('/forget-password-room-success',rateLimiters.forgetPassword,validators["forget-password-room"]);
   app.post('/otp-check',rateLimiters.otpCheck, validators["otp-check"]);
   app.post('/otp-register', rateLimiters.otpRegister,validators["otp-register"]);
+  app.post('/otp-forget-password', validators["otp-forget-password"]);
+  app.post('/change-forget-password', validators["change-forget-password"]);
   // app.post('/spamming-in-progress', validators["spamm-bot"]);
   // app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
->>>>>>> a2c297cd1b686fedb28d4a748d0d6b3cda92ab2d
 }
 function gameSessionCheck(req, isPlaying) {
   //either hosting or joining, not both

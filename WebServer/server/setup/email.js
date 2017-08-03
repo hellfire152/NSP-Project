@@ -79,13 +79,9 @@ async function forgetPasswordOtpEmail(emailObj){
         user: 'chloeangsl@gmail.com',
         clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
         clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-<<<<<<< HEAD
         refreshToken: '1/CdG25CNYw0WHFFUwFhKV9oeOtHlBgMMEqmZ9NuRGuCU',
         accessToken: 'ya29.GlubBIRdu0QVHtgdcia8XQUHxZICdqL1z0ByITPpWUcbG9T4FTURkJkLakaXdkFxgEjgPkbNuvKUGlGilmww6gAiqnUzmqIMhB23AiAeH6SfgPD11nLMacqvHnFS'
-=======
-        refreshToken: '1/Xo9bruoNI6t4xddW4HHYQsnWggysrtlUbpNkoPuRpPk',
-        accessToken: 'ya29.GlucBMchbxrLq3aR4qpwIgqhqeRpC5Q70TqSSbSCoa6PqjXKX6ie4tkKtUeMEnEdfsw9oM9mZnZ12h90tIecCOAeP3hpC8OMaHQAKkt8zOqDwbqlE0PovaA-xrhq'
->>>>>>> a2c297cd1b686fedb28d4a748d0d6b3cda92ab2d
+
          }
     })
 
