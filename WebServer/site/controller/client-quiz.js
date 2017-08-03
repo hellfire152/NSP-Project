@@ -214,13 +214,13 @@ var today = new Date();
 var clientChoiceQuiz25 = [2, "Dumb", "Dumb"];
 var hostedChoiceQuiz345 = [2, "Dumb", "Dumb"];
 // function changeContent(){
-//     document.getElementById('type').innerHTML = 
+//     document.getElementById('type').innerHTML =
 // }
 function displayClientCompletedQuestion(){
-    
+
     var index;
     for(var i =0;i<client_completed_quizzes.length;i++){
-        
+
 
         if(client_completed_quizzes.quiz_id == tempQuizID){
 
@@ -260,14 +260,14 @@ function displayClientCompletedQuestion(){
         console.log(clientChoiceQuiz25[j] === questionQuiz25[j].solution);
 
         if(clientChoiceQuiz25[j] === questionQuiz25[j].solution){
-            body.innerHTML = "Choice is: " + clientChoiceQuiz25[j] + 
+            body.innerHTML = "Choice is: " + clientChoiceQuiz25[j] +
             "<br> Answer is: " + questionQuiz25[j].solution + "<br>" + "Tick";
 
         }else if (clientChoiceQuiz25[j] != questionQuiz25[j].solution){
-            body.innerHTML = "Choice is: " + clientChoiceQuiz25[j] + 
+            body.innerHTML = "Choice is: " + clientChoiceQuiz25[j] +
             "<br> Answer is: " + questionQuiz25[j].solution + "<br>" + "Cross";
         }
-        
+
         li.appendChild(body);
         document.getElementsByClassName("collapsible")[0].appendChild(li);
     }
@@ -288,7 +288,7 @@ for(var i =2;i<=questionQuiz25.length;i++){
     book.write({ "cell":"A" + (i+1), "content":questionQuiz25[index].prompt});
     book.write({"cell": "D" + (i+1), "content":questionQuiz25[index].solution});
 }
-  
+
 book.saveAs("demo.xlsx");
 
 }
@@ -311,7 +311,7 @@ function displayClientCompletedQuiz(){
 
 
         var dateCreate = new Date(obj.date_created.substr(0,4),(obj.date_created.substr(5,2)-1), obj.date_created.substr(8,2));
-        
+
 
         var duration_created = dateDiffInDays(today, dateCreate);
         var days;
@@ -349,8 +349,8 @@ function displayClientCompletedQuiz(){
         });
         records.appendChild(cell4);
 
-       
-        
+
+
         document.getElementById("testTable").appendChild(records);
 
     }
@@ -377,7 +377,7 @@ function displayClientHostedQuiz(){
         records.appendChild(cell1);
 
          var dateCreate = new Date(obj.date_created.substr(0,4),(obj.date_created.substr(5,2)-1), obj.date_created.substr(8,2));
-        
+
 
         var duration_created = dateDiffInDays(today, dateCreate);
         var days;
@@ -432,7 +432,7 @@ function displayHostedQuestion(){
 
      var index;
     for(var i =0;i<hostedQuiz.length;i++){
-        
+
 
         if(hostedQuiz.quiz_id == tempQuizID){
 
@@ -446,8 +446,8 @@ function displayHostedQuestion(){
     var date = new Date(hostedQuiz[index].date_created.substr(0,4), hostedQuiz[index].date_created.substr(5,2), hostedQuiz[index].date_created.substr(8,2));
     var duration = dateDiffInDays(today,date);
 
-   
-    console.log(duration);  
+
+    console.log(duration);
     var printed;
 
     if(duration < 0){
@@ -459,7 +459,7 @@ function displayHostedQuestion(){
     }
     document.getElementById('date').innerHTML = date.toDateString();
     console.log(printed);
-    
+
 
     for(var j =0;j<hosted_question345.length;j++){
 
@@ -480,14 +480,14 @@ function displayHostedQuestion(){
         console.log(clientChoiceQuiz25[j] === hosted_question345[j].solution);
 
         if(hostedChoiceQuiz345[j] === hosted_question345[j].solution){
-            body.innerHTML = "Choice is: " + hostedChoiceQuiz345[j] + 
+            body.innerHTML = "Choice is: " + hostedChoiceQuiz345[j] +
             "<br> Answer is: " + hosted_question345[j].solution + "<br>" + "Tick";
 
         }else if (hostedChoiceQuiz345[j] != hosted_question345[j].solution){
-            body.innerHTML = "Choice is: " + hostedChoiceQuiz345[j] + 
+            body.innerHTML = "Choice is: " + hostedChoiceQuiz345[j] +
             "<br> Answer is: " + hosted_question345[j].solution + "<br>" + "Cross";
         }
-        
+
         li.appendChild(body);
         document.getElementsByClassName("collapsible")[0].appendChild(li);
     }
@@ -495,14 +495,15 @@ function displayHostedQuestion(){
 
 }
 
-function displayProfile(){
+function displayProfile(clientProfile){
+  console.log(clientProfile);
     var user_id = account[0].user_id;
     var newArr = [];
     var newStudentArr = [];
     var teachIndex;
 
-    document.getElementById('name').innerHTML = account[0].name;
-    document.getElementById('complete_quiz').innerHTML = hostedQuiz.length;     
+    document.getElementById('name').innerHTML = clientProfile.name;
+    document.getElementById('complete_quiz').innerHTML = hostedQuiz.length; //TODO: Need to get completed quiz from database
 
     for(i =0;i<client_completed_quizzes.length;i++){
 
@@ -515,7 +516,7 @@ function displayProfile(){
 
     document.getElementById('numOfQuiz').innerHTML = newArr.length;
 
-    document.getElementById('email').innerHTML = account[0].email;
+    document.getElementById('email').innerHTML = clientProfile.email;
 
     for(j=0;j<studAccount.length;j++){
 
@@ -532,22 +533,21 @@ function displayProfile(){
         }
     }
 
-    document.getElementById('school').innerHTML = newStudentArr[0].school;
-    document.getElementById('user_id').innerHTML = user_id;
-    document.getElementById('user_name').innerHTML =  account[0].Username;
-    document.getElementById('DOB').innerHTML = newStudentArr[0].date_of_birth;
-    document.getElementById('organisation').innerHTML = teachAccount[teachIndex].organisation;
+    document.getElementById('school').innerHTML = clientProfile.school;
+    document.getElementById('user_name').innerHTML =  clientProfile.username;
+    document.getElementById('DOB').innerHTML = clientProfile.date_of_birth;
+    document.getElementById('emailAdd').innerHTML = clientProfile.email;
+    // document.getElementById('organisation').innerHTML = teachAccount[teachIndex].organisation;
 
     displayClientCompletedQuiz();
 }
 var _MS_PER_DAY = 1000* 60* 60 * 24;
 /* a is the value that you want to minus
-   b is the value that you use to minus 
+   b is the value that you use to minus
    */
 function dateDiffInDays(a, b){
     var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
     var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
 
-    return Math.floor((utc2 - utc1)/_MS_PER_DAY); 
-}  
- 
+    return Math.floor((utc2 - utc1)/_MS_PER_DAY);
+}

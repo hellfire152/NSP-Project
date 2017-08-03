@@ -18,7 +18,9 @@ html
     link#colour-scheme(href='#', rel='stylesheet')
     link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-  body(onload='displayProfile()')
+    script.
+      var profile = !{JSON.stringify(profile)}
+  body(onload= 'displayProfile(profile)')
     // Hidden Header
     .header-hidden.collapse
       .header-hidden-inner.container
@@ -77,7 +79,7 @@ html
               img.circle.responsive-img.z-depth-4(src='/resources/images/profilePic.jpg')
             .row
               .col.s3.offset-s2
-                h4#name.card-title.grey-text.text-darken-4 Bryan Tan
+                h4#name.card-title.grey-text.text-darken-4 Nigel Tan
                 p#email.medium-small.grey-text Test
               .col.s2.center-align
                 h4.card-title.grey-text.text-darken-4
@@ -101,14 +103,11 @@ html
               | My Profile
               i.material-icons.right close
             p
-              | User ID:
-              span#user_id
-            p
               | User Name:
               span#user_name
             p
               | Email Address:
-              span#email
+              span#emailAdd
             p
               | School:
               span#school

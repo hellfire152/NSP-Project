@@ -26,8 +26,8 @@ module.exports = function(data) {
     'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer, cookieValidation),
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
-    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C),
-    'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C),
+    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer),
+    'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer),
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, xssDefense, cookieValidation),
     'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C)
   };
@@ -66,19 +66,28 @@ module.exports = function(data) {
     }
 
     appConn.send({
-      'type' : C.REQ_TYPE.ACCOUNT_DETAILS,
-      'username' : req.params.username
+      'type' : C.REQ_TYPE.DATABASE,
+      'data' : {
+        'type' : C.DB.SELECT.ACCOUNT_DETAILS,
+        'username' : req.params.username
+      }
     }, (response) => {
-      let profileDetails =  {
-        'username' : response.username,
-        'email' : response.email,
-        'category' : response.category,
-        'completedQuizzes' : response.completedQuizzes,
-        'creationDate' : response.creationDate,
-        'aboutMe' : response.aboutMe,
-        'quizList' : response.quizList,
-        'achievementsList' : response.achievementsList
+      console.log(response);
+      // let profileDetails =  {
+      //   // 'username' : response.username,
+      //   // 'email' : response.email,
+      //   // 'category' : response.category,
+      //   // 'completedQuizzes' : response.completedQuizzes,
+      //   // 'creationDate' : response.creationDate,
+      //   // 'aboutMe' : response.aboutMe,
+      //   // 'quizList' : response.quizList,
+      //   // 'achievementsList' : response.achievementsList
+      // };
+      let profileDetails = {
+        'profile' : response.data.data[0]
       };
+
+      console.log(profileDetails);
 
       //viewing own profile
       if(req.validLogin && req.session.id === req.params.username) {

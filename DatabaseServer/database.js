@@ -328,6 +328,10 @@ var server = net.createServer(function(conn){
             await retrieveNewDeviceId(inputData);
             break;
           }
+          case C.DB.SELECT.ACCOUNT_DETAILS : {
+            await retrieveAccountDetails(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -700,6 +704,56 @@ async function retrieveFullAccount(inputData){
 
     }
   });
+}
+
+async function retrieveAccountDetails(inputData){
+  var data = inputData.data;
+  var query = connection.query("SELECT user_account.name, user_account.username, user_account.email, user_account.about_me,\
+    student_details.date_of_birth, student_details.school, student_details.student_category, \
+    teacher_details.organisation \
+    FROM user_account \
+    LEFT OUTER JOIN student_details \
+    ON user_account.user_id = student_details.user_id \
+    LEFT OUTER JOIN teacher_details \
+    ON user_account.user_id = teacher_details.user_id \
+    WHERE user_account.username = ?", data.username, function(error, resultArr){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      if(resultArr.length == 1){
+        var result = resultArr[0];
+        handleDb.handleFormatDisplayAccount(result)
+        .then(formatResult => {
+          handleDb.handleDecryption([formatResult])
+          .then(resultOut => {
+            objOutResult = {
+              data:{
+                data : resultOut,
+                success : true
+              }
+            }
+            sendToServer(objOutResult, inputData);
+          });
+        });
+      }
+      else{
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_NO_SUCH_USER,
+            message : "No such user in database"
+          }
+        }
+        sendToServer(response, inputData);
+      }
+    });
 }
 
 //Retrieve email for OTP

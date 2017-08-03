@@ -21,10 +21,10 @@ $('#next').click(function(){
    alert("Please pick a type of quiz!");
    return false;
   }
-  else{
-    $("#addQuestion").show();
-    $('#createQuiz').hide();
-  }
+  // else{
+  //   $("#addQuestion").show();
+  //   $('#createQuiz').hide();
+  // }
 
 //   $(document).on('click', 'input[type="checkbox"]', function() {
 //       $('input[type="checkbox"]').not(this).prop('checked', false);
