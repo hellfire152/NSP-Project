@@ -8,84 +8,91 @@ var uuid;
 var express = require('express');
 var nodemailer = require('nodemailer');
 var rateLimiters = require('./rate-limiters.js');
+var cookieValidation = require('./cookie-validation.js');
 var S;
 module.exports = function(data) {
   S = data.S;
   let {app, dirname, cipher, emailServer, appConn, cookieCipher, xssDefense, csrfProtection}
     = data;
-  const C = data.C;
+  const C = data.C;;
   uuid = data.uuid;
 
   //validators
   var validators = {
-    'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
+    // 'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
     'join-room' : require('../validators/validate-join-room.js')(cookieCipher, appConn),
     'host-room' : require('../validators/validate-host-room.js')(cookieCipher, appConn, S),
     'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C),
-    'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer),
+    'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer, cookieValidation),
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
-    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C),
-    'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C),
-    'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C),
-    'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C)
+    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer),
+    'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer),
+    'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, xssDefense, cookieValidation),
+    'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
+    // 'spamm-bot' : require('../validators/validate-spam.js')(appConn, C)
   };
 
   //routing
-  //handling requests for .html, controller, css or resource files
+  //handling requests for controller, css or resource files
   app.get('((/resources|/controller|/css)*)|/favicon.ico', function(req, res) {
-    res.sendFile(`${dirname}/site${req.path}`);
+    res.sendFile(`${dirname}/site${req.path}`, (err) => {
+      if(err) res.send('Error 404: Not Found!');
+    });
   });
   //handling all .html file requests
   app.get('*.html', function(req, res) {
-    res.sendFile(`${dirname}/site/html${req.path}`);
+    res.sendFile(`${dirname}/site/html${req.path}`, (err) => {
+      res.sendErrorPage('Error 404: Not Found!');
+    });
   });
-  //sends index.html when someone sends a https request to the root directory
+  //redirect to home page
   app.get('/', function(req, res){
-    res.sendFile(dirname + "/site/html/index.html");
+    if(req.session.validLogin) {
+      res.render('user-home');
+    } else {
+      res.render('home');
+    }
   });
-
-  // app.get('/form', csrfProtection, function(req,res){
-  //   res.render('form', {
-  //     csrfToken: req.csrfToken()
-  //   });
-  // });
-
-  app.get('/data', function(req,res){
-      cookieCipher.decryptJSON(req.cookies.encryptedDataReq)
-        .catch(reason => {
-          console.log(reason);
-        })
-        .then(function(cookieData) {
-          console.log(cookieData);
-          appConn.send({
-            'type': C.REQ_TYPE.DATABASE, //JOIN_ROOM
-            'data': cookieData.data
-          }, (response) => {
-            res.render('dbTest', {
-              data: response.data
-            });
-          });
-        });
-    // }
-  })
 
   //handling profile pages
+  app.get('/profile', (req, res) => {
+    res.redirect('/profile/0');
+  });
   app.get('/profile/:username', (req, res) => {
+    console.log(req.params);
+    //go to own profile page if logged in + no specified user profile
+    if(req.params.username == "0") {
+      if(req.session.validLogin) {
+        res.redirect(`/profile/${req.session.username}`);
+      } else {
+        res.sendErrorPage('No username specified!');
+      }
+    }
+
     appConn.send({
-      'type' : C.REQ_TYPE.ACCOUNT_DETAILS,
-      'username' : req.params.username
+      'type' : C.REQ_TYPE.DATABASE,
+      'data' : {
+        'type' : C.DB.SELECT.ACCOUNT_DETAILS,
+        'username' : req.params.username
+      }
     }, (response) => {
-      let profileDetails =  {
-        'username' : response.username,
-        'email' : response.email,
-        'category' : response.category,
-        'completedQuizzes' : response.completedQuizzes,
-        'creationDate' : response.creationDate,
-        'aboutMe' : response.aboutMe,
-        'quizList' : response.quizList,
-        'achievementsList' : response.achievementsList
+      console.log(response);
+      // let profileDetails =  {
+      //   // 'username' : response.username,
+      //   // 'email' : response.email,
+      //   // 'category' : response.category,
+      //   // 'completedQuizzes' : response.completedQuizzes,
+      //   // 'creationDate' : response.creationDate,
+      //   // 'aboutMe' : response.aboutMe,
+      //   // 'quizList' : response.quizList,
+      //   // 'achievementsList' : response.achievementsList
+      // };
+      let profileDetails = {
+        'profile' : response.data.data[0]
       };
+
+      console.log(profileDetails);
 
       //viewing own profile
       if(req.validLogin && req.session.id === req.params.username) {
@@ -165,46 +172,57 @@ module.exports = function(data) {
       res.sendErrorPage('Invalid hosting session!');
     }
   });
-  //handling Logout
-  app.get('/logout', function(req,res){
-    console.log("You have logged out!");
-    if(req.session.validLogin === true){
-      res.clearCookie('loginCookie');
-      req.session.validLogin === false;
-      res.redirect('/student-login');
-    }
-    else{
-      console.log('HUMAN.Why are you even landing here');
-    }
-
-
+  //handling logout
+  app.get('/logout', rateLimiters.logout, function(req,res){
+    req.session.destroy(function(err) {
+      if(err){
+        console.log(err);
+        console.log("WHY U STILL HERE????");
+      }
+      else{
+        console.log("successful logout!");
+        res.clearCookie("_csrf");
+        res.clearCookie("connect.sid");
+        res.clearCookie("tempToken");
+        res.clearCookie("user_info");
+        console.log("CLEAREDDDDDDDDDDDDDDDDDDD");
+        res.redirect('/student-login');
+      }
+    })
   });
-
   //handling all other requests (PUT THIS LAST)
   app.get('/*', function(req, res){
     //doing this just in case req.params has something defined for some reason
     console.log("OTHER PATH");
     console.log("GET FILE: " +req.path.substring(1));
-    res.render(req.path.substring(1));
+    //handling csrf token
+    let c = (S.INCLUDE_CSRF_TOKEN.indexOf(req.path.substring(1)) >= 0)? true : false;
+    res.render(req.path.substring(1), {
+      'csrfToken' : (c) ? req.csrfToken() : null
+    }, (err, html) => {
+      if(err) {
+        console.log(err);
+        if (err.message.indexOf('Failed to lookup view') !== -1) {
+          return res.sendErrorPage('Error 404: Not Found!');
+        }
+        throw err;
+      } else res.send(html);
+    });
   });
-
   //handling form submits
-  app.post('/data-access', validators["data-access"]);
-  app.post('/join-room', rateLimiters.join,validators["join-room"]);
-  app.post('/host-room',rateLimiters.host, validators["host-room"]);
-  app.post('/add-quiz', validators["add-quiz"]);
-  app.post('/LoginIndex', validators["login-room"]);
-  app.post('/reg-room', rateLimiters.register, validators["reg-room"]);
-  app.post('/reg-room-teach', rateLimiters.register, validators["reg-room-teach"]);
-  app.post('/change-password-room-success', validators["change-password-room"]);
-  app.post('/forget-password-room-success', validators["forget-password-room"]);
-  app.post('/otp-check', validators["otp-check"]);
-  app.post('/otp-register', validators["otp-register"]);
+  // app.post('/data-access', validators["data-access"]);
+  app.post('/join-room', rateLimiters.join, validators["join-room"]);
+  app.post('/host-room', rateLimiters.host, validators["host-room"]);
+  app.post('/add-quiz',rateLimiters.addQuiz, validators["add-quiz"]);
+  app.post('/user-home',rateLimiters.login, validators["login-room"]);
+  app.post('/student-login', rateLimiters.register, validators["reg-room"]);
+  app.post('/teacher-login', rateLimiters.register, validators["reg-room-teach"]);
+  app.post('/change-password-room-success', rateLimiters.changePassword, validators["change-password-room"]);
+  app.post('/forget-password-room-success',rateLimiters.forgetPassword,validators["forget-password-room"]);
+  app.post('/otp-check',rateLimiters.otpCheck, validators["otp-check"]);
+  app.post('/otp-register', rateLimiters.otpRegister,validators["otp-register"]);
+  // app.post('/spamming-in-progress', validators["spamm-bot"]);
   // app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
-  // app.post('/change-forget-password', require('../validate-change-forget-password.js')(cipher, appConn, C, xssDefense));
-  app.post('/process', function(req,res){
-    res.redirect('/');
-  });
 }
 
 function gameSessionCheck(req, isPlaying) {
@@ -212,5 +230,5 @@ function gameSessionCheck(req, isPlaying) {
   if(S.NO_SIMULTANEOUS_HOST_JOIN && !(!req.session.joining ^ !req.session.hosting)) {
     return false;
   }
-  return (isPlaying)? req.session.joining : req.session.hosting;
+  return (isPlaying)? req.session.joining : true;
 }

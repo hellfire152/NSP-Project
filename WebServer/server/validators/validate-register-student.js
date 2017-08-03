@@ -222,7 +222,7 @@ module.exports =function(cipher, appConn,C, emailServer){
         }
         console.log("never fill in all");
 
-        res.redirect('/registerstud');
+        res.redirect('/student-login');
 
         return;
 

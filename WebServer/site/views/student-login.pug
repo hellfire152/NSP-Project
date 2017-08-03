@@ -128,13 +128,15 @@ html
       .card
       .card
         h1.title Login
-        form#login(onsubmit='/validate-login-room', method='POST', action='/LoginIndex')
+        form#login(onsubmit='/validate-login-room', method='POST', action='/user-home')
           .input-container
-            input#username(type='text', name="username", value=`${csrfToken}`)
+            input(type='hidden', name='_csrf', value=`${csrfToken}`)
+          .input-container
+            input#username(type='text', name="username", autocomplete='off')
             label(for='Username') Username
             .bar
           .input-container
-            input#password(type='password', name ="password")
+            input#password(type='password', name ="password", autocomplete='off')
             label(for='Password') Password
             .bar
           .button-container
@@ -151,35 +153,37 @@ html
           .close
         form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
           .input-container
-            input#name(type='text', name='name', autocomplete="off", value=`${csrfToken}`)
+            input(type='hidden', name='_csrf', value=`${csrfToken}`)
+          .input-container
+            input#name(type='text', name='name', autocomplete='off')
             label(for='name') Name
             .bar
           .input-container
-            input#lusername(type='text', name='lusername', autocomplete="off", value=`${csrfToken}`)
+            input#lusername(type='text', name='lusername', autocomplete='off')
             label(for='Username') Username
             .bar
           .input-container
-            input#lpassword(type='password', name='lpassword', autocomplete="off")
+            input#lpassword(type='password', name='lpassword', autocomplete='off')
             label(for='Password') Password
             .bar
           .input-container
-            input#cpassword(type='password',  name='cpassword', autocomplete="off")
+            input#cpassword(type='password',  name='cpassword',  autocomplete='off')
             label(for='Confirm Password') Confirm Password
             .bar
           .input-container
-            input#email(type='email', name='email', autocomplete="off")
+            input#email(type='email', name='email',  autocomplete='off')
             label(for='email') Email
             .bar
           .input-container
-            input#DOB(style='width:230px;', type='date', name='DOB',min='1990-01-01',max='2011-01-15', autocomplete="off")
+            input#DOB(style='width:230px;', type='date', name='DOB',min='1990-01-01',max='2011-01-15', autocomplete='off')
             label(for='Dob') Date Of Birth
             .bar
           .input-container
-            input#school(type='text', name='school', autocomplete="off", value=`${csrfToken}`)
+            input#school(type='text', name='school',  autocomplete='off')
             label(for='school') School
             .bar
           .input-container
-            input#number.checkphone(type='text',name='number', autocomplete="off")
+            input#number.checkphone(type='text',name='number',  autocomplete='off')
             label(for='phone') Phone Number
             .bar
           .button-container

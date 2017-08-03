@@ -22,13 +22,9 @@ app.loader  //load all
   .add('blue-button', '/resources/graphics/buttons/blue-button.json')
   .add('green-button', '/resources/graphics/buttons/green-button.json')
   .add('red-button', '/resources/graphics/buttons/red-button.json')
-  .add('car-body', '/resources/graphics/car/base.png')
-  .add('car-driving', '/resources/graphics/car/driving.json')
-  .add('engine-fireup', '/resources/graphics/car/engine/fire.json')
-  .add('engine-firing', '/resources/graphics/car/engine/firing.json')
   .add('button-background', '/resources/graphics/ui/button-background.png')
   .add('topbar-background', '/resources/graphics/ui/topbar-background.png')
-  .add('answer-streak-icon', '/resources/images/answer-streak-icon.png')
+  .add('answer-streak-icon', '/resources/images/game/answer-streak-icon.png')
   .load((loader, resources) => {
     allResources = resources;
     //initialize all the various scenes

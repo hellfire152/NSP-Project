@@ -39,10 +39,77 @@ var register = new RateLimit({
   }
 });
 
-// var login = new RateList({
-//   'windowMS' : 1000 * 60 * 60,
-//
-// });
+var login = new RateLimit({
+  'windowMS' : 1000 * 60 * 60,
+  'delayAfter' : 50,
+  'delayMs' : 1000*60,
+  'message' : 'Too many login requests!',
+  'max' : 5, // testing purpose
+  'handler' : (req, res) => {
+    sendErrorPage(res);
+  }
+});
+var addQuiz = new RateLimit({
+  'windowMS' : 1000 * 60 * 60,
+  'delayAfter' : 100,
+  'delayMs' : 300,
+  'message' : 'Too many add quiz requests!',
+  'max' : 200,
+  'handler' : (req, res) => {
+    sendErrorPage(res);
+  }
+});
+var changePassword = new RateLimit({
+  'windowMS' : 1000 * 60 * 60,
+  'delayAfter' : 100,
+  'delayMs' : 300,
+  'message' : 'Too many change password requests!',
+  'max' : 100,
+  'handler' : (req, res) => {
+    sendErrorPage(res);
+  }
+});
+var forgetPassword = new RateLimit({
+  'windowMS' : 1000 * 60 * 60,
+  'delayAfter' : 100,
+  'delayMs' : 300,
+  'message' : 'Too many forget password requests!',
+  'max' : 100,
+  'handler' : (req, res) => {
+    sendErrorPage(res);
+  }
+});
+var otpCheck = new RateLimit({
+  'windowMS' : 1000 * 60 * 60,
+  'delayAfter' : 100,
+  'delayMs' : 300,
+  'message' : 'Too many OTP check requests!',
+  'max' : 100,
+  'handler' : (req, res) => {
+    sendErrorPage(res);
+  }
+});
+var otpRegister = new RateLimit({
+  'windowMS' : 1000 * 60 * 60,
+  'delayAfter' : 100,
+  'delayMs' : 300,
+  'message' : 'Too many OTP register requests!',
+  'max' : 100,
+  'handler' : (req, res) => {
+    sendErrorPage(res);
+  }
+});
+var logout = new RateLimit({
+  'windowMS' : 1000 * 60 * 60,
+  'delayAfter' : 100,
+  'delayMs' : 300,
+  'message' : 'Too many logout requests!',
+  'max' : 100,
+  'handler' : (req, res) => {
+    sendErrorPage(res);
+  }
+});
+//adding one more for profile
 function sendErrorPage(res, error) {
   res.render('error', {
     'error' : (error === undefined)?
@@ -53,5 +120,12 @@ function sendErrorPage(res, error) {
 module.exports = {
   'join' : join,
   'host' : host,
-  'register' : register
+  'register' : register,
+  'login' :login,
+  'addQuiz':addQuiz,
+  'otpCheck':otpCheck,
+  'otpRegister':otpRegister,
+  'changePassword':changePassword,
+  'forgetPassword':forgetPassword,
+  'logout':logout
 };

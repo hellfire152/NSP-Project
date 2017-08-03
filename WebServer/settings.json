@@ -12,12 +12,9 @@
     "KEY" : "./cert/private.key"
   },
   "COOKIE" : {
-    "CIPHERED" : ["login", "otp", "deviceIP", "user_info", "tempToken"],
+    "CIPHERED" : ["otp", "deviceIP", "user_info", "tempToken"],
     "KEY" : "cookieKey",
-    "IV" : "cookieIv",
-    "MAPPINGS" : {
-      "login" : "asnsdavioasnviosanvoirviwh"
-    }
+    "IV" : "cookieIv"
   },
   "EMAIL" : {
     "SERVICE" : "gmail",
@@ -30,13 +27,13 @@
       "ACCESS_TOKEN" : "ya29.GluLBIxQYjPTkuJBqVhtWukxOUB4HCKjfYIFNuNtNiEK0P_xFvttlL2Z61ezv4cvCGUYB-RP4nKkFuzXFtY_OfaHQYZi_Zl3RxaMpEhGCScsc7vYxk1kZSz-MFtV"
     }
   },
-  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login", "spam"],
+  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam"],
   "REQUIRE_VALID_LOGIN" : ["createquiz", "host", "play", "report", "hostreport", "forgetpassword", "userhome"],
   "USE_TEST_ACCOUNT" : true,
   "TEST_ACCOUNTS" : [{
-      "USERNAME" : "hellfire152"
+      "username" : "hellfire152"
     }, {
-      "USERNAME" : "psidra"
+      "username" : "psidra"
     }],
   "NO_SIMULTANEOUS_HOST_JOIN" : false,
   "CONSTANTS" : "../custom-API/constants.json",
