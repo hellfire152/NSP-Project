@@ -15,8 +15,6 @@ module.exports = function(cipher, appConn) {
       req.sanitize('room').trim();
 
       req.session.joining = true;
-      //TEST ID
-      req.session.username = req.body.id;
       res.redirect(`/play?room=${req.body.room}`);
     } else {
       res.sendErrorPage('You are not logged in!');

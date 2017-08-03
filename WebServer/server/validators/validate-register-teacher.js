@@ -17,11 +17,13 @@ module.exports =function(cipher, appConn, C, emailServer){
     var password = req.body.lpassword;
     var confirmPassword = req.body.cpassword;
     var school=req.body.school;
-    var phoneNumber=req.body.number;
+    var phoneNumber=req.body.phone;
     var speakeasy = require("speakeasy");
     var secret = speakeasy.generateSecret({length: 20}); // Secret key is 20 characters long
     var randomNum = Math.floor((Math.random() * 999999) + 10000);
     console.log(email);
+    console.log(username);
+    console.log(phoneNumber)
 
     var otp = speakeasy.totp({
         secret: secret.base32,
@@ -104,18 +106,18 @@ module.exports =function(cipher, appConn, C, emailServer){
                       username :req.body.lusername,
                       email : req.body.email,
                       password_hash : req.body.lpassword,
-                      phoneNumber: req.body.number
+                      contact: req.body.phone
                       // contact : req.body.contact TODO: FOR THE CONTACT IN DATABASE
                     },
                     details :{
                       organisation : req.body.school,
-                      otp: otp
+                      // otp: otp
                     }
                   }
 
 
                 }, (response) => {
-                  res.render('register-teacher',{
+                  res.render('teacher-login',{
                     data:response.data
                     // 'username':response.username,
                     // 'email':response.email,
@@ -129,7 +131,7 @@ module.exports =function(cipher, appConn, C, emailServer){
 
               console.log("FAIL");
 
-              res.redirect('/LoginForm');
+              res.redirect('/teacher-login');
             }
         }
 
@@ -140,7 +142,7 @@ module.exports =function(cipher, appConn, C, emailServer){
             console.log(schema.validate('password',{list:true}));
             console.log("FAIL PW");
 
-            res.redirect('/LoginForm');
+            res.redirect('/teacher-login');
 
 
           }
@@ -177,7 +179,7 @@ module.exports =function(cipher, appConn, C, emailServer){
         }
         console.log("never fill in all");
 
-        res.redirect('/LoginForm');
+        res.redirect('/teacher-login');
         return;
 
     }

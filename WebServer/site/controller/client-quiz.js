@@ -216,6 +216,8 @@ var hostedChoiceQuiz345 = [2, "Dumb", "Dumb"];
 // function changeContent(){
 //     document.getElementById('type').innerHTML =
 // }
+//
+
 function displayClientCompletedQuestion(){
 
     var index;
@@ -295,66 +297,58 @@ book.saveAs("demo.xlsx");
 
 function displayClientCompletedQuiz(client_completed_quizzes){
 
-    for(var i =0;i<client_completed_quizzes.length;i++){
-        var records = document.createElement('tr');
-        records.className = 'records';
-        var cell = document.createElement('td');
-        var obj = client_completed_quizzes[i];
-        // cell.innerHTML = obj.quiz_type.substr(0,1);
+  for(var i =0;i<client_completed_quizzes.length;i++){
+      var records = document.createElement('tr');
+      records.className = 'records';
+      var cell = document.createElement('td');
+      var obj = client_completed_quizzes[i];
+      // cell.innerHTML = obj.quiz_type.substr(0,1);
 
-        records.appendChild(cell);
+      records.appendChild(cell);
 
-        var cell1 = document.createElement('td');
-        cell1.innerHTML = obj.quiz_title;
-        records.appendChild(cell1);
+      var cell1 = document.createElement('td');
+      cell1.innerHTML = obj.quiz_title;
+      records.appendChild(cell1);
 
+      var dateCreate = new Date(obj.date_created.substr(0,4),(obj.date_created.substr(5,2)-1), obj.date_created.substr(8,2));
 
+      var duration_created = dateDiffInDays(today, dateCreate);
+      var days;
+      if(duration_created < 0){
+          days = -duration_created + " days ago";
+      }else if (duration_created ==0){
+          days = "Just now";
+      }else{
+          days = duration_created + " later";
+      }
+      console.log(days);
 
-        var dateCreate = new Date(obj.date_created.substr(0,4),(obj.date_created.substr(5,2)-1), obj.date_created.substr(8,2));
+      var cell2 = document.createElement('td');
+      cell2.innerHTML = days;
+      records.appendChild(cell2);
 
+      var cell3 = document.createElement('td');
+      cell3.innerHTML = obj.quiz_rating;
+      records.appendChild(cell3);
 
-        var duration_created = dateDiffInDays(today, dateCreate);
-        var days;
-        if(duration_created < 0){
-            days = -duration_created + " days ago";
-        }else if (duration_created ==0){
-            days = "Just now";
-        }else{
-            days = duration_created + " later";
-        }
-        console.log(days);
+      quizID[i] = obj.quiz_id;
+      console.log(quizID[i]);
 
-        var cell2 = document.createElement('td');
-        cell2.innerHTML = days;
-        records.appendChild(cell2);
+      var cell4 = document.createElement('td');
+      var button  = document.createElement('button');
+      button.className = "btn";
+      button.id = obj.quiz_id;
+      button.innerHTML="view";
+      cell4.appendChild(button);
 
-        var cell3 = document.createElement('td');
-        cell3.innerHTML = obj.quiz_rating;
-        records.appendChild(cell3);
-
-        quizID[i] = obj.quiz_id;
-        console.log(quizID[i]);
-
-        var cell4 = document.createElement('td');
-        var button  = document.createElement('button');
-        button.className = "btn";
-        button.id = obj.quiz_id;
-        button.innerHTML="view";
-        cell4.appendChild(button);
-
-         $('.btn').click(function(){
-            tempQuizID = button.id;
-            console.log(tempQuizID);
-            location.href = 'report.pug'
-        });
-        records.appendChild(cell4);
-
-
-
-        document.getElementById("testTable").appendChild(records);
-
-    }
-
+       $('.btn').click(function(){
+          tempQuizID = button.id;
+          console.log(tempQuizID);
+          location.href = 'report.pug'
+      });
+      records.appendChild(cell4);
+      document.getElementById("testTable").appendChild(records);
+  }
 }
 
 
