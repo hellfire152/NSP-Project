@@ -496,15 +496,15 @@ function displayHostedQuestion(){
 }
 
 function displayProfile(clientProfile){
-  console.log(clientProfile);
     var user_id = account[0].user_id;
     var newArr = [];
     var newStudentArr = [];
     var teachIndex;
 
     document.getElementById('name').innerHTML = clientProfile.name;
-    document.getElementById('complete_quiz').innerHTML = hostedQuiz.length; //TODO: Need to get completed quiz from database
+    document.getElementById('complete_quiz').innerHTML = clientProfile.completedQuiz.length; //TODO: Need to get completed quiz from database
 
+    //NOTE: WHAT IS THIS FOR?
     for(i =0;i<client_completed_quizzes.length;i++){
 
         if(client_completed_quizzes[i].user_id === user_id){
@@ -514,8 +514,7 @@ function displayProfile(clientProfile){
         }
     }
 
-    document.getElementById('numOfQuiz').innerHTML = newArr.length;
-
+    document.getElementById('numOfQuiz').innerHTML = clientProfile.completedQuiz.length;
     document.getElementById('email').innerHTML = clientProfile.email;
 
     for(j=0;j<studAccount.length;j++){
