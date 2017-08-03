@@ -117,7 +117,7 @@ module.exports =function(cipher, appConn, C, emailServer){
 
 
                 }, (response) => {
-                  res.render('register-teacher',{
+                  res.render('teacher-login',{
                     data:response.data
                     // 'username':response.username,
                     // 'email':response.email,
@@ -131,7 +131,7 @@ module.exports =function(cipher, appConn, C, emailServer){
 
               console.log("FAIL");
 
-              res.redirect('/LoginForm');
+              res.redirect('/teacher-login');
             }
         }
 
@@ -142,7 +142,7 @@ module.exports =function(cipher, appConn, C, emailServer){
             console.log(schema.validate('password',{list:true}));
             console.log("FAIL PW");
 
-            res.redirect('/LoginForm');
+            res.redirect('/teacher-login');
 
 
           }
@@ -179,7 +179,7 @@ module.exports =function(cipher, appConn, C, emailServer){
         }
         console.log("never fill in all");
 
-        res.redirect('/LoginForm');
+        res.redirect('/teacher-login');
         return;
 
     }

@@ -151,7 +151,7 @@ html
         h1.title
           | Register
           .close
-        form#register-student(action='/reg-room', method='post', onsubmit='/validate-register-student')
+        form#register-student(action='/student-login', method='post', onsubmit='/validate-register-student')
           .input-container
             input(type='hidden', name='_csrf', value=`${csrfToken}`)
           .input-container

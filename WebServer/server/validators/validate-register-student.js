@@ -114,7 +114,7 @@ module.exports =function(cipher, appConn,C, emailServer){
                   // 'school':school
 
                 }, (response) => {
-                  res.render('register-student',{
+                  res.render('student-login',{
                     data:response.data
                     // 'username':response.username,
                     // 'email':response.email,
@@ -130,7 +130,7 @@ module.exports =function(cipher, appConn,C, emailServer){
 
               console.log("FAIL");
               errors=true;
-              res.redirect('/registerstud');
+              res.redirect('/student-login');
             }
           }
           else{
@@ -228,7 +228,7 @@ module.exports =function(cipher, appConn,C, emailServer){
 
     }
     function sendErrorPage(res, errormsg) {
-      res.render('register-student', {
+      res.render('student-login', {
         'error': errormsg
       });
     }
