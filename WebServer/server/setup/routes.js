@@ -56,9 +56,13 @@ module.exports = function(data) {
   });
 
   //handling profile pages
+  app.get('/profile', (req, res) => {
+    res.redirect('/profile/0');
+  });
   app.get('/profile/:username', (req, res) => {
+    console.log(req.params);
     //go to own profile page if logged in + no specified user profile
-    if(req.params.username == "" || req.params.username === undefined) {
+    if(req.params.username == "0") {
       if(req.session.validLogin) {
         res.redirect(`/profile/${req.session.username}`);
       } else {
@@ -209,5 +213,5 @@ function gameSessionCheck(req, isPlaying) {
   if(S.NO_SIMULTANEOUS_HOST_JOIN && !(!req.session.joining ^ !req.session.hosting)) {
     return false;
   }
-  return (isPlaying)? req.session.joining : req.session.hosting;
+  return (isPlaying)? req.session.joining : true;
 }
