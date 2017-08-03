@@ -37,14 +37,19 @@ module.exports = function(data) {
     try {
       //let loginCookie = await getLoginCookieS(socket, cookieCipher, cookie);
       let id = socket.handshake.session.username;
-      console.log("SOCKET IO CONNECTION INITIATED BY");
-      console.log(id);
-      if(socketOfUser[id] !== undefined) { //if user with that id already exists
-        console.log('User with that ID already logged in!');
+      if(!socket.handshake.session.validLogin || id === undefined) {  //if not logged in
+        console.log('Invalid connection!');
         socket.disconnect();
+      } else {
+        console.log("SOCKET IO CONNECTION INITIATED BY");
+        console.log(id);
+        if(socketOfUser[id] !== undefined) { //if user with that id already exists
+          console.log('User with that ID already logged in!');
+          socket.disconnect();
+        }
+        socketOfUser[id] = socket;
+        socket.userId = id;
       }
-      socketOfUser[id] = socket;
-      socket.userId = id;
     } catch (err) {
       console.log(err);
       console.log("Invalid login cookie detected");

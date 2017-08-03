@@ -142,13 +142,13 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.GAME_END: {
+      //hide the other divs
+      let nextButton = document.getElementById('next-button');
+      nextButton.parentNode.removeChild(nextButton);
+      document.getElementById('game-ranking').style.display = 'none';
+
       //show end results
       gameEnd(response);
-      //top rankings
-
-      //titles and achievements
-
-      //rating
       break;
     }
     default: {

@@ -34,7 +34,7 @@ module.exports = function(data) {
   };
 
   //routing
-  //handling requests for .html, controller, css or resource files
+  //handling requests for controller, css or resource files
   app.get('((/resources|/controller|/css)*)|/favicon.ico', function(req, res) {
     res.sendFile(`${dirname}/site${req.path}`, (err) => {
       if(err) res.send('Error 404: Not Found!');

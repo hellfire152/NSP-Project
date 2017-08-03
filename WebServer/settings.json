@@ -12,12 +12,9 @@
     "KEY" : "./cert/private.key"
   },
   "COOKIE" : {
-    "CIPHERED" : ["login", "otp", "deviceIP", "user_info", "tempToken"],
+    "CIPHERED" : ["otp", "deviceIP", "user_info", "tempToken"],
     "KEY" : "cookieKey",
-    "IV" : "cookieIv",
-    "MAPPINGS" : {
-      "login" : "asnsdavioasnviosanvoirviwh"
-    }
+    "IV" : "cookieIv"
   },
   "EMAIL" : {
     "SERVICE" : "gmail",
