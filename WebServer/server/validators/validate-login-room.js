@@ -159,8 +159,19 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                                     .then((encryptedCookie) => {
                                       res.cookie('user_info', encryptedCookie);
                                       validLoginSession(req);
-                                      res.render('user-home', {
-                                        data : encodedData
+                                      appConn.send({
+                                        'type' : C.REQ_TYPE.DATABASE,
+                                        'data' : {
+                                          'type' : C.DB.SELECT.ALL_QUIZ
+                                        }
+                                      }, (response4) => {
+                                        //TODO: XSS of array of quiz data
+                                        res.render('user-home', {
+                                          data : {
+                                            userInfo : encodedData,
+                                            quizInfo : response4.data.data
+                                          }
+                                        });
                                       });
                                     });
                                   }

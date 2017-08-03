@@ -13,6 +13,10 @@ html
     link(rel='stylesheet', type='text/css', href='/resources/css/animate.css')
     link(rel='stylesheet', type='text/css', href='/resources/css/mainstyle.css')
     link(rel='stylesheet', type='text/css', href='/resources/css/LoginHome.css')
+    script.
+      var data = !{JSON.stringify(data)};
+      var Totalquiz = data.quizInfo;
+      console.log(Totalquiz);
   body
     // Hidden Header
     .header-hidden.collapse

@@ -229,7 +229,7 @@ var server = net.createServer(function(conn){
             break;
           }
           case C.DB.SELECT.ALL_QUIZ : {
-            await retrieveAllQuiz();
+            await retrieveAllQuiz(inputData);
             break;
           }
           case C.DB.SELECT.QUESTION : {
@@ -1479,8 +1479,12 @@ async function addChoices(choiceData, questionId, questionNo, inputData){
 }
 
 //Retrieve all the quiz available in the database
-async function retrieveAllQuiz(){
-  var query = connection.query('SELECT * FROM quiz ORDER BY date_created DESC', function(err, result, fields){
+async function retrieveAllQuiz(inputData){
+  var query = connection.query('SELECT quiz.*, user_account.username \
+  FROM quiz \
+  JOIN user_account \
+  ON user_account.user_id = quiz.user_id \
+  ORDER BY date_created DESC', function(err, result, fields){
 			if (err) {
         var response = {
           data : {
