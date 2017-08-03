@@ -40,7 +40,7 @@ html
                 minlength:8,
                 equalTo:"#lpassword"
               },
-              number:{
+              phone:{
                 checkphone:true
               },
               email:{
@@ -88,6 +88,8 @@ html
             h1.title Login
             form
               .input-container
+                input(type='hidden', name='_csrf', value=`${csrfToken}`)
+              .input-container
                 input#username(type='text', name='username')
                 label(for='Username') Username
                 .bar
@@ -109,16 +111,18 @@ html
               .close
             form#register-teacher(action='/reg-room-teach', method='post', onsubmit='/validate-register-teacher')
               .input-container
+                input(type='hidden', name='_csrf', value=`${csrfToken}`)
+              .input-container
                 input#name(type='text', name='name')
                 label(for='Name') Name
                 .bar
               .input-container
-                input#lusername(type='text', username='lusername')
+                input#lusername(type='text', name='lusername')
                 label(for='Username') Username
                 .bar
               .input-container
                 input#email(type='email', name='email')
-                label(for='') Email
+                label(for='Email') Email
                 .bar
               .input-container
                 input#lpassword(type='password', name='lpassword')

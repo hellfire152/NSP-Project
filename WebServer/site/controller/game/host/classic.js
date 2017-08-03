@@ -19,11 +19,11 @@ var answersObj = {};
 var currentQuestion;
 var firstQuestion = true;
 console.log('HOST: Loaded: classic gamemode handler!');
-initHost();
 function handleGame(response) {
   console.log('HOST: Handling game response!');
   switch(response.game) {
     case C.GAME_RES.GET_READY: {
+      initHost();
       document.getElementById('get-ready').style.display = true;
     }
     case C.GAME_RES.ANSWER_CHOSEN: {
@@ -94,7 +94,7 @@ function handleGame(response) {
         document.getElementById('get-ready').style.display = 'none';
       } else {
         let nextButton = document.getElementById('next-button');
-        nextButton.parentNode.removeChild(nextChild);
+        nextButton.parentNode.removeChild(nextButton);
       }
 
       currentQuestion = response.question;
@@ -142,13 +142,13 @@ function handleGame(response) {
       break;
     }
     case C.GAME_RES.GAME_END: {
+      //hide the other divs
+      let nextButton = document.getElementById('next-button');
+      nextButton.parentNode.removeChild(nextButton);
+      document.getElementById('game-ranking').style.display = 'none';
+
       //show end results
       gameEnd(response);
-      //top rankings
-
-      //titles and achievements
-
-      //rating
       break;
     }
     default: {

@@ -5,6 +5,7 @@ var mailchecker= require('mailchecker');
 var passwordValidator =require('password-validator');
 module.exports =function(cipher, appConn,C, emailServer){
   return function(req, res){
+    console.log(cipher);
     errors=false;
     var name = req.body.name;
     var username = req.body.lusername;
@@ -86,7 +87,7 @@ module.exports =function(cipher, appConn,C, emailServer){
               email : req.body.email
             }
 
-            emailServer.createAccountOtpEmail(emailObj);
+             emailServer.createAccountOtpEmail(emailObj);
 
             if(!error) {
             console.log("Creating an account: ");
@@ -221,7 +222,7 @@ module.exports =function(cipher, appConn,C, emailServer){
         }
         console.log("never fill in all");
 
-        res.redirect('/registerstud');
+        res.redirect('/student-login');
 
         return;
 

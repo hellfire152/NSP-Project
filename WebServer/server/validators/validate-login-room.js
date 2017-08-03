@@ -205,7 +205,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                     }
                   }
                   else{
-                    res.redirect('/LoginForm');
+                    res.redirect('/student-login');
                   }
                   });
                 }
@@ -252,7 +252,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
         }
         else{
           console.log("FAIL");
-          res.redirect('/LoginForm');
+          res.redirect('/student-login');
         }
       }
       else{
@@ -262,7 +262,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.redirect('/LoginForm');
+          res.redirect('/student-login');
         }
     }
     else{
@@ -277,7 +277,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
 
         console.log("never fill in all");
 
-        res.redirect('/LoginForm');
+        res.redirect('/student-login');
         return;
     }
   }
