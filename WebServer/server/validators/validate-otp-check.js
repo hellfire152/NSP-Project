@@ -14,7 +14,6 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       // var userIP = req.body.userIp;
       var userIP = req.connection.remoteAddress;
       var otpObj = req.cookies.otp.data;
-
       //Check if cookie is valid or not
       if(!cookieValidator.validateCookie(req.cookies.otp, userIP)){
         console.log("Cookie Modification detected");
@@ -91,7 +90,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                                 .then((encryptedCookie) => {
                                   res.cookie('user_info', encryptedCookie);
                                   validLoginSession(req, otpObj);
-                                  res.render('LoginIndex', {
+                                  res.render('user-home', {
                                     data : response.data
                                   });
                                 });
@@ -101,7 +100,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                                 .then((encryptedCookie) => {
                                   res.cookie('user_info', encryptedCookie);
                                   validLoginSession(req, otpObj);
-                                  res.render('LoginIndex', {
+                                  res.render('user-home', {
                                     data : response.data
                                   });
                                 });
@@ -116,7 +115,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                     .then((encryptedCookie) => {
                       res.cookie('user_info', encryptedCookie);
                       validLoginSession(req, otpObj);
-                      res.render('LoginIndex', {
+                      res.render('user-home', {
                         data : response.data
                       });
                     });
@@ -137,7 +136,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
           }
           else{
             res.clearCookie("otp");
-            res.redirect('/LoginForm');
+            res.redirect('/student-login');
           }
         }
       }

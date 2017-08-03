@@ -30,27 +30,17 @@ html
         .col.s12
           ul.tabs
             li.tab.col.s3
-              a.active(href='#test1') SMS OTP
-            li.tab.col.s3
               a(href='#test2') Email OTP
-        #test1.col.s12
-          p Enter the 6 digit One-Time-Password (OTP) sent to your mobile number
-          .input-field.col.s3
-            input#sms_otp.validate(placeholder='OTP', type='text')
-            label(for='first_name') OTP
-            a#resend_sms_otp.waves-effect.waves-light.btn Resend OTP
-          button.btn.waves-effect.waves-light(type='submit', name='action')
-            | Submit
-            i.material-icons.right send
         #test2.col.s12
           p Enter the 6 digit One-Time-Password (OTP) sent to your email address
           .input-field.col.s3
-            input#sms_otp.validate(placeholder='OTP', type='text')
-            label(for='first_name') OTP
-            a#resend_sms_otp.waves-effect.waves-light.btn Resend OTP
-          button.btn.waves-effect.waves-light(type='submit', onsubmit='/validate-otp-check', method='POST', action='/LoginIndex')
-            | Submit
-            i.material-icons.right send
+            form#login(method='POST', action='/otp-check')
+              input#sms_otp.validate(placeholder='OTP', type='text' name='otp')
+              label(for='first_name') OTP
+              input(type='hidden', name='_csrf', value=`${csrfToken}`)
+              button.btn.waves-effect.waves-light(type='submit')
+                | Submit
+                i.material-icons.right send
     script(type='text/javascript', src='/resources/js/jquery.min.js')
     script(type='text/javascript', src='/resources/js/bootstrap.min.js')
     script(type='text/javascript', src='/resources/js/materialize.min.js')
