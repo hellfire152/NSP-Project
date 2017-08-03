@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/LoginForm.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/resources/css/materialize.css">
+  </head>
+  <body>
+    <nav>
+      <div class="nav-wrapper"><a href="#" class="brand-logo">Logo</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="sass.html">Sass</a></li>
+          <li><a href="badges.html">Components</a></li>
+          <li><a href="collapsible.html">JavaScript</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <form id="createQuiz">
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="nameofQuiz">Quiz title:</label>
+              <input id="nameofQuiz" type="text" name="nameofQuiz" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="desc">Description:</label>
+              <input id="desc" type="textarea" name="desc" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label>Visibility:</label>
+              <input id="public" name="typeOfQuiz" type="radio">
+              <label for="public">Yes</label>
+              <input id="private" type="radio" name="typeOfQuiz">
+              <label for="private">No</label>
+            </div>
+            <div class="form-group">
+              <label>Question No:</label>
+              <p>Prompt</p>
+            </div>
+            <div id="next" class="form-group"><a id="quizDetails" style="margin:auto;" class="btn-floating btn-large waves-effect waves-light red prompt-open"><i class="material-icons">add</i></a>
+              <div class="wrap">
+                <div class="content">
+                  <div class="row">
+                    <form id="addQuestion">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <label>Prompt:</label>
+                          <input id="prompt" type="text" name="prompt" autocomplete="off">
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <label>Visibility:</label>
+                          <input id="mcq" name="type" type="radio" onclick="setMCQ()">
+                          <label for="mcq">MCQ</label>
+                          <input id="short-answer" type="radio" name="type" onclick="setShort()">
+                          <label for="short-answer">Short-Ans</label>
+                        </div>
+                      </div>
+                      <div id="mcqSection" class="row selection">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <input id="choice1" type="textarea" name="choices" class="choices">
+                            <input id="filled-in-box" type="checkbox" class="filled-in">
+                            <label for="filled-in-box">Filled in</label>
+                          </div>
+                          <div class="col-md-6">
+                            <input id="choice2" type="textarea" name="choices" disabled="disabled" class="choices">
+                            <input id="filled-in-box2" type="checkbox" class="filled-in">
+                            <label for="filled-in-box2">Filled in</label>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <input id="choice3" type="textarea" name="choices" disabled="disabled" class="choices">
+                            <input id="filled-in-box3" type="checkbox" name="solution" class="filled-in">
+                            <label for="filled-in-box3">Filled in</label>
+                          </div>
+                          <div class="col-md-6">
+                            <input id="choice4" type="textarea" name="choices" class="choices">
+                            <input id="filled-in-box4" type="checkbox" name="solution" class="filled-in">
+                            <label for="filled-in-box4">Filled in</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div id="shortSection" class="row selection">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <label for="shortAns">Short Answer:</label>
+                            <textarea id="shortAns" name="shortAns" class="materialize-textarea"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col-md-5">
+                          <select id="time" name="time" class="browser-default">
+                            <option value="" disabled="" selected="">Select your timing</option>
+                            <option value="5">5 seconds</option>
+                            <option value="10">10 seconds</option>
+                            <option value="15">15 seconds</option>
+                            <option value="20">20 seconds</option>
+                          </select>
+                        </div>
+                        <div class="col-md-7">
+                          <div class="form-group">
+                            <label for="reward">Specific Reward</label>
+                            <input id="reward" type="number" name="reward">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-5">
+                          <div class="form-group">
+                            <label for="penalty">Specific Penalty</label>
+                            <input id="penalty" type="number" name="penalty">
+                          </div>
+                        </div>
+                        <div class="col-md-7">
+                          <input id="cancel" type="reset" value="Add Question" onclick="addQuestion()" class="cancel">
+                          <button id="submit" type="button" name="action" onclick="sendSetQuiz()" class="btn waves-effect waves-light">Submit<i class="material-icons right">send</i></button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <form id="sendQuiz" method="POST" name="sendQuiz" action="/add-quiz">
+                    <input id="quizSet" type="hidden" name="quizSet">
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- Import jQuery before materialize.js-->
+      <script src="socket.io/socket.io.js"></script>
+      <script src="resources/pixi.js"></script>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="/resources/constants.js"></script>
+      <script src="/resources/js/addQuiz2.js"></script>
+      <script type="text/javascript" src="/resources/js/materialize.min.js"></script>
+      <script src="/resources/js/bootstrap.min.js"></script>
+      <script type="text/javascript">
+        $(document).ready(function() {
+        $('select').material_select();
+        });
+        $('a').on('click', function(){
+        $('.wrap, a').toggleClass('active');
+        return false;
+        });
+        $('.prompt-open').on('click', function(){
+        if($('.wrap').hasClass('active')){
+        $('.prompt-open').attr('z-index', '-1');
+        }
+        });
+        $('#cancel').on('click',function(){
+        $('.wrap').removeClass('active');
+        });
+        //Selection Choice
+      </script>
+    </div>
+  </body>
+</html>

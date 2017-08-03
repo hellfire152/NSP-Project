@@ -21,10 +21,10 @@ $('#next').click(function(){
    alert("Please pick a type of quiz!");
    return false;
   }
-  else{
-    $("#addQuestion").show();
-    $('#createQuiz').hide();
-  }
+  // else{
+  //   $("#addQuestion").show();
+  //   $('#createQuiz').hide();
+  // }
 
 //   $(document).on('click', 'input[type="checkbox"]', function() {
 //       $('input[type="checkbox"]').not(this).prop('checked', false);
@@ -115,10 +115,10 @@ $('#next').click(function(){
    //using constants
    $("#mcq").val(0);
    $("#short-answer").val(1);
-   $("#choice1Ans").val(C.MCQ.A);
-   $("#choice2Ans").val(C.MCQ.B);
-   $("#choice3Ans").val(C.MCQ.C);
-   $("#choice4Ans").val(C.MCQ.D);
+   $("#filled-in-box").val(C.MCQ.A);
+   $("#filled-in-box2").val(C.MCQ.B);
+   $("#filled-in-box3").val(C.MCQ.C);
+   $("#filled-in-box4").val(C.MCQ.D);
 
  }
 
@@ -205,16 +205,24 @@ function addQuestion() {
       choice.push($('#choice4').val());
   }
 
+  // function solution(){
+  //   if($('input[name="solution"]:checked').val() != undefined){
+  //     return $('input[name="solution"]:checked').val();
+  //   }
+  //   else if ($('input[name="shortAns"]').val() != undefined){
+  //     return $('input[name="shortAns"]').val();
+  //   }
+  //   else {
+  //     console.log("NO SOLUTION");
+  //     return null;
+  //   }
+  // }
   function solution(){
-    if($('input[name="solution"]:checked').val() != undefined){
-      return $('input[name="solution"]:checked').val();
+    if($("#mcq").is(":checked")){
+      
     }
-    else if ($('input[name="shortAns"]').val() != undefined){
-      return $('input[name="shortAns"]').val();
-    }
-    else {
-      console.log("NO SOLUTION");
-      return null;
+    else{
+
     }
   }
 

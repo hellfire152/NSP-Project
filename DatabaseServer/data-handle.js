@@ -85,7 +85,7 @@ async function handleRecieveAccount(data){
   console.log(data);
   dataArr.push(data); // Push to array to follow the format of encryption
   var plainData;
-  
+
   await handleDecryption(dataArr)
   .then(dataOut => {
     console.log("SALT: " + dataOut[0].salt);
@@ -105,6 +105,19 @@ async function handleRecieveAccount(data){
     console.log(reason);
   });
   return plainData;
+}
+
+async function handleFormatDisplayAccount(result){
+  console.log("INSIDE");
+  for (var key in result) {
+    if (result.hasOwnProperty(key)) {
+      console.log(key);
+      if(result[key] == null || result[key].length == 0){
+        delete result[key]
+      }
+    }
+  }
+  return result
 }
 
 //Seperate the words in a string of text, and the store each individual word in an array.
@@ -163,6 +176,7 @@ async function handleEncryption(data){
 }
 
 async function handleDecryption(data){
+  console.log(data);
   // return data; //For testing purposes where data will not be decrypted before processing data to client
   var plainData;
   await databaseCipher.decryptDbData(data)
@@ -185,6 +199,7 @@ module.exports = function(data) {
     'handleDecryption' : handleDecryption,
     'handleHashPass' : handleHashPass,
     'handleDeleteAccount' : handleDeleteAccount,
-    'handleHashIP' : handleHashIP
+    'handleHashIP' : handleHashIP,
+    'handleFormatDisplayAccount' : handleFormatDisplayAccount
   }
 }

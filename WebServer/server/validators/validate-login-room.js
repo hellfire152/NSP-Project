@@ -21,42 +21,39 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     // TODO: AUTO LOGIN FUNCTION
     // Check the integrity if the cookie
     if(req.cookies.tempToken != undefined){
-      cipher.decryptJSON(req.cookies.tempToken) //NOTE: AUTO DECRYPT DOES NOT SEEM TO WORK TODO: NEED TO FIX THIS
-      .then(tempTokenData => {
-        if(cookieValidator.validateCookie(tempTokenData)){
-          var tempData = tempTokenData.data;
-          console.log(tempData);
-          appConn.send({
-            // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
-            'type':C.REQ_TYPE.DATABASE,
-            'data': {
-              'type' : C.DB.SELECT.TEMP_TOKEN,
-              //This is just the cookie obj
-              'inputData' : {
-                'temp_token' : tempData.temp_token,
-                'ip_address' : tempData.ip_address,
-                'user_id' : tempData.user_id,
-                'new_device_id' : tempData.new_device_id
-              }
+      if(cookieValidator.validateCookie(req.cookies.tempToken)){
+        var tempData = req.cookies.tempToken.data;
+        console.log(tempData);
+        appConn.send({
+          // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+          'type':C.REQ_TYPE.DATABASE,
+          'data': {
+            'type' : C.DB.SELECT.TEMP_TOKEN,
+            //This is just the cookie obj
+            'inputData' : {
+              'temp_token' : tempData.temp_token,
+              'ip_address' : tempData.ip_address,
+              'user_id' : tempData.user_id,
+              'new_device_id' : tempData.new_device_id
             }
-          }, (response) => {
-            //NOTE: If authenticate pass, response.data.success = true
-            //NOTE: If authenticate fail, response.data.success = false
-            console.log("SUCCESS YAY");
-            console.log(response.data.success);
-            if(response.data.success){
-              //PROCESS DATA
-            }
-            else{
-              res.clearCookie("tempToken");
-            }
-          });
-        }
-      });
+          }
+        }, (response) => {
+          //NOTE: If authenticate pass, response.data.success = true
+          //NOTE: If authenticate fail, response.data.success = false
+          console.log("SUCCESS YAY");
+          console.log(response.data.success);
+          if(response.data.success){
+            //PROCESS DATA
+          }
+          else{
+            res.clearCookie("tempToken");
+          }
+        });
+      }
     }
     //END OF AUTO LOGIN FUNCTION
 
-    if (username!=""  && password!=""){
+    if (username != "" && password != ""){
       var schema = new passwordValidator();
       schema
       .is().min(8)
@@ -65,13 +62,13 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
       .has().digits()
       .has().not().spaces();
 
-      var passwordCheck=schema.validate(password);
+      var passwordCheck = schema.validate(password);
       var error = req.validationErrors();
 
       if (passwordCheck){
         if(!error){
           console.log("HOST FORM DATA: ");
-
+            //check for a valid deviceIP cookie
             if(req.cookies.deviceIP != undefined){
               if(cookieValidator.validateCookie(req.cookies.deviceIP))
                 var deviceIp = req.cookies.deviceIP.data;
@@ -92,13 +89,13 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
             }, (response) => {
               //If incorrect user input return to login page
               if(!(response.data.success)){
-                res.redirect('/student-login');
+                res.sendErrorPage('Invalid login details!');
               }
-              else{
+              else {
                 //Check for identical IP address in user cookie
                 var valid = false; //Registered IP address in client PC
                 if(deviceIp != undefined && response.data.data.ip_address != undefined){
-                  var currentIpAddress = crypto.createHash('SHA256').update(userIP).digest('base64'); //NOTE: Temp solution
+                  var currentIpAddress = crypto.createHash('SHA256').update(userIP).digest('base64');
                     outerloop:
                       for(i=0 ; i<response.data.data.ip_address.length ; i++){
                         for(j=0 ; j<deviceIp.length ; j++){
@@ -161,7 +158,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                                     cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                                     .then((encryptedCookie) => {
                                       res.cookie('user_info', encryptedCookie);
-                                      res.render('LoginIndex', {
+                                      validLoginSession(req);
+                                      res.render('user-home', {
                                         data : encodedData
                                       });
                                     });
@@ -170,7 +168,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                                     cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                                     .then((encryptedCookie) => {
                                       res.cookie('user_info', encryptedCookie);
-                                      res.render('LoginIndex', {
+                                      validLoginSession(req);
+                                      res.render('user-home', {
                                         data : encodedData
                                       });
                                     });
@@ -187,18 +186,19 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                       cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                       .then((encryptedCookie) => {
                         res.cookie('user_info', encryptedCookie);
-                        res.render('LoginIndex', {
+                        validLoginSession(req);
+                        res.render('user-home', {
                           data : encodedData
                         });
                       });
                     }
                   }
                   else{
-                    res.redirect('/student-login');
+                    res.redirect('/LoginForm');
                   }
                   });
                 }
-                else{
+                else {
                   var randomNum = Math.floor((Math.random() * 999999) + 10000);
                   console.log("THIS IS THE PIN: " + randomNum);
 
@@ -251,7 +251,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.redirect('/student-login');
+          res.redirect('/LoginForm');
         }
     }
     else{
@@ -266,8 +266,13 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
 
         console.log("never fill in all");
 
-        res.redirect('/student-login');
+        res.redirect('/LoginForm');
         return;
     }
   }
+}
+
+function validLoginSession(req) {
+  req.session.validLogin = true;
+  req.session.username = req.body.username;
 }

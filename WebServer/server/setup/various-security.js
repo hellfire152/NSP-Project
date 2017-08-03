@@ -31,7 +31,7 @@ module.exports = function(data) {
 
   app.use(helmet()); //adds a bunch of security features
   app.use(invalidCsrfToken);
-  app.use(attachCsrfToken);
+  //app.use(attachCsrfToken);
   return { //in case there's any function you need outside here
   }
 }

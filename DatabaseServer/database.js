@@ -215,6 +215,10 @@ var server = net.createServer(function(conn){
     } else {  //ALEADY AUTHENTICATED
       try {
         switch(inputData.data.type) {
+          case C.DB.VALIDATE_LOGIN : {
+            validateAccount(inputData);
+            break;
+          }
           case C.DB.CREATE.STUDENT_ACC :
           case C.DB.CREATE.TEACHER_ACC : {
             await createAccount(inputData);
@@ -322,6 +326,14 @@ var server = net.createServer(function(conn){
           }
           case C.DB.SELECT.NEW_DEVICE_ID : {
             await retrieveNewDeviceId(inputData);
+            break;
+          }
+          case C.DB.SELECT.ACCOUNT_DETAILS : {
+            await retrieveAccountDetails(inputData);
+            break;
+          }
+          case C.DB.SELECT.LOG_QUIZ : {
+            await getLogQuiz(inputData);
             break;
           }
           default : {
@@ -695,6 +707,94 @@ async function retrieveFullAccount(inputData){
 
     }
   });
+}
+
+async function retrieveAccountDetails(inputData){
+  var data = inputData.data;
+  var query = connection.query("SELECT user_account.name, user_account.username, user_account.email, user_account.about_me,\
+    student_details.date_of_birth, student_details.school, student_details.student_category, \
+    teacher_details.organisation \
+    FROM user_account \
+    LEFT OUTER JOIN student_details \
+    ON user_account.user_id = student_details.user_id \
+    LEFT OUTER JOIN teacher_details \
+    ON user_account.user_id = teacher_details.user_id \
+    WHERE user_account.username = ?", data.username, function(error, resultArr){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      if(resultArr.length == 1){
+        var result = resultArr[0];
+        handleDb.handleFormatDisplayAccount(result)
+        .then(formatResult => {
+          handleDb.handleDecryption([formatResult])
+          .then(resultOut => {
+
+            var query2 = connection.query("SELECT quiz.quiz_id, quiz.quiz_title, quiz.visibility, quiz.description, quiz.reward, quiz.quiz_rating, quiz.date_created \
+              FROM quiz \
+              JOIN user_account\
+              ON user_account.user_id  = quiz.user_id \
+              WHERE user_account.username = ? ", data.username, function(error, quizResult){
+                if(error){
+                  var response = {
+                    data : {
+                      success : false,
+                      reason : C.ERR.DB_SQL_QUERY,
+                      message : error
+                    }
+                  }
+                  sendToServer(response, inputData);
+                }
+                resultOut[0].hostedQuiz = quizResult;
+
+                var query3 = connection.query("SELECT quiz.quiz_id, quiz.visibility, quiz.description, quiz.quiz_title, quiz.reward, quiz.quiz_rating, quiz.date_created\
+                  FROM quiz\
+                  JOIN user_account\
+                  ON quiz.user_id = user_account.user_id\
+                  JOIN log_quiz\
+                  ON log_quiz.user_id = quiz.user_id AND log_quiz.quiz_id = quiz.quiz_id\
+                  WHERE user_account.username = ?", data.username, function(error, completedQuizResult){
+                    if(error){
+                      var response = {
+                        data : {
+                          success : false,
+                          reason : C.ERR.DB_SQL_QUERY,
+                          message : error
+                        }
+                      }
+                      sendToServer(response, inputData);
+                    }
+                    resultOut[0].completedQuiz = completedQuizResult;
+                    objOutResult = {
+                      data:{
+                        data : resultOut,
+                        success : true
+                      }
+                    }
+                    sendToServer(objOutResult, inputData);
+                  });
+              });
+          });
+        });
+      }
+      else{
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_NO_SUCH_USER,
+            message : "No such user in database"
+          }
+        }
+        sendToServer(response, inputData);
+      }
+    });
 }
 
 //Retrieve email for OTP
@@ -1703,6 +1803,28 @@ async function addLogQuestion(logQuestion, data, quizId){
       }
     });
   })
+}
+
+async function getLogQuiz(inputData){
+  var data = inputData.data;
+  var query3 = connection.query("SELECT quiz.quiz_id, quiz.visibility, quiz.description, quiz.quiz_title, quiz.reward, quiz.quiz_rating, quiz.date_created\
+    FROM quiz\
+    JOIN user_account\
+    ON quiz.user_id = user_account.user_id\
+    JOIN log_quiz\
+    ON log_quiz.user_id = quiz.user_id AND log_quiz.quiz_id = quiz.quiz_id\
+    WHERE user_account.username = ?", data.username, function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+    });
 }
 
 //This is a showcase of spambot fucnction

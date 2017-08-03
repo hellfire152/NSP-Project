@@ -14,12 +14,11 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       // var userIP = req.body.userIp;
       var userIP = req.connection.remoteAddress;
       var otpObj = req.cookies.otp.data;
-
       //Check if cookie is valid or not
       if(!cookieValidator.validateCookie(req.cookies.otp, userIP)){
         console.log("Cookie Modification detected");
         res.clearCookie("otp");
-        res.redirect('/LoginForm');
+        res.sendErrorPage("Cookie modification detected");
       }
       else{
         if(userOTP == otpObj.pin){
@@ -90,7 +89,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                               cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                                 .then((encryptedCookie) => {
                                   res.cookie('user_info', encryptedCookie);
-                                  res.render('LoginIndex', {
+                                  validLoginSession(req, otpObj);
+                                  res.render('user-home', {
                                     data : response.data
                                   });
                                 });
@@ -99,7 +99,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                               cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                                 .then((encryptedCookie) => {
                                   res.cookie('user_info', encryptedCookie);
-                                  res.render('LoginIndex', {
+                                  validLoginSession(req, otpObj);
+                                  res.render('user-home', {
                                     data : response.data
                                   });
                                 });
@@ -113,7 +114,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                   cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
                     .then((encryptedCookie) => {
                       res.cookie('user_info', encryptedCookie);
-                      res.render('LoginIndex', {
+                      validLoginSession(req, otpObj);
+                      res.render('user-home', {
                         data : response.data
                       });
                     });
@@ -134,10 +136,14 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
           }
           else{
             res.clearCookie("otp");
-            res.redirect('/LoginForm');
+            res.redirect('/student-login');
           }
         }
       }
     }
   }
+}
+function validLoginSession(req, otpObj) {
+  req.session.validLogin = true;
+  req.session.username = otpObj['user_id'];
 }
