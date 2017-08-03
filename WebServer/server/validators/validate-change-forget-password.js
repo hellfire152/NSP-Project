@@ -1,11 +1,12 @@
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn,C,emailServer){
+module.exports =function(cipher, appConn,C){
   return function(req, res){
     //TODO: Please do all sort of validation here
     var newPassword = req.body.newPassword;
     var confirmPassword = req.body.confirmPassword;
     var userId = JSON.parse(req.cookies.temp_user_id).user_id;
+
 
     req.sanitize('newPassword').escape();
     req.sanitize('confirmPassword').escape();
