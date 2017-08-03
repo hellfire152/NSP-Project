@@ -215,10 +215,10 @@ var server = net.createServer(function(conn){
     } else {  //ALEADY AUTHENTICATED
       try {
         switch(inputData.data.type) {
-          case C.DB.VALIDATE_LOGIN : {
-            validateAccount(inputData);
-            break;
-          }
+          // case C.DB.VALIDATE_LOGIN : {
+          //   validateAccount(inputData);
+          //   break;
+          // }
           case C.DB.CREATE.STUDENT_ACC :
           case C.DB.CREATE.TEACHER_ACC : {
             await createAccount(inputData);
@@ -1654,7 +1654,7 @@ async function retrieveQuestions(inputData){
   FROM quiz\
   LEFT OUTER JOIN user_account\
     ON user_account.user_id = quiz.user_id\
-  WHERE quiz.quiz_id = '" + quizId + "'", function(err, result){
+  WHERE quiz.quiz_id = '" + connection.escape(quizId) + "'", function(err, result){
     if(err){
       var response = {
         data : {
@@ -1676,7 +1676,7 @@ async function retrieveQuestions(inputData){
   FROM quiz_question\
   LEFT OUTER JOIN quiz_question_choices\
     ON quiz_question.question_id = quiz_question_choices.question_id\
-  WHERE quiz_question.quiz_id = '" + quizId + "'\
+  WHERE quiz_question.quiz_id = '" + connection.escape(quizId) + "'\
   ORDER BY quiz_question.question_no",
   async function(err, result, fields){
 			if (!err) { //result = data recieve from database
