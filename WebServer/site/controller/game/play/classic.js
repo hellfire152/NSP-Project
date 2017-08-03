@@ -17,7 +17,7 @@ function handleGame(response) {
       document.body.innerHTML = ''; //clear the html body
       document.body.appendChild(app.renderer.view); //add the game view
       totalQuestions = response.totalQuestions;
-      pixiScenes.answering.allPlayerRanking.totalQuestions = totalQuestions;
+      pixiScenes.ranking.allPlayerRanking.totalQuestions = totalQuestions;
       swapScene('getReady');
       break;
     }
