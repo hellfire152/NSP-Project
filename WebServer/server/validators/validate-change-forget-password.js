@@ -69,6 +69,7 @@ module.exports =function(cipher, appConn,C){
                     }
                     else {
                       console.log("Return false!");
+                      console.log("HI");
                     }
                   //NOTE: If successful, response.data.success return TRUE
                   //NOTE: If failed, response.data.success return FALSE
