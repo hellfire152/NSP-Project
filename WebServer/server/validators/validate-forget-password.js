@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator = require('password-validator');
-module.exports = function(cipher, appConn, C,emailServer) {
+module.exports = function(cipher, appConn, C,emailServer, cookieValidator) {
   return function(req, res){
     console.log(`CIPHER MODULE: ${cipher}`);
     var username = req.body.username;
@@ -31,6 +31,7 @@ module.exports = function(cipher, appConn, C,emailServer) {
           email : email
         }
       } ,(response) => {
+        console.log(response);
         if(response.data.success){
           var otp = {
             pin : randomNum,
@@ -41,8 +42,13 @@ module.exports = function(cipher, appConn, C,emailServer) {
           //TODO: Send the randomNum to client email
           emailServer.forgetPasswordOtpEmail(emailObj);
           req.session.otpSession = true; //Open the session
-          res.cookie('otp', JSON.stringify(otp), {"maxAge": 1000*60*5}); //5 min
-          res.redirect('/otp-ForgetPassword');
+
+          cipher.encryptJSON(cookieValidator.generateCheckCookie(otp))
+          .then((encryptedCookie) => {
+
+            res.cookie('otp', encryptedCookie, {"maxAge": 1000*60*5}); //5 min
+            res.redirect('/otp-ForgetPassword');
+          });
         }
         else{
           req.session.otpSession = undefined; //Close the session

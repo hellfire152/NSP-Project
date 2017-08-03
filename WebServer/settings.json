@@ -12,7 +12,7 @@
     "KEY" : "./cert/private.key"
   },
   "COOKIE" : {
-    "CIPHERED" : ["login", "otp", "deviceIP", "user_info", "tempToken"],
+    "CIPHERED" : ["login", "otp", "deviceIP", "user_info", "tempToken", "temp_user_id"],
     "KEY" : "cookieKey",
     "IV" : "cookieIv",
     "MAPPINGS" : {

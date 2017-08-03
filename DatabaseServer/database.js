@@ -990,6 +990,8 @@ async function retrieveUserDetails(inputData){
   await handleDb.handleEncryption(data)
   .then(dataOut => {
     var query = connection.query("SELECT user_id FROM user_account WHERE username = ? AND email = ?", [dataOut.username, dataOut.email], function(error, result){
+      console.log(query);
+      console.log(result);
       if(error){
         var response = {
           data : {
@@ -1013,6 +1015,7 @@ async function retrieveUserDetails(inputData){
       else if(result.length === 1){
         var response = {
           data : {
+            user_id : result[0].user_id,
             success : true,
             message : "Input correct"
           }
@@ -1040,6 +1043,7 @@ async function changePassword(inputData){
       handleDb.handleEncryption(dataOut.account)
       .then(dataOutAccountEncrypt => {
         var query = connection.query("UPDATE user_account SET password_hash = ?, salt = ? WHERE user_id = ?",[dataOutAccountEncrypt.password_hash, dataOutAccountEncrypt.salt, dataOutAccountEncrypt.user_id] , function(error, result){
+          console.log(query);
           if(error){
             var response = {
               data : {
@@ -1084,93 +1088,92 @@ async function changePassword(inputData){
     });
   }
 
-//Update password,
-//New salt will be generated and hash accordingly.
-//All new data will be encrypted.
-async function updatePassword(inputData){
-  var data = inputData.data;
-  var query = connection.query("SELECT salt FROM user_account WHERE user_id = " + connection.escape(data.verify.user_id), function(error, result){
-    if(error){
-      console.error('[Error in query]: ' + error);
-      var response = {
-        data : {
-          success : false,
-          reason : C.ERR.DB_SQL_QUERY,
-          message : error
+  //Update password,
+  //New salt will be generated and hash accordingly.
+  //All new data will be encrypted.
+  async function updatePassword(inputData){
+    var data = inputData.data;
+    var query = connection.query("SELECT salt FROM user_account WHERE user_id = " + connection.escape(data.verify.user_id), function(error, result){
+      if(error){
+        console.error('[Error in query]: ' + error);
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
         }
+        sendToServer(response, inputData);
       }
-      sendToServer(response, inputData);
-    }
-    handleDb.handleDecryption(result)
-    .then(decryptSalt => {
-      data.verify.salt = decryptSalt[0].salt;
-      handleDb.handleHashPass(data)
-      .then(dataOut =>{
-        // console.log(dataOut);
-        delete data.verify.salt;
-        handleDb.handleEncryption(dataOut.verify)
-        .then(dataOutEncrypted => {
-          dataOut.verify = dataOutEncrypted;
-          dataOut.account.user_id = dataOut.verify.user_id;
-          var query = connection.query("SELECT username FROM user_account\
-            WHERE user_id = " + connection.escape(dataOut.verify.user_id) + " AND password_hash = " + connection.escape(dataOut.verify.password_hash), function(error, result){
-            if(error){
-              console.error('[Error in query]: ' + error);
-              var response = {
-                data : {
-                  success : false,
-                  reason : C.ERR.DB_SQL_QUERY,
-                  message : error
+      handleDb.handleDecryption(result)
+      .then(decryptSalt => {
+        data.verify.salt = decryptSalt[0].salt;
+        handleDb.handleHashPass(data)
+        .then(dataOut =>{
+          // console.log(dataOut);
+          delete data.verify.salt;
+          handleDb.handleEncryption(dataOut.verify)
+          .then(dataOutEncrypted => {
+            dataOut.verify = dataOutEncrypted;
+            dataOut.account.user_id = dataOut.verify.user_id;
+            var query = connection.query("SELECT username FROM user_account\
+              WHERE user_id = " + connection.escape(dataOut.verify.user_id) + " AND password_hash = " + connection.escape(dataOut.verify.password_hash), function(error, result){
+              if(error){
+                console.error('[Error in query]: ' + error);
+                var response = {
+                  data : {
+                    success : false,
+                    reason : C.ERR.DB_SQL_QUERY,
+                    message : error
+                  }
                 }
+                sendToServer(response, inputData);
               }
-              sendToServer(response, inputData);
-            }
-            if(result.length === 1){
-              handleDb.handlePassword(dataOut)
-              .then(dataAccount => {
-                handleDb.handleEncryption(dataAccount.account)
-                .then(dataAccountEncrypt => {
-                  var query = connection.query("UPDATE user_account SET password_hash = " + connection.escape(dataAccountEncrypt.password_hash) + " , salt = " + connection.escape(dataAccountEncrypt.salt) +
-                  " WHERE user_id = " + connection.escape(dataAccountEncrypt.user_id), function(error, result){
-                    if(error){
-                      console.error('[Error in query]: ' + error);
+              if(result.length === 1){
+                handleDb.handlePassword(dataOut)
+                .then(dataAccount => {
+                  handleDb.handleEncryption(dataAccount.account)
+                  .then(dataAccountEncrypt => {
+                    var query = connection.query("UPDATE user_account SET password_hash = " + connection.escape(dataAccountEncrypt.password_hash) + " , salt = " + connection.escape(dataAccountEncrypt.salt) +
+                    " WHERE user_id = " + connection.escape(dataAccountEncrypt.user_id), function(error, result){
+                      if(error){
+                        console.error('[Error in query]: ' + error);
+                        var response = {
+                          data : {
+                            success : false,
+                            reason : C.ERR.DB_SQL_QUERY,
+                            message : error
+                          }
+                        }
+                        sendToServer(response, inputData);
+                      }
                       var response = {
                         data : {
-                          success : false,
-                          reason : C.ERR.DB_SQL_QUERY,
-                          message : error
+                          success : true,
+                          message : "Password updated"
                         }
                       }
                       sendToServer(response, inputData);
-                    }
-                    var response = {
-                      data : {
-                        success : true,
-                        message : "Password updated"
-                      }
-                    }
-                    sendToServer(response, inputData);
+                    });
                   });
                 });
-              });
-            }
-            else {
-              var response = {
-                data : {
-                  success : false,
-                  reason : C.ERR.DB_PASSWORD_INCORRECT,
-                  message : "Incorrect password"
-                }
               }
-              sendToServer(response, inputData);
-            }
+              else {
+                var response = {
+                  data : {
+                    success : false,
+                    reason : C.ERR.DB_PASSWORD_INCORRECT,
+                    message : "Incorrect password"
+                  }
+                }
+                sendToServer(response, inputData);
+              }
+            });
           });
         });
       });
     });
-  });
-}
-
+  }
 
 async function updateName(inputData){
   data = inputData.data;

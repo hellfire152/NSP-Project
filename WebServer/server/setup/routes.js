@@ -26,10 +26,10 @@ module.exports = function(data) {
     'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer, cookieValidation),
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
-    'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer),
+    'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidation),
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, xssDefense, cookieValidation),
     'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
-    'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer),
+    'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidation),
     'change-forget-password' : require('../validators/validate-change-forget-password.js')(cookieCipher, appConn,C)
     // 'spam-bot' : require('../validators/validate-spam.js')(appConn, C)
   };
