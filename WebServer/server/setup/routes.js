@@ -30,7 +30,7 @@ module.exports = function(data) {
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, xssDefense, cookieValidation),
     'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer),
-    'change-forget-password' : require('../validators/validate-change-forget-password.js')(cookieCipher, appConn,C,emailServer)
+    'change-forget-password' : require('../validators/validate-change-forget-password.js')(cookieCipher, appConn,C)
     // 'spam-bot' : require('../validators/validate-spam.js')(appConn, C)
   };
 
