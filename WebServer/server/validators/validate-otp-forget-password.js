@@ -9,7 +9,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
 
     if(errors) {
       //TODO::Handle errors
-      res.sendErrorPage('IDK WHY YOURE HERE');
+
     } else {
       var userOTP = req.body.otp;
       var otpObj = req.cookies.otp.data
