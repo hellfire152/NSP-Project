@@ -180,9 +180,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                                     .then((encryptedCookie) => {
                                       res.cookie('user_info', encryptedCookie);
                                       validLoginSession(req);
-                                      res.render('user-home', {
-                                        data : encodedData
-                                      });
+                                      res.redirect('/');
                                     });
                                   }
                                 });
@@ -198,9 +196,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                       .then((encryptedCookie) => {
                         res.cookie('user_info', encryptedCookie);
                         validLoginSession(req);
-                        res.render('user-home', {
-                          data : encodedData
-                        });
+                        res.redirect('/');
                       });
                     }
                   }
@@ -244,6 +240,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                     .then(function(cookieData) {
                       //TODO: OPEN SESSION
                     res.cookie('otp', cookieData, {"maxAge": 1000*60*60}); //one hour
+                    req.session.tempUsername = req.body.username;
                     res.redirect('/otp');
                   });
                 }

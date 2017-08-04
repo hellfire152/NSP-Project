@@ -170,7 +170,7 @@ function initHost() {
   let gameRankingDiv = document.createElement('div');
   gameRankingDiv.id = 'game-ranking';
   let rankingText = createNode('h1', 'Rankings:', 'game-ranking', 'game-ranking-header');
-  gaemRankingDiv.appendChild(rankingText);
+  gameRankingDiv.appendChild(rankingText);
 
   gameRankingDiv.style.display =
     currentQuestionDiv.style.display = 'none';
