@@ -9,8 +9,9 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
 
 
     if(errors) {
-      //TODO::Handle errors
-    } else {
+      if(!(response.data.success)){
+        res.sendErrorPage('Error 404: Not found!');
+      } else {
       var userOTP = req.body.otp;
       // var userIP = req.body.userIp;
       var userIP = req.connection.remoteAddress;

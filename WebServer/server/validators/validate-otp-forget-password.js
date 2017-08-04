@@ -8,8 +8,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
     var errors = req.validationErrors();
 
     if(errors) {
-      //TODO::Handle errors
-
+      if(!(response.data.success)){
+        res.sendErrorPage('Error 404: Not found!');
     } else {
       var userOTP = req.body.otp;
       var otpObj = req.cookies.otp.data
