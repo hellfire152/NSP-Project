@@ -59,66 +59,26 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                       res.cookie('deviceIP', encryptedCookie, {"maxAge" : 1000 * 60 * 60 * 24 * 30}); //30 days
                     });
                 }
-
-                //Generate super random token form auto login function if user check "Auto login function"
-                if(true){ //If user check rmb me functionW
-                  cipher.generateSalt()
-                  .then(randomSaltValue1 => {
-                    cipher.generateSalt()
-                    .then(randomSaltValue2 => {
-                      randomSaltValue = randomSaltValue1 + randomSaltValue2;
-                      cipher.encryptJSON(cookieValidator.generateCheckCookie({
-                        'temp_token' : randomSaltValue,
-                        'ip_address' : response2.data.data.hashedIpAddress,
-                        'user_id' : otpObj.user_id,
-                        'new_device_id' : response2.data.data.newDeviceId
-                      }))
-                        .then((encryptedCookie) => {
-                          //TODO: UPDATE DATABASE
-                          console.log("SETTING COOKIE TEMP");
-                          res.cookie('tempToken', encryptedCookie); // TODO: SET TIME OUT
-                          appConn.send({
-                            'type' : C.REQ_TYPE.DATABASE,
-                            'data' : {
-                              'type' : C.DB.UPDATE.TEMP_TOKEN,
-                              'temp_token' : randomSaltValue,
-                              'new_device_id' : response2.data.data.newDeviceId
-                            }
-                          }, (response3) => {
-                            if(response3.data.success){
-                              cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
-                                .then((encryptedCookie) => {
-                                  res.cookie('user_info', encryptedCookie);
-                                  req.session.otpSession = true;
-                                  validLoginSession(req);
-                                  res.redirect('/');
-                                });
-                            }
-                            else{
-                              cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
-                                .then((encryptedCookie) => {
-                                  res.cookie('user_info', encryptedCookie);
-                                  req.session.otpSession = true;
-                                  validLoginSession(req);
-                                  res.redirect('/');
-                                });
-                            }
-                          });
-                        });
-                    });
-                  });
-                }
-                else{
-                  cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
-                    .then((encryptedCookie) => {
-                      res.cookie('user_info', encryptedCookie);
-                      req.session.otpSession = undefined; //Close the session
-                      validLoginSession(req, otpObj);
+                cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
+                  .then((encryptedCookie) => {
+                    res.cookie('user_info', encryptedCookie);
+                    req.session.otpSession = undefined; //Close the session
+                    validLoginSession(req, otpObj);
+                    appConn.send({
+                      'type' : C.REQ_TYPE.DATABASE,
+                      'data' : {
+                        'type' : C.DB.SELECT.ALL_QUIZ
+                      }
+                    }, (response4) => {
+                      //TODO: XSS of array of quiz data
                       res.render('user-home', {
-                        data : response.data
+                        data : {
+                          userInfo : encodedData,
+                          quizInfo : response4.data.data
+                        }
                       });
                     });
-                }
+                  });
               });
           });
         }
