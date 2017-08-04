@@ -135,7 +135,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
               .then((encryptedCookie) => {
                 req.session.otpSession = true; //Open the session
                 res.cookie('otp', encryptedCookie, {"maxAge" : 1000 * 60 * 5}) //5 min
-                res.redirect('/otp');
+                res.redirect('/student-login'); // redirect to student login so they can get a new otp
               });
           }
           else{
