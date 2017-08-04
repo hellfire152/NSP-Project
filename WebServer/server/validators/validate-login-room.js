@@ -159,8 +159,19 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                                     .then((encryptedCookie) => {
                                       res.cookie('user_info', encryptedCookie);
                                       validLoginSession(req);
-                                      res.render('user-home', {
-                                        data : encodedData
+                                      appConn.send({
+                                        'type' : C.REQ_TYPE.DATABASE,
+                                        'data' : {
+                                          'type' : C.DB.SELECT.ALL_QUIZ
+                                        }
+                                      }, (response4) => {
+                                        //TODO: XSS of array of quiz data
+                                        res.render('user-home', {
+                                          data : {
+                                            userInfo : encodedData,
+                                            quizInfo : response4.data.data
+                                          }
+                                        });
                                       });
                                     });
                                   }
@@ -194,7 +205,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                     }
                   }
                   else{
-                    res.redirect('/LoginForm');
+                    res.redirect('/student-login');
                   }
                   });
                 }
@@ -231,6 +242,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                       throw new Error('Error parsing JSON!');
                     })
                     .then(function(cookieData) {
+                      //TODO: OPEN SESSION
                     res.cookie('otp', cookieData, {"maxAge": 1000*60*60}); //one hour
                     res.redirect('/otp');
                   });
@@ -241,7 +253,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
         }
         else{
           console.log("FAIL");
-          res.redirect('/LoginForm');
+          res.redirect('/student-login');
         }
       }
       else{
@@ -251,7 +263,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.redirect('/LoginForm');
+          res.redirect('/student-login');
         }
     }
     else{
@@ -266,7 +278,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
 
         console.log("never fill in all");
 
-        res.redirect('/LoginForm');
+        res.redirect('/student-login');
         return;
     }
   }

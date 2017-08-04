@@ -5,6 +5,7 @@ var mailchecker= require('mailchecker');
 var passwordValidator =require('password-validator');
 module.exports =function(cipher, appConn,C, emailServer){
   return function(req, res){
+    console.log(cipher);
     errors=false;
     var name = req.body.name;
     var username = req.body.lusername;
@@ -86,7 +87,7 @@ module.exports =function(cipher, appConn,C, emailServer){
               email : req.body.email
             }
 
-            emailServer.createAccountOtpEmail(emailObj);
+             emailServer.createAccountOtpEmail(emailObj);
 
             if(!error) {
             console.log("Creating an account: ");
@@ -113,7 +114,7 @@ module.exports =function(cipher, appConn,C, emailServer){
                   // 'school':school
 
                 }, (response) => {
-                  res.render('register-student',{
+                  res.render('student-login',{
                     data:response.data
                     // 'username':response.username,
                     // 'email':response.email,
@@ -129,7 +130,7 @@ module.exports =function(cipher, appConn,C, emailServer){
 
               console.log("FAIL");
               errors=true;
-              res.redirect('/registerstud');
+              res.redirect('/student-login');
             }
           }
           else{
@@ -221,13 +222,13 @@ module.exports =function(cipher, appConn,C, emailServer){
         }
         console.log("never fill in all");
 
-        res.redirect('/registerstud');
+        res.redirect('/student-login');
 
         return;
 
     }
     function sendErrorPage(res, errormsg) {
-      res.render('register-student', {
+      res.render('student-login', {
         'error': errormsg
       });
     }

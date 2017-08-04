@@ -1,58 +1,4 @@
 //Test data
-var name = "Bryan";
-var date = 22 / 6 / 2017;
-var Totalquiz = [{
-        quiz_id: 23,
-        user_id: 123,
-        quiz_title: "Test QUiz 1",
-        quiz_type: "Classic",
-        visibility: 1,
-        description: "This is test quiz 1",
-        quiz_rating: 5,
-        date_created: "2017-06-15"
-    },
-    {
-        quiz_id: 24,
-        user_id: 123,
-        quiz_title: "Test QUiz 2",
-        quiz_type: "Classic",
-        visibility: 1,
-        description: "This is test quiz 2",
-        quiz_rating: 3,
-        date_created: "2017-06-17"
-    },
-    {
-        quiz_id: 25,
-        user_id: 123,
-        quiz_title: "Test QUiz 3",
-        quiz_type: "Classic",
-        visibility: 1,
-        description: "This is test quiz 3",
-        quiz_rating: 4,
-        date_created: "2017-05-06"
-    },
-    {
-        quiz_id: 26,
-        user_id: 124,
-        quiz_title: "Test Quiz 4",
-        quiz_type: 'Classic',
-        visibility: 1,
-        description: 'NIDIDIMEIYOUMAO',
-        quiz_rating: 3,
-        date_created: "2017-06-17"
-    },
-    {
-        quiz_id: 27,
-        user_id: 124,
-        quiz_title: "Test Quiz 5",
-        quiz_type: 'Classic',
-        visibility: 1,
-        description: 'NIDIDIMEIYOUMAO',
-        quiz_rating: 3,
-        date_created: "2017-06-01"
-    }
-];
-//End of Test Data
 function createNode1(){
     var total = Totalquiz.length;
 
@@ -79,11 +25,13 @@ function createNode1(){
         iDiv.appendChild(actionButtonDiv1);
 
         var actionButton1 = document.createElement('a');
+        actionButton1.setAttribute('href' , 'https://google.com'); // SHARE BUTTON
         actionButton1.className = "btn-floating btn-large waves-effect waves-light green accent-4";
         actionButtonDiv1.appendChild(actionButton1);
 
         var shareicon = document.createElement('i');
         shareicon.className = 'material-icons';
+        shareicon.setAttribute('href', 'http://google.com');
         shareicon.innerHTML = "share";
         actionButton1.appendChild(shareicon);
 
@@ -92,6 +40,7 @@ function createNode1(){
         iDiv.appendChild(actionButtonDiv2);
 
         var actionButton2 = document.createElement('a');
+        actionButton2.setAttribute('href' , 'https://google.com'); // FAVOURITE BUTTON
         actionButton2.className = "btn-floating btn-large waves-effect waves-light red accent-2";
         actionButtonDiv2.appendChild(actionButton2);
 
@@ -124,10 +73,12 @@ function createNode1(){
 
         var actionButton4 = document.createElement('a');
         actionButton4.className = "btn-floating btn-large waves-effect waves-light red";
+        actionButton4.setAttribute('href' , document.location.origin + '/host?quizId=' + Totalquiz[i].quiz_id);
         content.appendChild(actionButton4);
 
         var playicon = document.createElement('i');
         playicon.className = "material-icons";
+        playicon.setAttribute('href', document.location.origin + '/host?quizId=' + Totalquiz[i].quiz_id);
         playicon.innerHTML = "play_circle_filled";
         actionButton4.appendChild(playicon);
 
@@ -144,13 +95,13 @@ function createNode1(){
         close.innerHTML = "close";
         close.className = "material-icons right";
         reveal_title.appendChild(close);
-
-        var quiz_content = document.createElement('p');
-        quiz_content.innerHTML =  "20 MCQ Questions";
-        reveal_title.appendChild(quiz_content);
+        //
+        // var quiz_content = document.createElement('p');
+        // quiz_content.innerHTML =  "20 MCQ Questions";
+        // reveal_title.appendChild(quiz_content);
 
         var createdBy = document.createElement('p');
-        createdBy.innerHTML = "Created By: " + Totalquiz[i].user_id;
+        createdBy.innerHTML = "Created By: " + Totalquiz[i].username;
         reveal_title.appendChild(createdBy);
 
         var quiz_created = document.createElement('p');
@@ -164,69 +115,69 @@ function createNode1(){
     }
 }
 
-function createNode() {
-
-    var total = Totalquiz.length;
-
-    for (var i = 0; i < total; i++) {
-
-        var iDiv = document.createElement('div');
-        iDiv.className = "card horizontal";
-        document.getElementsByClassName('quiz-container')[0].appendChild(iDiv);
-
-        //Create and append child
-        var divImg = document.createElement('div');
-        divImg.className = "card-image";
-        iDiv.appendChild(divImg);
-
-        var divCardStack = document.createElement('div');
-        divCardStack.className = 'card-stacked';
-        iDiv.appendChild(divCardStack);
-
-        var divCardContent = document.createElement('div');
-        divCardContent.className = 'card-content';
-        divCardStack.appendChild(divCardContent);
-
-        var newH = document.createElement('h5');
-        var Htext = document.createTextNode(Totalquiz[i].quiz_title);
-        newH.appendChild(Htext);
-        divCardContent.appendChild(newH);
-
-        var newP = document.createElement('p');
-        var text = document.createTextNode("20 MCQ Questions")
-        newP.appendChild(text);
-        divCardContent.appendChild(newP);
-
-        var newP1 = document.createElement('p');
-        var text = document.createTextNode("Created By: " + Totalquiz[i].user_id);
-        newP1.appendChild(text);
-        divCardContent.appendChild(newP1);
-
-        var newP2 = document.createElement('p');
-        var text = document.createTextNode("Created On: " + Totalquiz[i].date_created);
-        newP2.appendChild(text);
-        divCardContent.appendChild(newP2);
-
-        var divCardAction = document.createElement('div');
-        divCardAction.className = 'card-action';
-        divCardStack.appendChild(divCardAction);
-
-        var playTag = document.createElement('a');
-        playTag.setAttribute('href', '#');
-        playTag.innerHTML = "Play";
-        divCardAction.appendChild(playTag);
-
-        var FavouTag = document.createElement('a');
-        FavouTag.setAttribute('href', '#');
-        FavouTag.innerHTML = "Favourite";
-        divCardAction.appendChild(FavouTag);
-
-        var ShareTag = document.createElement('a');
-        ShareTag.setAttribute('href', '#');
-        ShareTag.innerHTML = "Share";
-        divCardAction.appendChild(ShareTag);
-    }
-}
+// function createNode() {
+//
+//     var total = Totalquiz.length;
+//
+//     for (var i = 0; i < total; i++) {
+//
+//         var iDiv = document.createElement('div');
+//         iDiv.className = "card horizontal";
+//         document.getElementsByClassName('quiz-container')[0].appendChild(iDiv);
+//
+//         //Create and append child
+//         var divImg = document.createElement('div');
+//         divImg.className = "card-image";
+//         iDiv.appendChild(divImg);
+//
+//         var divCardStack = document.createElement('div');
+//         divCardStack.className = 'card-stacked';
+//         iDiv.appendChild(divCardStack);
+//
+//         var divCardContent = document.createElement('div');
+//         divCardContent.className = 'card-content';
+//         divCardStack.appendChild(divCardContent);
+//
+//         var newH = document.createElement('h5');
+//         var Htext = document.createTextNode(Totalquiz[i].quiz_title);
+//         newH.appendChild(Htext);
+//         divCardContent.appendChild(newH);
+//
+//         var newP = document.createElement('p');
+//         var text = document.createTextNode("20 MCQ Questions")
+//         newP.appendChild(text);
+//         divCardContent.appendChild(newP);
+//
+//         var newP1 = document.createElement('p');
+//         var text = document.createTextNode("Created By: " + Totalquiz[i].username);
+//         newP1.appendChild(text);
+//         divCardContent.appendChild(newP1);
+//
+//         var newP2 = document.createElement('p');
+//         var text = document.createTextNode("Created On: " + Totalquiz[i].date_created);
+//         newP2.appendChild(text);
+//         divCardContent.appendChild(newP2);
+//
+//         var divCardAction = document.createElement('div');
+//         divCardAction.className = 'card-action';
+//         divCardStack.appendChild(divCardAction);
+//
+//         var playTag = document.createElement('a');
+//         playTag.setAttribute('href', 'http://google.com');
+//         playTag.innerHTML = "Play";
+//         divCardAction.appendChild(playTag);
+//
+//         var FavouTag = document.createElement('a');
+//         FavouTag.setAttribute('href', 'http://google.com');
+//         FavouTag.innerHTML = "Favourite";
+//         divCardAction.appendChild(FavouTag);
+//
+//         var ShareTag = document.createElement('a');
+//         ShareTag.setAttribute('href', 'http://google.com');
+//         ShareTag.innerHTML = "Share";
+//         divCardAction.appendChild(ShareTag);
+//     }
+// }
 
 
 function findTopRating1(){
@@ -306,7 +257,7 @@ function findTopRating1(){
         divCardStack.appendChild(divCardAction);
 
         var playTag = document.createElement('a');
-        playTag.setAttribute('href', '#');
+        playTag.setAttribute('href' , document.location.origin + '/host?quizId=' + Totalquiz[i].quiz_id);
         playTag.innerHTML = "Play";
         divCardAction.appendChild(playTag);
 
@@ -324,85 +275,85 @@ function findTopRating1(){
 }
 
 
-function findTopRating(){
-    var max = 0;
-    var index;
-    var topRatingArr = [];
-    var maxArr = [];
-
-
-
-    for(var i =0;i<Totalquiz.length;i++){
-        topRatingArr.push(Totalquiz[i].quiz_rating);
-    }
-
-    topRatingArr.sort();
-
-    console.log(topRatingArr);
-
-    for(j =topRatingArr.length-1;j>topRatingArr.length-4;j--){
-        maxArr.push(topRatingArr[j]);
-        console.log(maxArr);
-    }
-
-    for(v = 0;v<maxArr.length;v++){
-        var iDiv = document.createElement('div');
-        iDiv.className = "card-panel hoverable teal";
-        document.getElementsByClassName('quiz')[0].appendChild(iDiv);
-
-        //Create and append child
-
-        var newTitle = document.createElement('span');
-        newTitle.className = "text-darken-4";
-        newTitle.innerHTML = (maxArr[v].quiz_title);
-
-        console.log(maxArr[v]);
-
-        iDiv.appendChild(newTitle);
-
-        var divImg = document.createElement('div');
-        divImg.className = "card-image";
-        iDiv.appendChild(divImg);
-
-        var divCardStack = document.createElement('div');
-        divCardStack.className = 'card-stacked';
-        iDiv.appendChild(divCardStack);
-
-        var divCardContent = document.createElement('div');
-        divCardContent.className = 'card-content';
-        divCardStack.appendChild(divCardContent);
-
-        var newH = document.createElement('h5');
-        var Htext = document.createTextNode(maxArr[j].quiz_title);
-        newH.appendChild(Htext);
-        divCardContent.appendChild(newH);
-
-        var newP = document.createElement('p');
-        var text = document.createTextNode("20 MCQ Questions")
-        newP.appendChild(text);
-        divCardContent.appendChild(newP);
-
-        var divCardAction = document.createElement('div');
-        divCardAction.className = 'card-action';
-        divCardStack.appendChild(divCardAction);
-
-        var playTag = document.createElement('a');
-        playTag.setAttribute('href', '#');
-        playTag.innerHTML = "Play";
-        divCardAction.appendChild(playTag);
-
-        var FavouTag = document.createElement('a');
-        FavouTag.setAttribute('href', '#');
-        FavouTag.innerHTML = "Favourite";
-        divCardAction.appendChild(FavouTag);
-
-        var ShareTag = document.createElement('a');
-        ShareTag.setAttribute('href', '#');
-        ShareTag.innerHTML = "Share";
-        divCardAction.appendChild(ShareTag);
-    }
-
-}
+// function findTopRating(){
+//     var max = 0;
+//     var index;
+//     var topRatingArr = [];
+//     var maxArr = [];
+//
+//
+//
+//     for(var i =0;i<Totalquiz.length;i++){
+//         topRatingArr.push(Totalquiz[i].quiz_rating);
+//     }
+//
+//     topRatingArr.sort();
+//
+//     console.log(topRatingArr);
+//
+//     for(j =topRatingArr.length-1;j>topRatingArr.length-4;j--){
+//         maxArr.push(topRatingArr[j]);
+//         console.log(maxArr);
+//     }
+//
+//     for(v = 0;v<maxArr.length;v++){
+//         var iDiv = document.createElement('div');
+//         iDiv.className = "card-panel hoverable teal";
+//         document.getElementsByClassName('quiz')[0].appendChild(iDiv);
+//
+//         //Create and append child
+//
+//         var newTitle = document.createElement('span');
+//         newTitle.className = "text-darken-4";
+//         newTitle.innerHTML = (maxArr[v].quiz_title);
+//
+//         console.log(maxArr[v]);
+//
+//         iDiv.appendChild(newTitle);
+//
+//         var divImg = document.createElement('div');
+//         divImg.className = "card-image";
+//         iDiv.appendChild(divImg);
+//
+//         var divCardStack = document.createElement('div');
+//         divCardStack.className = 'card-stacked';
+//         iDiv.appendChild(divCardStack);
+//
+//         var divCardContent = document.createElement('div');
+//         divCardContent.className = 'card-content';
+//         divCardStack.appendChild(divCardContent);
+//
+//         var newH = document.createElement('h5');
+//         var Htext = document.createTextNode(maxArr[j].quiz_title);
+//         newH.appendChild(Htext);
+//         divCardContent.appendChild(newH);
+//
+//         var newP = document.createElement('p');
+//         var text = document.createTextNode("20 MCQ Questions")
+//         newP.appendChild(text);
+//         divCardContent.appendChild(newP);
+//
+//         var divCardAction = document.createElement('div');
+//         divCardAction.className = 'card-action';
+//         divCardStack.appendChild(divCardAction);
+//
+//         var playTag = document.createElement('a');
+//         playTag.setAttribute('href', 'http://google.com');
+//         playTag.innerHTML = "Play";
+//         divCardAction.appendChild(playTag);
+//
+//         var FavouTag = document.createElement('a');
+//         FavouTag.setAttribute('href', '#');
+//         FavouTag.innerHTML = "Favourite";
+//         divCardAction.appendChild(FavouTag);
+//
+//         var ShareTag = document.createElement('a');
+//         ShareTag.setAttribute('href', '#');
+//         ShareTag.innerHTML = "Share";
+//         divCardAction.appendChild(ShareTag);
+//     }
+//
+// }
 
 $(document).ready(createNode1());
 $(document).ready(findTopRating1());

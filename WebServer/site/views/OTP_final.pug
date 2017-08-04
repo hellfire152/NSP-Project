@@ -26,6 +26,8 @@ html
             | Welcome,
             span#acc_name Bryan Tan
       .col.s2
+  form(method='POST', action='/otp-check')
+    input(type='hidden', name='_csrf', value=`${csrfToken}`)
     .otp-tab
       .row
         .col.s12
@@ -34,24 +36,26 @@ html
               a.active(href='#test1') SMS OTP
             li.tab.col.s3
               a(href='#test2') Email OTP
-        #test1.col.s12
-          p Enter the 6 digit One-Time-Password (OTP) sent to your mobile number
-          .input-field.col.s3
-            input#sms_otp.validate(placeholder='OTP', type='text')
-            label(for='first_name') OTP
-            a#resend_sms_otp.waves-effect.waves-light.btn Resend OTP
-          button.btn.waves-effect.waves-light.submit-otp(type='submit', name='action')
-            | Submit
-            i.material-icons.right send
+        //- #test1.col.s12
+        //-   p Enter the 6 digit One-Time-Password (OTP) sent to your mobile number
+        //-   .input-field.col.s3
+        //-     input#sms_otp.validate(placeholder='OTP', type='text')
+        //-     label(for='first_name') OTP
+        //-     a#resend_sms_otp.waves-effect.waves-light.btn Resend OTP
+        //-   button.btn.waves-effect.waves-light.submit-otp(type='submit', name='action')
+        //-     | Submit
+        //-     i.material-icons.right send
         #test2.col.s12
           p Enter the 6 digit One-Time-Password (OTP) sent to your email address
           .input-field.col.s3
-            input#sms_otp.validate(placeholder='OTP', type='text')
-            label(for='first_name') OTP
+            input#otp(placeholder='OTP', type='text' name='otp')
+            label(for='otp') OTP
             a#resend_sms_otp.waves-effect.waves-light.btn Resend OTP
-          button.btn.waves-effect.waves-light.submit-otp(type='submit', name='action')
-            | Submit
+          button.btn.waves-effect.waves-light.submit-otp(type='submit')
+            | Verification
             i.material-icons.right send
     script(type='text/javascript', src='/resources/js/jquery.min.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
     script(type='text/javascript', src='/resources/js/bootstrap.min.js')
     script(type='text/javascript', src='/resources/js/materialize.min.js')

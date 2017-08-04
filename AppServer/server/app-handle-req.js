@@ -5,6 +5,9 @@
   Author: Jin Kuan
 */
 var C, allRooms;
+
+const util = require('util');
+
 module.exports = async function(input) {
   data = input.data;
   C = input.C;
@@ -19,7 +22,7 @@ module.exports = async function(input) {
       break;
     }
     case C.REQ_TYPE.HOST_ROOM: {
-      return (await host_room(data));
+      return (await host_room(data, dbConn));
       break;
     }
 
@@ -171,7 +174,7 @@ async function account_create_teach(data){
   The only thing this does is check the cookie for a valid login,
   socket.io will take the rest, including generating a room number.
 */
-async function host_room(data) {
+async function host_room(data, dbConn) {
   response =  {};
   validLogin = true /*TODO::Proper login check*/
 
@@ -199,7 +202,21 @@ async function host_room(data) {
         'quizId': data.quizId
       }
     }
-  } //TODO::Get quiz from database
+    //TODO::Get quiz from database
+  await databaseAccess({
+      //NOTE: This is the standard format for my databse to retrieve quiz.
+      'data' : {
+        'type' : C.DB.SELECT.QUESTION,
+        'quizId' : 17 //dynamic quizId
+      }
+    }, dbConn)
+    .then(result => {
+      var quizSet = result.data.data;
+      console.log("QUIZ RESULT RECEIVED FROM DATABASE");
+      // console.log(result);
+      console.log(util.inspect(quizSet, {showHidden: false, depth: null}))
+    })
+  }
   else {
     return {
       'err': C.ERR.QUIZ_DOES_NOT_EXIST,

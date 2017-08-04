@@ -12,8 +12,8 @@ async function createAccountOtpEmail(emailObj){
               user: 'chloeangsl@gmail.com',
               clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
               clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-              refreshToken: '1/6IKxFg5K_EVxK2RMvme_ugPvq7iH3JZg9zETT0SgVWU',
-              accessToken: 'ya29.GlubBPqLfK3qLNt__3Qv6VITkfywEQGF8WX64_Gym6G2Fd_5ouvWsPGQ9-eusOSTHr7nFip73-xlX0HRSNl44dZqve8_f1L2NoSsysR0IOA1HHH04RDmRr2LgnxL'
+              refreshToken: '1/Xo9bruoNI6t4xddW4HHYQsnWggysrtlUbpNkoPuRpPk',
+              accessToken: 'ya29.GlucBMchbxrLq3aR4qpwIgqhqeRpC5Q70TqSSbSCoa6PqjXKX6ie4tkKtUeMEnEdfsw9oM9mZnZ12h90tIecCOAeP3hpC8OMaHQAKkt8zOqDwbqlE0PovaA-xrhq'
         }
     })
 
@@ -45,8 +45,8 @@ async function loginAccountOtpEmail(emailObj){
         user: 'chloeangsl@gmail.com',
         clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
         clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-        refreshToken: '1/6IKxFg5K_EVxK2RMvme_ugPvq7iH3JZg9zETT0SgVWU',
-        accessToken: 'ya29.GlubBPqLfK3qLNt__3Qv6VITkfywEQGF8WX64_Gym6G2Fd_5ouvWsPGQ9-eusOSTHr7nFip73-xlX0HRSNl44dZqve8_f1L2NoSsysR0IOA1HHH04RDmRr2LgnxL'
+        refreshToken: '1/Xo9bruoNI6t4xddW4HHYQsnWggysrtlUbpNkoPuRpPk',
+        accessToken: 'ya29.GlucBMchbxrLq3aR4qpwIgqhqeRpC5Q70TqSSbSCoa6PqjXKX6ie4tkKtUeMEnEdfsw9oM9mZnZ12h90tIecCOAeP3hpC8OMaHQAKkt8zOqDwbqlE0PovaA-xrhq'
           }
     })
 
@@ -79,8 +79,9 @@ async function forgetPasswordOtpEmail(emailObj){
         user: 'chloeangsl@gmail.com',
         clientId: '709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com',
         clientSecret: 'aDT6KfKpSItfcGyHzsPQiOza',
-        refreshToken: '1/6IKxFg5K_EVxK2RMvme_ugPvq7iH3JZg9zETT0SgVWU',
-        accessToken: 'ya29.GlubBPqLfK3qLNt__3Qv6VITkfywEQGF8WX64_Gym6G2Fd_5ouvWsPGQ9-eusOSTHr7nFip73-xlX0HRSNl44dZqve8_f1L2NoSsysR0IOA1HHH04RDmRr2LgnxL'
+        refreshToken: '1/CdG25CNYw0WHFFUwFhKV9oeOtHlBgMMEqmZ9NuRGuCU',
+        accessToken: 'ya29.GlubBIRdu0QVHtgdcia8XQUHxZICdqL1z0ByITPpWUcbG9T4FTURkJkLakaXdkFxgEjgPkbNuvKUGlGilmww6gAiqnUzmqIMhB23AiAeH6SfgPD11nLMacqvHnFS'
+
          }
     })
 

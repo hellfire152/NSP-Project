@@ -215,10 +215,10 @@ var server = net.createServer(function(conn){
     } else {  //ALEADY AUTHENTICATED
       try {
         switch(inputData.data.type) {
-          case C.DB.VALIDATE_LOGIN : {
-            validateAccount(inputData);
-            break;
-          }
+          // case C.DB.VALIDATE_LOGIN : {
+          //   validateAccount(inputData);
+          //   break;
+          // }
           case C.DB.CREATE.STUDENT_ACC :
           case C.DB.CREATE.TEACHER_ACC : {
             await createAccount(inputData);
@@ -229,7 +229,7 @@ var server = net.createServer(function(conn){
             break;
           }
           case C.DB.SELECT.ALL_QUIZ : {
-            await retrieveAllQuiz();
+            await retrieveAllQuiz(inputData);
             break;
           }
           case C.DB.SELECT.QUESTION : {
@@ -453,7 +453,7 @@ async function createAccount(inputData){
           var response = {
             data : {
               success : false,
-              reason : ERR.DB_USERNAME_TAKEN,
+              reason : C.ERR.DB_USERNAME_TAKEN,
               message : "Username or Email have been taken"
             }
           }
@@ -510,8 +510,7 @@ async function retrievePreAccount(inputData){
             }
           }
           sendToServer(response, inputData);
-        }
-        if(result.length > 0){
+        } else if(result.length > 0){
             dataAccount.userId = result[0].user_id;
             dataAccount.salt = result[0].salt;
             dataAccount.dbPass = result[0].password_hash;
@@ -990,6 +989,8 @@ async function retrieveUserDetails(inputData){
   await handleDb.handleEncryption(data)
   .then(dataOut => {
     var query = connection.query("SELECT user_id FROM user_account WHERE username = ? AND email = ?", [dataOut.username, dataOut.email], function(error, result){
+      console.log(query);
+      console.log(result);
       if(error){
         var response = {
           data : {
@@ -1013,6 +1014,7 @@ async function retrieveUserDetails(inputData){
       else if(result.length === 1){
         var response = {
           data : {
+            user_id : result[0].user_id,
             success : true,
             message : "Input correct"
           }
@@ -1033,92 +1035,144 @@ async function retrieveUserDetails(inputData){
   });
 }
 
-//Update password,
-//New salt will be generated and hash accordingly.
-//All new data will be encrypted.
-async function updatePassword(inputData){
-  var data = inputData.data;
-  var query = connection.query("SELECT salt FROM user_account WHERE user_id = " + connection.escape(data.verify.user_id), function(error, result){
-    if(error){
-      console.error('[Error in query]: ' + error);
-      var response = {
-        data : {
-          success : false,
-          reason : C.ERR.DB_SQL_QUERY,
-          message : error
-        }
-      }
-      sendToServer(response, inputData);
-    }
-    handleDb.handleDecryption(result)
-    .then(decryptSalt => {
-      data.verify.salt = decryptSalt[0].salt;
-      handleDb.handleHashPass(data)
-      .then(dataOut =>{
-        // console.log(dataOut);
-        delete data.verify.salt;
-        handleDb.handleEncryption(dataOut.verify)
-        .then(dataOutEncrypted => {
-          dataOut.verify = dataOutEncrypted;
-          dataOut.account.user_id = dataOut.verify.user_id;
-          var query = connection.query("SELECT username FROM user_account\
-            WHERE user_id = " + connection.escape(dataOut.verify.user_id) + " AND password_hash = " + connection.escape(dataOut.verify.password_hash), function(error, result){
-            if(error){
-              console.error('[Error in query]: ' + error);
-              var response = {
-                data : {
-                  success : false,
-                  reason : C.ERR.DB_SQL_QUERY,
-                  message : error
-                }
+async function changePassword(inputData){
+    var data = inputData.data;
+    await handleDb.handlePassword(data)
+    .then(dataOut => {
+      handleDb.handleEncryption(dataOut.account)
+      .then(dataOutAccountEncrypt => {
+        var query = connection.query("UPDATE user_account SET password_hash = ?, salt = ? WHERE user_id = ?",[dataOutAccountEncrypt.password_hash, dataOutAccountEncrypt.salt, dataOutAccountEncrypt.user_id] , function(error, result){
+          console.log(query);
+          if(error){
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_SQL_QUERY,
+                message : error
               }
-              sendToServer(response, inputData);
             }
-            if(result.length === 1){
-              handleDb.handlePassword(dataOut)
-              .then(dataAccount => {
-                handleDb.handleEncryption(dataAccount.account)
-                .then(dataAccountEncrypt => {
-                  var query = connection.query("UPDATE user_account SET password_hash = " + connection.escape(dataAccountEncrypt.password_hash) + " , salt = " + connection.escape(dataAccountEncrypt.salt) +
-                  " WHERE user_id = " + connection.escape(dataAccountEncrypt.user_id), function(error, result){
-                    if(error){
-                      console.error('[Error in query]: ' + error);
+            sendToServer(response, inputData);
+          }
+          if(result.affectedRows == 0){
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_UPDATE_FAILED,
+                message : "Password did not update"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          else if(result.affectedRows == 1){
+            var response = {
+              data : {
+                success : true,
+                message : "Password updated"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+          else{
+            var response = {
+              data : {
+                success : false,
+                reason : C.ERR.DB_UNKNOWN,
+                message : "Updated multiple account"
+              }
+            }
+            sendToServer(response, inputData);
+          }
+        });
+      });
+    });
+  }
+
+  //Update password,
+  //New salt will be generated and hash accordingly.
+  //All new data will be encrypted.
+  async function updatePassword(inputData){
+    var data = inputData.data;
+    var query = connection.query("SELECT salt FROM user_account WHERE user_id = " + connection.escape(data.verify.user_id), function(error, result){
+      if(error){
+        console.error('[Error in query]: ' + error);
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      handleDb.handleDecryption(result)
+      .then(decryptSalt => {
+        data.verify.salt = decryptSalt[0].salt;
+        handleDb.handleHashPass(data)
+        .then(dataOut =>{
+          // console.log(dataOut);
+          delete data.verify.salt;
+          handleDb.handleEncryption(dataOut.verify)
+          .then(dataOutEncrypted => {
+            dataOut.verify = dataOutEncrypted;
+            dataOut.account.user_id = dataOut.verify.user_id;
+            var query = connection.query("SELECT username FROM user_account\
+              WHERE user_id = " + connection.escape(dataOut.verify.user_id) + " AND password_hash = " + connection.escape(dataOut.verify.password_hash), function(error, result){
+              if(error){
+                console.error('[Error in query]: ' + error);
+                var response = {
+                  data : {
+                    success : false,
+                    reason : C.ERR.DB_SQL_QUERY,
+                    message : error
+                  }
+                }
+                sendToServer(response, inputData);
+              }
+              if(result.length === 1){
+                handleDb.handlePassword(dataOut)
+                .then(dataAccount => {
+                  handleDb.handleEncryption(dataAccount.account)
+                  .then(dataAccountEncrypt => {
+                    var query = connection.query("UPDATE user_account SET password_hash = " + connection.escape(dataAccountEncrypt.password_hash) + " , salt = " + connection.escape(dataAccountEncrypt.salt) +
+                    " WHERE user_id = " + connection.escape(dataAccountEncrypt.user_id), function(error, result){
+                      if(error){
+                        console.error('[Error in query]: ' + error);
+                        var response = {
+                          data : {
+                            success : false,
+                            reason : C.ERR.DB_SQL_QUERY,
+                            message : error
+                          }
+                        }
+                        sendToServer(response, inputData);
+                      }
                       var response = {
                         data : {
-                          success : false,
-                          reason : C.ERR.DB_SQL_QUERY,
-                          message : error
+                          success : true,
+                          message : "Password updated"
                         }
                       }
                       sendToServer(response, inputData);
-                    }
-                    var response = {
-                      data : {
-                        success : true,
-                        message : "Password updated"
-                      }
-                    }
-                    sendToServer(response, inputData);
+                    });
                   });
                 });
-              });
-            }
-            else {
-              var response = {
-                data : {
-                  success : false,
-                  reason : C.ERR.DB_PASSWORD_INCORRECT,
-                  message : "Incorrect password"
-                }
               }
-              sendToServer(response, inputData);
-            }
+              else {
+                var response = {
+                  data : {
+                    success : false,
+                    reason : C.ERR.DB_PASSWORD_INCORRECT,
+                    message : "Incorrect password"
+                  }
+                }
+                sendToServer(response, inputData);
+              }
+            });
           });
         });
       });
     });
-  });
-}
+  }
 
 async function updateName(inputData){
   data = inputData.data;
@@ -1479,8 +1533,12 @@ async function addChoices(choiceData, questionId, questionNo, inputData){
 }
 
 //Retrieve all the quiz available in the database
-async function retrieveAllQuiz(){
-  var query = connection.query('SELECT * FROM quiz ORDER BY date_created DESC', function(err, result, fields){
+async function retrieveAllQuiz(inputData){
+  var query = connection.query('SELECT quiz.*, user_account.username \
+  FROM quiz \
+  JOIN user_account \
+  ON user_account.user_id = quiz.user_id \
+  ORDER BY date_created DESC', function(err, result, fields){
 			if (err) {
         var response = {
           data : {
@@ -1655,7 +1713,7 @@ async function retrieveQuestions(inputData){
   FROM quiz\
   LEFT OUTER JOIN user_account\
     ON user_account.user_id = quiz.user_id\
-  WHERE quiz.quiz_id = '" + quizId + "'", function(err, result){
+  WHERE quiz.quiz_id = '" + connection.escape(quizId) + "'", function(err, result){
     if(err){
       var response = {
         data : {
@@ -1677,7 +1735,7 @@ async function retrieveQuestions(inputData){
   FROM quiz_question\
   LEFT OUTER JOIN quiz_question_choices\
     ON quiz_question.question_id = quiz_question_choices.question_id\
-  WHERE quiz_question.quiz_id = '" + quizId + "'\
+  WHERE quiz_question.quiz_id = '" + connection.escape(quizId) + "'\
   ORDER BY quiz_question.question_no",
   async function(err, result, fields){
 			if (!err) { //result = data recieve from database
@@ -1827,6 +1885,7 @@ async function getLogQuiz(inputData){
       }
     });
 }
+
 
 //This is a showcase of spambot fucnction
 async function addSpam(inputData){

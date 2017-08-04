@@ -40,7 +40,7 @@ html
                 minlength:8,
                 equalTo:"#lpassword"
               },
-              number:{
+              phone:{
                 checkphone:true
               },
               email:{
@@ -86,7 +86,9 @@ html
           .card
           .card
             h1.title Login
-            form
+            form#login(onsubmit='/validate-login-room', method='POST', action='/user-home')
+              .input-container
+                input(type='hidden', name='_csrf', value=`${csrfToken}`)
               .input-container
                 input#username(type='text', name='username')
                 label(for='Username') Username
@@ -100,25 +102,27 @@ html
                   span Go
               .footer
                 a(href='#') Forgot your password
-                a(href='#') | Login as Teacher
+                a(href='/student-login') | Login as Student
           .card.alt
             .toggle
             .toggle1
             h1.title
               | Register
               .close
-            form#register-teacher(action='/reg-room-teach', method='post', onsubmit='/validate-register-teacher')
+            form#register-teacher(action='/teacher-login', method='post', onsubmit='/validate-register-teacher')
+              .input-container
+                input(type='hidden', name='_csrf', value=`${csrfToken}`)
               .input-container
                 input#name(type='text', name='name')
                 label(for='Name') Name
                 .bar
               .input-container
-                input#lusername(type='text', username='lusername')
+                input#lusername(type='text', name='lusername')
                 label(for='Username') Username
                 .bar
               .input-container
                 input#email(type='email', name='email')
-                label(for='') Email
+                label(for='Email') Email
                 .bar
               .input-container
                 input#lpassword(type='password', name='lpassword')
