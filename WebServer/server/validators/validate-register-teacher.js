@@ -117,15 +117,8 @@ module.exports =function(cipher, appConn, C, emailServer){
 
 
                 }, (response) => {
-                  res.redirect('teacher-login',{
-                    data:response.data
-                    // 'username':response.username,
-                    // 'email':response.email,
-                    // 'password':response.password,
-                    // 'school':response.school
-                  });
+                  res.redirect('/teacher-login');
                 });
-              // });
             }
             else{
 

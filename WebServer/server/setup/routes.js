@@ -89,6 +89,10 @@ module.exports = function(data) {
       //   // 'quizList' : response.quizList,
       //   // 'achievementsList' : response.achievementsList
       // };
+      if(!response.data.success) {
+        res.sendErrorPage('Error loading profile page!');
+        return;
+      }
       let profileDetails = {
         'profile' : response.data.data[0]
       };
