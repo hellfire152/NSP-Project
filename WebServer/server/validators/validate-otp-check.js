@@ -7,6 +7,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
 
     var errors = req.validationErrors();
 
+
     if(errors) {
       //TODO::Handle errors
     } else {
@@ -14,6 +15,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       // var userIP = req.body.userIp;
       var userIP = req.connection.remoteAddress;
       var otpObj = req.cookies.otp.data;
+
+
       //Check if cookie is valid or not
       if(!cookieValidator.validateCookie(req.cookies.otp)){
         console.log("Cookie Modification detected");
@@ -127,6 +130,10 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
           });
         }
         else{
+          if (timer > 30000) {
+            res.clearCookie("otp");
+            res.redirect('/student-login');
+          }
           //Go back to OTP page and try again
           //More than 3 time boot out and clear cookies
           if(otpObj.count < 3){
@@ -134,8 +141,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
             cipher.encryptJSON(cookieValidator.generateCheckCookie(otpObj, userIP))
               .then((encryptedCookie) => {
                 req.session.otpSession = true; //Open the session
-                res.cookie('otp', encryptedCookie, {"maxAge" : 1000 * 60 * 5}) //5 min
-                res.redirect('/student-login'); // redirect to student login so they can get a new otp
+                res.cookie('otp', encryptedCookie, {"maxAge" : 1*0*1}) //5 min
+                res.redirect('/otp');
               });
           }
           else{

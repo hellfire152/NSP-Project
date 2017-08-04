@@ -5,12 +5,11 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
   return function(req, res) {
     req.sanitize('otp').escape();
 
-
     var errors = req.validationErrors();
-
 
     if(errors) {
       //TODO::Handle errors
+      res.sendErrorPage('IDK WHY YOURE HERE');
     } else {
       var userOTP = req.body.otp;
       var otpObj = req.cookies.otp.data
@@ -20,7 +19,6 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       console.log(userOTP);
       console.log(userOTP == otpObj.pin);
       if(userOTP == otpObj.pin){
-
 
       cipher.encryptJSON(cookieValidator.generateCheckCookie({user_id : otpObj.user_id}))
       .then((encryptedCookie) => {
@@ -41,7 +39,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
           .then((encryptedCookie) => {
 
             res.cookie('otp', encryptedCookie, {"maxAge": 1000*60*5}); //5 min
-            res.redirect('/ForgetPassword');
+            res.redirect('/otp-ForgetPassword');
           });
         }
         else{
