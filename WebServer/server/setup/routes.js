@@ -9,6 +9,7 @@ var express = require('express');
 var nodemailer = require('nodemailer');
 var rateLimiters = require('./rate-limiters.js');
 var cookieValidation = require('./cookie-validation.js');
+
 var S;
 module.exports = function(data) {
   S = data.S;
@@ -28,7 +29,7 @@ module.exports = function(data) {
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidation),
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, xssDefense, cookieValidation),
-    'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
+    // 'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidation),
     'change-forget-password' : require('../validators/validate-change-forget-password.js')(cookieCipher, appConn,C),
     'spam-bot' : require('../validators/validate-spam.js')(appConn, C)
@@ -177,6 +178,7 @@ module.exports = function(data) {
       res.sendErrorPage('Invalid hosting session!');
     }
   });
+
   //handling logout
   app.get('/logout', rateLimiters.logout, function(req,res){
     req.session.destroy(function(err) {
@@ -225,7 +227,7 @@ module.exports = function(data) {
   // app.post('/change-password-room-success', rateLimiters.changePassword, validators["change-password-room"]); //NOTE: Chloe say its not needed
   app.post('/forget-password-room-success',rateLimiters.forgetPassword,validators["forget-password-room"]);
   app.post('/otp-check',rateLimiters.otpCheck, validators["otp-check"]);
-  app.post('/otp-register', rateLimiters.otpRegister,validators["otp-register"]);
+  // app.post('/otp-register', rateLimiters.otpRegister,validators["otp-register"]);
   app.post('/otp-forget-password', validators["otp-forget-password"]);
   app.post('/change-forget-password', validators["change-forget-password"]);
   app.post('/spamming-in-progress', validators["spam-bot"]);
