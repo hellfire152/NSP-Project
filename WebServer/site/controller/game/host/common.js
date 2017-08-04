@@ -12,11 +12,6 @@
 */
 function gameEnd(response) {
   var currentScene;
-  //remove the PIXI canvas from the window
-  try {
-    let appView = document.getElementsByTagName('canvas')[0];
-    appView.parentNode.removeChild(appView);
-  } catch (e) {console.log(e)};
 
   //initializing the various divs
   let rankingDiv = createNode('div', null, null, 'ranking');
@@ -58,8 +53,11 @@ function gameEnd(response) {
   for(let title of response.titlesAndAchievenments) {
     let titleDisplay = createNode('div', null, 'title-display');
     let titleName = createNode('p', title.name, 'title-name');
+    //title image
     let titleIcon = createNode('img', null, 'title-icon');
-    titleIcon.src = `/resources/images/${title.icon}`;
+    titleIcon.src = `/resources/images/titles/${title.icon}`;
+    titleIcon.style.height = '100px';
+    titleIcon.style.width = '100px';
     let earningPlayer = createNode('p', title.recipient, 'title-recipient');
     let description = createNode('p', title.description, 'title-description');
     appendMultiple(titleDisplay, titleName, titleIcon, earningPlayer, description);
