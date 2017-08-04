@@ -16,10 +16,17 @@ var app, helmet, C, S;
 /**PUT SOME COMMENTS**/
 function attachCsrfToken(req, res, next){
   res.locals.csrfTokenFunction = req.csrfToken;
+  // console.log(res.locals.csrfTokenFunction);
   next();
 }
 
 function invalidCsrfToken(err, req, res, next){
+  // console.log("error");
+  // console.log(err);
+  // console.log("req");
+  // console.log(req);
+  // console.log("res");
+  // console.log(res);
   if (err.code === 'EBADCSRFTOKEN') {
     res.sendErrorPage('Invalid CSRF token!');
   }
