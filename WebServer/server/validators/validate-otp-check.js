@@ -90,10 +90,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                                 .then((encryptedCookie) => {
                                   res.cookie('user_info', encryptedCookie);
                                   req.session.otpSession = true;
-                                  validLoginSession(req, otpObj);
-                                  res.render('user-home', {
-                                    data : response.data
-                                  });
+                                  validLoginSession(req);
+                                  res.redirect('/');
                                 });
                             }
                             else{
@@ -101,10 +99,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                                 .then((encryptedCookie) => {
                                   res.cookie('user_info', encryptedCookie);
                                   req.session.otpSession = true;
-                                  validLoginSession(req, otpObj);
-                                  res.render('user-home', {
-                                    data : response.data
-                                  });
+                                  validLoginSession(req);
+                                  res.redirect('/');
                                 });
                             }
                           });
@@ -151,5 +147,5 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
 }
 function validLoginSession(req, otpObj) {
   req.session.validLogin = true;
-  req.session.username = otpObj['user_id'];
+  req.session.username = req.session.tempUsername;
 }

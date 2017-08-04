@@ -114,14 +114,7 @@ module.exports =function(cipher, appConn,C, emailServer){
                   // 'school':school
 
                 }, (response) => {
-                  res.render('student-login',{
-                    data:response.data
-                    // 'username':response.username,
-                    // 'email':response.email,
-                    // 'password':response.password,
-                    // 'dateOfBirth':response.dateOfBirth,
-                    // 'school':response.school
-                  });
+                  res.redirect('/student-login');
                 });
               // });
               // errors=false;
@@ -150,7 +143,7 @@ module.exports =function(cipher, appConn,C, emailServer){
             console.log(schema.validate('password',{list:true}));
             console.log("FAIL PW");
 
-            // res.redirect('/registerstud');
+            res.sendErrorPage('Failed password requirements!');
 
 
           }

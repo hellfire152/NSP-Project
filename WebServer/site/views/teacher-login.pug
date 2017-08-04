@@ -86,7 +86,7 @@ html
           .card
           .card
             h1.title Login
-            form#login(onsubmit='/validate-login-room', method='POST', action='/user-home')
+            form#login(method='POST', action='/user-home')
               .input-container
                 input(type='hidden', name='_csrf', value=`${csrfToken}`)
               .input-container
@@ -109,7 +109,7 @@ html
             h1.title
               | Register
               .close
-            form#register-teacher(action='/teacher-login', method='post', onsubmit='/validate-register-teacher')
+            form#register-teacher(action='/teacher-login', method='post')
               .input-container
                 input(type='hidden', name='_csrf', value=`${csrfToken}`)
               .input-container
@@ -142,7 +142,7 @@ html
                 .bar
               .button-container
                 button
-                  span Next
+                  span Register
         script(type='text/javascript').
           $('.toggle').on('click', function() {
           $('.container').stop().addClass('active');

@@ -312,11 +312,11 @@ function logResponse(response) {
 async function decryptResponse(response) {
   if(dbConn.encryption == 'none') {
     console.log("NO ENCRYPTION");
-    return JSON.parse(response);
+    return splitJsons(response);
   } else if(dbConn.encryption == 'rsa')  {
-    return JSON.parse(dbConn.receiveCipher.rsaDecrypt(response, KEYS.PRIVATE));
+    return splitJsons(dbConn.receiveCipher.rsaDecrypt(response, KEYS.PRIVATE));
   } else {
-    return JSON.parse(await dbConn.receiveCipher.decrypt(response));
+    return splitJsons(await dbConn.receiveCipher.decrypt(response));
   }
 }
 
@@ -353,8 +353,10 @@ dbConn.send = (reqObj, callback, encryption) => {
 //Recieve data from database and run callback
 dbConn.on('data', async function(inputData) {
   let data = await decryptResponse(inputData);
-  logResponse(data);
-  runCallback(data);
+  for(let d of data) {
+    logResponse(d);
+    runCallback(d);
+  }
 });
 
 /****AUTHENTICATION******/
@@ -442,3 +444,25 @@ var handleIo = require('./server/app-handle-io.js');
 var handleReq = require('./server/app-handle-req.js');
 var handleGame = require('./server/app-handle-game.js');
 var handleSpecial = require('./server/app-handle-special.js');
+
+/*
+  Takes in a string of any number of concatenated JSON strings,
+  and returns an array of parsed JSON objects
+*/
+function splitJsons(jsons) {
+  if(jsons[0] !== '{') throw new Error('Invalid response!');
+  let s = [];
+  let r = [];
+  for(let i = 0, j = 0; i < jsons.length; i++) {
+    if(jsons[i] === '{') s.push(1);
+    else if(jsons[i] === '}') {
+      let b = s.pop();
+      if(b === undefined) throw new Error('Invalid response, expected "{" !');
+      if(s.length === 0) {
+        r.push(JSON.parse(jsons.substr(j, i + 1)));
+        j = i + 1;
+      }
+    }
+  }
+  return r;
+}

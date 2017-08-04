@@ -637,7 +637,7 @@ async function retrieveFullAccount(inputData){
         FROM user_account\
         LEFT OUTER JOIN teacher_details\
         ON user_account.user_id = teacher_details.user_id\
-        WHERE teacher_details.user_id = " + connection.escape(dataOut.userId),
+        WHERE teacher_details.user_id = " + connection.escape(data.userId),
       function(err, result){
         if(err){
           console.error('[Error in query]: ' + err);
