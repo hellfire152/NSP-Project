@@ -33,7 +33,8 @@ function calculateTitles(currentRoom) {
   let titles = []; //object that will be returned
 
   //calculating "Speedy!" and "sleepy..."
-  let fastestPlayer, fastestTime = Number.MAX_VALUE, slowestPlayer, slowestTime = 0;
+  let fastestPlayer, fastestTime = Number.MAX_VALUE, slowestPlayer, slowestTime = 0,
+  mostCorrectPlayer, mostCorrect = 0, mostWrongPlayer, mostWrong = 0;
   //get the fastest and the slowest
   for(let player in players) {
     if(players.hasOwnProperty(player)) {
@@ -49,6 +50,14 @@ function calculateTitles(currentRoom) {
             slowestPlayer = player;
           }
         }
+        if(players[player].correctAnswers) {
+          if(players[player].correctAnswers > mostCorrect) {
+            mostCorrectPlayer = player;
+          }
+          if(players[player].wrongAnswers > mostWrong) {
+            mostWrongPlayer = player;
+          }
+        }
       }
     }
   }
@@ -57,12 +66,15 @@ function calculateTitles(currentRoom) {
   fastestTitle.recipient = fastestPlayer;
   let slowestTitle = T.SLEEPY;
   slowestTitle.recipient = slowestPlayer;
-
-  //CONFUSED title
-
+  let correctTitle = T.ACCURATE;
+  correctTitle.recipient = mostCorrectPlayer;
+  let wrongTitle = T.CONFUSED;
+  wrongTitle.recipient = mostWrongPlayer;
 
   titles.push(fastestTitle);
   titles.push(slowestTitle);
+  titles.push(correctTitle);
+  titles.push(wrongTitle);
 
   //TODO::CALCULATE MORE TITLES
   return titles;

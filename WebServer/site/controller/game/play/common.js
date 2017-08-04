@@ -206,7 +206,7 @@ function gameEnd(response) {
     let titleDisplay = createNode('div', null, 'title-display');
     let titleName = createNode('p', title.name, 'title-name');
     let titleIcon = createNode('img', null, 'title-icon');
-    titleIcon.src = `/resources/images/${title.icon}`;
+    titleIcon.src = `/resources/images/titles/${title.icon}`;
     let earningPlayer = createNode('p', title.recipient, 'title-recipient');
     let description = createNode('p', title.description, 'title-description');
     appendMultiple(titleDisplay, titleName, titleIcon, earningPlayer, description);
