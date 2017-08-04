@@ -117,7 +117,7 @@ module.exports =function(cipher, appConn, C, emailServer){
 
 
                 }, (response) => {
-                  res.render('teacher-login',{
+                  res.redirect('teacher-login',{
                     data:response.data
                     // 'username':response.username,
                     // 'email':response.email,
