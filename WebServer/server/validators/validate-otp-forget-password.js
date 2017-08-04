@@ -41,7 +41,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
           .then((encryptedCookie) => {
 
             res.cookie('otp', encryptedCookie, {"maxAge": 1000*60*5}); //5 min
-            res.redirect('/otp-ForgetPassword');
+            res.redirect('/ForgetPassword');
           });
         }
         else{
