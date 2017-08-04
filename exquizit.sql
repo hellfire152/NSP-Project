@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 17, 2017 at 04:31 PM
+-- Generation Time: Aug 04, 2017 at 12:14 PM
 -- Server version: 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -77,6 +77,13 @@ CREATE TABLE `log_quiz` (
   `date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `log_quiz`
+--
+
+INSERT INTO `log_quiz` (`log_quiz_id`, `user_id`, `quiz_id`, `score`, `feedback`, `date`) VALUES
+(3, 15, 13, 100, 'It is a good game', '2017-08-03');
+
 -- --------------------------------------------------------
 
 --
@@ -86,21 +93,17 @@ CREATE TABLE `log_quiz` (
 CREATE TABLE `new_device` (
   `new_device_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `ip_address` text NOT NULL
+  `ip_address` text NOT NULL,
+  `temp_token` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `new_device`
 --
 
-INSERT INTO `new_device` (`new_device_id`, `user_id`, `ip_address`) VALUES
-(40, 15, 'wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU='),
-(41, 15, 'wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU='),
-(42, 15, 'wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU='),
-(43, 16, 'wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU='),
-(44, 15, 'wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU='),
-(45, 15, 'wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU='),
-(46, 15, 'wfMw0K/zHByHQD8eQ0e8whr/fBeZCHI1NfKzFyNwJSU=');
+INSERT INTO `new_device` (`new_device_id`, `user_id`, `ip_address`, `temp_token`) VALUES
+(76, 15, '7/jnylBmJ/4V3aXg5RL8qtcLbVIPN8x2WX/bTy2DoaM=', 'mTrE+8eLGvW0/wUjhh9SI+VV63BGdsWJgZmJAEwJi2E=RHODjx/bnYvDUwzK3YejKaprE9zdmwhJ95BMx1FwpmI='),
+(77, 15, '7/jnylBmJ/4V3aXg5RL8qtcLbVIPN8x2WX/bTy2DoaM=', NULL);
 
 -- --------------------------------------------------------
 
@@ -138,7 +141,8 @@ INSERT INTO `quiz` (`quiz_id`, `user_id`, `quiz_title`, `visibility`, `descripti
 (12, 15, '123', 0, '213', 123, 0, '2017-07-17'),
 (13, 15, 'QUIZ TITLE', 1, 'TESTING YAY', 100, 0, '2017-07-17'),
 (14, 15, '312312', 0, 'jkl', 312312312, 0, '2017-07-17'),
-(15, 15, '312312', 0, 'jkl', 312312312, 0, '2017-07-17');
+(15, 15, '312312', 0, 'jkl', 312312312, 0, '2017-07-17'),
+(17, 15, 'quizTest1', 1, 'quizTestdescription', 2, 5, '2017-08-10');
 
 -- --------------------------------------------------------
 
@@ -188,7 +192,9 @@ INSERT INTO `quiz_question` (`question_id`, `quiz_id`, `question_no`, `type`, `p
 (23, 14, 3, 0, '0e3d9577bcdb7fc0b8e376e3b7ba9005', '6e901ce5e45055e4399fbbaf450224cb', 3123, 123, 5),
 (24, 14, 4, 1, '0e3d9577bcdb7fc0b8e376e3b7ba9005', '77f03e5abd0b39b7c0c0183e1209321a', 312312, 312312, 5),
 (25, 14, 5, 1, '59f7446a7a9042e7445e6953832f27ec', '132043ad28e2e52701733e6e65989a94', 12, 312321, 5),
-(26, 15, 1, 0, '89f03833e4d1baa2b26fd4aa180a98a2', '6e901ce5e45055e4399fbbaf450224cb', 121, 3123123, 10);
+(26, 15, 1, 0, '89f03833e4d1baa2b26fd4aa180a98a2', '6e901ce5e45055e4399fbbaf450224cb', 121, 3123123, 10),
+(27, 17, 1, 0, 'shdflhkj', '8', 12, 123, 123),
+(28, 17, 123, 1, 'fqe hlkjl', 'adn,dsnf,sd', 1231, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -215,7 +221,35 @@ INSERT INTO `quiz_question_choices` (`choice_id`, `question_id`, `choices`, `que
 (5, 21, '4159eb823f56496d2ba10dd3718b4668662f1294bfbb15c1b3d69f6434dc70930fb4ca15895fb499e3dac79cc481080f8911c1f75fc75ea3b9a882642ce2332482e02e4d06b16e2236456d0f0a3996c6', 1),
 (6, 22, '0ce6ad0cf95da9f59443a93971a1eee0b9ab254f6562b45d4ae5e0f35c38423275c358757449693cb652e2ecaf3787269d9fecc583e3085ae6c5704bb13c1ebf01d3387a52ec26034501269dcbd95fc6', 2),
 (7, 23, '4f30d46e79a3746bb24c39a4f3beb5abc844d98e747221b84aefc54f4da1cd3bfc068af929cc40b2c34547d361849a9ce69d3c1af1dcf14fe272eb9cf6fd0ef8216ef9b206c772734fb1e8ccf2da5470', 3),
-(8, 26, '172939e42adc5458e1582dbc3f61e56e9dc0a01858cfc4e1c084a82f387727f9155ce791f3267b88541ad5806f0e9ba17c0c2577c1c130bfb38fb3479a0e4327693e3c3aa41c42d8448bac1ac6bc1a34', 1);
+(8, 26, '172939e42adc5458e1582dbc3f61e56e9dc0a01858cfc4e1c084a82f387727f9155ce791f3267b88541ad5806f0e9ba17c0c2577c1c130bfb38fb3479a0e4327693e3c3aa41c42d8448bac1ac6bc1a34', 1),
+(9, 27, '[\'hello\',\'you\',\'suck\',\'so much\']', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `spam_area`
+--
+
+CREATE TABLE `spam_area` (
+  `spam_id` int(11) NOT NULL,
+  `username` text NOT NULL,
+  `spam_text` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `spam_area`
+--
+
+INSERT INTO `spam_area` (`spam_id`, `username`, `spam_text`) VALUES
+(1, '123', '123'),
+(2, '123', '123'),
+(3, 'qwe', 'qwe'),
+(4, 'ew', 'w'),
+(5, '123', '123'),
+(6, '123', 'k'),
+(7, 'dfdajl', 'wjklfds'),
+(8, 'fdjasklfjdsl', 'qdfjklsdf'),
+(9, 'ashjl', 'qfkl');
 
 -- --------------------------------------------------------
 
@@ -236,17 +270,14 @@ CREATE TABLE `student_details` (
 --
 
 INSERT INTO `student_details` (`student_id`, `user_id`, `date_of_birth`, `school`, `student_category`) VALUES
-(1, 1, '1998-05-08', '9b10c3ceb898d822803338d5a7b2b569', '1a5d81749867e764beab15f1ed49303d'),
-(2, 2, '2017-06-30', '9b10c3ceb898d822803338d5a7b2b569', ''),
-(3, 3, '2017-06-30', '9b10c3ceb898d822803338d5a7b2b569', ''),
-(4, 5, '2017-06-30', '9b10c3ceb898d822803338d5a7b2b569', ''),
-(5, 8, '2017-06-30', 'Unencrypted NYP', ''),
-(7, 10, '2017-07-13', 'a9f6b177338fb1d9dec06f380948037e', ''),
-(8, 11, '2017-07-06', 'a9f6b177338fb1d9dec06f380948037e', ''),
-(9, 12, '2017-06-29', 'a9f6b177338fb1d9dec06f380948037e', ''),
-(10, 15, '2017-07-11', '9b10c3ceb898d822803338d5a7b2b569', ''),
-(11, 16, '2017-07-19', '9b10c3ceb898d822803338d5a7b2b569', ''),
-(12, 17, '2017-08-03', '9b10c3ceb898d822803338d5a7b2b569', '');
+(65, 15, '1998-05-08', 'c12a066d7ed10595abea81f9311c7f8b', 'c12a066d7ed10595abea81f9311c7f8b'),
+(66, 66, '1980-01-12', 'a0ca80206c1f1df76878301a3d0ba170', ''),
+(67, 67, '1972-04-19', '661379c27f421f3162d74fe46448d05d', ''),
+(68, 68, '1985-12-11', '51041f7f6bdc158eef5c5ba6f6e687c5', ''),
+(69, 69, '1971-05-01', '5d9b1bd413ce0c935daac2c4ee05734f', ''),
+(70, 70, '1982-08-13', 'c61feae84c6f327561a76645114eb669', ''),
+(71, 71, '1990-01-25', 'c12a066d7ed10595abea81f9311c7f8b', ''),
+(72, 72, '1997-05-08', 'c12a066d7ed10595abea81f9311c7f8b', '');
 
 -- --------------------------------------------------------
 
@@ -259,15 +290,6 @@ CREATE TABLE `teacher_details` (
   `user_id` int(11) NOT NULL,
   `organisation` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `teacher_details`
---
-
-INSERT INTO `teacher_details` (`teacher_id`, `user_id`, `organisation`) VALUES
-(1, 4, '3fe1d9da31529b765b380c5f5a708958'),
-(3, 7, 'Unencrypted Organisation'),
-(4, 13, '9b10c3ceb898d822803338d5a7b2b569');
 
 -- --------------------------------------------------------
 
@@ -291,21 +313,14 @@ CREATE TABLE `user_account` (
 --
 
 INSERT INTO `user_account` (`user_id`, `name`, `username`, `email`, `contact`, `about_me`, `password_hash`, `salt`) VALUES
-(1, 'aa182b3c9847fd7b6c61a9591a92757d0576a0e01008eb21128550d2cbe63c0cc32f5fdd5b0eb89dd1e9b908232a1bed', 'nigelhao123456', '0c5f3fbb26322c11cde4b3c895c304dc38933c2bb514cdc751177567bf417d2f585c4593c8c6f90c0d2f621a44b2cbc3', '', '5d354f426860f22d22e58d35e87c647032d0fdf44c8118c484c817ff682999654113bce51938570995dec0b2a954c1301ccdd5231e2c42b3b028435b362d0fbcc9aab01cb065346863647b756f0f173f96928b246178a328f037dc33f47364e07bbed9c18d7ccae29160f09e9bfebbcb5ba42238545fcf64ea74112038ef2e9184708c7ab281d1126d2d4999464b74103b5595a317f5f828a69ff4d502c2486fcbfdafa901ace0aea6efad95c23a83e0', 'b697106f3e0f8ca62b090adb3005fc089fae885834f862917ed70627c2c10158a39f3aef608c561585c8434eec3390721c1931414615f20f1bc264f969bfd091bcb69a46f47cb0fe83c994a565db7bf7', 'adc2023401f6190ff780e919d05d219d329c495bfdabb68ba94e5e380185030ad0c844d419a98ad83f77d4d434602773ba9311d57f9418578772ae68e4b6f9d587c1dbe661e751688fe2d7e231679c50'),
-(2, 'b09a3caa4fd40530a4b11e03f4bfc44a', 'jinkuan', '9348762009d880f3703e5f74dbd3424fdfa550ec5482dc5363d4f7c5197e8e0387434137de627def105d8215e8b49372', '', 'd8e46f9dda0e39724bc87907f937452cab38cc9c0f7e42f8f2cb1213baf9cb0345c5aca2b67be66daa3d788e6018cb8e', 'c237af20702a5a56c63a40292d76b2f8ac11292c6f2c783eb7bcf4b3b2e134bd9c3fd95274c43d2c2145e7e125e439b87c79a58e15d29da4ab162c71f655bf35e2647394e2be3426583709db03058433', 'd9e976b2e93979acae600f0ff2b33bc2b5edac8a230c0561bdc4cf19c8fdae990ef6584c884d0bbb102784a57cdef3604c70dda5517d1ede04671e54ae42244472d4be160a95786082e5f4ed58c35b1e'),
-(3, 'a06637a02a28229fa47a9b81d9c53c90', 'chloeang', 'a4a3d0886d4ef4100c9347ee92e2bd1098db94a4d36b80aa0361afbfe7a0e05fa512c52d39a113621288b90db037cc09', '', 'd8e46f9dda0e39724bc87907f937452cab38cc9c0f7e42f8f2cb1213baf9cb0345c5aca2b67be66daa3d788e6018cb8e', 'd3b122972e88f24e84826bf5d7c1a9155a3118f00082f5ca62fbdf4058161c33526b1a950f19686cfee0843f0c40fd62adb45e393c92cbf8a882403187be31ea6694c27746428e547fcd1f43c71d6b06', '440bce1f7bf83f386024046341ef8f898356b914675c722955bc8a3b5f67e033b826cf01a006565b6d9afc2de95f0ec5a714073dd9dbaf82d0cc39b7725a9b718f04f61182091669eee91329e058bd0a'),
-(4, 'a8fb266685a3f256859391c0c92d69ae', 'bryantan', 'e14353172dbf5f6ab93d69ed8b767fa3de1e904b375390b00e6f3d6c68c51ee8ae6d110ab5885df5b977398d873007c4', '', 'd8e46f9dda0e39724bc87907f937452cab38cc9c0f7e42f8f2cb1213baf9cb0345c5aca2b67be66daa3d788e6018cb8e', 'b3708e3469503cedfe02cfa5ca81f6679f3c7c9060f7fade3223fb693f708a0e638f805cf9cf7ce4af6124f2bfd52ebb8972942244ac901bd40497437f6c37c594d10b2bb7d7a146dafaf4fc79dea34d', 'bc4c95d31561b4c20faedbbc59659f72e3fe945291de5f0bdb9d3eb34e44678c81a5b0eb37b4d2c538e5c09b6156567aa78bd73c204bbde4db97246a54b94b9a4bd717c5e3453659c499326658db919b'),
-(5, '796275eb407cf924ac8ea05c41278cb1', 'qingning', '6a25cd8829de2338e267f048835e024cbd944214c69e3a5c9dceba9d07271761f0c698a769afca1f9f4cb3394a047aa6', '', 'd8e46f9dda0e39724bc87907f937452cab38cc9c0f7e42f8f2cb1213baf9cb0345c5aca2b67be66daa3d788e6018cb8e', 'b9e2783621c316bbaac172d97a3024b1c2b3cfa9867e2bc5854d52071e66379a698f906f0adb67a3168b21676d34a5a964eddfd96cc1f10d3aff54871de0767a6974be0bb3053179fc3dee213c2c8a42', '3800e5ace02c3c469cbce314cbde4f7791dcdf9c7b1e5e7ef0b5cb2c7ead259ebecd95690d68902d5a9af004bf1b5f9a8cff77729599cefd222b53ef14b104b7bce7a23fd24498a03c9e6c096c8e5186'),
-(7, 'Unencrypted Name', 'Unencrypted Teach Name', 'unencryptedteachname@gmail.com', '', 'd8e46f9dda0e39724bc87907f937452cab38cc9c0f7e42f8f2cb1213baf9cb0345c5aca2b67be66daa3d788e6018cb8e', 'exo8XOHnDV2gvPD2wLvSvrYAVDV++F6wxpfnuA7Y4+A=', 'Yaog6ZhUnEYMDJI8QcQV9TpUoyLOQ/TiDOhP/pRGLZw='),
-(8, 'new name', 'nigelhao22', 'unencryptedstuname@gmail.com', '', 'HELLO', 'Dy4gFRDQJYQexIo5uuG/NzaVbEls+Q849qB5dRXPaeM=', 'Q8VbdgIpg0oERhhFjWpzgwoHwYFCX0wgdhkX3YzpA0g='),
-(10, '77d3ab94ee790f4941be36f0872d927d9efb3e8da48f69f22f15753b5de4951933c6f5a2e6cf9d3e99cce17b5f7949ac', 'doing presentation', '571272e80d9dbb09fc77fef118ea801ec0595d0a10df56dfcb3a257d5f56aa6828b6b8e3577e5c73144d2750397293c0', '', '5d354f426860f22d22e58d35e87c647032d0fdf44c8118c484c817ff682999654113bce51938570995dec0b2a954c1301ccdd5231e2c42b3b028435b362d0fbcc9aab01cb065346863647b756f0f173f96928b246178a328f037dc33f47364e07bbed9c18d7ccae29160f09e9bfebbcb5ba42238545fcf64ea74112038ef2e9184708c7ab281d1126d2d4999464b74103b5595a317f5f828a69ff4d502c2486fcbfdafa901ace0aea6efad95c23a83e0', '2dec332584436293d09b7600993cb168486dac0c44bc150a61686a807701dc6efec15ffee13734296cf4fec2a907b1b58a09d335769e9a0727ef32c97fc0ca6d10ec4bf0271fdd30dfd976e82226ef9f', '91a7e66bdb7fe1ad66619a8efd7ac35525ecf51c8673b333a3306d76c44135cf4c698e1b6738d5449aa9ad72ea02692be934050b3cdf8d00e31d73f428161de3b2c895cda83c0a7e88a2f63f68cc0332'),
-(11, '1743bba70a51c7bb52ac7dec677c8af6', 'nigelhao22324432342534', '0c5f3fbb26322c11cde4b3c895c304dc38933c2bb514cdc751177567bf417d2f0aeed2a1b94ebe3e267e7f7b1fb59f40', '', '', '9148d9e73e4aea79d2b54e09b7d60ade611cbc748ebe881a07fd72e7dd2f4bc937bc0326589dbe53a7d5841f929a63c38a9117c1f51134311b8a0a7c46885ae8a80ed14c47cc495d834bd40e856483f5', 'ff2b7bed8428f1dced93796ac131d385132e6a4ba820d9d3fc2d9e40f444e850db51db06b0a35ce39fbcd422dd1e2dbf884500e21d81e2e8033a693f570f87149981deb5c8416e42f2481de1f2fb6708'),
-(12, '1989512acce3fbeeb5155cc054766e5f', '321312', 'dd7f2f0353303dc7d730b4425feb72df7b4c28a1f9609d24dbf9eaae51c4e86a55d616894e5694b7d448fdb8431679d1', '', '', 'f260757a81638acdd2f60e56bebfdffb77a56e44c75bfa1b53577e831c39f0d763c12dfb722baf1001efaa05c642c6554b50a88a0a372deb382cbfbb54984feb4648839d677cafae39895a4e520f7651', '85f160a0452ab823aa223bf742d77269ae973314fb59f8b3d0107f0467636ffe41e70a0e56e073b56e5d5fb442866f259502e5bb8c58997111418feebfa7eff96b265530c329ce6bd27d6a5fd735cb93'),
-(13, '1fe4feadb2e85b06834062ed4fd4061d', 'dasd@dasdsa.com', 'e37cbf7ff5219a57f81e186dfb663539', '', '', '02b1036ae2dd616e3b4fb6ac13b60e726579b0efd60fee76bfd3ad507a9f0076e200d7f048e2c6d18fc634f4f2fd7ea6f2e692204da3e8b6c56bbaf21a0a9904861035452457a51ade4e1e7ff68da4e9', '56ee32e156b5f495583f76feebe25a7de5ea9ac329d1d29fbe3ac4cccacd331e682df8e5158da6203f26008e0f62796263c5790c04b1dcef798ae90a2323954b239dbf22b82e2b53d4f8d7321cb63b7e'),
-(14, 'f', '', '', '', '', '', ''),
-(15, '948b68cb8558720309654b3682f78e78', 'nigelhao', '6c627602388a6ef2f766a015eb287dbd80956c4667b69cdc733a4e97ad1455842952d55383e07e36afcc097d3254f46e', '', '', '67e4fe12b11d6aab6e25a811759bdd84a40f2511b94f7bd5b91964fc5bb3a6fbf2c51dcc97a777e03304d17713b066bc657ad0118598a82138f8d6b157ffefd528a67cf821120cfaea9975ffc1b771d9', '4c17d0a7bd55b23c4c81e68ff937a92f9920bb123999a1bebbe2259507126eab106d40af42a93aecfe4c4dbcf59bb87413265ca9e90d634b7de11ca16231083540d105a1fc1264244b3e7a97c4b0dda0'),
-(16, 'd7285ab32a956959c83ee4a499149deb07bf13b019ef4044ad8ee3e51a5c3d7649158a9fb1de1d065b2f644cc4e0bc28c4c186b939966b7066fcbf6de9ac4438', 'script', '05b5a451a9d9ff93736a8546c75189075b259e3cacf70f97718fe430d81412696901883ecad66321655e6733bc5d237b', '', '', '20c1e26a8a465f82db1d6e48d37fd51c4f2aa4e522822466c689f1853e5f311c13714ab43bd5a02aa7fccfa656ac2884d47b3fe4a507b9a50593b82db6071656b727cca717eefb443da71a446d027d1a', 'e1baad05fcceae5b318baec0a033e2b2aed5b99bdacad520f6d2ba312e784b7ea74be7ef5e40dbad602b559d5b6ae5c2b487b964277f12585626b6fc6c503c8c117210004c2d65b06059681aeb02b7ca'),
-(17, '5a521260aecb2aa57499ae249693a28c', '<script>alert(\"kill\");</script>', 'dbf16a60f5709f270422e5402f3905c6e865b9b6f3f255e02c067b75083abfdce3da45f5945a9592896220f5a07b79e52e654f62f10e45075e1102185e48b9f33fca65a936f87efb3f756e193c9390bab41236730be614c6e85f143fe6e009b66492cb6ce5ab479ccff049ee3a273aef119d3b2fbc911b4cbcc18d1815790e5983192d946c07b4889303f4216c0fe357', '', '', 'd4790fd0498f69a368e125dcd9508a4dc0fa525e47c545b0f67ab99dd0e4a31c0d6755400df6c5ddefc3e0765320026e8d9710feee209f2d6410f3a81dd85cdfcec85fc7e00ed9124a6fabfa0cd5da93', '6d531f5971453b78c8be6736225c6f01a483a44125f14d93def5e1c78290283eca9cb20a25e186ee7b23cbc0e191377d150ad20aa1010d2c3a36bc419e3bfc30c73e4c8fa407e21abdda5aa4ebde31e4');
+(15, 'e30f3fd4f0d49f551880d77b20644275db9ce8cdc965a5d932aba311a67e5ba7c43e3a4cf14e9a1975aec0d73d35c1eb', 'nigelhao', '5893c8f04a4ae2087852ce2aef5dee46dbec241889cc94d553f28d898114978a94ef4683b8c11707205cdde87a406712', 'ec7f44783bf622056d1692637cf76c52', 'a15f04c0a10888c4975fbce0a46f7dcb11b0119f02edf41666ad97994f480b31530202f07a8cbce32d8c395d7d73571acad672631b6a078f9b7d3edbece021931dd7ba3df4f75f825ebfcc4fb939755f', 'a15f04c0a10888c4975fbce0a46f7dcb11b0119f02edf41666ad97994f480b31530202f07a8cbce32d8c395d7d73571acad672631b6a078f9b7d3edbece021931dd7ba3df4f75f825ebfcc4fb939755f', 'bf808fba0a496f3063e8c928de0acb8a53fccd46ce9b1c6fab7a76a03b070a7f9b00d06bac7c13bd76539584944b379aae04d9e2d2e630c5b96a1839cb8d12ebc2f5ea9dddc21cac7cf85b9d37f255c5'),
+(66, '76a746fed366e0c957ad5e471c92ba59', '0Deserunt.', '0e6c567bdec5f62f37f5bc60867cc89144f7dfc88c7dd3987fed3fb27d2fe255e27cd205ac4611e4033ba7641133e291', 'a76494dad8e16069e44160f6b3e95d01', '', '881f1d4ceafcba7bbe87fc1b5362e6479ee7c257ed2708b7ade88ee2b237601a6ec05cb8c4e76143e52bd6fde07c161b7a1ea097a75aa97f61dc3401d150916b57c89f2ae91617e1fbb0b2847663c0f7', '3b16375fc9561fda5951ef16278417c837cc3583ab85e1640ca7cc4a82c41db1f66e6a26c83cd2015fa183a142925703bff3e9665c71e31c83305883a80efde15af8905be0278d0fdd237f7956e15bd0'),
+(67, 'e69cf5f5f7368461f955880d847647e2', '1Hic cumque.', 'c5dac5f7a937133bee1d39ecc6c89b84a06a88149f3b04cff4988ebb2eb20a75a282888f4a1432c3f9a536ef0e446c14aaecda6a1dcd4caad7e236bf982153f5e3b2ce034b6a749db07d7159a50c7438', 'a76494dad8e16069e44160f6b3e95d01', '', '6176a263b794367d696c3af19514414cb4807a5d5e4a81b5791cc47e3b102338de616c2ebc96a74035ec2718391d7104d78f900523861535f4bdbcd44425bd7ae78b19902ed91825b66c7f2b7675712d', '0430a15740f5bd3fd5f0d9f02fd1eb7c16cddee1988c940bb8c2fdbcaa28f09f1e72315177cbbdd2de859d35d28808fd97a82d7647af758c7697dbba0d32e585aea8eadfb3691933d9773d0976cbb328'),
+(68, 'd24128a43f78f9b6bfd354a77c22463d', '2Ullam magni.', '5eac1587ceaf307e572807c928638653bc3fdcd84a77e9b730606eb649386824d6c6b560d3e3b0a7da021b157d212e5a02d18dfd0f46d2a7c71cf28e9bcb6314', 'a76494dad8e16069e44160f6b3e95d01', '', 'ef74980b15ee9d74beb63edc8b12c4b8631e1225372b6d4bccfb99438ca87acb09152c6d452a89263933cb96d5e5a3322e9f8cd7802939096d1ba78123d629033506fd6c157514fde302f372d08d3720', '0c21e7e9a47d8b8a41928d552bcb0ed524ca4ba41dcc7b80fb674a4e307097d31f62fb0c708907c18d414b6fde757739b024e6fa0dfa8a3f5b426dda247cac1d3fe49aef978351c579406262633e5d92'),
+(69, '30f6298eb4509ddddc5ff272843f1aa0', '0Assumenda.', 'a2bb74115f8633f717081c5020cf2fad7a46eabc3f78dcfc2e35670fd04ac3d7f6cfff2d70f871938fa704e40a4a8404', 'a76494dad8e16069e44160f6b3e95d01', '', 'eecce3dfb42d712a35d364d39e92acc31f872a035f4099726b13201e2084e279ceb68c85e5d64c59b88f089ac8094e0fe061d5ef090b0701c0e801e1f9bfedbeea53a84bba77fe7f6a1f9d9cb7c7fc64', '9189b2ffeab9137dc51123013b4b36be20944073fc05f33af35ceb9bc92bf99d945460f9330ec6696816f7b3fe20f00a9064df5beb7bfb8884c0340655a8764acf42d3591ab45ea873eeffa22f5d49c0'),
+(70, '09116963caea1818a28d7619dabd3270', '1Voluptatum.', '7ba4b182b62995f3b3294d8a6d75ecc6ac1160ad8813bf3ac2adfede917c8f05300ca7ac4d9700fb0a28ced075d7fcc58faa8d80e43f1382ac400649370e736c7c84802977af08ce9104568851576089', 'a76494dad8e16069e44160f6b3e95d01', '', '8ddcdc08aa1123246198d1f79bb167700c769a0bcda6c42f84d72507d166ad9f27df1f4b4c6d8f5c0b697d288660cd7c93ed6903f90e8bcdf1af12ed0aaeb21e935afc9bf351b21739ef957417251f66', '48d915ce909a5a79f6cec59be596c6c015c2d256d02f1c5b5acd677cd0d325b515a92aca18516a7f696c4f0d6c61063f80e1f13fa1f990ff026a429fbda43837a3cd5e9c4db1d4714a79787819d3ceb2'),
+(71, '4df9d63cc54985873cb1d07b2bb7b8de', 'user1', 'b0054b0dac0ae3ebc55a9518db3008c516cdeac3e514e92e1d76dab74723aad0', 'a76494dad8e16069e44160f6b3e95d01', '', '5b1d937fc6fa77847f29c30a4e60466cb0bfc2673c21cb2d7d598a0da267e7623eaaea1a56b0847f9b0d7f6906b51f00525751a7e5af1da473ec3148d30a7fdb63a7fe79997bcff229cb5a655f5473de', 'ea08f66583ed8ca8d18953d8b896b38ea0b424164778c111fed72d04ca89d8ec3522f3cdb215d881770c30e2dda7a880db3e4a9ef89e57bc8ab724f9be42a4946a4e8732370b0baf528da10515100dcb'),
+(72, 'f032ed6de0292677795f2cdeaffe1861', 'user2', '728f152f5df92bcc5eda4265ddb77f8e', 'a76494dad8e16069e44160f6b3e95d01', '', '67f31a1ad65352d7859b487c9d77233bddd46f418d8ca39d71c53eb6f4ce67f9e7e18e0ff899315564b295933a684e9437356bb5c58538ecf0476e081b24db0739e19c06b83e4ce8c93532ad1625a00c', '716c305cfcebba4591471867def3e006327e00de6875f6e559433ebd431fa47e458994cbc23da2008e07864a896f96ffe40bae76a19760da120e82dd7a7e43d5889457ee250c28c344af8279f123a007');
 
 --
 -- Indexes for dumped tables
@@ -369,6 +384,12 @@ ALTER TABLE `quiz_question_choices`
   ADD KEY `quiz_question_choices_ibfk_1` (`question_id`);
 
 --
+-- Indexes for table `spam_area`
+--
+ALTER TABLE `spam_area`
+  ADD PRIMARY KEY (`spam_id`);
+
+--
 -- Indexes for table `student_details`
 --
 ALTER TABLE `student_details`
@@ -406,42 +427,47 @@ ALTER TABLE `log_question`
 -- AUTO_INCREMENT for table `log_quiz`
 --
 ALTER TABLE `log_quiz`
-  MODIFY `log_quiz_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `log_quiz_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `new_device`
 --
 ALTER TABLE `new_device`
-  MODIFY `new_device_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `new_device_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 --
 -- AUTO_INCREMENT for table `quiz`
 --
 ALTER TABLE `quiz`
-  MODIFY `quiz_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `quiz_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 --
 -- AUTO_INCREMENT for table `quiz_question`
 --
 ALTER TABLE `quiz_question`
-  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 --
 -- AUTO_INCREMENT for table `quiz_question_choices`
 --
 ALTER TABLE `quiz_question_choices`
-  MODIFY `choice_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `choice_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+--
+-- AUTO_INCREMENT for table `spam_area`
+--
+ALTER TABLE `spam_area`
+  MODIFY `spam_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `student_details`
 --
 ALTER TABLE `student_details`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 --
 -- AUTO_INCREMENT for table `teacher_details`
 --
 ALTER TABLE `teacher_details`
-  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `user_account`
 --
 ALTER TABLE `user_account`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 --
 -- Constraints for dumped tables
 --
