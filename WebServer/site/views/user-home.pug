@@ -2,218 +2,223 @@ doctype html
 html
   head
     title
-    // Bootstrap CSS File
-    link(href='/resources/css/bootstrap.min.css', rel='stylesheet')
-    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
-    // Font Awesome Stylesheet File
-    link(href='/resources/css/font-awesome.min.css', rel='stylesheet')
-    // Material StyleSheet
-    link(type='text/css', rel='stylesheet', href='/resources/css/materialize.min.css', media='screen,projection')
-    // Animate Stylesheet
-    link(rel='stylesheet', type='text/css', href='/resources/css/animate.css')
-    link(rel='stylesheet', type='text/css', href='/resources/css/mainstyle.css')
-    link(rel='stylesheet', type='text/css', href='/resources/css/LoginHome.css')
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+    title Food and Restorent One page Template
+    meta(name='description', content='')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='apple-touch-icon', href='apple-touch-icon.png')
+    link(rel='stylesheet', href='/resources/css/bootstrap.min.css')
+    link(href='https://fonts.googleapis.com/css?family=Pacifico', rel='stylesheet', type='text/css')
+    link(rel='stylesheet', href='/resources/css/font-awesome.min.css')
+    // <link rel="stylesheet" href="/resources/css/bootstrap-theme.min.css">
+    // For Plugins external css
+    link(rel='stylesheet', href='/resources/css/animate.css')
+    // Theme custom css
+    link(rel='stylesheet', href='/resources/css/style.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/user-home.css')
+    // Theme Responsive css
+    link(rel='stylesheet', href='/resources/css/responsive.css')
+    script(src='/resources/js/modernizr-2.8.3-respond-1.4.2.min.js')
     script.
       var data = !{JSON.stringify(data)};
       var Totalquiz = data.quizInfo;
-      console.log(data);
+      console.log(Totalquiz);
   body
-    // Hidden Header
-    .header-hidden.collapse
-      .header-hidden-inner.container
-        .row
-          .col-md-3
-            h5
-              | Welcome
-              span#user-name  #{data.userInfo.username}
-              | ,
-            p #{data.userInfo.about_me}            
-            a.btn.btn-more(href='/profile')
-              | Profile
-              i.fa.fa-arrow-right(aria-hidden='true')
-          .col-md-3
-          .col-md-6
-            h3
-              | Choose A Theme
-            .switcher
-              .cols
-                br
-                a.background.benches.active(href='#benches', title='Benches')  Benches
-                a.background.boots(href='#boots', title='Boots') Boots
-                a.background.buildings(href='#buildings', title='Buildings') Buildings
-                a.background.city(href='#city', title='City') City
-                a.background.metro(href='#metro', title='Metro') Metro
-              .cols
-                | Colours:
-                br
-                a.colour.orange.active(href='#orange', title='Orange') Orange
-                a.colour.green(href='#green', title='Green') Green
-                a.colour.blue(href='#blue', title='Blue') Blue
-                a.colour.lavender(href='#lavender', title='Lavender') Lavender
-            p
-              small Selection is not persistent
-    nav
-      .nav-wrapper
-        a.brand-logo(href='LoginIndex.pug')
-          img.logo(src='/resources/images/logo.png')
-        ul#nav-mobile.right.hide-on-med-and-down
-          li
-            a(href='/createquiz')
-              i.fa.fa-plus-square-o
-              |  Create
-          li
-            a(href='#')
-              i.fa.fa-graduation-cap
-              |  Quiz
-          li
-            a.dropdown-button(href='/profile', data-activates='dropdown1')
-              i.fa.fa-user(aria-hidden='true')
-              |  Profile
-              i.material-icons.right arrow_drop_down
-          ul#dropdown1.dropdown-content
-            li
-              a(href='#!') Hosted
-            li.divider
-            li
-              a(href='#!') Attempts
-          li
-            a(href='#') Join Quiz
-          li
-              a(href='/logout') Logout
-    
-          li
-            a.btn.btn-primary.btn-hh-trigger(role='button', data-toggle='collapse', data-target='.header-hidden') Open
-      
-    .container-fluid.welcomei
-      .row
-        .col-md-8
-          .greeting
-            h4 Hello  #{data.userInfo.username}
+    .preloader
+      .loaded  
+    header#home.navbar-fixed-top
+      .header_top_menu.clearfix
+        .container
+          .row
+            .col-md-5.col-md-offset-3.col-sm-12.text-right
+              .call_us_text
+                a(href='')
+                  i.fa.fa-clock-o
+                  |  Default Theme
+                a(href='')
+                  i.fa.fa-phone
+                  | Dark Theme
+            .col-md-4.col-sm-12
+              .head_top_social.text-right
+                a(href='')
+                  i.fa.fa-facebook
+                a(href='')
+                  i.fa.fa-google-plus
+                a(href='')
+                  i.fa.fa-twitter
+                a(href='')
+                  i.fa.fa-linkedin
+                a(href='')
+                  i.fa.fa-pinterest-p
+                a(href='')
+                  i.fa.fa-youtube
+                a(href='')
+                  i.fa.fa-phone
+                a(href='')
+                  i.fa.fa-camera
+      // End navbar-collapse
+      .main_menu_bg
+        .container
+          .row
+            nav.navbar.navbar-default
+              .container-fluid
+                // Brand and toggle get grouped for better mobile display
+                .navbar-header
+                  button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+                    span.sr-only Toggle navigation
+                    span.icon-bar
+                    span.icon-bar
+                    span.icon-bar
+                  a.navbar-brand.our_logo(href='#')
+                    img(src='/resources/images/logo.png', alt='')
+                // Collect the nav links, forms, and other content for toggling
+                #bs-example-navbar-collapse-1.collapse.navbar-collapse
+                  ul.nav.navbar-nav.navbar-right
+                    li
+                      a(href='#') Home
+                    li
+                      a(href='#mobaileapps') Join
+                    li
+                      a(href='/profile') Profile
+                    li
+                      a.booking(href='/logout')  Logout
+                // /.navbar-collapse
+              // /.container-fluid
+    // End Header Section
+    section#facts.facts-section.text-center(data-stellar-vertical-offset='50', data-stellar-background-ratio='0.2')
+      .tt-overlay-bg
+        .container
+          .row
+            .col-md-12
+              .count-wrap
+                .col-sm-3.col-xs-6
+                  h3.timer(style='padding-top:150px;') Welcome, 
+                  p#user-name #{data.userInfo.username}
+                .col-sm-3.col-xs-6
+                .col-sm-3.col-xs-6
+                .col-sm-3.col-xs-6
+                  h3.timer(style='padding-top:150px;') 10 Posts
+              // /count-wrap
+            // /.col-md-12
+          // /.row
+        // /.container
+    // End Facts Section
+    .container-fluid
+      #quiz-row.row
+        #quiz-div.col-md-8
+          .post-quiz(style='border:1px solid red;')
+            .post
+              .post-thumb
+                img.img-rounded(src='/resources/images/works/portfolio-6.jpg')
+              .post-details
+                h3 Blah Blah QUiz
+                .post-meta
+                  .meta-info
+                    i.fa.fa-calendar(aria-hidden='true')
+                    |  04 August 2017
+                p 20 MCQ Questions
+          .post-quiz
+            .post
+              .post-thumb
+                img.img-rounded(src='/resources/images/works/portfolio-6.jpg')
+              .post-details
+                h3 Blah Blah QUiz
+                .post-meta
+                  .meta-info
+                    i.fa.fa-calendar(aria-hidden='true')
+                    |  04 August 2017
+                p 20 MCQ Questions
+          .post-quiz
+            .post
+              .post-thumb
+                img.img-rounded(src='/resources/images/works/portfolio-6.jpg')
+              .post-details
+                h3 Blah Blah QUiz
+                .post-meta
+                  .meta-info
+                    i.fa.fa-calendar(aria-hidden='true')
+                    |  04 August 2017
+                p 20 MCQ Questions
+          nav.pagination-container
+            .pagination
+              a.pagination-newer(href='#') PREV
+              span.pagination-inner
+                a(href='#') 1
+                a.pagination-active(href='#') 2
+                a(href='#') 3
+                a(href='#') 4
+                a(href='#') 5
+                a(href='#') 6
+              a.pagination-older(href='#') NEXT
         .col-md-4
-          .statistics
-            .ui
-              .ui_box
-                .ui_box__inner
-                  h2
-                    | Achievement
-                  p Overview of your achievement
-                  .statistics
-                    span 58%
-                  .progress
-                    .progress_bar
-                  p Highest achievement
-    .control
-      .btn-material
-      i.material-icons.icon-material-search search
-    // full screen form controls
-    i.icon-close.material-icons close
-    .search-input
-      input.input-search(placeholder='Start Typing', type='text')
-    .container-fluid
-      .row
-        .col-md-6
-          nav#searchbar
-            .nav-wrapper
-              form
-                .input-field
-                  input#search(type='search', placeholder='Search for quizzes', required='')
-                  label.label-icon(for='search')
-                    i.material-icons search
-                  i.material-icons close
-        .col-md-6
-      .row
-        .col-md-9
-          blockquote
-            | All Quizzes
-        .col-md-3
-          blockquote
-            | Top Quizzes
-    .container-fluid
-      .row
-        .col.s12.m9.quiz-container
-          .card.all-quiz
-            .card-image.waves-effect.waves-block.waves-light
-              a.btn-floating.btn-large.btn-price.waves-effect.waves-light.pink.accent-2.quiz-category(href='#') Uni
-              img.quiz-image(src='/resources/images/quiz_default.jpg')
-            .col.s2.offset-s5
-              a.btn-floating.btn-large.waves-effect.waves-light.green.accent-4
-                i.material-icons share
-            .col.s2
-              a.btn-floating.btn-large.waves-effect.waves-light.red.accent-2
-                i.material-icons favorite
-            .col.s2
-              a.btn-floating.btn-large.waves-effect.waves-light.light-blue
-                i.material-icons.activator info
-            .card-content
-              span.card-title.activator.grey-text.text-darken-4 Blah Blah Quiz
-              a.btn-floating.btn-large.waves-effect.waves-light.red
-                i.material-icons play_circle_filled
-            .card-reveal(style='border:1px solid red')
-              span.card-title.grey-text.text-darken-4
-                | Blah Blah Quiz
-                i.material-icons.right close
-              p 20 MCQ Questions
-              p Created By: 123
-              p Created On: 2017-06-15
-          .card.all-quiz
-            .card-image.waves-effect.waves-block.waves-light
-              a.btn-floating.btn-large.btn-price.waves-effect.waves-light.pink.accent-2.quiz-category(href='#') Uni
-              img.quiz-image(src='resources/images/quiz_default.jpg')
-            .col.s2.offset-s5
-              a.btn-floating.btn-large.waves-effect.waves-light.green.accent-4
-                i.material-icons share
-            .col.s2
-              a.btn-floating.btn-large.waves-effect.waves-light.red.accent-2
-                i.material-icons favorite
-            .col.s2
-              a.btn-floating.btn-large.waves-effect.waves-light.light-blue
-                i.material-icons.activator info
-            .card-content
-              span.card-title.activator.grey-text.text-darken-4 Blah Blah Quiz
-              a.btn-floating.btn-large.waves-effect.waves-light.red
-                i.material-icons play_circle_filled
-            .card-reveal
-              span.card-title.grey-text.text-darken-4
-                | Blah Blah Quiz
-                i.material-icons.right close
-              p 20 MCQ Questions
-              p Created By: 123
-              p Created On: 2017-06-15
-        .col.s12.m3
-          .quiz
-    a#scroll(href='#', style='display: none;')
-      i.material-icons arrow_drop_up
-    // Required JavaScript Libraries
-    script(src='/resources/js/jquery.min.js')
+          .sidebar
+            h3 Top 3 Quiz
+            .sidebar-content
+              ul.discussion-list
+                li
+                  a.thumb(href='#')
+                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
+                  .details(style='border:1px solid red;')
+                    a(href='#') Blah Blah Quiz
+                    p
+                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                li
+                  a.thumb(href='#')
+                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
+                  .details
+                    a(href='#') Blah Blah Quiz
+                    p
+                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+          .sidebar
+            h3 Recent Quizzes
+            .sidebar-content
+              ul.discussion-list
+                li
+                  a.thumb(href='#')
+                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
+                  .details(style='border:1px solid red;')
+                    a(href='#') Blah Blah Quiz
+                    p
+                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                li
+                  a.thumb(href='#')
+                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
+                  .details
+                    a(href='#') Blah Blah Quiz
+                    p
+                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                li
+                  a.thumb(href='#')
+                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
+                  .details
+                    a(href='#') Blah Blah Quiz
+                    p
+                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                li
+                  a.thumb(href='#')
+                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
+                  .details
+                    a(href='#') Blah Blah Quiz
+                    p
+                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    script(src='/resources/js/jquery-1.11.2.min.js')
     script(src='/resources/js/bootstrap.min.js')
-    script(type='text/javascript', src='/resources/js/materialize.min.js')
-    script(type='text/javascript', src='../controller/quiz.js')
-    script(type='text/javascript', src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/499416/TweenLite.min.js')
-    script(type='text/javascript', src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/499416/EasePack.min.js')
+    script(src='/resources/js/jquery.easing.1.3.js')
+    script(src='/resources/js/wow.min.js')
+    script(src='/resources/js/plugins.js')
+    script(src='/resources/js/main.js')
+    script(type='text/javascript', src='/resources/js/jquery.easyPaginate.js')
+    script(type='text/javascript', src='../controller/quiz-client.js')
     script(type='text/javascript').
-      var options = [
-      {selector: '.card', offset: 0, callback: function(el) {
-      Materialize.showStaggeredList($(el));
-      }}
-      ];
-      Materialize.scrollFire(options);
-      $(document).ready(function(){
-      $(window).scroll(function(){
-      if ($(this).scrollTop() > 100) {
-      $('#scroll').fadeIn();
-      } else {
-      $('#scroll').fadeOut();
-      }
+      $('.pagination-inner a').on('click', function() {
+      $(this).siblings().removeClass('pagination-active');
+      $(this).addClass('pagination-active');
       });
-      $('#scroll').click(function(){
-      $("html, body").animate({ scrollTop: 0 }, 600);
-      return false;
-      });
-      });
-      $('.control').click( function(){
-      $('body').addClass('search-active');
-      $('.input-search').focus();
-      });
-      $('.icon-close').click( function(){
-      $('body').removeClass('search-active');
-      });
+      createNode();

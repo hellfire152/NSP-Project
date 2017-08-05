@@ -21,12 +21,6 @@ function attachCsrfToken(req, res, next){
 }
 
 function invalidCsrfToken(err, req, res, next){
-  // console.log("error");
-  // console.log(err);
-  // console.log("req");
-  // console.log(req);
-  // console.log("res");
-  // console.log(res);
   if (err.code === 'EBADCSRFTOKEN') {
     res.sendErrorPage('Invalid CSRF token!');
   }

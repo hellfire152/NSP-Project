@@ -1,0 +1,144 @@
+body{
+    background-color: #FFF;
+}
+.head{
+    background-color: #F5F5F5;
+    height:60px;
+}
+#welcome{
+    color:#333333;
+    font-size:28px;
+}
+#numOfPost{
+    color:#777777;
+    font-size: 28px;
+}
+.post-quiz{
+    position: relative;
+}
+.post{
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    display:block;
+    height:180px;
+}
+.post-thumb{
+    width:30%;
+    float:left;
+}
+.post-details{
+    display:inline-block;
+    width:65%;
+    float:right;
+    padding-left:20px;
+}
+.post-meta{
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f2f2f2;
+}
+.meta-info{
+    display:inline-block;
+    color:#999;
+    font-size:12px;
+}
+.post-detail p{
+    color:#999;
+}
+.sidebar{
+    position: relative;
+    margin-left:60px;
+    margin-bottom: 60px;
+
+}
+.sidebar h3{
+    margin-top:0;
+    font-size:19px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f2f2f2;
+    padding-bottom: 15px;
+}
+.sidebar .sidebar-content ul{
+    list-style: none;
+    margin:0;
+    padding:0;
+}
+
+.sidebar .sidebar-content ul li{
+    display:block;
+    padding:10px 10px;
+    border:1px solid yellow;
+    height:180px;
+}
+.sidebar .sidebar-content ul > li{
+    border-bottom: 1px solid #f2f2f2;
+}
+.sidebar .sidebar-content .discussion-list li .thumb{
+    width:30%;
+}
+.sidebar .sidebar-content .discussion-list li .details{
+    float:right;
+    width:80%;
+    padding:15px;
+}
+
+.sidebar .sidebar-content .discussion-list li .details a{
+    color:#303641;
+    font-weight: bold;
+}
+.sidebar .sidebar-content .discussion-list li .details p {
+    font-size:12px;
+    margin-top:5px;
+}
+
+.pagination-container {
+  margin: 100px auto;
+  text-align: center;
+}
+.pagination {
+  position: relative;
+}
+.pagination a {
+  position: relative;
+  display: inline-block;
+  color: #2c3e50;
+  text-decoration: none;
+  font-size: 1.2rem;
+  padding: 8px 16px 10px;
+}
+.pagination a:before {
+  z-index: -1;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  content: "";
+  top: 0;
+  left: 0;
+  background-color: #2c3e50;
+  border-radius: 24px;
+  -webkit-transform: scale(0);
+          transform: scale(0);
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+}
+.pagination a:hover,
+.pagination a .pagination-active {
+  color: #fff;
+}
+.pagination a:hover:before,
+.pagination a .pagination-active:before {
+  -webkit-transform: scale(1);
+          transform: scale(1);
+}
+.pagination .pagination-active {
+  color: #fff;
+}
+.pagination .pagination-active:before {
+  -webkit-transform: scale(1);
+          transform: scale(1);
+}
+.pagination-newer {
+  margin-right: 50px;
+}
+.pagination-older {
+  margin-left: 50px;
+}

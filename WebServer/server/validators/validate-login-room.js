@@ -27,7 +27,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
       }
     }, (checkBannedResponse) => {
       if(checkBannedResponse.data.success){ //IP banned
-        res.end()
+        res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
       }
       else{
         if(botCheck !== ''){
@@ -39,7 +39,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
               ip_address : userIP
             }
           }, (response) => {
-            res.end()
+            res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
           });
         }
         else{

@@ -28,8 +28,8 @@
     }
   },
 
-  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam", "ForgetPassword", "otp-ForgetPassword", "ChangePassword"],
-  "REQUIRE_VALID_LOGIN" : ["createquiz", "host", "play", "report", "hostreport", "forgetpassword", "userhome"],
+  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam", "ForgetPassword", "otp-ForgetPassword", "ChangePassword" , "Home", "CreateQuiz"],
+  "REQUIRE_VALID_LOGIN" : ["CreateQuiz", "host", "play", "report", "hostreport", "forgetpassword", "userhome"],
   "USE_TEST_ACCOUNT" : true,
   "TEST_ACCOUNTS" : [{
       "username" : "hellfire152"

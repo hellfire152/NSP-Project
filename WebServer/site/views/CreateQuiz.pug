@@ -2,129 +2,145 @@ doctype html
 html
   head
     title
-    link(rel='stylesheet', type='text/css', href='/resources/css/bootstrap.min.css')
-    link(rel='stylesheet', type='text/css', href='/resources/css/LoginForm.css')
-    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
-    link(rel='stylesheet', type='text/css', href='/resources/css/materialize.css')
+    link(rel='stylesheet', href='/resources/css/bootstrap.min.css')
+    link(href='https://fonts.googleapis.com/css?family=Pacifico', rel='stylesheet', type='text/css')
+    link(rel='stylesheet', href='/resources/css/font-awesome.min.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/createquiz.css')
+    // For Plugins external css
+    link(rel='stylesheet', href='/resources/css/animate/animate.css')
+    // Theme custom css
+    link(rel='stylesheet', href='/resources/css/style.css')
+    link(rel='stylesheet', href='/resources/css/responsive.css')
+    script(type='text/javascript', src='../resources/constants.js')
   body
-    nav
-      .nav-wrapper
-        a.brand-logo(href='#') Logo
-        ul#nav-mobile.right.hide-on-med-and-down
-          li
-            a(href='sass.html') Sass
-          li
-            a(href='badges.html') Components
-          li
-            a(href='collapsible.html') JavaScript
-    .container-fluid
+    .main_menu_bg
+      .container
+        .row
+          nav.navbar.navbar-default
+            .container-fluid
+              // Brand and toggle get grouped for better mobile display
+              .navbar-header
+                button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+                  span.sr-only Toggle navigation
+                  span.icon-bar
+                  span.icon-bar
+                  span.icon-bar
+                a.navbar-brand.our_logo(href='#')
+                  img(src='/resources/images/logo.png', alt='')
+              // Collect the nav links, forms, and other content for toggling
+              #bs-example-navbar-collapse-1.collapse.navbar-collapse
+                ul.nav.navbar-nav.navbar-right
+                  li
+                    a(href='/Home') Home
+                  li
+                    a(href='#abouts') Join
+                  li
+                    a(href='/profile') Profile
+                  li
+                    a.booking(href='/logout') Logout
+              // /.navbar-collapse
+            // /.container-fluid
+    ol.breadcrumb
+      li.breadcrumb-item
+        a(href='#') Home
+      li.breadcrumb-item.active Create Quiz
+    .container
       .row
-        form#createQuiz
-          .col-md-3
-          .col-md-6
-            .form-group
-              label(for='nameofQuiz') Quiz title:
-              input#nameofQuiz(type='text', name='nameofQuiz', autocomplete='off')
-            .form-group
-              label(for='desc') Description:
-              input#desc(type='textarea', name='desc', autocomplete='off')
-            .form-group
-              label Visibility:
-              input#public(name='typeOfQuiz', type='radio')
-              label(for='public') Yes
-              input#private(type='radio', name='typeOfQuiz')
-              label(for='private') No
-            .form-group
-              label Question No:
-              p Prompt
-            #next.form-group
-              a#quizDetails.btn-floating.btn-large.waves-effect.waves-light.red.prompt-open(style='margin:auto;')
-                i.material-icons add
-          .wrap
-            .content
+        .col-md-3
+        .col-md-6
+          form
+            label Quiz Title: 
+            input#quizTitle.form-control(type='text', placeholder='Quiz Title', autocomplete='off')
+            label Description: 
+            input#quizDescription.form-control(type='text', placeholder='Description', autocomplete='off')
+            label Reward: 
+            input#mainReward.form-control(type='number', placeholder='Reward', autocomplete='off')
+            label Visibility
+            .radio
+              input#visibleYes(name='visibility', type='radio')
+              label.radio-label(for='visibleYes') Yes
+            .radio
+              input#visibleNo(name='visibility', type='radio')
+              label.radio-label(for='visibleNo') No
+            #questionAppend.form-group
+              label Questions:
+        .col-md-3
+      .row
+        .col-md-3
+        .col-md-6
+          button#addQuestion Add Question 
+          form#sendQuiz(method='POST', action='/add-quiz')
+            input(type='hidden', name='_csrf', value=`${csrfToken}`)
+            input#bot(type='hidden', name='_bot')
+            input#quizSet(type='hidden', name='quizData')
+        .col-md-3
+          button#sendSetQuiz(onclick ='sendSetQuiz()') Submit Quiz
+      // modal
+      .modal-overlay
+        .modal
+          a.close-modal
+            svg(viewbox='0 0 20 20')
+              path(fill='#000000', d='M15.898,4.045c-0.271-0.272-0.713-0.272-0.986,0l-4.71,4.711L5.493,4.045c-0.272-0.272-0.714-0.272-0.986,0s-0.272,0.714,0,0.986l4.709,4.711l-4.71,4.711c-0.272,0.271-0.272,0.713,0,0.986c0.136,0.136,0.314,0.203,0.492,0.203c0.179,0,0.357-0.067,0.493-0.203l4.711-4.711l4.71,4.711c0.137,0.136,0.314,0.203,0.494,0.203c0.178,0,0.355-0.067,0.492-0.203c0.273-0.273,0.273-0.715,0-0.986l-4.711-4.711l4.711-4.711C16.172,4.759,16.172,4.317,15.898,4.045z')
+          // close modal
+          form
+            .modal-content
               .row
-                form#addQuestion
-                  .col-md-7
-                    .form-group
-                      label Prompt:
-                      input#prompt(type='text', name='prompt', autocomplete='off')
-                  .col-md-5
-                    .form-group
-                      label Visibility:
-                      input#mcq(name='type', type='radio', onclick='setMCQ()')
-                      label(for='mcq') MCQ
-                      input#short-answer(type='radio', name='type', onclick='setShort()')
-                      label(for='short-answer') Short-Ans
-                  #mcqSection.row.selection
-                    .row
-                      .col-md-6
-                        input#choice1.choices(type='textarea', name='choices')
-                        input#filled-in-box.filled-in(type='checkbox')
-                        label(for='filled-in-box') Filled in
-                      .col-md-6
-                        input#choice2.choices(type='textarea', name='choices', disabled='disabled')
-                        input#filled-in-box2.filled-in(type='checkbox')
-                        label(for='filled-in-box2') Filled in
-                    .row
-                      .col-md-6
-                        input#choice3.choices(type='textarea', name='choices', disabled='disabled')
-                        input#filled-in-box3.filled-in(type='checkbox', name='solution')
-                        label(for='filled-in-box3') Filled in
-                      .col-md-6
-                        input#choice4.choices(type='textarea', name='choices')
-                        input#filled-in-box4.filled-in(type='checkbox', name='solution')
-                        label(for='filled-in-box4') Filled in
-                  #shortSection.row.selection
-                    .row
-                      .col-md-12
-                        label(for='shortAns') Short Answer:
-                        textarea#shortAns.materialize-textarea(name='shortAns')
-                  .row
-                    .input-field.col-md-5
-                      select#time.browser-default(name='time')
-                        option(value='', disabled='', selected='') Select your timing
-                        option(value='5') 5 seconds
-                        option(value='10') 10 seconds
-                        option(value='15') 15 seconds
-                        option(value='20') 20 seconds
-                    .col-md-7
-                      .form-group
-                        label(for='reward') Specific Reward
-                        input#reward(type='number', name='reward')
-                  .row
-                    .col-md-5
-                      .form-group
-                        label(for='penalty') Specific Penalty
-                        input#penalty(type='number', name='penalty')
-                    .col-md-7
-                      input#cancel.cancel(type='reset', value='Add Question', onclick='addQuestion()')
-                      button#submit.btn.waves-effect.waves-light(type='button', name='action', onclick='sendSetQuiz()')
-                        | Submit
-                        i.material-icons.right send
-              form#sendQuiz(method='POST', name='sendQuiz', action='/add-quiz')
-                input#quizSet(type='hidden', name='quizSet')
-      // Import jQuery before materialize.js
-      script(src='socket.io/socket.io.js')
-      script(src='resources/pixi.js')
-      script(type='text/javascript', src='https://code.jquery.com/jquery-2.1.1.min.js')
-      script(src='/resources/constants.js')
-      script(src='/resources/js/addQuiz2.js')
-      script(type='text/javascript', src='/resources/js/materialize.min.js')
-      script(src='/resources/js/bootstrap.min.js')
+                .col-md-6
+                  label Prompt: 
+                  input#prompt.form-control(type='text', autocomplete='off')
+                .col-md-6
+                  label Quiz Category: 
+                  .radio
+                    input#mcq(name='type', type='radio', checked='')
+                    label.radio-label(for='mcq') MCQ
+                  .radio
+                    input#shortans(name='type', type='radio')
+                    label.radio-label(for='shortans') Short Answer
+              .row
+                .col-md-6
+                  input#choice1.choices.form-control(type='text', name='choices',placeholder='Choice 1', autocomplete='off')
+                  input#filled-in-box.filled-in(type='checkbox', name='solution')
+                  label(for='filled-in-box')
+                .col-md-6
+                  input#choice2.choices.form-control(type='textarea', name='choices',placeholder='Choice 2', autocomplete='off')
+                  input#filled-in-box2.filled-in(type='checkbox', name='solution')
+                  label(for='filled-in-box2')
+              .row
+                .col-md-6
+                  input#choice3.choices.form-control(type='textarea', name='choices',placeholder='Choice 3', autocomplete='off')
+                  input#filled-in-box3.filled-in(type='checkbox', name='solution')
+                  label(for='filled-in-box3')
+                .col-md-6
+                  input#choice4.choices.form-control(type='textarea', name='choices',placeholder='Choice 4', autocomplete='off')
+                  input#filled-in-box4.filled-in(type='checkbox', name='solution')
+                  label(for='filled-in-box4')
+              .row
+                .col-md-6
+                  select#time.browser-default(name='time')
+                    option(value='', disabled='', selected='') Select your timing
+                    option(value='5') 5 seconds
+                    option(value='10') 10 seconds
+                    option(value='15') 15 seconds
+                    option(value='20') 20 seconds
+                .col-md-6
+                  label Specific Reward: 
+                  input#specificReward.form-control(type='number', autocomplete='off')
+              .row
+                .col-md-6
+                  label Specific Penalty: 
+                  input#specificPenatly.form-control(type='number', autocomplete='off')
+                .col-md-6
+                  input(type='reset', value='Add Question', onclick='addQuestion()')
+          // content
+        // modal
+      // overlay
+      script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js')
+      script(type='text/javascript', src='../controller/handle-create-quiz.js')
       script(type='text/javascript').
-        $(document).ready(function() {
-        $('select').material_select();
+        var elements = $('.modal-overlay, .modal');
+        $('button').click(function(){
+        elements.addClass('active');
         });
-        $('a').on('click', function(){
-        $('.wrap, a').toggleClass('active');
-        return false;
+        $('.close-modal').click(function(){
+        elements.removeClass('active');
         });
-        $('.prompt-open').on('click', function(){
-        if($('.wrap').hasClass('active')){
-        $('.prompt-open').attr('z-index', '-1');
-        }
-        });
-        $('#cancel').on('click',function(){
-        $('.wrap').removeClass('active');
-        });
-        //Selection Choice
