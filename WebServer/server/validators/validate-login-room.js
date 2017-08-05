@@ -8,6 +8,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     var randomNum = req.body.randomNum;
     // var userIP = req.body.userIp;
     var userIP = req.connection.remoteAddress;
+    var botCheck = req.body._bot;
+    console.log(botCheck);
 
     req.sanitize('username').escape();
     req.sanitize('password').escape();
@@ -179,6 +181,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                     })
                     .then(function(cookieData) {
                       //TODO: OPEN SESSION
+                    req.session.otpSession = true;
                     res.cookie('otp', cookieData, {"maxAge": 1000*60*60}); //one hour
                     req.session.tempUsername = req.body.username;
                     res.redirect('/otp');
