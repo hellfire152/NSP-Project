@@ -17,7 +17,7 @@ module.exports =function(cipher, appConn, C, emailServer){
     var password = req.body.lpassword;
     var confirmPassword = req.body.cpassword;
     var school=req.body.school;
-    var phoneNumber=req.body.phone;
+    var phoneNumber=req.body.number;
     var speakeasy = require("speakeasy");
     var secret = speakeasy.generateSecret({length: 20}); // Secret key is 20 characters long
     var randomNum = Math.floor((Math.random() * 999999) + 10000);
@@ -106,7 +106,7 @@ module.exports =function(cipher, appConn, C, emailServer){
                       username :req.body.lusername,
                       email : req.body.email,
                       password_hash : req.body.lpassword,
-                      contact: req.body.phone
+                      contact: req.body.number
                       // contact : req.body.contact TODO: FOR THE CONTACT IN DATABASE
                     },
                     details :{
@@ -124,7 +124,7 @@ module.exports =function(cipher, appConn, C, emailServer){
 
               console.log("FAIL");
 
-              res.redirect('/teacher-login');
+              res.sendErrorPage('Fail reistration');
             }
         }
 
@@ -135,7 +135,7 @@ module.exports =function(cipher, appConn, C, emailServer){
             console.log(schema.validate('password',{list:true}));
             console.log("FAIL PW");
 
-            res.redirect('/teacher-login');
+            res.sendErrorPage('Failed password requirements');
 
 
           }
@@ -144,7 +144,7 @@ module.exports =function(cipher, appConn, C, emailServer){
           req.session.errors=error;
           req.session.success=false;
           console.log("email not valid");
-
+          res.sendErrorPage('Email is blacklisted');
         }
 
     }
@@ -172,7 +172,7 @@ module.exports =function(cipher, appConn, C, emailServer){
         }
         console.log("never fill in all");
 
-        res.redirect('/teacher-login');
+        res.sendErrorPage('Never fill in all the fields');
         return;
 
     }
