@@ -87,10 +87,6 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
           });
         }
         else{
-          if (timer > 30000) {
-            res.clearCookie("otp");
-            res.redirect('/student-login');
-          }
           //Go back to OTP page and try again
           //More than 3 time boot out and clear cookies
           if(otpObj.count < 3){

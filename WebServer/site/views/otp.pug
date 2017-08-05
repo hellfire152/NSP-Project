@@ -10,39 +10,25 @@ html
         window.location.href='/student-login'
       },300000);
   body
-    nav
-      .nav-wrapper
-        .col.s12
-          a.breadcrumb(href='#!') Home
-          a.breadcrumb(href='#!') Login
-          a.breadcrumb(href='#!') Verification
     .row
       .col.s2
       .col.s8
         .card.green.accent-2
           .card-content.darken-text
-            span.card-title Note
+            span.card-title IMPORTANT!
             p
-              | Your account contains lots of personal data. Please do not share your username, password and 2FA details (SMS-OTP and Email-OTP)
-        .acc-details
-          p
-            | Welcome, 
-            span#acc_name Bryan Tan
+              | Your account contains a lot of personal data. Please do not share your username, password and 2FA details with anyone. (Email-OTP)
       .col.s2
     form(onsubmit='/validate-otp-check', method='POST', action='/otp-check')
       input(type='hidden', name='_csrf', value=`${csrfToken}`)
       .otp-tab
         .row
           .col.s12
-            ul.tabs
-              li.tab.col.s3
-                a(href='#test2') Email OTP
           #test2.col.s12
             p Enter the 6 digit One-Time-Password (OTP) sent to your email address
             .input-field.col.s3
               input#otp.validate(placeholder='OTP', type='text', name="otp")
               label(for='otp') OTP
-              a#resend_sms_otp.waves-effect.waves-light.btn Resend OTP
             button.btn.waves-effect.waves-light(type='submit')
               | Submit
               i.material-icons.right send

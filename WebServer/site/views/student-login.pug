@@ -129,6 +129,7 @@ html
       .card
         h1.title Login
         form#login(onsubmit='/validate-login-room', method='POST', action='/user-home')
+          input(type='hidden', name='_csrf', value=`${csrfToken}`)
           .input-container
             input(type='hidden', name='_csrf', value=`${csrfToken}`)
             input#bot(type='hidden', name='_bot')
