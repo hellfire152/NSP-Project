@@ -2,151 +2,153 @@ doctype html
 html
   head
     title
-    link(rel='stylesheet', type='text/css', href='/resources/css/TeacherLogin.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/teacher.css')
     script.
-      var tim = 0;
-      function reload () {
-      tim = setTimeout("location.reload(true);",60000);   // 1 minute
-      }
-      function canceltimer() {
-      window.clearTimeout(tim);  // cancel the timer on each mousemove/click
-      reload();  // and restart it
-      }
+         var tim = 0;
+         function reload () {
+         tim = setTimeout("location.reload(true);",60000);   // 1 minute
+         }
+         function canceltimer() {
+         window.clearTimeout(tim);  // cancel the timer on each mousemove/click
+         reload();  // and restart it
+         }
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
     script.
-        jQuery.validator.addMethod('checkphone', function(value){
-          if(/^[0-9]{8}$/.test(value)){
-            return true;
-           } else{
-            return false;
-           };
-         }, 'Please enter a valid phone number');
+      $(function(){
+      $("#login").validate({
+      rules:{
+      username:{
+      required:true,
+      minlength:5
+      },
+      password:{
+      required:true,
+      minlength:8
+      }
+      },
+      messages:{
+      username:{
+      required: "Please enter username",
+      minlength:"Your username must consist atleast 5 characters"
+      },
+      password:{
+      required: "Please enter password",
+      minlength:"Your password must consist atleast 8 characters"
+      },
+      }
+      });
+      });
     script.
-        $(function(){
-          $('#register-teacher').validate({
-            rules:{
-              lusername:{
-                required:true,
-                minlength:5
-              },
-              lpassword:{
-                required:true,
-                minlength:8
-              },
-              cpassword:{
-                required:true,
-                minlength:8,
-                equalTo:"#lpassword"
-              },
-              phone:{
-                checkphone:true
-              },
-              email:{
-                required:true,
-                email:true
-              },
-              school:{
-                required:true,
-                minlength:3
-              }
-            },
-            messages:{
-              lusername:{
-                required: "Please enter username",
-                minlength:"Your username must consist atleast 5 characters"
-              },
-              lpassword:{
-                required: "Please enter password",
-                minlength:"Your password must consist atleast 8 characters"
-              },
-              cpassword:{
-                required:"Please enter password",
-                minlength:"Your password must consist atleast 8 characters",
-                equalTo:"Passwords not match"
-              },
-              email:{
-                required:"Please enter email",
-                email:"Please enter a valid email"
-              },
-              school:{
-                required:"Please enter your school",
-                minlength:"Please enter a valid school"
-              }
-            }
-          });
-        });
-    body(onmousemove='canceltimer();', onclick='canceltimer();')
-        // Mixins
-        // Pen Title
-        .pen-title
-          h1 Teacher Login Form
-        .container
-          .card
-          .card
-            h1.title Login
-            form#login(method='POST', action='/user-home')
-              .input-container
-                input(type='hidden', name='_csrf', value=`${csrfToken}`)
-              .input-container
-                input#username(type='text', name='username')
-                label(for='Username') Username
-                .bar
-              .input-container
-                input#password(type='password', name ='password')
-                label(for='Password') Password
-                .bar
-              .button-container
-                button
-                  span Go
-              .footer
-                a(href='#') Forgot your password
-                a(href='/student-login') | Login as Student
-          .card.alt
-            .toggle
-            .toggle1
-            h1.title
-              | Register
-              .close
-            form#register-teacher(action='/teacher-login', method='post')
-              .input-container
-                input(type='hidden', name='_csrf', value=`${csrfToken}`)
-              .input-container
-                input#name(type='text', name='name')
-                label(for='Name') Name
-                .bar
-              .input-container
-                input#lusername(type='text', name='lusername')
-                label(for='Username') Username
-                .bar
-              .input-container
-                input#email(type='email', name='email')
-                label(for='Email') Email
-                .bar
-              .input-container
-                input#lpassword(type='password', name='lpassword')
-                label(for='Password') Password
-                .bar
-              .input-container
-                input#cpassword(type='password', name='cpassword')
-                label(for='Confirm Password') Confirm Password
-                .bar
-              .input-container
-                input#school(type='text', name='school')
-                label(for='school') School
-                .bar
-              .input-container
-                input#phone.checkphone(type='text', name='phone')
-                label(for='phone') Phone Number
-                .bar
-              .button-container
-                button
-                  span Register
-        script(type='text/javascript').
-          $('.toggle').on('click', function() {
-          $('.container').stop().addClass('active');
-          });
-          $('.close').on('click', function() {
-          $('.container').stop().removeClass('active');
-          });
+      jQuery.validator.addMethod('checkphone', function(value){
+      if(/^[0-9]{8}$/.test(value)){
+      return true;
+      } else{
+      return false;
+      };
+      }, 'Please enter a valid phone number');
+    script.
+      $(function(){
+      $('#register-teacher').validate({
+      rules:{
+      name:{
+      required:true,
+      minlength:5
+      },
+      lusername:{
+      required:true,
+      minlength:5
+      },
+      lpassword:{
+      required:true,
+      minlength:8
+      },
+      cpassword:{
+      required:true,
+      minlength:8,
+      equalTo:"#lpassword"
+      },
+      number:{
+      checkphone:true
+      },
+      email:{
+      required:true,
+      email:true
+      },
+      school:{
+      required:true,
+      minlength:3
+      }
+      },
+      messages:{
+      name:{
+      required: "Please enter name",
+      minlength:"Your name must consist atleast 5 characters"
+      },
+      lusername:{
+      required: "Please enter username",
+      minlength:"Your username must consist atleast 5 characters"
+      },
+      lpassword:{
+      required: "Please enter password",
+      minlength:"Your password must consist atleast 8 characters"
+      },
+      cpassword:{
+      required:"Please enter password",
+      minlength:"Your password must consist atleast 8 characters",
+      equalTo:"Passwords not match"
+      },
+      email:{
+      required:"Please enter email",
+      email:"Please enter a valid email"
+      },
+      school:{
+      required:"Please enter your school",
+      minlength:"Please enter a valid school"
+      }
+      }
+      });
+      });
+  body(onmousemove='canceltimer();', onclick='canceltimer();')
+    // Form Module
+    .module.form-module
+      .toggle
+        i.fa.fa-times.fa-pencil
+        .tooltip Click Me
+      .form
+        h2 Login to your account
+        form#login(method='POST', action='/user-home')
+          input(type='hidden', name='_csrf', value=`${csrfToken}`)
+          input#username.form-control(type='text', placeholder='Username', name='username', autocomplete='off')
+          input#password.form-control(type='password', placeholder='Password', name='password', autocomplete='off')
+          input.button(type='submit', name='login', value='Login')
+      .form
+        h2 Create an account
+        form#register-teacher(action='/teacher-login', method='post')
+          input(type='hidden', name='_csrf', value=`${csrfToken}`)
+          input#name.form-control(type='text', placeholder='Name', name='name' autocomplete='off')
+          input#lusername.form-control(type='text', placeholder='Username', name='lusername',autocomplete='off')
+          input#lpassword.form-control(type='password', placeholder='Password', name='lpassword',autocomplete='off')
+          input#cpassword.form-control(type='password', placeholder='Confirm-Password', name='cpassword',autocomplete='off')
+          input#email.form-control(type='email', placeholder='Email Address', name='email',autocomplete='off')
+          input#school.form-control(type='text', placeholder='school', name='school',autocomplete='off')
+          input#number.form-control(type='text', placeholder='Phone Number', name='number',autocomplete='off')
+          input.button(type='submit', name='register', value='Register')
+      .cta
+        a(href='http://andytran.me') Forgot your password
+        |  
+        a(href='#')  Login as student 
+    script(type='text/javascript').
+      // Toggle Function
+      $('.toggle').click(function(){
+      // Switches the Icon
+      $(this).children('i').toggleClass('fa-pencil');
+      // Switches the forms
+      $('.form').animate({
+      height: "toggle",
+      'padding-top': 'toggle',
+      'padding-bottom': 'toggle',
+      opacity: "toggle"
+      }, "slow");
+      });

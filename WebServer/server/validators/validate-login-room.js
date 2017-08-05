@@ -190,7 +190,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
         }
         else{
           console.log("FAIL");
-          res.redirect('/student-login');
+          res.sendErrorPage('Fail registration');
         }
       }
       else{
@@ -200,7 +200,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.redirect('/student-login');
+          res.sendErrorPage('Failed password requirements');
         }
     }
     else{
@@ -215,7 +215,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
 
         console.log("never fill in all");
 
-        res.redirect('/student-login');
+        res.sendErrorPage('Never fill in all the fields');
         return;
     }
   }
