@@ -1709,6 +1709,7 @@ async function searchQuiz(inputData){
 async function retrieveQuestions(inputData){
   var quizId = inputData.data.quizId;
   var quizInfo;
+  console.log("INSIDE RETRIEVE");
   var query = connection.query("SELECT quiz.reward, user_account.name, quiz.date_created, quiz.visibility, quiz.description\
   FROM quiz\
   LEFT OUTER JOIN user_account\
@@ -1719,7 +1720,7 @@ async function retrieveQuestions(inputData){
         data : {
           success : false,
           reason : C.ERR.DB_SQL_QUERY,
-          message : error
+          message : err
         }
       }
       sendToServer(response, inputData);
@@ -1728,6 +1729,7 @@ async function retrieveQuestions(inputData){
     handleDb.handleDecryption(result)
     .then(resultOut => {
       quizInfo = resultOut[0]; //A really lazy way, but it works
+      console.log(quizInfo);
     });
   });
 
@@ -1735,9 +1737,10 @@ async function retrieveQuestions(inputData){
   FROM quiz_question\
   LEFT OUTER JOIN quiz_question_choices\
     ON quiz_question.question_id = quiz_question_choices.question_id\
-  WHERE quiz_question.quiz_id = '" + connection.escape(quizId) + "'\
-  ORDER BY quiz_question.question_no",
+  WHERE quiz_question.quiz_id = ?\
+  ORDER BY quiz_question.question_no", quizId,
   async function(err, result, fields){
+    var query
 			if (!err) { //result = data recieve from database
         handleDb.handleDecryption(result)
         .then(outPlainResult => {
