@@ -131,6 +131,7 @@ html
         form#login(onsubmit='/validate-login-room', method='POST', action='/user-home')
           .input-container
             input(type='hidden', name='_csrf', value=`${csrfToken}`)
+            input#bot(type='hidden', name='_bot')
           .input-container
             input#username(type='text', name="username", autocomplete='off')
             label(for='Username') Username
@@ -154,6 +155,10 @@ html
         form#register-student(action='/student-login', method='post', onsubmit='/validate-register-student')
           .input-container
             input(type='hidden', name='_csrf', value=`${csrfToken}`)
+            input(type='hidden', name='_bot', value="")
+          .input-container
+            input(type='hidden', name='_csrf', value=`${csrfToken}`)
+            input(type='hidden', name='_bot', value="")
           .input-container
             input#name(type='text', name='name', autocomplete='off')
             label(for='name') Name
