@@ -9,7 +9,6 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     // var userIP = req.body.userIp;
     var userIP = req.connection.remoteAddress;
     var botCheck = req.body._bot;
-    console.log(botCheck);
 
     req.sanitize('username').escape();
     req.sanitize('password').escape();
@@ -20,40 +19,19 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     req.sanitize('userIp').trim();
     req.sanitize('randomNum').trim();
 
-    // TODO: AUTO LOGIN FUNCTION
-    // Check the integrity if the cookie
-    // if(req.cookies.tempToken != undefined){
-    //   if(cookieValidator.validateCookie(req.cookies.tempToken)){
-    //     var tempData = req.cookies.tempToken.data;
-    //     console.log(tempData);
-    //     appConn.send({
-    //       // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
-    //       'type':C.REQ_TYPE.DATABASE,
-    //       'data': {
-    //         'type' : C.DB.SELECT.TEMP_TOKEN,
-    //         //This is just the cookie obj
-    //         'inputData' : {
-    //           'temp_token' : tempData.temp_token,
-    //           'ip_address' : tempData.ip_address,
-    //           'user_id' : tempData.user_id,
-    //           'new_device_id' : tempData.new_device_id
-    //         }
-    //       }
-    //     }, (response) => {
-    //       //NOTE: If authenticate pass, response.data.success = true
-    //       //NOTE: If authenticate fail, response.data.success = false
-    //       console.log("SUCCESS YAY");
-    //       console.log(response.data.success);
-    //       if(response.data.success){
-    //         //PROCESS DATA
-    //       }
-    //       else{
-    //         res.clearCookie("tempToken");
-    //       }
-    //     });
-    //   }
+    // if(botCheck !== ''){
+      console.log("BOT DETECTED");
+      appConn.send({
+        // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+        'type':C.REQ_TYPE.DATABASE,
+        'data': {
+          type : C.DB.CREATE.BANNED_IP,
+          ip_address : userIP
+        }
+      }, (response) => {
+        console.log(response);
+      });
     // }
-    //END OF AUTO LOGIN FUNCTION
 
     if (username != "" && password != ""){
       var schema = new passwordValidator();

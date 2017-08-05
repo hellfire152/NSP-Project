@@ -336,6 +336,10 @@ var server = net.createServer(function(conn){
             await getLogQuiz(inputData);
             break;
           }
+          case C.DB.CREATE.BANNED_IP : {
+            await addBannedIp(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -1910,6 +1914,31 @@ async function addSpam(inputData){
         data : {
           success : true,
           message : "Spam input successful"
+        }
+      }
+      sendToServer(response, inputData);
+    }
+  })
+}
+
+async function addBannedIp(inputData){
+  var data = inputData.data;
+  var query = connection.query("INSERT INTO banned_ip (ip_address) VALUES (?)", data.ip_address, function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    else{
+      var response = {
+        data : {
+          success : true,
+          message : "ip_address added successful"
         }
       }
       sendToServer(response, inputData);
