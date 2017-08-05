@@ -38,7 +38,7 @@ body {
 }
 
 .ranking-streak-icon {
-  height : inherit;
+  height : 50px;
   width : auto;
 }
 
@@ -58,12 +58,13 @@ body {
   display: inline-block;
 }
 
-#response-list {
+#response-list, #players-list-header {
   width : 80%;
   list-style-type : none;
+  font-size : xx-large;
 }
 
-.choice {
+.choice, .players-list-name {
   font-size : x-large;
   width : 100%;
   padding : 5px;
@@ -77,15 +78,13 @@ body {
   font-size : 1.2em;
 }
 
-#next-button {
+#next-button , #previous-button{
   margin : auto;
 
-  position : absolute;
   clear : both;
   z-index : 2;
   height : 3em;
-  width : 60%;
-  margin-top : 3.2em;
+  width : 70%;
   background-color: #AC17B5;
   border : 2px solid #AC17B5;
   border-radius: 5px;
@@ -100,4 +99,13 @@ body {
 #next-button:hover {
   color : black;
   background-color : white;
+}
+
+/* RACE MODE ONLY */
+.players-list-name {
+  font-size: 2em;
+}
+
+.players-list-progress {
+  font-size: 1.5em;
 }

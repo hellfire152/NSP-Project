@@ -24,14 +24,6 @@ class AllPlayerRanking extends DisplayElement {
     }
   }
 
-  fadeIn() {
-
-  }
-
-  slideUp() {
-
-  }
-
   set data(playerData) {
     let pd = this._positionData;
     let indivDisplayHeight = pd.height / playerData.length;
