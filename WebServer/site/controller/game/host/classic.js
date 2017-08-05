@@ -169,6 +169,8 @@ function initHost() {
   //init ranking stuff
   let gameRankingDiv = document.createElement('div');
   gameRankingDiv.id = 'game-ranking';
+  let rankingText = createNode('h1', 'Rankings:', 'game-ranking', 'game-ranking-header');
+  gameRankingDiv.appendChild(rankingText);
 
   gameRankingDiv.style.display =
     currentQuestionDiv.style.display = 'none';

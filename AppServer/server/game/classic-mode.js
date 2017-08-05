@@ -170,6 +170,7 @@ function sendQuestion(currentRoom, question, data) {
         if(!player.answered) { //player has NOT answered
           player.score -= common.getPenalty(currentRoom, question);
           player.answered = true;
+          player.answerStreak = 0; //reset answerStreak
         }
       }
     }
@@ -198,14 +199,5 @@ function sendGameEnd(players, data, allRooms) {
   gameEndResults.titlesAndAchievenments
     = common.calculateTitles(allRooms[data.roomNo]);
 
-  //send clear game cookie signal
-  setTimeout(() => {
-    let users = common.handleClearGameCookie(allRooms[data.roomNo].players);
-    sendToServer(conn, {
-      'special' : C.SPECIAL.CLEAR_ALL_GAME_COOKIE,
-      'users' : users
-    });
-  }, 1000);
-  
   return gameEndResults;
 }

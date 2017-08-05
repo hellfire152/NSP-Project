@@ -195,53 +195,62 @@ async function host_room(data, dbConn) {
   let quiz;
   //load quiz
   if(data.quizId == 'TEST') {
-    quiz = require('../../test-quiz.json');
-    if(quiz.public == false && data.id !== quiz.author) {
-      return {
-        'err': C.ERR.INACCESSIBLE_PRIVATE_QUIZ,
-        'quizId': data.quizId
-      }
+    let quiz = require('../../test-quiz.json');
+    //add data to allRooms
+    allRooms[roomNo] = {
+      'host': data.id,
+      'players': {},
+      'quiz': quiz
     }
-    //TODO::Get quiz from database
-  await databaseAccess({
-      //NOTE: This is the standard format for my databse to retrieve quiz.
+    return {
+      'type': C.RES_TYPE.HOST_ROOM_RES,
+      'resNo': data.resNo,
+      'hostId': data.id,
+      'quizId' : quiz.id,
+      'roomNo' : roomNo
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    databaseAccess({
       'data' : {
         'type' : C.DB.SELECT.QUESTION,
-        'quizId' : 17 //dynamic quizId
+        'quizId' : data.quizId
       }
     }, dbConn)
-    .then(result => {
-      var quizSet = result.data.data;
-      console.log("QUIZ RESULT RECEIVED FROM DATABASE");
-      // console.log(result);
-      console.log(util.inspect(quizSet, {showHidden: false, depth: null}))
-    })
-  }
-  else {
-    return {
-      'err': C.ERR.QUIZ_DOES_NOT_EXIST,
-      'id': data.id,
-      'quizId': data.quizId
-    }
-  }
-
-  //add data to allRooms
-  allRooms[roomNo] = {
-    'host': data.id,
-    'players': {},
-    'quiz': quiz
-  }
-
-  //build response
-  response = {
-    'type': C.RES_TYPE.HOST_ROOM_RES,
-    'validLogin': true,//TODO::Proper login check
-    'resNo': data.resNo,
-    'hostId': data.id,
-    'quizId' : quiz.id,
-    'roomNo' : roomNo
-  };
-  return response;
+      .then((result) => {
+        let quiz = result.data.data;
+        console.log(quiz);
+        if(quiz === undefined) {
+          resolve({
+            'err': C.ERR.QUIZ_DOES_NOT_EXIST,
+            'id': data.id,
+            'quizId': data.quizId
+          });
+        } else {
+          //add data to allRooms
+          allRooms[roomNo] = {
+            'host': data.id,
+            'players': {},
+            'quiz': quiz
+          }
+          if(quiz.public == false && data.id !== quiz.author) {
+            resolve({
+              'err': C.ERR.INACCESSIBLE_PRIVATE_QUIZ,
+              'quizId': data.quizId
+            });
+            return;
+          }
+          resolve({
+            'type': C.RES_TYPE.HOST_ROOM_RES,
+            'resNo': data.resNo,
+            'hostId': data.id,
+            'quizId' : quiz.id,
+            'roomNo' : roomNo
+          });
+        }
+      });
+  });
 }
 
 async function databaseAccess(inputData, dbConn){
