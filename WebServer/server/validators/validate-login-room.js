@@ -8,6 +8,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     var randomNum = req.body.randomNum;
     // var userIP = req.body.userIp;
     var userIP = req.connection.remoteAddress;
+    var botCheck = req.body._bot;
+    console.log(botCheck);
 
     req.sanitize('username').escape();
     req.sanitize('password').escape();
