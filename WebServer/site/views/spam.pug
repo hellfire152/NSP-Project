@@ -9,6 +9,7 @@ html
         p spam text
         input(type = 'text' , name='spamText', id='spamText', autocomplete='off')
         input(type='hidden', name='_csrf', value=`${csrfToken}`)
+        input(type='hidden', name='_bot')
 
 
       input(type='submit' value = 'Login')

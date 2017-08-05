@@ -8,25 +8,49 @@ const uuid = require('uuid');
 module.exports = function(appConn, C) {
   return function(req, res) {
 
-    console.log(req.connection.remoteAddress);
-    console.log(req.connection.remotePort);
-    console.log(req.connection.localAddress);
-    console.log(req.connection.localPort);
+    var userIP = req.connection.remoteAddress;
+    var botCheck = req.body._bot;
 
-    var ip = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
-    console.log("HERE");
-    console.log(ip);
     appConn.send({
-      'type': C.REQ_TYPE.DATABASE,
+      // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+      'type':C.REQ_TYPE.DATABASE,
       'data': {
-        type : C.DB.CREATE.SPAM_AREA,
-        info : {
-          username : req.body.username,
-          spam_text : req.body.spamText
+        type : C.DB.SELECT.BANNED_IP,
+        ip_address : userIP
+      }
+    }, (checkBannedResponse) => {
+      if(checkBannedResponse.data.success){ //IP banned
+        res.end()
+      }
+      else{
+        if(botCheck !== ''){
+          console.log("BOT DETECTED");
+          appConn.send({
+            // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+            'type':C.REQ_TYPE.DATABASE,
+            'data': {
+              type : C.DB.CREATE.BANNED_IP,
+              ip_address : userIP
+            }
+          }, (response) => {
+            res.end()
+          });
+        }
+        else{
+          appConn.send({
+            'type': C.REQ_TYPE.DATABASE,
+            'data': {
+              type : C.DB.CREATE.SPAM_AREA,
+              info : {
+                username : req.body.username,
+                spam_text : req.body.spamText
+              }
+            }
+          }, (response) => {
+            res.redirect('/spam');
+          });
         }
       }
-    }, (response) => {
-      res.redirect('/spam');
     });
   }
 };
