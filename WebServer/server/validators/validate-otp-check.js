@@ -117,3 +117,4 @@ function validLoginSession(req, otpObj) {
   req.session.validLogin = true;
   req.session.username = req.session.tempUsername;
 }
+}

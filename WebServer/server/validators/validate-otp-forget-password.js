@@ -52,3 +52,4 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
     }
   }
 }
+}
