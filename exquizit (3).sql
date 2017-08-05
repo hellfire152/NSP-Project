@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 05, 2017 at 07:49 PM
+-- Generation Time: Aug 05, 2017 at 07:52 PM
 -- Server version: 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -58,13 +58,6 @@ CREATE TABLE `banned_ip` (
   `ip_id` int(11) NOT NULL,
   `ip_address` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `banned_ip`
---
-
-INSERT INTO `banned_ip` (`ip_id`, `ip_address`) VALUES
-(3, '::1');
 
 -- --------------------------------------------------------
 
