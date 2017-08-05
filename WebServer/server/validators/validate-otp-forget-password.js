@@ -8,8 +8,8 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
     var errors = req.validationErrors();
 
     if(errors) {
-      if(!(response.data.success)){
-        res.sendErrorPage('Error 404: Not found!');
+      //TODO::Handle errors
+
     } else {
       var userOTP = req.body.otp;
       var otpObj = req.cookies.otp.data
@@ -23,7 +23,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       cipher.encryptJSON(cookieValidator.generateCheckCookie({user_id : otpObj.user_id}))
       .then((encryptedCookie) => {
         res.cookie('temp_user_id', encryptedCookie, {"maxAge": 1000*60*5});
-        req.session.otpSession = undefined; //Open the session
+        req.session.otpSession = true; //Open the session
         res.clearCookie("otp");
         res.redirect('/ChangePassword');
       });
@@ -40,7 +40,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
 
             res.cookie('otp', encryptedCookie, {"maxAge": 1000*60*5}); //5 min
             res.redirect('/otp-ForgetPassword');
-          });
+          })
         }
         else{
           console.log("HERE");
@@ -51,5 +51,4 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
       }
     }
   }
-}
 }
