@@ -77,12 +77,16 @@ function handleGame(response) {
       //show ranking
       let rankingList = document.getElementById('game-ranking');
       rankingList.innerHTML = "";
+      rankingList.appendChild(
+        createNode('h1', 'Current Rankings:', 'header', 'game-ranking-header'));
       for(let player of response.roundEndResults) {
         let playerLi = document.createElement('div');
         let name = createNode('p', `Name:\t${player.name}`, 'ranking-name', null);
         let score = createNode('p', `Score:\t${player.score}`, 'ranking-score', null);
-        let answerStreak = createNode('p', `Streak:\t${player.answerStreak}`, 'ranking-streak', null);
-        appendMultiple(playerLi, name, score, answerStreak);
+        let answerStreak = createNode('p', player.answerStreak, 'ranking-streak', null);
+        let answerStreakIcon = createNode('img', null, 'ranking-streak-icon', null);
+        answerStreakIcon.src = '/resources/images/game/answer-streak-icon.png';
+        appendMultiple(playerLi, name, answerStreakIcon, answerStreak, score);
         rankingList.appendChild(playerLi);
       }
       answersObj = {}; //clear answersObj for next round
@@ -169,7 +173,7 @@ function initHost() {
   //init ranking stuff
   let gameRankingDiv = document.createElement('div');
   gameRankingDiv.id = 'game-ranking';
-  let rankingText = createNode('h1', 'Rankings:', 'game-ranking', 'game-ranking-header');
+  let rankingText = createNode('h1', 'Rankings:', 'header', 'game-ranking-header');
   gameRankingDiv.appendChild(rankingText);
 
   gameRankingDiv.style.display =

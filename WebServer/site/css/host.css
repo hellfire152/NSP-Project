@@ -1,0 +1,103 @@
+* {
+  font-family: Corbel;
+}
+
+body {
+  min-height: 100%;
+  min-width : 100%;
+}
+
+#get-ready {
+  margin: auto;
+  width : 80%;
+  padding : 50px;
+  text-align : center;
+  font-size:  xx-large;
+}
+
+#game-ranking {
+  margin : auto;
+
+}
+
+#game-ranking-header {
+  margin : auto
+}
+
+.ranking-name {
+  display : inline-block;
+  font-size : 1.2em;
+}
+
+.ranking-score {
+  display : inline-block;
+}
+
+.ranking-streak {
+  display : inline-block;
+}
+
+.ranking-streak-icon {
+  height : inherit;
+  width : auto;
+}
+
+.header {
+  margin : auto;
+  padding : 30px;
+  font-size : xx-large;
+}
+
+#current-question {
+  margin : auto;
+  text-align : center;
+  font-size : xx-large;
+}
+
+#current-question-text {
+  display: inline-block;
+}
+
+#response-list {
+  width : 80%;
+  list-style-type : none;
+}
+
+.choice {
+  font-size : x-large;
+  width : 100%;
+  padding : 5px;
+
+  border-radius : 3px;
+  border-style : groove;
+  border-width : 0px 2px 3px 0px;
+}
+
+.choice-chosen {
+  font-size : 1.2em;
+}
+
+#next-button {
+  margin : auto;
+
+  position : absolute;
+  clear : both;
+  z-index : 2;
+  height : 3em;
+  width : 60%;
+  margin-top : 3.2em;
+  background-color: #AC17B5;
+  border : 2px solid #AC17B5;
+  border-radius: 5px;
+
+  color : white;
+  font-size : x-large;
+  text-align: center;
+
+  transition-duration: 0.2s;
+}
+
+#next-button:hover {
+  color : black;
+  background-color : white;
+}
