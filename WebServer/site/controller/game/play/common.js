@@ -204,13 +204,13 @@ function gameEnd(response) {
   taDiv.appendChild(titleHeader);
   for(let title of response.titlesAndAchievenments) {
     let titleDisplay = createNode('div', null, 'title-display');
-    let titleName = createNode('p', title.name, 'title-name');
+    let titleName = createNode('p', title.title, 'title-name');
     let titleIcon = createNode('img', null, 'title-icon');
     titleIcon.src = `/resources/images/titles/${title.icon}`;
     titleIcon.style.height = '100px';
     titleIcon.style.width = '100px';
     let earningPlayer = createNode('p', title.recipient, 'title-recipient');
-    let description = createNode('p', title.description, 'title-description');
+    let description = createNode('p', title.details, 'title-description');
     appendMultiple(titleDisplay, titleName, titleIcon, earningPlayer, description);
     taDiv.appendChild(titleDisplay);
   }

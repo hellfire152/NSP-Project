@@ -143,8 +143,8 @@ var attemptConnection = setInterval(() => {
     appConn.on("data", async (response) => {
       let data = await decryptResponse(response);
       //the authentication stage should have no problems with simultaneous responses
-      logResponse(response[0]);
-      runCallback(response[0]);
+      logResponse(data[0]);
+      runCallback(data[0]);
     });
 
     /****AUTHENTICATION******/

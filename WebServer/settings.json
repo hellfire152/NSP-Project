@@ -39,5 +39,5 @@
   "NO_SIMULTANEOUS_HOST_JOIN" : false,
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
-  "AUTH_BYPASS" : true
+  "AUTH_BYPASS" : false
 }

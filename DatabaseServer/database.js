@@ -191,7 +191,6 @@ var server = net.createServer(function(conn){
           try {
             let key = inputData.dhPublic;
             conn.secret = conn.dh.computeSecret(key, 'base64', 'base64');
-            console.log("SECRET" +conn.secret);
             let r = conn.sendCipher.hash(
               conn.sendCipher.xorString(conn.secret, conn.encryptedChallenge));
             let s = conn.sendCipher.hash(
