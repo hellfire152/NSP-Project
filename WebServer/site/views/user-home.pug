@@ -16,7 +16,7 @@ html
     script.
       var data = !{JSON.stringify(data)};
       var Totalquiz = data.quizInfo;
-      console.log(Totalquiz);
+      console.log(data);
   body
     // Hidden Header
     .header-hidden.collapse
@@ -25,12 +25,10 @@ html
           .col-md-3
             h5
               | Welcome
-              span#user-name  Bryan
+              span#user-name  #{data.userInfo.username}
               | ,
-            p
-              | Account description Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              | tempor incididunt ut labore et dolore magna aliqua.
-            a.btn.btn-more(href='#')
+            p #{data.userInfo.about_me}            
+            a.btn.btn-more(href='/profile')
               | Profile
               i.fa.fa-arrow-right(aria-hidden='true')
           .col-md-3
@@ -90,8 +88,7 @@ html
       .row
         .col-md-8
           .greeting
-            h4 Hello UserName,
-            p You have 0 new quiz
+            h4 Hello  #{data.userInfo.username}
         .col-md-4
           .statistics
             .ui

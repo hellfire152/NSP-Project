@@ -3,6 +3,7 @@
 const uuid = require('uuid');
 var mailchecker= require('mailchecker');
 var passwordValidator =require('password-validator');
+// var simpleTimer =require('node-timers/simple');
 module.exports =function(cipher, appConn,C, emailServer){
   return function(req, res){
     console.log(cipher);
@@ -16,7 +17,7 @@ module.exports =function(cipher, appConn,C, emailServer){
     var school=req.body.school;
     var phoneNumber=req.body.number;
     var randomNum = Math.floor((Math.random() * 999999) + 10000);
-
+    // var simple=simpleTimer();
 
     // // generate out the OTP
     // var otp = speakeasy.totp({
@@ -123,7 +124,7 @@ module.exports =function(cipher, appConn,C, emailServer){
 
               console.log("FAIL");
               errors=true;
-              res.redirect('/student-login');
+              res.sendErrorPage('Fail registration');
             }
           }
           else{
@@ -132,6 +133,7 @@ module.exports =function(cipher, appConn,C, emailServer){
             req.session.success=false;
 
             console.log("password not match");
+            res.sendErrorPage('Password does not match')
             // res.redirect('/registerstud');
           }
         }
@@ -153,6 +155,29 @@ module.exports =function(cipher, appConn,C, emailServer){
           req.session.success=false;
 
           console.log("email not valid");
+          res.sendErrorPage('Email is blacklisted');
+          // async function timer(){
+            // var timeout1 =  setTimeout(function () {
+            //   console.log("hi");
+            //   res.render('student-login');
+            // }, 20000);
+            // console.log("after 20 seconds");
+            // return timeout1;
+          // }
+
+          // res.redirect('/student-login');
+          // console.log("start timer");
+          // simple.start();
+          // simple.time();
+          // console.log(simple.time());
+          // if(simple.time()>10){
+          //   console.log("over 10 seconds");
+          //   console.log(simple.time());
+          //   simple.stop();
+          //   simple.reset();
+          //   res.redirect('/student-login');
+          // }
+
         }
 
     }
@@ -160,71 +185,38 @@ module.exports =function(cipher, appConn,C, emailServer){
 
         req.session.errors=error;
         req.session.success=false;
-        var errormsg = '';
         if(name==""){
           console.log("Please enter your name");
-          // errormsg= "Please enter your username"
-          // sendErrorPage(res,errormsg);
-          // res.render('register-student',{
-          //   error1:
-          // });
         }
         if(username==""){
           console.log("Please enter your username");
-          // errormsg= "Please enter your username"
-          // sendErrorPage(res,errormsg);
-          // res.render('register-student',{
-          //   error1:
-          // });
         }
         if(password==""){
           console.log("Please enter your password");
-          // errormsg= "Please enter your passwor"
-          // sendErrorPage(res,errormsg);
-          // res.render('register-student',{
-          //   error3:'Please enter your password'
-          // });
         }
         if(email==""){
           console.log("Please enter your email");
-          // res.render('register-student',{
-          //   error2:'Please enter your email'
-          // });
-
         }
         if(dateOfBirth==""){
           console.log("Please enter your date of birth");
-          // res.render('register-student',{
-          //   error2:'Please enter your email'
-          // });
-
         }
         if(phoneNumber==""){
           console.log("Please enter your phone number");
-          // res.render('register-student',{
-          //   error2:'Please enter your email'
-          // });
-
         }
         if(school==""){
           console.log("Please enter your school");
-          // res.render('register-student',{
-          //   error2:'Please enter your email'
-          // });
-
         }
         console.log("never fill in all");
-
-        res.redirect('/student-login');
+        res.sendErrorPage('Please fill in all details');
 
         return;
 
     }
-    function sendErrorPage(res, errormsg) {
-      res.render('student-login', {
-        'error': errormsg
-      });
-    }
+    // function sendErrorPage(res, errormsg) {
+    //   res.render('student-login', {
+    //     'error': errormsg
+    //   });
+    // }
 
 
   }

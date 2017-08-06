@@ -1,5 +1,3 @@
-//login
-
 const uuid = require('uuid');
 module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
   return function(req, res) {

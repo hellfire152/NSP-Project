@@ -176,7 +176,6 @@ async function handleEncryption(data){
 }
 
 async function handleDecryption(data){
-  console.log(data);
   // return data; //For testing purposes where data will not be decrypted before processing data to client
   var plainData;
   await databaseCipher.decryptDbData(data)

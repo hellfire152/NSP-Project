@@ -8,6 +8,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     var randomNum = req.body.randomNum;
     // var userIP = req.body.userIp;
     var userIP = req.connection.remoteAddress;
+    var botCheck = req.body._bot;
+    console.log(botCheck);
 
     req.sanitize('username').escape();
     req.sanitize('password').escape();
@@ -162,7 +164,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                       email : email
                     }
 
-                    // emailServer.loginAccountOtpEmail(emailObj);
+                    emailServer.loginAccountOtpEmail(emailObj);
                   });
 
                   console.log("THIS IS THE RANDOM NUM: " + randomNum);
@@ -179,6 +181,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                     })
                     .then(function(cookieData) {
                       //TODO: OPEN SESSION
+                    req.session.otpSession = true;
                     res.cookie('otp', cookieData, {"maxAge": 1000*60*60}); //one hour
                     req.session.tempUsername = req.body.username;
                     res.redirect('/otp');
@@ -190,7 +193,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
         }
         else{
           console.log("FAIL");
-          res.redirect('/student-login');
+          res.sendErrorPage('Fail registration');
         }
       }
       else{
@@ -200,7 +203,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.redirect('/student-login');
+          res.sendErrorPage('Failed password requirements');
         }
     }
     else{
@@ -215,7 +218,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
 
         console.log("never fill in all");
 
-        res.redirect('/student-login');
+        res.sendErrorPage('Never fill in all the fields');
         return;
     }
   }
