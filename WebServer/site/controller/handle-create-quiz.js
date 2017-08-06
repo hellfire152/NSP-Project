@@ -167,25 +167,47 @@ function solution(){
  }
 
  function sendSetQuiz(){
-
-  create = {
-    quiz_title : $("#quizTitle").val(),
-    description : $("#quizDescription").val(),
-    visibility :  checkPublic(),
-    reward : $("#mainReward").val()
+   if( !$('#quizTitle').val() ) {
+      alert('Please fill in the name of the quiz!');
+      event.stop(); // TODO:NEED TO CHANGE
+      return false;
+   }
+   else if( !$('#quizDescription').val() ) {
+      alert('Please fill in the description!');
+      event.stop(); // TODO:NEED TO CHANGE
+      return false;
+   }
+   else if($('input[name=visibility]:checked').length<=0)
+   {
+    alert("Please select the visibility");
+    event.stop(); // TODO:NEED TO CHANGE
+    return false;
   }
-
-  //NOTE: This is the place where it send the quiz set to database
-  var data = {
-    quiz : create,
-    question : questionArr,
-    choices : choiceArr
+  else if(questionArr.length == 0){
+    alert("Please key add some question");
+    event.stop(); // TODO:NEED TO CHANGE
+    return false;
   }
-  sendToServer(data);
+  else{
+    create = {
+      quiz_title : $("#quizTitle").val(),
+      description : $("#quizDescription").val(),
+      visibility :  checkPublic(),
+      reward : $("#mainReward").val()
+    }
 
+    //NOTE: This is the place where it send the quiz set to database
+    var data = {
+      quiz : create,
+      question : questionArr,
+      choices : choiceArr
+    }
+    sendToServer(data);
+  }
  }
 
  function sendToServer(inputData){
+   alert("Quiz Submitted");
    $('#quizSet').val(JSON.stringify(inputData));
    console.log($('#quizSet').val);
    document.forms["sendQuiz"].submit(function(){
