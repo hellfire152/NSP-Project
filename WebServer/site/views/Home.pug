@@ -9,6 +9,8 @@ doctype html
 html.no-js(lang='')
   // <![endif]
   head
+    script.
+      var validLogin = !!(${validLogin})
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
     title Food and Restorent One page Template
@@ -94,8 +96,9 @@ html.no-js(lang='')
                       a(href='#') Contact
                     li
                       a(href='#') Join
-                    li
-                      a.booking(href='/student-login') Login
+                    if(validLogin == false)
+                      li
+                        a.booking(href='/student-login') Login
                 // /.navbar-collapse
               // /.container-fluid
     // End Header Section

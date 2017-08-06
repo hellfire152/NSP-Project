@@ -36,15 +36,11 @@ function gameEnd(response) {
 
     //append the various data of the player
     playerRankingDiv.appendChild(rank);
-    for(let playerAttr in player) {
-      if(player.hasOwnProperty(playerAttr)) {
-        let attr = createNode(
-          'p', `${playerAttr}:\t${player[playerAttr]}`, 'player-attr', `player-${player[playerAttr]}`);
-        appendMultiple(playerRankingDiv, attr);
-      }
-    }
+    let name = createNode('p', player.name, 'player-name player-attr', null);
+    let correct = createNode('p', `${player.correctAnswers}/${player.wrongAnswers}`, 'player-correct player-attr', null);
+    let score = createNode('p', player.score, 'player-score player-attr', null);
 
-    appendMultiple(rankingDiv, playerRankingDiv);
+    appendMultiple(rankingDiv, name, score, correct);
   }
 
   //the display for people who got titles and/or achievements

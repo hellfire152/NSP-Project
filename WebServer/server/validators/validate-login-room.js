@@ -136,7 +136,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                         if(req.session.attemptJoin) {
                           res.redirect(`play?room=${req.session.attemptJoin}`);
                         } else if(req.session.attemptVisit) {
-                          res.redirect(req.session.attemptVisit);
+                          res.redirect(req.session.attemptedAccess);
                         } else {
                           res.redirect('/user-home');
                         }

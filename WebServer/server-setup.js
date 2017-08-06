@@ -99,7 +99,7 @@ module.exports = function(data) {
   app.use((req, res, next) => {
     if(S.REQUIRE_VALID_LOGIN.indexOf(req.path.substring(1)) >= 0
         && !req.session.validLogin) { //not logged in
-      req.session.attempedAccess = req.path;
+      req.session.attemptedAccess = req.path;
       res.redirect('/student-login');
     } else next();  //proceed if logged in
   })

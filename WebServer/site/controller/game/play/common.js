@@ -187,16 +187,12 @@ function gameEnd(response) {
     let playerRankingDiv = createNode('div', null, 'player-ranking');
 
     let rank = createNode('h2', `#${i + 1}`, 'player-rank', `rank-${i + 1}`);
+    let name = createNode('p', player.name, 'player-name player-attr', null);
+    let score = createNode('p', player.score, 'player-score player-attr', null);
+    let correct = createNode('p', `${player.correctAnswers}/${player.wrongAnswers}`, 'player-correct player-attr', null);
 
-    //append the various data of the player
-    for(let playerAttr in player) {
-      if(player.hasOwnProperty(playerAttr)) {
-        let attr = createNode('p',`${playerAttr}:\t${player[playerAttr]}`, `player-name`);
-        playerRankingDiv.appendChild(attr);
-      }
-    }
-
-    appendMultiple(rankingDiv, rank, playerRankingDiv);
+    appendMultiple(playerRankingDiv, rank, name, score, correct);
+    rankingDiv.appendChild(playerRankingDiv);
   }
 
   //the display for people who got titles and/or achievements
@@ -231,9 +227,10 @@ function gameEnd(response) {
     rankingDiv.style.display = taDiv.style.display = ratingDiv.style.display
       = endDiv.style.display = 'none';
     if(currentScene == 'ranking') {
-      ratingDiv.style.display = 'block';
+      ratingDiv.style.display = 'none';
       prevButton.style.display = 'block'; //show previous button
-      currentScene = 'rating';
+      endDiv.style.display = 'block';
+      currentScene = 'end';
     } else if(currentScene == 'rating') {
       document.getElementById('end').style.display = 'block';
       nextButton.style.display = 'none'; //hide next button
