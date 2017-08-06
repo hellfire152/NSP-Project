@@ -160,59 +160,32 @@ function solution(){
      choiceArr.push(choice);
    }
    questionArr.push(question);
-   console.log(choiceArr);
-   console.log(questionArr);
-
-
  }
 
  function sendSetQuiz(){
-   if( !$('#quizTitle').val() ) {
-      alert('Please fill in the name of the quiz!');
-      event.stop(); // TODO:NEED TO CHANGE
-      return false;
-   }
-   else if( !$('#quizDescription').val() ) {
-      alert('Please fill in the description!');
-      event.stop(); // TODO:NEED TO CHANGE
-      return false;
-   }
-   else if($('input[name=visibility]:checked').length<=0)
-   {
-    alert("Please select the visibility");
-    event.stop(); // TODO:NEED TO CHANGE
-    return false;
-  }
-  else if(questionArr.length == 0){
-    alert("Please key add some question");
-    event.stop(); // TODO:NEED TO CHANGE
-    return false;
-  }
-  else{
-    create = {
-      quiz_title : $("#quizTitle").val(),
-      description : $("#quizDescription").val(),
-      visibility :  checkPublic(),
-      reward : $("#mainReward").val()
-    }
 
-    //NOTE: This is the place where it send the quiz set to database
-    var data = {
-      quiz : create,
-      question : questionArr,
-      choices : choiceArr
-    }
-    sendToServer(data);
+  create = {
+    quiz_title : $("#quizTitle").val(),
+    description : $("#quizDescription").val(),
+    visibility :  checkPublic(),
+    reward : $("#mainReward").val()
   }
- }
 
- function sendToServer(inputData){
-   alert("Quiz Submitted");
-   $('#quizSet').val(JSON.stringify(inputData));
-   console.log($('#quizSet').val);
-   document.forms["sendQuiz"].submit(function(){
-     alert("send");
-   });
- }
+  //NOTE: This is the place where it send the quiz set to database
+  var data = {
+    quiz : create,
+    question : questionArr,
+    choices : choiceArr
+  }
+  sendToServer(data);
+}
 
- defaultSetting()
+function sendToServer(inputData){
+ $('#quizSet').val(JSON.stringify(inputData));
+ console.log($('#quizSet').val);
+ document.forms["sendQuiz"].submit(function(){
+   alert("send");
+ });
+}
+
+ defaultSetting();

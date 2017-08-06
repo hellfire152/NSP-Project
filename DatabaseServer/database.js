@@ -191,6 +191,7 @@ var server = net.createServer(function(conn){
           try {
             let key = inputData.dhPublic;
             conn.secret = conn.dh.computeSecret(key, 'base64', 'base64');
+            console.log("SECRET" +conn.secret);
             let r = conn.sendCipher.hash(
               conn.sendCipher.xorString(conn.secret, conn.encryptedChallenge));
             let s = conn.sendCipher.hash(
@@ -214,10 +215,10 @@ var server = net.createServer(function(conn){
     } else {  //ALEADY AUTHENTICATED
       try {
         switch(inputData.data.type) {
-          case C.DB.GET_ACCOUNT_DETAILS : {
-            await getAccountDetails(inputData);
-            break;
-          }
+          // case C.DB.VALIDATE_LOGIN : {
+          //   validateAccount(inputData);
+          //   break;
+          // }
           case C.DB.CREATE.STUDENT_ACC :
           case C.DB.CREATE.TEACHER_ACC : {
             await createAccount(inputData);
@@ -333,14 +334,6 @@ var server = net.createServer(function(conn){
           }
           case C.DB.SELECT.LOG_QUIZ : {
             await getLogQuiz(inputData);
-            break;
-          }
-          case C.DB.CREATE.BANNED_IP : {
-            await addBannedIp(inputData);
-            break;
-          }
-          case C.DB.SELECT.BANNED_IP : {
-            await checkBannedIp(inputData);
             break;
           }
           default : {
@@ -605,117 +598,6 @@ async function retrievePreAccount(inputData){
   });
 }
 
-async function getAccountDetails(inputData){
-  var data = inputData.data
-  var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
-    FROM user_account\
-    LEFT OUTER JOIN student_details\
-    ON user_account.user_id = student_details.user_id\
-    WHERE user_account.username = " + connection.escape(data.user_id),
-  function(err, result){
-    if(err){
-      console.error('[Error in query]: ' + err);
-      var response = {
-        data : {
-          success : false,
-          reason : C.ERR.DB_SQL_QUERY,
-          message : err
-        }
-      }
-      sendToServer(response, inputData);
-    }
-    if(result.length === 1){ // Student User
-      handleDb.handleDecryption(result)
-      .then(resultOut => {
-        objOutResult = {
-          data:{
-            data : resultOut,
-            success : true
-          }
-        }
-        sendToServer(objOutResult, inputData);
-      })
-      .catch(reason => {
-        console.log(reason);
-      });
-    }
-    else if(result.length === 0){ //Check Teacher user
-      var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, teacher_details.teacher_id, teacher_details.organisation\
-        FROM user_account\
-        LEFT OUTER JOIN teacher_details\
-        ON user_account.user_id = teacher_details.user_id\
-        WHERE teacher_details.username = " + connection.escape(data.user_id),
-      function(err, result){
-        if(err){
-          console.error('[Error in query]: ' + err);
-          var response = {
-            data : {
-              success : false,
-              reason : C.ERR.DB_SQL_QUERY,
-              message : err
-            }
-          }
-          sendToServer(response, inputData);
-        }
-
-        if(result.length === 1){
-          handleDb.handleDecryption(result)
-          .then(resultOut => {
-            objOutResult = {
-              data:{
-                data : resultOut,
-                success : true
-              }
-            }
-            sendToServer(objOutResult, inputData);
-          })
-          .catch(reason => {
-            console.log(reason);
-          });
-        }
-        else if(result.length === 0){
-          console.log("[No related data found]");
-          //TODO: Send error message to server
-          var response = {
-            data : {
-              success : false,
-              reason : C.ERR.DB_NO_SUCH_USER,
-              message : "No such user"
-            }
-          }
-          sendToServer(response, inputData);
-        }
-        else{
-          console.log("[Duplicate user_id, Entity integrity compromise]");
-          //TODO: Send error message to server
-          var response = {
-            data : {
-              success : false,
-              reason : C.ERR.DB_DUPLICATE_USER_ID,
-              message : "Duplicate user_id"
-            }
-          }
-          sendToServer(response, inputData);
-
-        }
-      });
-    }
-    else{
-      console.log("[Duplicate user_id, Entity integrity compromise]");
-      //TODO: Send error message to server
-      var response = {
-        data : {
-          success : false,
-          reason : C.ERR.DB_DUPLICATE_USER_ID,
-          message : "Duplicate user_id"
-        }
-      }
-      sendToServer(response, inputData);
-
-    }
-  });
-}
-
 async function retrieveFullAccount(inputData){
   var data = inputData.data
   var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
@@ -755,7 +637,7 @@ async function retrieveFullAccount(inputData){
         FROM user_account\
         LEFT OUTER JOIN teacher_details\
         ON user_account.user_id = teacher_details.user_id\
-        WHERE teacher_details.user_id = " + connection.escape(data.user_id),
+        WHERE teacher_details.user_id = " + connection.escape(dataOut.userId),
       function(err, result){
         if(err){
           console.error('[Error in query]: ' + err);
@@ -1827,7 +1709,6 @@ async function searchQuiz(inputData){
 async function retrieveQuestions(inputData){
   var quizId = inputData.data.quizId;
   var quizInfo;
-  console.log("INSIDE RETRIEVE");
   var query = connection.query("SELECT quiz.reward, user_account.name, quiz.date_created, quiz.visibility, quiz.description\
   FROM quiz\
   LEFT OUTER JOIN user_account\
@@ -1838,7 +1719,7 @@ async function retrieveQuestions(inputData){
         data : {
           success : false,
           reason : C.ERR.DB_SQL_QUERY,
-          message : err
+          message : error
         }
       }
       sendToServer(response, inputData);
@@ -1847,7 +1728,6 @@ async function retrieveQuestions(inputData){
     handleDb.handleDecryption(result)
     .then(resultOut => {
       quizInfo = resultOut[0]; //A really lazy way, but it works
-      console.log(quizInfo);
     });
   });
 
@@ -1855,10 +1735,9 @@ async function retrieveQuestions(inputData){
   FROM quiz_question\
   LEFT OUTER JOIN quiz_question_choices\
     ON quiz_question.question_id = quiz_question_choices.question_id\
-  WHERE quiz_question.quiz_id = ?\
-  ORDER BY quiz_question.question_no", quizId,
+  WHERE quiz_question.quiz_id = '" + connection.escape(quizId) + "'\
+  ORDER BY quiz_question.question_no",
   async function(err, result, fields){
-    var query
 			if (!err) { //result = data recieve from database
         handleDb.handleDecryption(result)
         .then(outPlainResult => {
@@ -2028,66 +1907,6 @@ async function addSpam(inputData){
         data : {
           success : true,
           message : "Spam input successful"
-        }
-      }
-      sendToServer(response, inputData);
-    }
-  })
-}
-
-async function addBannedIp(inputData){
-  var data = inputData.data;
-  var query = connection.query("INSERT INTO banned_ip (ip_address) VALUES (?)", data.ip_address, function(error, result){
-    if(error){
-      var response = {
-        data : {
-          success : false,
-          reason : C.ERR.DB_SQL_QUERY,
-          message : error
-        }
-      }
-      sendToServer(response, inputData);
-    }
-    else{
-      var response = {
-        data : {
-          success : true,
-          message : "ip_address added successful"
-        }
-      }
-      sendToServer(response, inputData);
-    }
-  })
-}
-
-async function checkBannedIp(inputData){
-  var data = inputData.data;
-  var query = connection.query("SELECT ip_id FROM banned_ip WHERE ip_address = ?", data.ip_address, function(error, result){
-    if(error){
-      var response = {
-        data : {
-          success : false,
-          reason : C.ERR.DB_SQL_QUERY,
-          message : error
-        }
-      }
-      sendToServer(response, inputData);
-    }
-    console.log(result);
-    if(result.length == 0){
-      var response = {
-        data : {
-          success : false,
-          message : "IP not blocked"
-        }
-      }
-      sendToServer(response, inputData);
-    }
-    else{
-      var response = {
-        data : {
-          success : true,
-          message : "IP blocked"
         }
       }
       sendToServer(response, inputData);

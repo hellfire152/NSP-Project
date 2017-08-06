@@ -34,6 +34,7 @@ var net = require('net');
 var crypto = require('crypto');
 var cookieParser = require('cookie-parser');
 var uuid = require('uuid');
+var util = require('util');
 
 var S = require(settings);
 S.APPSERVER.PASSWORD = appServerPassword;
@@ -109,7 +110,7 @@ var attemptConnection = setInterval(() => {
 
       //sending the request object
       console.log("TO APPSERVER:");
-      console.log(reqObj);
+      console.log(util.inspect(reqObj, {showHidden: false, depth: null}));
       encryptAndSend(reqObj, encryption);
       return reqNo; //just in case
     };

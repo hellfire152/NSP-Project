@@ -65,7 +65,7 @@ module.exports = function(cipher, appConn, C, cookieValidator) {
                   choices : dataObj.choices
                 }
               }, (response) => {
-                res.redirect('/CreateQuiz');
+                res.redirect('/profile');
               });
           }
         }

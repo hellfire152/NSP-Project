@@ -1,5 +1,8 @@
 html
   head
+    link(rel='stylesheet', type='text/css', href='/resources/css/materialize.css')
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+    link(rel='stylesheet', type='text/css', href='/resources/css/waiting.css' id='waiting-css')
     script.
       var room = #{roomNo}
     script.
@@ -22,6 +25,9 @@ html
     script(src='/resources/graphicsAPI/ShortAnswerTextField.js')
     script(src='/resources/graphicsAPI/TopBar.js')
     script(src='/resources/graphicsAPI/AllPlayerRanking.js')
+    script(type='text/javascript', src='/resources/js/jquery.min.js')
+    script(type='text/javascript', src='/resources/js/bootstrap.min.js')
+    script(type='text/javascript', src='/resources/js/materialize.min.js')
     if gamemode == 0
       script(src='/controller/game/play/classic.js')
     else if gamemode == 1
@@ -30,7 +36,34 @@ html
     script(src='/controller/game/play/common.js')
     title exQuizit! - Play
   body
-    #game
-    h1 In room: #{roomNo}
-    ul(id='waiting-list')
-      li Waiting List...
+    .container-fluid
+      .row
+        .col.s12.nav-area
+          a.button-collapse(href='#', data-activates='slide-out')
+            i.material-icons menu
+      .row
+        .col.s4
+        .col.s8
+          .glowworm-loader
+            .glowworm-motion
+              .glowworm-container
+                .glowworm-left
+                .glowworm-right
+      .row
+        .col.s4
+        .col.s4
+          p.white-text(style='margin:auto;text-align: center;') Waiting for game to be started... 
+        .col.s4
+      .row
+        .col.s4
+        .col.s4
+          h1#waiting-header In room: #{roomNo}
+          ul#waiting-list Waiting...
+        .col.s4
+    ul#slide-out.side-nav
+      li
+        a(href='/logout')
+          | Logout of 
+          span#acc_details  #{name}
+      li
+        a(href='/') Leave room

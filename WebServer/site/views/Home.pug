@@ -109,13 +109,13 @@ html.no-js(lang='')
                   h1
                     span#first Game
                     span#second Pin
-                  form#login(method='POST', action='/verify-pin')
+                  form#login(method='POST', action='/join-room')
                     .row
                       .col-md-3
                       .col-md-6
                           input(type='hidden', name='_csrf', value=`${csrfToken}`)
                           input#bot(type='hidden', name='_bot')
-                          input.form-control(name='pinNo', type='text', placeholder='Pin Number')
+                          input.form-control(name='room', type='text', placeholder='Pin Number')
                       .col-md-3
                     .row
                       .col-md-3

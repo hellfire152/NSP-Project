@@ -69,7 +69,13 @@ module.exports = function(cipher, appConn, C, emailServer, xssDefense, cookieVal
                       }
                     }, (response4) => {
                       //TODO: XSS of array of quiz data
-                      res.redirect('/user-home');
+                      if(req.session.attemptJoin) {
+                        res.redirect(`play?room=${req.session.attemptJoin}`);
+                      } else if(req.session.attemptVisit) {
+                        res.redirect(req.session.attemptVisit);
+                      } else {
+                        res.redirect('/user-home');
+                      }
                     });
                   });
               });
