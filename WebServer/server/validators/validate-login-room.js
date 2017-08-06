@@ -20,203 +20,206 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     req.sanitize('userIp').trim();
     req.sanitize('randomNum').trim();
 
-    appConn.send({
-      'type':C.REQ_TYPE.DATABASE,
-      'data': {
-        type : C.DB.SELECT.BANNED_IP,
-        ip_address : userIP
-      }
-    }, (checkBannedResponse) => {
-      if(checkBannedResponse.data.success){ //IP banned
-        res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
+  appConn.send({
+  // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+  'type':C.REQ_TYPE.DATABASE,
+  'data': {
+    type : C.DB.SELECT.BANNED_IP,
+    ip_address : userIP
+  }
+  }, (checkBannedResponse) => {
+    if(checkBannedResponse.success){ //IP banned
+      res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
+    }
+    else{
+      if(botCheck !== ''){
+        console.log("BOT DETECTED");
+        appConn.send({
+          // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+          'type':C.REQ_TYPE.DATABASE,
+          'data': {
+            type : C.DB.CREATE.BANNED_IP,
+            ip_address : userIP
+          }
+        }, (response) => {
+          res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
+        });
       }
       else{
-        if(botCheck !== ''){
-          console.log("BOT DETECTED");
-          appConn.send({
-            'type':C.REQ_TYPE.DATABASE,
-            'data': {
-              type : C.DB.CREATE.BANNED_IP,
-              ip_address : userIP
-            }
-          }, (response) => {
-            res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
-          });
-        }
-        else{
-          if (username != "" && password != ""){
-            var schema = new passwordValidator();
-            schema
-            .is().min(8)
-            .has().uppercase()
-            .has().lowercase()
-            .has().digits()
-            .has().not().spaces();
+        if (username != "" && password != ""){
+              var schema = new passwordValidator();
+              schema
+              .is().min(8)
+              .has().uppercase()
+              .has().lowercase()
+              .has().digits()
+              .has().not().spaces();
 
-            var passwordCheck = schema.validate(password);
-            var error = req.validationErrors();
+              var passwordCheck = schema.validate(password);
+              var error = req.validationErrors();
 
-            if (passwordCheck){
-              if(!error){
-                console.log("HOST FORM DATA: ");
-                  //check for a valid deviceIP cookie
-                  if(req.cookies.deviceIP != undefined){
-                    if(cookieValidator.validateCookie(req.cookies.deviceIP))
-                      var deviceIp = req.cookies.deviceIP.data;
-                    else
-                      res.clearCookie("deviceIP");
-                  }
-
-                  appConn.send({
-                    // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
-                    'type':C.REQ_TYPE.DATABASE,
-                    'data': {
-                      type : C.DB.SELECT.USER_ACCOUNT,
-                      account : {
-                        username : req.body.username,
-                        hash_password : req.body.password
-                      }
+              if (passwordCheck){
+                if(!error){
+                  console.log("HOST FORM DATA: ");
+                    //check for a valid deviceIP cookie
+                    if(req.cookies.deviceIP != undefined){
+                      if(cookieValidator.validateCookie(req.cookies.deviceIP))
+                        var deviceIp = req.cookies.deviceIP.data;
+                      else
+                        res.clearCookie("deviceIP");
                     }
-                  }, (response) => {
-                    //If incorrect user input return to login page
-                    if(!(response.data.success)){
-                      res.sendErrorPage('Invalid login details!');
-                    }
-                    else {
-                      //Check for identical IP address in user cookie
-                      var valid = false; //Registered IP address in client PC
-                      if(deviceIp != undefined && response.data.data.ip_address != undefined){
-                        var currentIpAddress = crypto.createHash('SHA256').update(userIP).digest('base64');
-                          outerloop:
-                            for(i=0 ; i<response.data.data.ip_address.length ; i++){
-                              for(j=0 ; j<deviceIp.length ; j++){
-                                console.log("["+response.data.data.ip_address[i]+"]" + "["+deviceIp[j]+"]" + "["+currentIpAddress+"]");
-                                if(response.data.data.ip_address[i] == deviceIp[j] && currentIpAddress == response.data.data.ip_address[i] && currentIpAddress == deviceIp[j]){
-                                  valid = true;
-                                  break outerloop;
-                                }
-                              }
-                            }
-                        // });
+
+                    appConn.send({
+                      // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+                      'type':C.REQ_TYPE.DATABASE,
+                      'data': {
+                        type : C.DB.SELECT.USER_ACCOUNT,
+                        account : {
+                          username : req.body.username,
+                          hash_password : req.body.password
+                        }
                       }
-                      if(valid){
-                        //GET ACTUAL DATA AND STORE TO SESSION WITHOUT OTP
-                        appConn.send({
-                          'type' : C.REQ_TYPE.DATABASE,
-                          'data' : {
-                            type : C.DB.SELECT.FULL_USER_ACCOUNT,
-                            user_id : response.data.data.user_id
-                          }
-                        } ,(response) => {
-                          //TODO: WILL INSERT AN REMEMBER ME FUNCCTION OVER HERE TOO TIRED TO IMPLEMENT, CURRENTLY WORKING AT OTP CHECK
-                          if(response.data.success){
-                            var encodedData = xssDefense.jsonEncode(response.data.data[0]);
-                            cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
-                            .then((encryptedCookie) => {
-                            res.cookie('user_info', encryptedCookie);
-                            validLoginSession(req);
-                            appConn.send({
-                              'type' : C.REQ_TYPE.DATABASE,
-                              'data' : {
-                                'type' : C.DB.SELECT.ALL_QUIZ
-                              }
-                            }, (response4) => {
-                              //TODO: XSS of array of quiz data
-                              res.render('user-home', {
-                                data : {
-                                  userInfo : encodedData,
-                                  quizInfo : response4.data.data
-                                }
-                              });
-                            });
-                          });
-                        }
-                        else{
-                          res.redirect('/student-login');
-                        }
-                        });
+                    }, (response) => {
+                      //If incorrect user input return to login page
+                      if(!(response.data.success)){
+                        res.sendErrorPage('Invalid login details!');
                       }
                       else {
-                        var randomNum = Math.floor((Math.random() * 999999) + 10000);
-                        console.log("THIS IS THE PIN: " + randomNum);
-
-                        appConn.send({
-                          'type' : C.REQ_TYPE.DATABASE,
-                          'data' : {
-                            type : C.DB.SELECT.EMAIL,
-                            user_id : response.data.data.user_id
+                        //Check for identical IP address in user cookie
+                        var valid = false; //Registered IP address in client PC
+                        if(deviceIp != undefined && response.data.data.ip_address != undefined){
+                          var currentIpAddress = crypto.createHash('SHA256').update(userIP).digest('base64');
+                            outerloop:
+                              for(i=0 ; i<response.data.data.ip_address.length ; i++){
+                                for(j=0 ; j<deviceIp.length ; j++){
+                                  console.log("["+response.data.data.ip_address[i]+"]" + "["+deviceIp[j]+"]" + "["+currentIpAddress+"]");
+                                  if(response.data.data.ip_address[i] == deviceIp[j] && currentIpAddress == response.data.data.ip_address[i] && currentIpAddress == deviceIp[j]){
+                                    valid = true;
+                                    break outerloop;
+                                  }
+                                }
+                              }
+                          // });
+                        }
+                        if(valid){
+                          //GET ACTUAL DATA AND STORE TO SESSION WITHOUT OTP
+                          appConn.send({
+                            'type' : C.REQ_TYPE.DATABASE,
+                            'data' : {
+                              type : C.DB.SELECT.FULL_USER_ACCOUNT,
+                              user_id : response.data.data.user_id
+                            }
+                          } ,(response) => {
+                            //TODO: WILL INSERT AN REMEMBER ME FUNCCTION OVER HERE TOO TIRED TO IMPLEMENT, CURRENTLY WORKING AT OTP CHECK
+                            if(response.data.success){
+                              var encodedData = xssDefense.jsonEncode(response.data.data[0]);
+                              cipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
+                              .then((encryptedCookie) => {
+                              res.cookie('user_info', encryptedCookie);
+                              validLoginSession(req);
+                              appConn.send({
+                                'type' : C.REQ_TYPE.DATABASE,
+                                'data' : {
+                                  'type' : C.DB.SELECT.ALL_QUIZ
+                                }
+                              }, (response4) => {
+                                //TODO: XSS of array of quiz data
+                                res.render('user-home', {
+                                  data : {
+                                    userInfo : encodedData,
+                                    quizInfo : response4.data.data
+                                  }
+                                });
+                              });
+                            });
                           }
-                        } ,(response2) => {
-                          var email = response2.data.data.email
-                          emailObj = {
-                            pin : randomNum,
-                            email : email
+                          else{
+                            res.redirect('/student-login');
                           }
+                          });
+                        }
+                        else {
+                          var randomNum = Math.floor((Math.random() * 999999) + 10000);
+                          console.log("THIS IS THE PIN: " + randomNum);
 
-                          // emailServer.loginAccountOtpEmail(emailObj);
-                        });
+                          appConn.send({
+                            'type' : C.REQ_TYPE.DATABASE,
+                            'data' : {
+                              type : C.DB.SELECT.EMAIL,
+                              user_id : response.data.data.user_id
+                            }
+                          } ,(response2) => {
+                            var email = response2.data.data.email
+                            emailObj = {
+                              pin : randomNum,
+                              email : email
+                            }
 
-                        console.log("THIS IS THE RANDOM NUM: " + randomNum);
-                        cipher.encryptJSON(
-                          cookieValidator.generateCheckCookie({ //Param: (jsonObj, user Ip address)
-                            'pin' : randomNum,
-                            'user_id' : response.data.data.user_id,
-                            'userIp' : userIP,
-                            'count' : 0
-                          }, userIP)
-                        )
-                          .catch(function (err) {
-                            throw new Error('Error parsing JSON!');
-                          })
-                          .then(function(cookieData) {
-                            //TODO: OPEN SESSION
-                          res.cookie('otp', cookieData, {"maxAge": 1000*60*60}); //one hour
-                          req.session.tempUsername = req.body.username;
-                          res.redirect('/otp');
-                        });
+                            emailServer.loginAccountOtpEmail(emailObj);
+                          });
+
+                          console.log("THIS IS THE RANDOM NUM: " + randomNum);
+                          cipher.encryptJSON(
+                            cookieValidator.generateCheckCookie({ //Param: (jsonObj, user Ip address)
+                              'pin' : randomNum,
+                              'user_id' : response.data.data.user_id,
+                              'userIp' : userIP,
+                              'count' : 0
+                            }, userIP)
+                          )
+                            .catch(function (err) {
+                              throw new Error('Error parsing JSON!');
+                            })
+                            .then(function(cookieData) {
+                              //TODO: OPEN SESSION
+                            req.session.otpSession = true;
+                            res.cookie('otp', cookieData, {"maxAge": 1000*60*60}); //one hour
+                            req.session.tempUsername = req.body.username;
+                            res.redirect('/otp');
+                          });
+                        }
                       }
-                    }
 
-                  });
+                    });
+                }
+                else{
+                  console.log("FAIL");
+                  res.sendErrorPage('Fail registration');
+                }
               }
               else{
-                console.log("FAIL");
-                res.redirect('/student-login');
-              }
+
+                  req.session.errors=error;
+                  req.session.success=false;
+                  console.log(schema.validate('password',{list:true}));
+                  console.log("FAIL PW");
+
+                  res.sendErrorPage('Failed password requirements');
+                }
             }
             else{
-
                 req.session.errors=error;
                 req.session.success=false;
-                console.log(schema.validate('password',{list:true}));
-                console.log("FAIL PW");
+                if(username==""){
+                  console.log("Please enter your username");
+                }
+                if(password==""){
+                  console.log("Please enter your password");
+                }
 
-                res.redirect('/student-login');
-              }
-          }
-          else{
-              req.session.errors=error;
-              req.session.success=false;
-              if(username==""){
-                console.log("Please enter your username");
-              }
-              if(password==""){
-                console.log("Please enter your password");
-              }
+                console.log("never fill in all");
 
-              console.log("never fill in all");
-
-              res.redirect('/student-login');
-              return;
-          }
-        }
+                res.sendErrorPage('Never fill in all the fields');
+                return;
+            }
       }
-    });
+    }
+  });
 
-  }
-}
+      }
+    }
 
-function validLoginSession(req) {
-  req.session.validLogin = true;
-  req.session.username = req.body.username;
-}
+    function validLoginSession(req) {
+      req.session.validLogin = true;
+      req.session.username = req.body.username;
+    }
