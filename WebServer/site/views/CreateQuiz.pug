@@ -82,7 +82,7 @@ html
             svg(viewbox='0 0 20 20')
               path(fill='#000000', d='M15.898,4.045c-0.271-0.272-0.713-0.272-0.986,0l-4.71,4.711L5.493,4.045c-0.272-0.272-0.714-0.272-0.986,0s-0.272,0.714,0,0.986l4.709,4.711l-4.71,4.711c-0.272,0.271-0.272,0.713,0,0.986c0.136,0.136,0.314,0.203,0.492,0.203c0.179,0,0.357-0.067,0.493-0.203l4.711-4.711l4.71,4.711c0.137,0.136,0.314,0.203,0.494,0.203c0.178,0,0.355-0.067,0.492-0.203c0.273-0.273,0.273-0.715,0-0.986l-4.711-4.711l4.711-4.711C16.172,4.759,16.172,4.317,15.898,4.045z')
           // close modal
-          form
+          form#addQuestionForm
             .modal-content
               .row
                 .col-md-6
@@ -95,42 +95,51 @@ html
                     label.radio-label(for='mcq') MCQ
                   .radio
                     input#shortans(name='type', type='radio')
-                    label.radio-label(for='shortans') Short Answer
+                    label.radio-label(for='shortans') Short Answer        
+              #choice
+                .row
+                  .col-md-12
+                    label Multiple Choice: 
+                .row
+                  .col-md-6
+                    input#choice1.choices.form-control(type='text', name='choices',placeholder='Choice 1', autocomplete='off')
+                    input#filled-in-box.filled-in(type='checkbox', name='solution')
+                    label(for='filled-in-box')
+                  .col-md-6
+                    input#choice2.choices.form-control(type='textarea', name='choices',placeholder='Choice 2', autocomplete='off')
+                    input#filled-in-box2.filled-in(type='checkbox', name='solution')
+                    label(for='filled-in-box2')
+                .row
+                  .col-md-6
+                    input#choice3.choices.form-control(type='textarea', name='choices',placeholder='Choice 3', autocomplete='off')
+                    input#filled-in-box3.filled-in(type='checkbox', name='solution')
+                    label(for='filled-in-box3')
+                  .col-md-6
+                    input#choice4.choices.form-control(type='textarea', name='choices',placeholder='Choice 4', autocomplete='off')
+                    input#filled-in-box4.filled-in(type='checkbox', name='solution')
+                    label(for='filled-in-box4')
+              #short
+                .row
+                    .col-md-12
+                      label Short Answer: 
+                      input#choiceShortAns.form-control(type='text', autocomplete='off' placeholder='Write your answer here')
               .row
                 .col-md-6
-                  input#choice1.choices.form-control(type='text', name='choices',placeholder='Choice 1', autocomplete='off')
-                  input#filled-in-box.filled-in(type='checkbox', name='solution')
-                  label(for='filled-in-box')
+                  label Specific Penalty: 
+                  input#specificPenatly.form-control(type='number', autocomplete='off', placeholder="Optional")
                 .col-md-6
-                  input#choice2.choices.form-control(type='textarea', name='choices',placeholder='Choice 2', autocomplete='off')
-                  input#filled-in-box2.filled-in(type='checkbox', name='solution')
-                  label(for='filled-in-box2')
-              .row
-                .col-md-6
-                  input#choice3.choices.form-control(type='textarea', name='choices',placeholder='Choice 3', autocomplete='off')
-                  input#filled-in-box3.filled-in(type='checkbox', name='solution')
-                  label(for='filled-in-box3')
-                .col-md-6
-                  input#choice4.choices.form-control(type='textarea', name='choices',placeholder='Choice 4', autocomplete='off')
-                  input#filled-in-box4.filled-in(type='checkbox', name='solution')
-                  label(for='filled-in-box4')
+                  label Specific Reward: 
+                  input#specificReward.form-control(type='number', autocomplete='off', placeholder="Optional")
               .row
                 .col-md-6
                   select#time.browser-default(name='time')
                     option(value='', disabled='', selected='') Select your timing
-                    option(value='5') 5 seconds
                     option(value='10') 10 seconds
                     option(value='15') 15 seconds
-                    option(value='20') 20 seconds
+                    option(value='30', selected="selected") 30 seconds
+                    option(value='60') 60 seconds
                 .col-md-6
-                  label Specific Reward: 
-                  input#specificReward.form-control(type='number', autocomplete='off')
-              .row
-                .col-md-6
-                  label Specific Penalty: 
-                  input#specificPenatly.form-control(type='number', autocomplete='off')
-                .col-md-6
-                  input(type='reset', value='Add Question', onclick='addQuestion()')
+                  input(type='button', value='Add Question', onclick='addQuestion()')
           // content
         // modal
       // overlay
