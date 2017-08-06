@@ -155,8 +155,6 @@ html
             a.active(href='#test1') Completed Quizzes
           li.tab.col.s3
             a(href='#test2') Hosted Quizzes
-          li.tab.col.s3
-            a(href='#test4') Overall Stats
       #test1.col.s12.m8
         table#testTable.entity
           tbody
@@ -170,25 +168,7 @@ html
               td
                 | Total Rating
               td
-            tr.records
-              td
-                span.gameType.live C
-              td
-                span.quiz-name Ministries of Singapore
-              td
-                span.quiz-date 1 day ago
-              td
-                span.total-players 1
-              td.btn-cell
-                a.edit-btn(href='#')
-                  i.fa.fa-pencil(aria-hidden='true')
-                a.download-btn(href='#')
-                  span
-                    i.fa.fa-download(aria-hidden='true')
-                a.trash-btn(href='#')
-                  i.fa.fa-trash-o(aria-hidden='true')
-                button.btn.waves-effect.waves-light.view-btn(type='submit', name='action')
-                  | View
+            
       #test2.col.s12.m8
         table#tableToExcel.entity
           tbody
@@ -202,25 +182,7 @@ html
               td
                 | Total Rating
               td
-            tr.records
-              td
-                | C
-              td
-                span.quiz-name Ministries of Singapore
-              td
-                span.quiz-date 1 day ago
-              td
-                span.total-players 1
-              td.btn-cell
-                a.edit-btn(href='#')
-                  i.fa.fa-pencil(aria-hidden='true')
-                a.download-btn(href='#')
-                  span
-                    i.fa.fa-download(aria-hidden='true')
-                a.trash-btn(href='#')
-                  i.fa.fa-trash-o(aria-hidden='true')
-                button.btn.waves-effect.waves-light.view-btn(type='submit', name='action')
-                  | View
+            
       #test4.col.s12.m8
         #canvas-holder(style='width:40%')
           canvas#chart-area

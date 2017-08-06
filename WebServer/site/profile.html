@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <!-- Bootstrap CSS File-->
+    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Main Stylesheet File-->
+    <link rel="stylesheet" type="text/css" href="/resources/css/Profile.css">
+    <!-- Font Awesome Stylesheet File-->
+    <link href="/resources/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Material StyleSheet-->
+    <link type="text/css" rel="stylesheet" href="/resources/css/materialize.css" media="screen,projection">
+    <!-- Animate Stylesheet-->
+    <link rel="stylesheet" type="text/css" href="/resources/css/animate.css">
+    <!-- Main Stylesheet File-->
+    <link href="/resources/css/mainstyle.css" rel="stylesheet">
+    <!-- Your custom colour override - predefined colours are: colour-blue.css, colour-green.css, colour-lavander.css, orange is default-->
+    <link id="colour-scheme" href="#" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>var profile = </script>
+  </head>
+  <body onload="displayProfile(profile)">
+    <!-- Hidden Header-->
+    <div class="header-hidden collapse">
+      <div class="header-hidden-inner container">
+        <div class="row">
+          <div class="col-md-3"></div>
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+            <h3>Choose A Theme</h3>
+            <div class="switcher">
+              <div class="cols"><br><a href="#benches" title="Benches" class="background benches active"> Benches</a><a href="#boots" title="Boots" class="background boots">Boots</a><a href="#buildings" title="Buildings" class="background buildings">Buildings</a><a href="#city" title="City" class="background city">City</a><a href="#metro" title="Metro" class="background metro">Metro</a></div>
+              <div class="cols">Colours:<br><a href="#orange" title="Orange" class="colour orange active">Orange</a><a href="#green" title="Green" class="colour green">Green</a><a href="#blue" title="Blue" class="colour blue">Blue</a><a href="#lavender" title="Lavender" class="colour lavender">Lavender</a></div>
+            </div>
+            <p><small>Selection is not persistent</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-wrapper"><a href="/" class="brand-logo"><img src="/resources/images/logo.png" class="logo"></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="#"><i class="fa fa-plus-square-o"></i> Create</a></li>
+          <li><a href="#"><i class="fa fa-graduation-cap"></i> Quiz</a></li>
+          <li></li>
+          <li class="active"><a href="/profile"><i aria-hidden="true" class="fa fa-user"></i> Profile</a></li>
+          <li><a href="#">Join Quiz</a></li>
+          <li><a role="button" data-toggle="collapse" data-target=".header-hidden" class="btn btn-primary btn-hh-trigger">Open</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container-fluid profile-area">
+      <div class="section">
+        <div class="card profile-card">
+          <div class="card-image waves-effect waves-block waves-light"><img src="/resources/images/backgrounds/bio_background.jpg" class="activator"></div>
+          <div class="card-content">
+            <div class="profile-pic"><img src="/resources/images/profilePic.jpg" class="circle responsive-img z-depth-4"></div>
+            <div class="row">
+              <div class="col s3 offset-s2">
+                <h4 id="name" class="card-title grey-text text-darken-4">Nigel Tan</h4>
+                <p id="email" class="medium-small grey-text">Test</p>
+              </div>
+              <div class="col s2 center-align">
+                <h4 class="card-title grey-text text-darken-4"></h4>
+                <p class="medium-small grey-text">Category</p>
+              </div>
+              <div class="col s2 center-align">
+                <h4 id="numOfQuiz" class="card-title grey-text text-darken-4">5</h4>
+                <p class="medium-small grey-text">Completed Quizzes</p>
+              </div>
+              <div class="col s2 center-align">
+                <h4 class="card-title grey-text text-darken-4">30/6/2017</h4>
+                <p class="medium-small grey-text">Account dated</p>
+              </div>
+              <div class="col s1 right-align"><a class="btn-floating activator waves-effect waves-light darken-2 right"><i class="material-icons">person_outline</i></a></div>
+            </div>
+          </div>
+          <div class="card-reveal"><span class="card-title grey-text text-darken-4">My Profile<i class="material-icons right">close</i></span>
+            <p>User Name:<span id="user_name"></span></p>
+            <p>Email Address:<span id="emailAdd"></span></p>
+            <p>School:<span id="school"></span></p>
+            <p>Date Of Birth:<span id="DOB"></span></p>
+            <p>Organisation:<span id="organisation"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div id="sidebar" class="col s12 m4">
+        <div class="card aboutMe deep-purple">
+          <div class="card-content white-text"><span class="card-title">About Me!</span></div>
+        </div>
+        <ul id="profile-page-about-details" class="collection z-depth-1">
+          <li class="collection-item">
+            <div class="row">
+              <div class="col s5 grey-text darken-1"><i class="material-icons">assessment</i>Skills</div>
+              <div class="col s7 grey-text text-darken-4 right-align">HTML, CSS</div>
+            </div>
+          </li>
+          <li class="collection-item">
+            <div class="row">
+              <div class="col s5 grey-text darken-1"><i class="material-icons">cake</i> Birth date</div>
+              <div class="col s7 grey-text text-darken-4 right-align"><span id="DOB"></span></div>
+            </div>
+          </li>
+        </ul>
+        <div class="card center-align">
+          <div class="card-content cyan white-text">
+            <p class="card-stats-title"><i class="mdi-editor-attach-money"></i>Completed Quiz</p>
+            <h4 id="complete_quiz" class="card-stats-number"></h4>
+            <p class="card-stats-compare"><i class="material-icons">arrow_drop_up</i> 70%<span class="purple-text text-lighten-5">last month</span></p>
+          </div>
+          <div class="card-action cyan darken-2">
+            <div id="sales-compositebar"></div>
+          </div>
+        </div>
+      </div>
+      <div id="main-div" class="col s12 m8">
+        <ul class="tabs indigo accent-2 text-white">
+          <li class="tab col s3"><a href="#test1" class="active">Completed Quizzes</a></li>
+          <li class="tab col s3"><a href="#test2">Hosted Quizzes</a></li>
+        </ul>
+      </div>
+      <div id="test1" class="col s12 m8">
+        <table id="testTable" class="entity">
+          <tbody>
+            <tr class="data-table">
+              <td>Type</td>
+              <td>Quiz Name</td>
+              <td>Date Of Quiz</td>
+              <td>Total Rating</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="test2" class="col s12 m8">
+        <table id="tableToExcel" class="entity">
+          <tbody>
+            <tr class="data-table">
+              <td>Type</td>
+              <td>Quiz Name</td>
+              <td>Date Of Quiz</td>
+              <td>Total Rating</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="test4" class="col s12 m8">
+        <div id="canvas-holder" style="width:40%">
+          <canvas id="chart-area"></canvas>
+        </div>
+      </div>
+      <!-- / tabs-->
+    </div>
+    <div class="fixed-action-btn vertical"><a class="btn-floating btn-large red"><i class="large material-icons">mode_edit</i></a>
+      <ul>
+        <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
+        <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
+        <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
+        <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
+      </ul>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+    <script type="text/javascript" src="../controller/client-profile.js"></script>
+    <script type="text/javascript" src="../controller/Chart.js"></script>
+    <script type="text/javascript"></script>
+  </body>
+</html>
