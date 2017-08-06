@@ -8,14 +8,9 @@ const uuid = require('uuid');
 module.exports = function(appConn, C) {
   return function(req, res) {
 
-    console.log(req.connection.remoteAddress);
-    console.log(req.connection.remotePort);
-    console.log(req.connection.localAddress);
-    console.log(req.connection.localPort);
+    var userIP = req.connection.remoteAddress;
+    var botCheck = req.body._bot;
 
-    var ip = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
-    console.log("HERE");
-    console.log(ip);
     appConn.send({
       'type': C.REQ_TYPE.DATABASE,
       'data': {
@@ -28,5 +23,6 @@ module.exports = function(appConn, C) {
     }, (response) => {
       res.redirect('/spam');
     });
+
   }
 };

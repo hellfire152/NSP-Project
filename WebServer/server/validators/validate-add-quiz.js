@@ -5,29 +5,71 @@
 */
 
 const uuid = require('uuid');
-module.exports = function(cipher, appConn, C) {
+module.exports = function(cipher, appConn, C, cookieValidator) {
   return function(req, res) {
 
+    var botCheck = req.body._bot;
+    var userIP = req.connection.remoteAddress;
+    var userInfo = req.cookies.user_info;
 
-    console.log(req.body);
-    var dataObj = JSON.parse(req.body.quizSet);
+    console.log(userInfo);
 
-      console.log("Data: ");
-      dataObj.quiz.quiz_rating = 0; //Default
-      dataObj.quiz.reward = parseInt(dataObj.quiz.reward);
-      dataObj.quiz.user_id = req.cookies.user_info.user_id;
+    appConn.send({
+      // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+      'type':C.REQ_TYPE.DATABASE,
+      'data': {
+        type : C.DB.SELECT.BANNED_IP,
+        ip_address : userIP
+      }
+    }, (checkBannedResponse) => {
+      if(checkBannedResponse.data.success){ //IP banned
+        res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
+        res.end();
+      }
+      else{
+        if(botCheck !== ''){
+          console.log("BOT DETECTED");
+          appConn.send({
+            // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+            'type':C.REQ_TYPE.DATABASE,
+            'data': {
+              type : C.DB.CREATE.BANNED_IP,
+              ip_address : userIP
+            }
+          }, (response) => {
+            res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
+            res.end();
+          });
+        }
+        else{
 
-
-        appConn.send({
-          'type': C.REQ_TYPE.DATABASE,
-          'data': {
-            type : C.DB.CREATE.QUIZ,
-            quiz : dataObj.quiz,
-            question : dataObj.question,
-            choices : dataObj.choices
+          if(!cookieValidator.validateCookie(userInfo)){
+            console.log("Cookie Modification detected");
+            res.clearCookie("user_info");
+            res.sendErrorPage("Cookie modification detected");
           }
-        }, (response) => {
-          res.redirect('add-quiz');
-        });
+          else{
+            var dataObj = JSON.parse(req.body.quizData);
+            console.log("Data: ");
+            dataObj.quiz.quiz_rating = 0; //Default
+            dataObj.quiz.reward = parseInt(dataObj.quiz.reward);
+            dataObj.quiz.user_id = userInfo.data.user_id;
+
+
+              appConn.send({
+                'type': C.REQ_TYPE.DATABASE,
+                'data': {
+                  type : C.DB.CREATE.QUIZ,
+                  quiz : dataObj.quiz,
+                  question : dataObj.question,
+                  choices : dataObj.choices
+                }
+              }, (response) => {
+                res.redirect('/CreateQuiz');
+              });
+          }
+        }
+      }
+    });
       }
     };

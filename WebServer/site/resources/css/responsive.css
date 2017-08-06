@@ -1,0 +1,325 @@
+
+
+/* Money Section */
+.demo
+{
+    padding: 100px 0;
+}
+.heading-title
+{
+    margin-bottom: 100px;
+}
+
+.pricingTable{
+    text-align: center;
+    transition: all 0.5s ease 0s;
+}
+
+.pricingTable:hover{
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.pricingTable .pricingTable-header{
+    color: #feffff;
+}
+
+.pricingTable .heading{
+    display: block;
+    padding-top: 25px;
+}
+
+.pricingTable .heading > h3{
+    font-size: 20px;
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.pricingTable .subtitle{
+    display: block;
+    font-size: 13px;
+    margin-top: 5px;
+    text-transform: capitalize;
+}
+
+.pricingTable .price-value{
+    display: block;
+    font-size: 64px;
+    font-weight: 700;
+    padding-bottom: 25px;
+}
+
+.pricingTable .price-value span{
+    display: block;
+    font-size: 14px;
+    line-height: 20px;
+    text-transform: uppercase;
+}
+
+.pricingTable .pricingContent{
+    text-transform: capitalize;
+    background: #fbfbfb;
+    color: #fefeff;
+}
+
+.pricingTable .pricingContent ul{
+    list-style: none;
+    padding: 15px 20px 10px;
+    margin: 0;
+    text-align: left;
+}
+
+.pricingTable .pricingContent ul li{
+    font-size: 14px;
+    padding: 12px 0;
+    border-bottom: 1px dashed #e1e1e1;
+    color: #9da1ad;
+}
+
+.pricingTable .pricingContent ul li i{
+    font-size: 14px;
+    float: right;
+}
+
+.pricingTable .pricingTable-sign-up{
+    padding: 20px 0;
+    background: #fbfbfb;
+    color: #fff;
+    text-transform: capitalize;
+}
+
+.pricingTable .btn-block{
+    width: 60%;
+    margin: 0 auto;
+    font-size: 17px;
+    color: #fff;
+    text-transform: capitalize;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    transition: all 0.5s ease 0s;
+}
+
+.pricingTable .btn-block:before{
+    content: "\f007";
+    font-family: 'FontAwesome';
+    margin-right: 10px;
+}
+
+.pricingTable.blue .pricingTable-header,
+.pricingTable.blue .btn-block{
+    background: #727cb6;
+}
+
+.pricingTable.pink .pricingTable-header,
+.pricingTable.pink .btn-block{
+    background: #ed687c;
+}
+
+.pricingTable.orange .pricingTable-header,
+.pricingTable.orange .btn-block{
+    background: #e67e22;
+}
+
+.pricingTable.green .pricingTable-header,
+.pricingTable.green .btn-block{
+    background: #008b8b;
+}
+
+.pricingTable.blue .btn-block:hover,
+.pricingTable.pink .btn-block:hover,
+.pricingTable.orange .btn-block:hover,
+.pricingTable.green .btn-block:hover{
+    background: #e6e6e6;
+    color: #939393;
+}
+
+.facts-section {
+    background: url('../images/counter-bg.jpg') no-repeat center center;
+    background-attachment: fixed;
+    background-size: cover;
+    color: #fff;  
+}
+
+.tt-overlay-bg {
+    background: rgba(26, 30, 35, 0.85);
+    padding: 110px 0;
+}
+
+.count-wrap i {
+    font-size: 64px;
+    margin-bottom: 25px;
+}
+.count-wrap h3 {
+    font-size: 50px;
+    line-height: 28px;
+    margin-bottom: 20px;
+}
+.count-wrap p {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+}
+/* Footer Section CSS */
+.footer_widget{
+    background:url(../images/footer-bg.jpg) center top no-repeat scroll;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    width: 100%;
+    overflow: hidden;
+}
+.footer_widget_content{
+    color:#fff;
+}
+.single_widget{
+    padding-bottom: 50px;
+    padding-top:60px;
+}
+
+.single_widget h3{
+    font-size:1.875rem;
+
+    font-family: 'Pacifico', cursive;   
+}
+.single_widget_info p{
+    margin-top:40px;
+}
+.single_widget_info p span{
+    display:block;
+}
+.single_widget_info p span.phone_email{
+    margin-top:15px;
+}
+.footer_socail_icon{
+    margin-top:90px;
+}
+.footer_socail_icon a{
+    padding:5px;
+}
+.footer_socail_icon a i{
+    font-size:25px;
+    color:#e7a331;
+}
+
+
+.single_widget_info p span.date_day{
+    margin-top:25px;
+    margin-bottom:15px;
+    font-weight:600;
+}
+.footer{
+    background:#000;
+}
+.footer .copyright p{
+    padding:25px;
+    color:#fff;
+}
+.footer .copyright p i{
+    padding:0px 10px;
+    color:#ff0000;
+}
+.footer .copyright p a{
+    padding:0px 10px;
+    color:green;
+}
+@media (min-width:769px) and (max-width:991px) {
+.portfolio_images_overlay {
+    padding: 0px;
+}
+body{
+    font-size:95%;
+}
+h1{font-size:90%;}
+
+.single_pakeg_text ul li {
+    background: url(../images/pkli.png) no-repeat left center;
+    padding: 5px 0px 5px 60px;
+    margin-top: 15px;
+}
+.single_monail_apps_text {
+    margin-top: 40px;
+}
+
+.main_mobail_apps_content img{
+    text-align: right;
+}
+
+.single_monail_apps_text a{
+    margin-right:5px;
+}
+.main_menu_bg a.navbar-brand.our_logo{
+	top: -77px;
+	width: 120px;
+}
+.menu-scroll .main_menu_bg a.navbar-brand.our_logo {
+    top: -16px;
+    width: 120px;
+}
+
+	
+}
+
+
+
+
+@media (max-width:768px){
+
+.main_menu_bg a.navbar-brand.our_logo{
+    top: -78px;
+    width: 120px;
+}
+	
+.single_monail_apps_text {
+    margin-top: 40px;
+}
+.main_mobail_apps_content img{
+    text-align: right;
+}
+.menu-scroll .main_menu_bg a.navbar-brand.our_logo {
+    top: -16px;
+    width: 120px;
+}
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #fff;
+}
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+    background-color: #E7A331;
+}
+.navbar-default .navbar-toggle {
+    border-color: #fff;
+}
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border-color: transparent;
+    border: 0px;
+    background: rgba(0, 0, 0, .45);
+    margin-top: 14px;
+}
+
+
+}
+
+
+@media screen (min-width:320px) and (max-width:480px){
+
+.header_top_menu .call_us_text{
+	display:none !important;
+}
+.main_menu_bg a.navbar-brand.our_logo{
+    top: -78px;
+    width: 35%;
+}
+	
+.single_monail_apps_text {
+    margin-top: 40px;
+}
+.main_mobail_apps_content img{
+    text-align: right;
+}
+.menu-scroll .main_menu_bg a.navbar-brand.our_logo {
+    top: -16px;
+    width: 60%;
+}
+
+
+}

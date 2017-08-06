@@ -23,8 +23,8 @@ module.exports = function(data) {
     // 'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
     'join-room' : require('../validators/validate-join-room.js')(cookieCipher, appConn),
     'host-room' : require('../validators/validate-host-room.js')(cookieCipher, appConn, S),
-    'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C),
     'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer, cookieValidator),
+    'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C, cookieValidation),
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
@@ -32,7 +32,8 @@ module.exports = function(data) {
     // 'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
     'change-forget-password' : require('../validators/validate-change-forget-password.js')(cookieCipher, appConn,C),
-    'spam-bot' : require('../validators/validate-spam.js')(appConn, C)
+    'spam-bot' : require('../validators/validate-spam.js')(appConn, C),
+    'verify-pin' : require('../validators/validate-enter-pin.js')(appConn, C)
   };
 
   //routing
@@ -267,6 +268,7 @@ module.exports = function(data) {
   app.post('/otp-forget-password', validators["otp-forget-password"]);
   app.post('/change-forget-password', validators["change-forget-password"]);
   app.post('/spamming-in-progress', validators["spam-bot"]);
+  app.post('/verify-pin', validators["verify-pin"]);
   // app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
 }
 function gameSessionCheck(req, isPlaying) {
