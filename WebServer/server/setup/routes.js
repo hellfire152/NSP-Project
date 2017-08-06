@@ -23,6 +23,7 @@ module.exports = function(data) {
     // 'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
     'join-room' : require('../validators/validate-join-room.js')(cookieCipher, appConn),
     'host-room' : require('../validators/validate-host-room.js')(cookieCipher, appConn, S),
+    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer),
     'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C, cookieValidator),
     'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer, cookieValidator),
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
@@ -284,6 +285,7 @@ module.exports = function(data) {
   // app.post('/otp-register', rateLimiters.otpRegister,validators["otp-register"]);
   app.post('/otp-forget-password', validators["otp-forget-password"]);
   app.post('/change-forget-password', validators["change-forget-password"]);
+  app.post('/change-password-room-success', validators["change-password-room"]);
   app.post('/spamming-in-progress', validators["spam-bot"]);
   // app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
 }

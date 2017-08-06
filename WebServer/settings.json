@@ -29,8 +29,8 @@
     }
   },
 
-  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam", "ForgetPassword", "otp-ForgetPassword", "ChangePassword" , "Home", "CreateQuiz"],
-  "REQUIRE_VALID_LOGIN" : ["createquiz", "host", "play", "report", "hostreport", "forgetpassword", "user-home"],
+  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam", "ForgetPassword", "otp-ForgetPassword", "ChangePassword" , "Home", "CreateQuiz", "change-password"],
+  "REQUIRE_VALID_LOGIN" : ["CreateQuiz", "host", "play", "report", "hostreport", "forgetpassword", "user-home", "change-password"],
   "USE_TEST_ACCOUNT" : false,
   "TEST_ACCOUNTS" : [{
       "username" : "hellfire152"
