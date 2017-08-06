@@ -1,0 +1,114 @@
+* {
+  font-family: Corbel;
+}
+
+body {
+  min-height: 100%;
+  min-width : 100%;
+}
+
+#get-ready {
+  margin: auto;
+  width : 80%;
+  padding : 50px;
+  text-align : center;
+  font-size:  x-large;
+}
+
+#game-ranking {
+  margin : auto;
+
+}
+
+#game-ranking-header {
+  margin : auto
+}
+
+.ranking-name {
+  display : inline-block;
+  font-size : 1.2em;
+  margin : 20px
+}
+
+.ranking-score {
+  display : inline-block;
+}
+
+.ranking-streak {
+  display : inline-block;
+  margin : 15px
+}
+
+.ranking-streak-icon {
+  height : 50px;
+  width : auto;
+  margin: 5px;
+}
+
+.header {
+  margin : auto;
+  padding : 30px;
+  font-size : xx-large;
+}
+
+#current-question {
+  margin : auto;
+  text-align : center;
+  font-size : xx-large;
+}
+
+#current-question-text {
+  display: inline-block;
+}
+
+#response-list, #players-list-header {
+  width : 80%;
+  list-style-type : none;
+  font-size : xx-large;
+}
+
+.choice, .players-list-name {
+  font-size : x-large;
+  width : 100%;
+  padding : 5px;
+
+  border-radius : 3px;
+  border-style : groove;
+  border-width : 0px 2px 3px 0px;
+}
+
+.choice-chosen {
+  font-size : 1.2em;
+}
+
+#next-button , #previous-button{
+  margin : auto;
+
+  clear : both;
+  z-index : 2;
+  height : 3em;
+  width : 70%;
+  background-color: #AC17B5;
+  border : 2px solid #AC17B5;
+  border-radius: 5px;
+
+  color : white;
+  font-size : x-large;
+  text-align: center;
+
+  transition-duration: 0.2s;
+}
+
+#next-button:hover, #prev-button:hover {
+  color : black;
+  background-color : white;
+}
+
+/* RACE MODE ONLY */
+.players-list-name {
+  font-size: 2em;
+}
+
+.players-list-progress {
+  font-size: 1.5em;
+}

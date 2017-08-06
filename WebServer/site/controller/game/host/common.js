@@ -52,15 +52,15 @@ function gameEnd(response) {
   taDiv.appendChild(titleHeader);
   for(let title of response.titlesAndAchievenments) {
     let titleDisplay = createNode('div', null, 'title-display');
-    let titleName = createNode('p', title.name, 'title-name');
+    let titleName = createNode('p', title.title, 'title-name');
     //title image
     let titleIcon = createNode('img', null, 'title-icon');
     titleIcon.src = `/resources/images/titles/${title.icon}`;
     titleIcon.style.height = '100px';
     titleIcon.style.width = '100px';
     let earningPlayer = createNode('p', title.recipient, 'title-recipient');
-    let description = createNode('p', title.description, 'title-description');
-    appendMultiple(titleDisplay, titleName, titleIcon, earningPlayer, description);
+    let description = createNode('p', title.details, 'title-description');
+    appendMultiple(titleDisplay, titleIcon, titleName, earningPlayer, description);
     taDiv.appendChild(titleDisplay);
   }
 
@@ -68,6 +68,9 @@ function gameEnd(response) {
 
   //now for the end screen
   let endScreen = createNode('h1', 'Thanks for playing!', 'end-header');
+  let endLink = createNode('a', 'Back to home', 'end', 'end-link');
+  endLink.href = '/';
+  endScreen.appendChild(endLink);
   endDiv.appendChild(endScreen);
 
   //buttons to toggle between the few scenes

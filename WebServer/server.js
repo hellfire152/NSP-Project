@@ -34,6 +34,7 @@ var net = require('net');
 var crypto = require('crypto');
 var cookieParser = require('cookie-parser');
 var uuid = require('uuid');
+var util = require('util');
 
 var S = require(settings);
 S.APPSERVER.PASSWORD = appServerPassword;
@@ -109,7 +110,7 @@ var attemptConnection = setInterval(() => {
 
       //sending the request object
       console.log("TO APPSERVER:");
-      console.log(reqObj);
+      console.log(util.inspect(reqObj, {showHidden: false, depth: null}));
       encryptAndSend(reqObj, encryption);
       return reqNo; //just in case
     };
@@ -143,8 +144,8 @@ var attemptConnection = setInterval(() => {
     appConn.on("data", async (response) => {
       let data = await decryptResponse(response);
       //the authentication stage should have no problems with simultaneous responses
-      logResponse(response[0]);
-      runCallback(response[0]);
+      logResponse(data[0]);
+      runCallback(data[0]);
     });
 
     /****AUTHENTICATION******/

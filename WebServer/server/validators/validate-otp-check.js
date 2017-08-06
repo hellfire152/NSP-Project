@@ -19,6 +19,7 @@ module.exports = function(cipher, appConn, C,emailServer, xssDefense, cookieVali
         res.sendErrorPage("Cookie modification detected");
       }
       else{
+        console.log(otpObj);
         if(userOTP == otpObj.pin){
           //TODO: Get data from database and send to client and redirect to new page
           appConn.send({
@@ -28,6 +29,7 @@ module.exports = function(cipher, appConn, C,emailServer, xssDefense, cookieVali
               user_id : otpObj.user_id
             }
           } ,(response) => {
+            console.log(response);
               appConn.send({
                 'type' : C.REQ_TYPE.DATABASE,
                 'data' : {
@@ -39,7 +41,7 @@ module.exports = function(cipher, appConn, C,emailServer, xssDefense, cookieVali
                   }
                 }
               }, (response2) => {
-                var encodedData = xssDefense.jsonEncode(response.data.data[0]);
+                // var encodedData = xssDefense.jsonEncode(response.data.data[0]);
                 var encodedData = response.data.data[0];
                 res.clearCookie("otp");
                 if(req.cookies.deviceIP != undefined){
@@ -69,12 +71,13 @@ module.exports = function(cipher, appConn, C,emailServer, xssDefense, cookieVali
                       }
                     }, (response4) => {
                       //TODO: XSS of array of quiz data
-                      res.render('user-home', {
-                        data : {
-                          userInfo : encodedData,
-                          quizInfo : response4.data.data
-                        }
-                      });
+                      if(req.session.attemptJoin) {
+                        res.redirect(`play?room=${req.session.attemptJoin}`);
+                      } else if(req.session.attemptVisit) {
+                        res.redirect(req.session.attemptVisit);
+                      } else {
+                        res.redirect('/user-home');
+                      }
                     });
                   });
               });

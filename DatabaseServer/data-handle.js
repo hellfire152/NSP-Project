@@ -19,10 +19,8 @@ async function handlePassword(data){
       data.account.salt = saltValue;
     })
     .then(function(){
-      databaseCipher.hash(data.account.password_hash + data.account.salt)
-        .then(hashed =>{
-          data.account.password_hash = hashed;
-        })
+      let hashed = databaseCipher.hash(data.account.password_hash + data.account.salt);
+      data.account.password_hash = hashed;
     })
     .catch(reason => {
       console.log(reason);
@@ -31,27 +29,15 @@ async function handlePassword(data){
 }
 
 async function handleHashPass(data){
-    databaseCipher.hash(data.verify.password_hash + data.verify.salt)
-      .then(hashed =>{
-        data.verify.password_hash = hashed;
-      })
-      .catch(reason => {
-        console.log(reason);
-      });
-
-    return data;
+  let hashed = databaseCipher.hash(data.verify.password_hash + data.verify.salt);
+  data.verify.password_hash = hashed;
+  return data;
 }
 
 async function handleHashIP(data){
-  databaseCipher.hash(data.inputData.ip_address)
-  .then(hashed => {
-    data.inputData.ip_address = hashed;
-  })
-  .catch(reason => {
-    console.log(reason);
-  });
-
-return data;
+  let hashed = databaseCipher.hash(data.inputData.ip_address);
+  data.inputData.ip_address = hashed;
+  return data;
 }
 
 async function handleDeleteAccount(data){
@@ -59,22 +45,20 @@ async function handleDeleteAccount(data){
   var encryptedData = {};
   dataArr.push(data)
   await handleDecryption(dataArr)
-  .then(dataDecrypt => {
-    data = dataDecrypt[0];
-    databaseCipher.hash(data.account.password + data.salt)
-    .then(hashed => {
-      data.account.password_hash = hashed;
-      delete data.account.password;
-      delete data.salt;
+    .then(dataDecrypt => {
+      data = dataDecrypt[0];
+      try {
+        let hashed = databaseCipher.hash(data.account.password + data.salt);
+        data.account.password_hash = hashed;
+        delete data.account.password;
+        delete data.salt;
+      } catch (e) {
+        console.log(e);
+      }
     })
     .catch(reason => {
       console.log(reason);
     });
-  })
-  .catch(reason => {
-    console.log(reason);
-  });
-
   return data;
 }
 
@@ -87,23 +71,21 @@ async function handleRecieveAccount(data){
   var plainData;
 
   await handleDecryption(dataArr)
-  .then(dataOut => {
-    console.log("SALT: " + dataOut[0].salt);
-    console.log(dataOut[0].hash_password);
-    databaseCipher.hash(dataOut[0].hash_password + dataOut[0].salt)
-    .then(hashed => {
-      console.log("HASHED: " + hashed);
-      dataOut[0].hash_password = hashed;
-      plainData = dataOut[0];
+    .then(dataOut => {
+      console.log("SALT: " + dataOut[0].salt);
+      console.log(dataOut[0].hash_password);
+      try {
+        let hashed = databaseCipher.hash(dataOut[0].hash_password + dataOut[0].salt);
+        console.log("HASHED: " + hashed);
+        dataOut[0].hash_password = hashed;
+        plainData = dataOut[0];
+      } catch (e) {
+        console.log(e);
+      }
     })
     .catch(reason => {
       console.log(reason);
     });
-
-  })
-  .catch(reason => {
-    console.log(reason);
-  });
   return plainData;
 }
 
@@ -142,6 +124,7 @@ async function handleSearchQuiz(searchItem){
 //Convert string into integer for quiz solution
 //Convert JASON string to object for choices
 async function handleRecieveQuestion(data){
+  console.log(data);
   var num;
   data.forEach(function(individualData){
     console.log(individualData);

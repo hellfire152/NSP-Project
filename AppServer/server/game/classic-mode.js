@@ -19,6 +19,9 @@ module.exports = async function(input) {
       if(data.id = currentRoom.host) {
         currentRoom.joinable = false; //room not joinable anymore
         currentRoom.questionCounter = 0; //question counter for the whole room
+        if(currentRoom.quiz.questions === undefined) {
+          currentRoom.quiz.questions = currentRoom.quiz.question;
+        }
         let question = currentRoom.quiz.questions[0]; //get first question
 
         //store answer resutls

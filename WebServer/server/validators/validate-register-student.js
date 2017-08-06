@@ -115,7 +115,11 @@ module.exports =function(cipher, appConn,C, emailServer){
                   // 'school':school
 
                 }, (response) => {
-                  res.redirect('/student-login');
+                  if(!response.data.success) { //fail
+                    res.sendErrorPage(response.data.message, '/student-login');
+                  } else {
+                    res.redirect('/student-login');
+                  }
                 });
               // });
               // errors=false;

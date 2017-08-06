@@ -25,6 +25,7 @@ module.exports = function(data) {
     socket.on('disconnect', () => {
       console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
       delete socketOfUser[socket.userId];
+      socket.handshake.session.hosting = socket.handshake.session.joining = false;
       appConn.send({
         'special': C.SPECIAL.SOCKET_DISCONNECT,
         'id': socket.userId,
@@ -36,11 +37,13 @@ module.exports = function(data) {
 
     try {
       //let loginCookie = await getLoginCookieS(socket, cookieCipher, cookie);
-      let id = socket.handshake.session.username;
-      if(!socket.handshake.session.validLogin || id === undefined) {  //if not logged in
+      let s = socket.handshake.session;
+      console.log(s);
+      if(!s.validLogin || !(s.hosting ^ s.joining)) { //not logged in or not hosting or joining
         console.log('Invalid connection!');
         socket.disconnect();
       } else {
+        let id = s.username;
         console.log("SOCKET IO CONNECTION INITIATED BY");
         console.log(id);
         if(socketOfUser[id] !== undefined) { //if user with that id already exists
@@ -53,12 +56,6 @@ module.exports = function(data) {
     } catch (err) {
       console.log(err);
       console.log("Invalid login cookie detected");
-      socket.disconnect();
-    }
-
-    //preventing outsiders from randomly connecting
-    if(!socket.handshake.session.joining && !socket.handshake.session.hosting) {
-      console.log('Illegal connection!');
       socket.disconnect();
     }
 

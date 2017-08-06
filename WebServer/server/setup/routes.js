@@ -8,7 +8,7 @@ var uuid;
 var express = require('express');
 var nodemailer = require('nodemailer');
 var rateLimiters = require('./rate-limiters.js');
-var cookieValidation = require('./cookie-validation.js');
+var cookieValidator = require('./cookie-validation.js');
 
 var S;
 module.exports = function(data) {
@@ -23,17 +23,16 @@ module.exports = function(data) {
     // 'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
     'join-room' : require('../validators/validate-join-room.js')(cookieCipher, appConn),
     'host-room' : require('../validators/validate-host-room.js')(cookieCipher, appConn, S),
-    'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C, cookieValidation),
-    'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer, cookieValidation),
+    'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C, cookieValidator),
+    'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer, cookieValidator),
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
-    'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidation),
-    'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, emailServer, xssDefense, cookieValidation),
+    'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
+    'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, emailServer, xssDefense, cookieValidator),
     // 'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
-    'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidation),
+    'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
     'change-forget-password' : require('../validators/validate-change-forget-password.js')(cookieCipher, appConn,C),
-    'spam-bot' : require('../validators/validate-spam.js')(appConn, C),
-    'verify-pin' : require('../validators/validate-enter-pin.js')(appConn, C)
+    'spam-bot' : require('../validators/validate-spam.js')(appConn, C)
   };
 
   //routing
@@ -52,11 +51,45 @@ module.exports = function(data) {
   //redirect to home page
   app.get('/', function(req, res){
     if(req.session.validLogin) {
-      res.render('user-home');
+      res.redirect('/user-home');
     } else {
-      res.render('home');
+      res.render('/Home');
     }
   });
+
+  app.get('/user-home', function(req, res) {
+    appConn.send({
+      'type' : C.REQ_TYPE.DATABASE,
+      'data' : {
+        type : C.DB.GET_ACCOUNT_DETAILS,
+        user_id : req.session.username
+      }
+    } ,(response) => {
+      //TODO: WILL INSERT AN REMEMBER ME FUNCCTION OVER HERE TOO TIRED TO IMPLEMENT, CURRENTLY WORKING AT OTP CHECK
+      if(response.data.success){
+        var userIP = req.connection.remoteAddress;
+        var encodedData = xssDefense.jsonEncode(response.data.data[0]);
+        cookieCipher.encryptJSON(cookieValidator.generateCheckCookie(encodedData, userIP))
+        .then((encryptedCookie) => {
+          res.cookie('user_info', encryptedCookie);
+          appConn.send({
+            'type' : C.REQ_TYPE.DATABASE,
+            'data' : {
+              'type' : C.DB.SELECT.ALL_QUIZ
+            }
+          }, (response4) => {
+            //TODO: XSS of array of quiz data
+            res.render('user-home', {
+              data : {
+                userInfo : encodedData,
+                quizInfo : response4.data.data
+              }
+            });
+          });
+        });
+    }
+    });
+  })
 
   //handling profile pages
   app.get('/profile', (req, res) => {
@@ -118,7 +151,7 @@ module.exports = function(data) {
       res.sendErrorPage("Argument Error!");
     } else if(gameSessionCheck(req, true)) {
       //check for login cookie
-      if(true /*!req.validLogin*/) {
+      if(req.session.validLogin) {
         let roomNo = req.query.room;
         appConn.send({
           'type' : C.REQ_TYPE.JOIN_ROOM,
@@ -149,7 +182,6 @@ module.exports = function(data) {
   });
 
   //handling hosting
-
   app.get('/host', rateLimiters.host, function(req, res) { //submit the form for hosting a room
     if(req.query.quizId.constructor === Array) {
       res.sendErrorPage('Argument error!');
@@ -167,6 +199,7 @@ module.exports = function(data) {
               res.sendErrorPage(e);
             }
           } else {  //no error
+            req.session.hosting = true;
             res.render('host', {
               'roomNo' : response.roomNo
             });
@@ -194,7 +227,7 @@ module.exports = function(data) {
         res.clearCookie("tempToken");
         res.clearCookie("user_info");
         console.log("CLEAREDDDDDDDDDDDDDDDDDDD");
-        // res.redirect('/student-login'); redirect on pug?
+        res.redirect('/Home'); 
       }
     })
   });
@@ -222,9 +255,9 @@ module.exports = function(data) {
   app.post('/join-room', rateLimiters.join, validators["join-room"]);
   app.post('/host-room', rateLimiters.host, validators["host-room"]);
   app.post('/add-quiz',rateLimiters.addQuiz, validators["add-quiz"]);
-  app.post('/user-home',rateLimiters.login, validators["login-room"]);
-  app.post('/student-login', rateLimiters.register, validators["reg-room"]);
-  app.post('/teacher-login', rateLimiters.register, validators["reg-room-teach"]);
+  app.post('/login',rateLimiters.login, validators["login-room"]);
+  app.post('/student-register', rateLimiters.register, validators["reg-room"]);
+  app.post('/teacher-register', rateLimiters.register, validators["reg-room-teach"]);
   // app.post('/change-password-room-success', rateLimiters.changePassword, validators["change-password-room"]); //NOTE: Chloe say its not needed
   app.post('/forget-password-room-success',rateLimiters.forgetPassword,validators["forget-password-room"]);
   app.post('/otp-check',rateLimiters.otpCheck, validators["otp-check"]);
@@ -232,7 +265,6 @@ module.exports = function(data) {
   app.post('/otp-forget-password', validators["otp-forget-password"]);
   app.post('/change-forget-password', validators["change-forget-password"]);
   app.post('/spamming-in-progress', validators["spam-bot"]);
-  app.post('/verify-pin', validators["verify-pin"]);
   // app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
 }
 function gameSessionCheck(req, isPlaying) {

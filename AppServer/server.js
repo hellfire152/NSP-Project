@@ -36,7 +36,7 @@ var uuid = require('uuid');
 var Cipher = require(S.CIPHER);
 var crypto = require('crypto');
 var fs = require('fs');
-
+var util = require('util');
 var allRooms = {};
 var pendingDatabaseResponses = {};
 
@@ -96,7 +96,7 @@ function initServer() {
       let reqNo = data.reqNo;
       delete data.reqNo;  //hide reqNo from logs
       console.log("FROM WEBSERVER"); //Log all data received from the WebServer
-      console.log(data);
+      console.log(util.inspect(data, {showHidden: false, depth: null}));
       let response = {};
 
       if(conn.status != C.AUTH.AUTHENTICATED) { //not authenticated yet
@@ -306,7 +306,7 @@ if(S.AUTH_BYPASS) {
 
 function logResponse(response) {
   console.log("DATABASE RESPONSE:");
-  console.log(response);
+  console.log(util.inspect(response, {showHidden: false, depth: null}));
 }
 
 async function decryptResponse(response) {
