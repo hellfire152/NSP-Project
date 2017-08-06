@@ -96,6 +96,7 @@
     "ACCOUNT_LOGGED_IN":3
   },
   "DB" : {
+    "GET_ACCOUNT_DETAILS" : 1,
     "CREATE" : {
       "STUDENT_ACC" : 101,
       "TEACHER_ACC" : 102,

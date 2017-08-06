@@ -13,7 +13,7 @@ var join = new RateLimit({
   'message' : 'Too many join requests!',
   'max' : 10000,
   'handler' : (req, res) => {
-    sendErrorPage(res);
+    res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
 });
 
@@ -24,7 +24,7 @@ var host = new RateLimit({
   'message' : 'Too many host requests',
   'max' : 500,
   'handler' : (req, res) => {
-    sendErrorPage(res);
+    res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
 });
 
@@ -35,7 +35,7 @@ var register = new RateLimit({
   'message' : 'Too many register requests!',
   'max' : 200,
   'handler' : (req, res) => {
-    sendErrorPage(res);
+    res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
 });
 
@@ -46,7 +46,7 @@ var login = new RateLimit({
   'message' : 'Too many login requests!',
   'max' : 5, // testing purpose
   'handler' : (req, res) => {
-    sendErrorPage(res);
+    res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
 });
 var addQuiz = new RateLimit({
@@ -56,7 +56,7 @@ var addQuiz = new RateLimit({
   'message' : 'Too many add quiz requests!',
   'max' : 200,
   'handler' : (req, res) => {
-    sendErrorPage(res);
+    res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
 });
 var changePassword = new RateLimit({
@@ -66,7 +66,7 @@ var changePassword = new RateLimit({
   'message' : 'Too many change password requests!',
   'max' : 100,
   'handler' : (req, res) => {
-    sendErrorPage(res);
+    res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
 });
 var forgetPassword = new RateLimit({
@@ -76,7 +76,7 @@ var forgetPassword = new RateLimit({
   'message' : 'Too many forget password requests!',
   'max' : 100,
   'handler' : (req, res) => {
-    sendErrorPage(res);
+    res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
 });
 var otpCheck = new RateLimit({
@@ -86,7 +86,7 @@ var otpCheck = new RateLimit({
   'message' : 'Too many OTP check requests!',
   'max' : 100,
   'handler' : (req, res) => {
-    sendErrorPage(res);
+    res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
 });
 var otpRegister = new RateLimit({
@@ -96,7 +96,7 @@ var otpRegister = new RateLimit({
   'message' : 'Too many OTP register requests!',
   'max' : 100,
   'handler' : (req, res) => {
-    sendErrorPage(res);
+    res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
 });
 var logout = new RateLimit({
@@ -106,16 +106,9 @@ var logout = new RateLimit({
   'message' : 'Too many logout requests!',
   'max' : 100,
   'handler' : (req, res) => {
-    sendErrorPage(res);
+    res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
 });
-//adding one more for profile
-function sendErrorPage(res, error) {
-  res.render('error', {
-    'error' : (error === undefined)?
-      "We've detected suspicious activity, you've been blocked for a while" : error
-  });
-}
 
 module.exports = {
   'join' : join,

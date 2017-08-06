@@ -118,14 +118,14 @@ html
         .tooltip Click Me
       .form
         h2 Login to your account
-        form#login(method='POST', action='/user-home')
+        form#login(method='POST', action='/login')
           input(type='hidden', name='_csrf', value=`${csrfToken}`)
           input#username.form-control(type='text', placeholder='Username', name='username', autocomplete='off')
           input#password.form-control(type='password', placeholder='Password', name='password', autocomplete='off')
           input.button(type='submit', name='login', value='Login')
       .form
         h2 Create an account
-        form#register-teacher(action='/teacher-login', method='post')
+        form#register-teacher(action='/teacher-register', method='post')
           input(type='hidden', name='_csrf', value=`${csrfToken}`)
           input#name.form-control(type='text', placeholder='Name', name='name' autocomplete='off')
           input#lusername.form-control(type='text', placeholder='Username', name='lusername',autocomplete='off')

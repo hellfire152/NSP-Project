@@ -133,17 +133,12 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                         }
                       }, (response4) => {
                         //TODO: XSS of array of quiz data
-                        res.render('user-home', {
-                          data : {
-                            userInfo : encodedData,
-                            quizInfo : response4.data.data
-                          }
-                        });
+                        res.redirect('/user-home');
                       });
                     });
                   }
                   else{
-                    res.redirect('/student-login');
+                    res.sendErrorPage(response.data.message);
                   }
                   });
                 }

@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
+module.exports = function(cipher, appConn, C, emailServer, xssDefense, cookieValidator) {
   return function(req, res) {
     req.sanitize('otp').escape();
 
@@ -69,12 +69,7 @@ module.exports = function(cipher, appConn, C, xssDefense, cookieValidator) {
                       }
                     }, (response4) => {
                       //TODO: XSS of array of quiz data
-                      res.render('user-home', {
-                        data : {
-                          userInfo : encodedData,
-                          quizInfo : response4.data.data
-                        }
-                      });
+                      res.redirect('/user-home');
                     });
                   });
               });

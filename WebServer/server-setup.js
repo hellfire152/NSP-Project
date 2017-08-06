@@ -52,7 +52,6 @@ module.exports = function(data) {
   //where the templates are located
   app.set('views', './site/views');
 
-  //Various middleware
   app.use(session);
   app.use(cookieParser(S.COOKIE_KEY));
   app.use(bodyParser.json());
@@ -148,9 +147,10 @@ module.exports = function(data) {
   });
 }
 
-function sendErrorPage(errormsg) {
+function sendErrorPage(errormsg, link) {
   this.render('error', {
-    'error': errormsg
+    'error': errormsg,
+    'link' : link
   });
   //stop anymore responses
   this.end();
