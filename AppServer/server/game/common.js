@@ -256,9 +256,9 @@ function __getRewardOrPenalty(quiz, question, reward) {
   }
   let field = reward ? 'reward' : 'penalty';
 
-  if(question[field] !== undefined) {  //question specific value
+  if(question[field] !== undefined && !(parseInt(question[field]) == 0)) {  //question specific value
     return question[field];
-  } else if(quiz[field] !== undefined) { //quiz-wide value
+  } else if(quiz[field] !== undefined && !(parseInt(quiz[field] == 0))) { //quiz-wide value
     return quiz[field];
   } else {  //default reward : penalty values
     return reward ? 100 : 0;
@@ -282,6 +282,11 @@ function handleClearGameCookie(players){
 
     return users;
 }
+
+function storeResults(dbConn, results) {
+
+}
+
 module.exports = {
   'calculateScore': calculateScore,
   'calculateTitles' : calculateTitles,

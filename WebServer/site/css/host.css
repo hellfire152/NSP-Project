@@ -7,6 +7,60 @@ body {
   min-width : 100%;
 }
 
+#room, #game{
+  margin : auto;
+  font-size: x-large;
+  text-align : center;
+}
+
+#game button {
+  margin : 30px;
+  display : inline-block;
+
+  clear : both;
+  z-index : 2;
+  height : 3em;
+  width : 30%;
+  background-color: #AC17B5;
+  border : 2px solid #AC17B5;
+  border-radius: 5px;
+
+  color : white;
+  font-size : x-large;
+  text-align: center;
+
+  transition-duration: 0.2s;
+}
+
+#game button:first-child {
+  background-color: #fff13a;
+  border : 2px solid #fff13a;
+}
+
+#game button:last-child {
+  background-color: #ed2d30;
+  border : 2px solid #ed2d30;
+}
+
+#start {
+  margin : auto;
+  display : block;
+
+  clear : both;
+  z-index : 2;
+  height : 3em;
+  width : 30%;
+  background-color: #28bc00;
+  border : 2px solid #28bc00;
+  border-radius: 5px;
+
+  color : white;
+  font-size : x-large;
+  text-align: center;
+
+  transition-duration: 0.2s;
+}
+
 #get-ready {
   margin: auto;
   width : 80%;
@@ -84,7 +138,6 @@ body {
 #next-button , #previous-button{
   margin : auto;
 
-  clear : both;
   z-index : 2;
   height : 3em;
   width : 70%;
@@ -99,7 +152,7 @@ body {
   transition-duration: 0.2s;
 }
 
-#next-button:hover, #prev-button:hover {
+#next-button:hover, #prev-button:hover, #game button:hover, #start:hover {
   color : black;
   background-color : white;
 }
@@ -111,4 +164,9 @@ body {
 
 .players-list-progress {
   font-size: 1.5em;
+}
+
+#waiting-list {
+  margin : auto;
+  text-align: center;
 }

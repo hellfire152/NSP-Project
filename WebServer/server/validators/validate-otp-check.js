@@ -39,8 +39,9 @@ module.exports = function(cipher, appConn, C,emailServer, xssDefense, cookieVali
                   }
                 }
               }, (response2) => {
-                var encodedData = xssDefense.jsonEncode(response.data.data[0]);
-                var encodedData = response.data.data[0];
+                var encodedData = xssDefense.jsonEncode(response2.data.data[0]);
+                var encodedData = response2.data.data[0];
+                console.log('ere');
                 res.clearCookie("otp");
                 if(req.cookies.deviceIP != undefined){
                   var ipArr = req.cookies.deviceIP.data;

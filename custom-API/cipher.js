@@ -119,8 +119,7 @@ class Cipher {
       for (let key in cipher) {
         if (cipher.hasOwnProperty(key)) {
           if(await _allow (key)){
-            if(cipher[key] != null || cipher[key].trim() != ''){
-              console.log("TO DECRYPT: " +cipher[key]);
+            if(cipher[key] != null){
               if(cipher[key] == null) console.log("ASF");
               cipher[key] = await this.decrypt(cipher[key]);
             }

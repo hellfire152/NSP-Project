@@ -16,15 +16,20 @@
 
 .player-attr {
   display:inline;
-  margin : 20px;
+  margin : 20%;
 }
 
-#title-display {
+.player-rank {
+  display : inline;
+  margin : 10%;
+}
+
+.title-display {
   display : inline-block;
 }
 
 .title-icon, .title-name {
-  float : left;
+  float : none;
 }
 
 .title-recipient, .title-desciption {

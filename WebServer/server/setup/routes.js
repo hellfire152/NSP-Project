@@ -53,8 +53,18 @@ module.exports = function(data) {
     if(req.session.validLogin) {
       res.redirect('/user-home');
     } else {
-      res.render('/Home');
+      res.render('Home', {
+        'csrfToken' : req.csrfToken(),
+        'validLogin' : false
+      });
     }
+  });
+
+  app.get('/Home', function(req, res) {
+    res.render('Home', {
+      'csrfToken' : req.csrfToken(),
+      'validLogin' : req.session.validLogin
+    });
   });
 
   app.get('/user-home', function(req, res) {
@@ -227,10 +237,17 @@ module.exports = function(data) {
         res.clearCookie("tempToken");
         res.clearCookie("user_info");
         console.log("CLEAREDDDDDDDDDDDDDDDDDDD");
-        // res.redirect('/student-login'); redirect on pug?
+        res.redirect('/');
       }
     })
   });
+
+  //only allow valid otp
+  app.get('/otp', function(req, res) {
+    if(!req.session.otpSession)
+      res.sendErrorPage('Access denied', '/Home');
+  });
+
   //handling all other requests (PUT THIS LAST)
   app.get('/*', function(req, res){
     //doing this just in case req.params has something defined for some reason

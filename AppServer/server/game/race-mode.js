@@ -13,6 +13,8 @@ module.exports = async function(input) {
       currentRoom.completedPlayers = [];
 
       //get the first question
+      if(currentRoom.quiz.questions === undefined)
+        currentRoom.quiz.questions = currentRoom.quiz.question;
       let question = currentRoom.quiz.questions[0];
 
       //add a questionCounter to each player
