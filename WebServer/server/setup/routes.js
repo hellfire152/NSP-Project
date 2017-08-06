@@ -246,6 +246,9 @@ module.exports = function(data) {
   app.get('/otp', function(req, res) {
     if(!req.session.otpSession)
       res.sendErrorPage('Access denied', '/Home');
+    else res.render('otp', {
+      'csrfToken' : req.csrfToken()
+    });
   });
 
   //handling all other requests (PUT THIS LAST)
