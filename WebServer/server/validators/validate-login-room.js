@@ -9,7 +9,8 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     // var userIP = req.body.userIp;
     var userIP = req.connection.remoteAddress;
     var botCheck = req.body._bot;
-
+    console.log("HERE IS THE VALID LOGIN");
+    console.log(req.session.validLogin);
     req.sanitize('username').escape();
     req.sanitize('password').escape();
     req.sanitize('userIp').escape();
