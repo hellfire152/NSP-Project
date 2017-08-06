@@ -53,7 +53,7 @@ module.exports = function(data) {
     if(req.session.validLogin) {
       res.redirect('/user-home');
     } else {
-      res.render('home');
+      res.render('/Home');
     }
   });
 
@@ -87,8 +87,6 @@ module.exports = function(data) {
             });
           });
         });
-    } else {
-      res.redirect('/student-login');
     }
     });
   })

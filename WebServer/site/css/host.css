@@ -12,7 +12,7 @@ body {
   width : 80%;
   padding : 50px;
   text-align : center;
-  font-size:  xx-large;
+  font-size:  x-large;
 }
 
 #game-ranking {
@@ -27,6 +27,7 @@ body {
 .ranking-name {
   display : inline-block;
   font-size : 1.2em;
+  margin : 20px
 }
 
 .ranking-score {
@@ -35,11 +36,13 @@ body {
 
 .ranking-streak {
   display : inline-block;
+  margin : 15px
 }
 
 .ranking-streak-icon {
   height : 50px;
   width : auto;
+  margin: 5px;
 }
 
 .header {
@@ -96,7 +99,7 @@ body {
   transition-duration: 0.2s;
 }
 
-#next-button:hover {
+#next-button:hover, #prev-button:hover {
   color : black;
   background-color : white;
 }

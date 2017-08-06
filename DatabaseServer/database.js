@@ -35,7 +35,7 @@ var crypto = require('crypto');
 var fs = require('fs');
 var uuid = require('uuid');
 var Promise = require('promise');
-var util = require('util');
+
 //delete the decrypted settings file
 
 //getting keys
@@ -118,7 +118,7 @@ var server = net.createServer(function(conn){
     }
 
     console.log("FROM APPSERVER:");
-    console.log(util.inspect(inputData, {showHidden: false, depth: null}));
+    console.log(inputData);
 
     if(conn.status != C.AUTH.AUTHENTICATED) { //not authenticated yet
       /**AUTHENTICATION PROCESS**/
@@ -602,13 +602,13 @@ async function retrievePreAccount(inputData){
   });
 }
 
-async function getAccountDetails(inputData){
+async function retrieveFullAccount(inputData){
   var data = inputData.data
   var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
     FROM user_account\
     LEFT OUTER JOIN student_details\
     ON user_account.user_id = student_details.user_id\
-    WHERE user_account.username = " + connection.escape(data.user_id),
+    WHERE student_details.user_id = " + connection.escape(data.user_id),
   function(err, result){
     if(err){
       console.error('[Error in query]: ' + err);
@@ -641,7 +641,7 @@ async function getAccountDetails(inputData){
         FROM user_account\
         LEFT OUTER JOIN teacher_details\
         ON user_account.user_id = teacher_details.user_id\
-        WHERE teacher_details.user_id = " + connection.escape(data.user_id),
+        WHERE teacher_details.user_id = " + connection.escape(dataOut.userId),
       function(err, result){
         if(err){
           console.error('[Error in query]: ' + err);
@@ -713,13 +713,13 @@ async function getAccountDetails(inputData){
   });
 }
 
-async function retrieveFullAccount(inputData){
+async function getAccountDetails(inputData){
   var data = inputData.data
   var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
     FROM user_account\
     LEFT OUTER JOIN student_details\
     ON user_account.user_id = student_details.user_id\
-    WHERE student_details.user_id = " + connection.escape(data.user_id),
+    WHERE user_account.username = " + connection.escape(data.user_id),
   function(err, result){
     if(err){
       console.error('[Error in query]: ' + err);
@@ -752,7 +752,7 @@ async function retrieveFullAccount(inputData){
         FROM user_account\
         LEFT OUTER JOIN teacher_details\
         ON user_account.user_id = teacher_details.user_id\
-        WHERE teacher_details.user_id = " + connection.escape(dataOut.userId),
+        WHERE teacher_details.username = " + connection.escape(data.user_id),
       function(err, result){
         if(err){
           console.error('[Error in query]: ' + err);
@@ -1597,7 +1597,6 @@ async function addQuestion(questionData, data, quizId, inputData){
   questionData.quiz_id = quizId;
   await handleDb.handleEncryption(questionData)
   .then(questionDataOut => {
-    console.log(questionDataOut);
     var query = connection.query("INSERT INTO quiz_question SET ?", questionDataOut, function(error, result){
       if(error){
         console.error('[Error in query]: ' + error);
@@ -1825,8 +1824,7 @@ async function searchQuiz(inputData){
 async function retrieveQuestions(inputData){
   var quizId = inputData.data.quizId;
   var quizInfo;
-  console.log("INSIDE RETRIEVE");
-  var query = connection.query("SELECT quiz.reward, user_account.username, quiz.date_created, quiz.visibility, quiz.description\
+  var query = connection.query("SELECT quiz.reward, user_account.name, quiz.date_created, quiz.visibility, quiz.description\
   FROM quiz\
   LEFT OUTER JOIN user_account\
     ON user_account.user_id = quiz.user_id\
@@ -1841,65 +1839,60 @@ async function retrieveQuestions(inputData){
       }
       sendToServer(response, inputData);
     }
-    console.log(result);
-      quizInfo = result[0]; //A really lazy way, but it works
-      console.log(quizInfo);
 
     handleDb.handleDecryption(result)
     .then(resultOut => {
       quizInfo = resultOut[0]; //A really lazy way, but it works
+    });
+  });
 
-      var query = connection.query("SELECT quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices, quiz_question.reward, quiz_question.penalty\
-      FROM quiz_question\
-      LEFT OUTER JOIN quiz_question_choices\
-      ON quiz_question.question_id = quiz_question_choices.question_id\
-      WHERE quiz_question.quiz_id = " + connection.escape(quizId) + "\
-      ORDER BY quiz_question.question_no",
-      async function(err, result, fields){
-        if (!err) { //result = data recieve from database
-          handleDb.handleDecryption(result)
-          .then(outPlainResult => {
-            handleDb.handleRecieveQuestion(outPlainResult)
-            .then(outResult => {
-              console.log(outResult);
-              objOutResult = {
-                data:{
-                  data : {
-                    id : quizId,
-                    question : outResult,
-                    reward : quizInfo.reward,
-                    author : quizInfo.name,
-                    creationDate : quizInfo.date_created,
-                    'public' : quizInfo.visibility,
-                    description : quizInfo.description
-                  },
-                  success : true
-                }
+  var query = connection.query("SELECT quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices, quiz_question.reward, quiz_question.penalty\
+  FROM quiz_question\
+  LEFT OUTER JOIN quiz_question_choices\
+    ON quiz_question.question_id = quiz_question_choices.question_id\
+  WHERE quiz_question.quiz_id = " + connection.escape(quizId) + "\
+  ORDER BY quiz_question.question_no",
+  async function(err, result, fields){
+			if (!err) { //result = data recieve from database
+        handleDb.handleDecryption(result)
+        .then(outPlainResult => {
+          handleDb.handleRecieveQuestion(outPlainResult)
+          .then(outResult => {
+            objOutResult = {
+              data:{
+                data : {
+                  id : quizId,
+                  question : outResult,
+                  reward : quizInfo.reward,
+                  author : quizInfo.name,
+                  creationDate : quizInfo.date_created,
+                  'public' : quizInfo.visibility,
+                  description : quizInfo.description
+                },
+                success : true
               }
-              sendToServer(objOutResult, inputData);
-            })
-            .catch(reason => {
-              console.log(reason);
-            });
+            }
+            sendToServer(objOutResult, inputData);
           })
           .catch(reason => {
             console.log(reason);
           });
-        } else {
-          console.error('[Error in query]: ' + err);
-          var response = {
-            data : {
-              success : false,
-              reason : C.ERR.DB_SQL_QUERY,
-              message : err
-            }
+        })
+        .catch(reason => {
+          console.log(reason);
+        });
+			} else {
+        console.error('[Error in query]: ' + err);
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : err
           }
-          sendToServer(response, inputData);
         }
-      });
-    });
-  });
-
+        sendToServer(response, inputData);
+			}
+	});
 }
 
 async function deleteQuiz(inputData){
