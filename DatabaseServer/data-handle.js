@@ -124,6 +124,7 @@ async function handleSearchQuiz(searchItem){
 //Convert string into integer for quiz solution
 //Convert JASON string to object for choices
 async function handleRecieveQuestion(data){
+  console.log(data);
   var num;
   data.forEach(function(individualData){
     console.log(individualData);

@@ -256,8 +256,6 @@ async function host_room(data, dbConn) {
 async function databaseAccess(inputData, dbConn){
   return new Promise((resolve, reject) => {
     dbConn.send(inputData, (response) => {
-      console.log("DB RESPONSE");
-      console.log(response);
       resolve(response)
     });
   });

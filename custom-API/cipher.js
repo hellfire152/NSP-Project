@@ -62,14 +62,15 @@ class Cipher {
     var plainText = "";
     var cipherTextBlock = _splitCipherBlock(cipher);
     var subIv = _newIv(this._iv);
-    for(let cipherBlock of cipherTextBlock){
-      var cipherBlockWithIv = _decryptBlock(cipherBlock, this._algorithm, this._password);
-      var encodedBlockWithIv = _encode(cipherBlockWithIv, this._plainTextBlockSize);
-      var encodedBlock = _xor(encodedBlockWithIv[0], subIv);
-      var plainTextBlock = _decode(encodedBlock);
-      subIv = _newIv(cipherBlock);
-      plainText += plainTextBlock;
-    }
+    if(cipherTextBlock !== null)
+      for(let cipherBlock of cipherTextBlock){
+        var cipherBlockWithIv = _decryptBlock(cipherBlock, this._algorithm, this._password);
+        var encodedBlockWithIv = _encode(cipherBlockWithIv, this._plainTextBlockSize);
+        var encodedBlock = _xor(encodedBlockWithIv[0], subIv);
+        var plainTextBlock = _decode(encodedBlock);
+        subIv = _newIv(cipherBlock);
+        plainText += plainTextBlock;
+      }
     return plainText;
   }
 
@@ -118,7 +119,9 @@ class Cipher {
       for (let key in cipher) {
         if (cipher.hasOwnProperty(key)) {
           if(await _allow (key)){
-            if(cipher[key] !== null){
+            if(cipher[key] != null || cipher[key].trim() != ''){
+              console.log("TO DECRYPT: " +cipher[key]);
+              if(cipher[key] == null) console.log("ASF");
               cipher[key] = await this.decrypt(cipher[key]);
             }
           }
