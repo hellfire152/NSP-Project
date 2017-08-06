@@ -18,29 +18,10 @@ module.exports =function(cipher, appConn, C, emailServer){
     var confirmPassword = req.body.cpassword;
     var school=req.body.school;
     var phoneNumber=req.body.number;
-    var speakeasy = require("speakeasy");
-    var secret = speakeasy.generateSecret({length: 20}); // Secret key is 20 characters long
     var randomNum = Math.floor((Math.random() * 999999) + 10000);
     console.log(email);
     console.log(username);
     console.log(phoneNumber)
-
-    var otp = speakeasy.totp({
-        secret: secret.base32,
-        encoding: 'base32'
-      });
-
-      console.log(otp);
-      // to test for verification
-      var verified = speakeasy.totp.verify({
-        secret: secret.base32,
-        encoding: 'base32',
-        otp: otp
-      });
-
-
-      console.log(verified);
-
     console.log(school);
     req.sanitize('name').escape();
     req.sanitize('username').escape();
