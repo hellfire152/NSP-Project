@@ -136,7 +136,10 @@ async function handleRecieveQuestion(data){
     if(individualData.penalty === null){
       delete individualData.penalty
     }
+    console.log("HERES IS THE SOLUTUIUO");
+    console.log(individualData.solution);
     num = parseInt(individualData.solution);
+    console.log(num);
     if(!isNaN(num)){
       individualData.solution = num;
     }

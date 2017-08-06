@@ -111,7 +111,9 @@ function solution(){
     if($('input[id="filled-in-box4"]:checked').val() != undefined){
       totalSolution += parseInt($('input[id="filled-in-box4"]:checked').val());
     }
-    return totalSolution;
+    console.log("HERE IS THE TOLTOA SOLUTION");
+    console.log(totalSolution.toString());
+    return totalSolution.toString();
  }
  else if ($('input[name="shortAns"]').val() != undefined){
    return $('input[name="shortAns"]').val();

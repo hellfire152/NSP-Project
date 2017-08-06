@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-module.exports = function(cipher, appConn, C, emailServer, xssDefense, cookieValidator) {
+module.exports = function(cipher, appConn, C,emailServer, xssDefense, cookieValidator) {
   return function(req, res) {
     req.sanitize('otp').escape();
 
