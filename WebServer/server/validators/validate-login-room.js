@@ -28,8 +28,9 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     ip_address : userIP
   }
   }, (checkBannedResponse) => {
-    if(checkBannedResponse.success){ //IP banned
+    if(checkBannedResponse.data.success){ //IP banned
       res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
+      res.end();
     }
     else{
       if(botCheck !== ''){

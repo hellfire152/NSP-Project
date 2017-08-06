@@ -71,9 +71,6 @@ module.exports =function(cipher, appConn,C){
                       console.log("Return false!");
                       console.log("HI");
                     }
-                  //NOTE: If successful, response.data.success return TRUE
-                  //NOTE: If failed, response.data.success return FALSE
-                  //NOTE: You can do any form of validation as you wish
                 });
 
             } else {

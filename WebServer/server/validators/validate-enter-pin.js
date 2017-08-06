@@ -17,7 +17,7 @@ module.exports = function(appConn, C) {
         ip_address : userIP
       }
     }, (checkBannedResponse) => {
-      if(checkBannedResponse.success){ //IP banned
+      if(checkBannedResponse.data.success){ //IP banned
         res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
       }
       else{
