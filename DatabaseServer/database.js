@@ -1718,11 +1718,11 @@ async function retrieveQuestions(inputData){
   var quizId = inputData.data.quizId;
   var quizInfo;
   console.log("INSIDE RETRIEVE");
-  var query = connection.query("SELECT quiz.reward, user_account.name, quiz.date_created, quiz.visibility, quiz.description\
+  var query = connection.query("SELECT quiz.reward, user_account.username, quiz.date_created, quiz.visibility, quiz.description\
   FROM quiz\
   LEFT OUTER JOIN user_account\
     ON user_account.user_id = quiz.user_id\
-  WHERE quiz.quiz_id = '" + connection.escape(quizId) + "'", function(err, result){
+  WHERE quiz.quiz_id = ?", quizId, function(err, result){
     if(err){
       var response = {
         data : {
@@ -1733,12 +1733,10 @@ async function retrieveQuestions(inputData){
       }
       sendToServer(response, inputData);
     }
-
-    handleDb.handleDecryption(result)
-    .then(resultOut => {
-      quizInfo = resultOut[0]; //A really lazy way, but it works
+    console.log(result);
+      quizInfo = result[0]; //A really lazy way, but it works
       console.log(quizInfo);
-    });
+
   });
 
   var query = connection.query("SELECT quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices, quiz_question.reward, quiz_question.penalty\
@@ -1748,10 +1746,13 @@ async function retrieveQuestions(inputData){
   WHERE quiz_question.quiz_id = ?\
   ORDER BY quiz_question.question_no", quizId,
   async function(err, result, fields){
+    console.log("QUESTIOn");
+    console.log(result);
     var query
 			if (!err) { //result = data recieve from database
         handleDb.handleDecryption(result)
         .then(outPlainResult => {
+          console.log(outPlainResult);
           handleDb.handleRecieveQuestion(outPlainResult)
           .then(outResult => {
             objOutResult = {
@@ -1760,7 +1761,7 @@ async function retrieveQuestions(inputData){
                   id : quizId,
                   question : outResult,
                   reward : quizInfo.reward,
-                  author : quizInfo.name,
+                  author : quizInfo.username,
                   creationDate : quizInfo.date_created,
                   'public' : quizInfo.visibility,
                   description : quizInfo.description
