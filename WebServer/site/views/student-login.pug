@@ -128,7 +128,7 @@ html
         .tooltip Click Me
       .form
         h2 Login to your account
-        form#login(onsubmit='/validate-login-room', method='POST', action='/user-home')
+        form#login(onsubmit='/validate-login-room', method='POST' action='/')
           input(type='hidden', name='_csrf', value=`${csrfToken}`)
           input#bot(type='hidden', name='_bot')
           input#username.form-control(type='text', placeholder='Username', name='username', autocomplete='off')
