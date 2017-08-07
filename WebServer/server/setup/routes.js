@@ -111,11 +111,15 @@ module.exports = function(data) {
     appConn.send({
       'type' : C.REQ_TYPE.DATABASE,
       'data' : {
+        'csrfToken' : req.csrfToken(),
         'type' : C.DB.SELECT.SEARCH_QUIZ,
         'searchItem' : req.query.search
       }
     }, (response) => {
-      res.render('search', {'data': response.data});
+      res.render('search', {
+        'csrfToken' : req.csrfToken(),
+        'data': response.data
+      });
     })
   });
   //handling profile pages

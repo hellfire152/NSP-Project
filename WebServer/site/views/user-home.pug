@@ -23,6 +23,7 @@ html
       var data = !{JSON.stringify(data)};
       var Totalquiz = data.quizInfo;
       console.log(Totalquiz);
+      console.log(data)
   body
     .preloader
       .loaded  
@@ -93,7 +94,7 @@ html
               .count-wrap
                 .col-sm-3.col-xs-6
                   h3.timer(style='padding-top:150px;') Welcome, 
-                  p#user-name Bryan
+                  p#user-name #{data.userInfo.name}
                 .col-sm-6.col-xs-12
                   form#login(method='POST', action='/join-room')
                     input(type='hidden', name='_csrf', value=`${csrfToken}`)
