@@ -344,6 +344,14 @@ var server = net.createServer(function(conn){
             await updateCompletedQuiz(inputData);
             break;
           }
+          case C.DB.CREATE.BANNED_IP : {
+            await addBannedIp(inputData);
+            break;
+          }
+          case C.DB.SELECT.BANNED_IP : {
+            await checkBannedIp(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -906,13 +914,30 @@ async function retrieveAccountDetails(inputData){
                       sendToServer(response, inputData);
                     }
                     resultOut[0].completedQuiz = completedQuizResult;
-                    objOutResult = {
-                      data:{
-                        data : resultOut,
-                        success : true
-                      }
-                    }
-                    sendToServer(objOutResult, inputData);
+                      var query4 = connection.query("SELECT no_of_quiz, score, correctAnswers, wrongAnswers\
+                      FROM completed_quiz\
+                      JOIN user_account\
+                      ON user_account.user_id = completed_quiz.user_id\
+                      WHERE user_account.username = ?", data.username, function(error, statsResults){
+                        if(error){
+                          var response = {
+                            data : {
+                              success : false,
+                              reason : C.ERR.DB_SQL_QUERY,
+                              message : error
+                            }
+                          }
+                          sendToServer(response, inputData);
+                        }
+                        resultOut[0].stats = statsResults;
+                        objOutResult = {
+                          data:{
+                            data : resultOut,
+                            success : true
+                          }
+                        }
+                        sendToServer(objOutResult, inputData);
+                      });
                   });
               });
           });

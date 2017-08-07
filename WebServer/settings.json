@@ -29,15 +29,9 @@
     }
   },
 
-<<<<<<< HEAD
   "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam", "ForgetPassword", "otp-ForgetPassword", "ChangePassword" , "Home", "CreateQuiz", "change-password", "Profile-form", "user-home"],
   "REQUIRE_VALID_LOGIN" : ["CreateQuiz", "host", "play", "report", "hostreport", "forgetpassword", "userhome"],
   "USE_TEST_ACCOUNT" : true,
-=======
-  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam", "ForgetPassword", "otp-ForgetPassword", "ChangePassword" , "Home", "CreateQuiz", "change-password"],
-  "REQUIRE_VALID_LOGIN" : ["CreateQuiz", "host", "play", "report", "hostreport", "forgetpassword", "user-home", "change-password"],
-  "USE_TEST_ACCOUNT" : false,
->>>>>>> 6a90725329b105de4accd7bde7aeaf16e7b33648
   "TEST_ACCOUNTS" : [{
       "username" : "qingxi1"
     }, {
