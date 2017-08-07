@@ -4,11 +4,12 @@ module.exports = function(appConn, C) {
 
     var userIP = req.connection.remoteAddress;
     var botCheck = req.body._bot;
-    var pinNo = req.body.pinNo;
+    var search = req.body.search;
 
     req.sanitize('search').escape();
     req.sanitize('botCheck').escape();
 
+    console.log("HELLO MY NAME IS NIGEL CHEN CHIN AHO");
     appConn.send({
       // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
       'type':C.REQ_TYPE.DATABASE,
@@ -35,14 +36,8 @@ module.exports = function(appConn, C) {
           });
         }
         else{
-          console.log(req.session.validLogin);
-          if(req.session.validLogin){
-            var url = '/play?room='+pinNo;
-            res.redirect(url)
-          }
-          else{
-            res.redirect('/student-login');
-          }
+          var url = '/search?search='+search;
+          res.redirect(url)
         }
       }
     });

@@ -114,6 +114,8 @@ html
           .container
             form.search(method='POST', action='/search')
               .field
+                input(type='hidden', name='_csrf', value=`${csrfToken}`)
+                input#bot(type='hidden', name='_bot')
                 input#input-search.input-search(type='text', name='search', required='')
                 label(for='input-search') Search
               // /field
