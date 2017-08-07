@@ -283,8 +283,16 @@ function handleClearGameCookie(players){
     return users;
 }
 
-function storeResults(dbConn, results) {
+function storeResults(dbConn, players) {
+  let playersArr = playersObjectToArray(players);
+  dbConn.send({
+    //'type' : C.STORE QUIZ
+    'players' : playersArr
+  }, (response) => {
+    //log something if successful
 
+    //do nothing else
+  });
 }
 
 module.exports = {
@@ -300,5 +308,6 @@ module.exports = {
   'removeSolution' : removeSolution,
   'getResponseData' : getResponseData,
   'handleScoring' : handleScoring,
-  'handleClearGameCookie' : handleClearGameCookie
+  'handleClearGameCookie' : handleClearGameCookie,
+  'storeResults' : storeResults
 };

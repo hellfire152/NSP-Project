@@ -227,13 +227,9 @@ function gameEnd(response) {
     rankingDiv.style.display = taDiv.style.display = ratingDiv.style.display
       = endDiv.style.display = 'none';
     if(currentScene == 'ranking') {
-      ratingDiv.style.display = 'none';
       prevButton.style.display = 'block'; //show previous button
-      endDiv.style.display = 'block';
-      currentScene = 'end';
-    } else if(currentScene == 'rating') {
       document.getElementById('end').style.display = 'block';
-      nextButton.style.display = 'none'; //hide next button
+      nextButton.style.display = 'none';
       currentScene = 'end';
     } else throw new Error('No more scenes!');
   }
@@ -245,13 +241,9 @@ function gameEnd(response) {
       = endDiv.style.display = 'none';
     if(currentScene == 'end') {
       endDiv.style.display = 'none';
-      ratingDiv.style.display = 'block';
       nextButton.style.display = 'block'; //show next button
-      currentScene = 'rating';
-    }
-    else if(currentScene == 'rating') {
-      prevButton.style.display = 'none'; //hide previous button
       rankingDiv.style.display = taDiv.style.display = 'block';
+      prevButton.style.display = 'none';
       currentScene = 'ranking';
     } else {
       throw new Error('Cannot go back further!');

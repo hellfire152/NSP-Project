@@ -25,6 +25,18 @@ function gameEnd(response) {
   //ranking header
   let rankingHeader = createNode('h1', 'Final rankings:', null, 'ranking-header');
   rankingDiv.appendChild(rankingHeader);
+
+  //hidden table for Excel
+  let table = createNode('table', null, 'excel', 'excel-table');
+  //table header row
+  let tableHeader = createNode('tr', null, 'table-header-row', 'table-header');
+  tableHeader.appendChild(createNode('th', 'Username', 'table-header', 'table-username'));
+  tableHeader.appendChild(createNode('th', 'Correct Answers', 'table-header', 'table-correct'));
+  tableHeader.appendChild(createNode('th', 'Wrong Answers', 'table-header', 'table-wrong'));
+  tableHeader.appendChild(createNode('th', 'Score', 'table-header', 'table-score'));
+  table.appendChild(tableHeader);
+  document.body.appendChild(table);
+
   //generating a display for each player
   for(let i = 0, player = response.roundEndResults[i];
       i < response.roundEndResults.length;
@@ -40,6 +52,14 @@ function gameEnd(response) {
     let correct = createNode('p', `${player.correctAnswers}/${player.wrongAnswers}`, 'player-correct player-attr', null);
     let score = createNode('p', player.score, 'player-score player-attr', null);
 
+    //for Excel
+    let tableRow = createNode('tr', null, 'table-row', null);
+    let tableUsername = createNode('td', player.name, 'table-username table-element', null);
+    let tableCorrect = createNode('td', player.correctAnswers, 'table-correct table-element', null);
+    let tableWrong = createNode('td', player.wrongAnswers, 'table-username table-element', null);
+    let tableScore = createNode('td', player.score, 'table-username table-element', null);
+    appendMultiple(tableRow, tableUsername, tableCorrect, tableWrong, tableScore);
+    table.appendChild(tableRow);
     appendMultiple(rankingDiv, name, score, correct);
   }
 
@@ -106,11 +126,17 @@ function gameEnd(response) {
     }
   }
 
+  //export to excel sheet button
+  let excelButton = createNode('button', 'Export to Excel', 'excel-button', 'excel-button');
+  excelButton.onclick = () => {
+    tablesToExcel(['excel-table'], ['results'], 'exquizit-results.xls', 'Excel');
+  };
+
   //show ranking and titles + achievements first
   currentScene = 'ranking';
   rankingDiv.style.display = taDiv.style.display = 'block';
   appendMultiple(document.body,
-    rankingDiv, taDiv, ratingDiv, endDiv, nextButton, prevButton);
+    rankingDiv, taDiv, ratingDiv, endDiv, nextButton, prevButton, excelButton);
 }
 
 function createNode(type, text, cssClass, id) {

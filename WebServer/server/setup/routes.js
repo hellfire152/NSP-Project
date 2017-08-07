@@ -98,6 +98,8 @@ module.exports = function(data) {
             });
           });
         });
+    } else {
+      res.sendErrorPage('Error retrieving account details!', '/');
     }
     });
   })
