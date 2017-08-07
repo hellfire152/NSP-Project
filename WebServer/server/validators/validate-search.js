@@ -9,7 +9,6 @@ module.exports = function(appConn, C) {
     req.sanitize('search').escape();
     req.sanitize('botCheck').escape();
 
-    console.log("HELLO MY NAME IS NIGEL CHEN CHIN AHO");
     appConn.send({
       // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
       'type':C.REQ_TYPE.DATABASE,

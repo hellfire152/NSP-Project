@@ -125,11 +125,13 @@ function findTopRating(){
     	button.className = "card-media-link";
     	button.className = "u-float-right";
     	button.innerHTML = "Host";
+			button.setAttribute('href', '/host?quizId=' + maxArr[v].quiz_id);
     	buttonDiv.appendChild(button);
 
 
     }
-		createNode();
+		// createNode();
 }
+// createNode();
+$(document).ready(findTopRating());
 createNode();
-// $(document).ready(findTopRating());

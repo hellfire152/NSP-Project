@@ -335,17 +335,18 @@ function displayClientCompletedQuiz(client_completed_quizzes){
       console.log(quizID[i]);
 
       var cell4 = document.createElement('td');
-      var button  = document.createElement('button');
+      var button  = document.createElement('a');
       button.className = "btn";
       button.id = obj.quiz_id;
-      button.innerHTML="view";
+      button.innerHTML="Host";
+      button.setAttribute('href', '/host?quizId=' + obj.quiz_id);
       cell4.appendChild(button);
 
-       $('.btn').click(function(){
-          tempQuizID = button.id;
-          console.log(tempQuizID);
-          location.href = 'report.pug'
-      });
+      //  $('.btn').click(function(){
+      //     tempQuizID = button.id;
+      //     console.log(tempQuizID);
+      //     location.href = 'report.pug'
+      // });
       records.appendChild(cell4);
       document.getElementById("testTable").appendChild(records);
   }
@@ -396,19 +397,20 @@ function displayClientHostedQuiz(hostedQuiz){
         console.log(quizID[i]);
 
         var cell4 = document.createElement('td');
-        var button  = document.createElement('button');
+        var button  = document.createElement('a');
         button.className = "btn";
-        button.onclick = function(){
-            location.href = 'HostReport.pug';
-        }
+        // button.onclick = function(){
+        //     location.href = 'HostReport.pug';
+        // }
         button.id = obj.quiz_id;
-        button.innerHTML="view";
+        button.innerHTML="Host";
+        button.setAttribute('href', '/host?quizId=' + obj.quiz_id);
         cell4.appendChild(button);
 
-         $('.btn').click(function(){
-            tempQuizID = button.id;
-            console.log(tempQuizID);
-        });
+        //  $('.btn').click(function(){
+        //     tempQuizID = button.id;
+        //     console.log(tempQuizID);
+        // });
         records.appendChild(cell4);
 
         document.getElementById("tableToExcel").appendChild(records);

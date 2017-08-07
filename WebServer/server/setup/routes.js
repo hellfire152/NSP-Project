@@ -92,6 +92,7 @@ module.exports = function(data) {
           }, (response4) => {
             //TODO: XSS of array of quiz data
             res.render('user-home', {
+              'csrfToken' : req.csrfToken(),
               data : {
                 userInfo : encodedData,
                 quizInfo : response4.data.data
@@ -108,11 +109,15 @@ module.exports = function(data) {
     appConn.send({
       'type' : C.REQ_TYPE.DATABASE,
       'data' : {
+        'csrfToken' : req.csrfToken(),
         'type' : C.DB.SELECT.SEARCH_QUIZ,
         'searchItem' : req.query.search
       }
     }, (response) => {
-      res.render('search', {'data': response.data});
+      res.render('search', {
+        'csrfToken' : req.csrfToken(),
+        'data': response.data
+      });
     })
   });
   //handling profile pages
