@@ -340,6 +340,10 @@ var server = net.createServer(function(conn){
             await getLogQuiz(inputData);
             break;
           }
+          case C.DB.UPDATE.STATS : {
+            await updateCompletedQuiz(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -487,6 +491,19 @@ async function userDetails(userId, details, type){
       }
       sendToServer(response, inputData);
     }
+    var query2 = connection.query("INSERT INTO completed_quiz (user_id, name) VALUES (?)", userId, function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      return;
+    })
   });
 }
 
@@ -2027,6 +2044,106 @@ async function addSpam(inputData){
       sendToServer(response, inputData);
     }
   })
+}
+
+async function addBannedIp(inputData){
+  var data = inputData.data;
+  var query = connection.query("INSERT INTO banned_ip (ip_address) VALUES (?)", data.ip_address, function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    else{
+      var response = {
+        data : {
+          success : true,
+          message : "ip_address added successful"
+        }
+      }
+      sendToServer(response, inputData);
+    }
+  })
+}
+
+async function checkBannedIp(inputData){
+  var data = inputData.data;
+  var query = connection.query("SELECT ip_id FROM banned_ip WHERE ip_address = ?", data.ip_address, function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    console.log(result);
+    if(result.length == 0){
+      var response = {
+        data : {
+          success : false,
+          message : "IP not blocked"
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    else{
+      var response = {
+        data : {
+          success : true,
+          message : "IP blocked"
+        }
+      }
+      sendToServer(response, inputData);
+    }
+  })
+}
+
+async function updateCompletedQuiz(inputData){
+  var data = inputData.data;
+  var finalQuery = ""
+  data.result.forEach(function(dataObj) {
+    finalQuery += "UPDATE completed_quiz\
+      JOIN user_account\
+      ON user_account.user_id = completed_quiz.user_id\
+      SET completed_quiz.no_of_quiz = completed_quiz.no_of_quiz + 1,\
+      completed_quiz.score = completed_quiz.score + "+connection.escape(dataObj.score)+",\
+      completed_quiz.correctAnswers = completed_quiz.correctAnswers + "+connection.escape(dataObj.correctAnswers)+",\
+      completed_quiz.wrongAnswers = completed_quiz.wrongAnswers + "+connection.escape(dataObj.wrongAnswers)+"\
+      WHERE user_account.username = "+connection.escape(dataObj.name)+";";
+  });
+
+  connection.query(finalQuery, function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+
+    var response = {
+      data : {
+        success : true,
+        message : "Quiz result updated!"
+      }
+    }
+    sendToServer(response, inputData);
+  })
+}
+
+async function retrieveCompletedQuiz(inputData){
+
 }
 
 console.log("Listening on port 7070");

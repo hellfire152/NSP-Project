@@ -2,9 +2,8 @@ doctype html
 html
   head
     title
-    meta(charset='utf-8')
-    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
-    title Food and Restorent One page Template
+    link(rel='stylesheet', type='text/css', href='/resources/css/user-home.css')
+    link(rel='stylesheet', href='/resources/css/bootstrap.min.css')
     meta(name='description', content='')
     meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel='apple-touch-icon', href='apple-touch-icon.png')
@@ -13,7 +12,7 @@ html
     link(rel='stylesheet', href='/resources/css/font-awesome.min.css')
     // <link rel="stylesheet" href="/resources/css/bootstrap-theme.min.css">
     // For Plugins external css
-    link(rel='stylesheet', href='/resources/css/animate.css')
+    link(rel='stylesheet', href='/resources/css/animate/animate.css')
     // Theme custom css
     link(rel='stylesheet', href='/resources/css/style.css')
     link(rel='stylesheet', type='text/css', href='/resources/css/user-home.css')
@@ -76,13 +75,13 @@ html
                 #bs-example-navbar-collapse-1.collapse.navbar-collapse
                   ul.nav.navbar-nav.navbar-right
                     li
-                      a(href='#') Home
+                      a(href='/user-home') Home
                     li
-                      a(href='/Home') Join
+                      a(href='/Profile') Profile
                     li
-                      a(href='/profile') Profile
+                      a(href='/CreateQuiz') Create  
                     li
-                      a.booking(href='/logout')  Logout
+                      a.booking(href='/logout') Logout
                 // /.navbar-collapse
               // /.container-fluid
     // End Header Section
@@ -94,9 +93,13 @@ html
               .count-wrap
                 .col-sm-3.col-xs-6
                   h3.timer(style='padding-top:150px;') Welcome, 
-                  p#user-name #{data.userInfo.username}
-                .col-sm-3.col-xs-6
-                .col-sm-3.col-xs-6
+                  p#user-name Bryan
+                .col-sm-6.col-xs-12
+                  form
+                    input(type='hidden', name='_csrf', value=`${csrfToken}`)
+                    input#bot(type='hidden', name='_bot')
+                    input.form-control(name='pinNo', type='text', placeholder='Pin Number' style = "margin-top:120px")
+                    a.btn.btn-primary(href='#', style='margin-top:15px;') Enter Game
                 .col-sm-3.col-xs-6
                   h3.timer(style='padding-top:150px;') 10 Posts
               // /count-wrap
@@ -104,121 +107,30 @@ html
           // /.row
         // /.container
     // End Facts Section
-    .container-fluid
-      #quiz-row.row
-        #quiz-div.col-md-8
-          .post-quiz(style='border:1px solid red;')
-            .post
-              .post-thumb
-                img.img-rounded(src='/resources/images/works/portfolio-6.jpg')
-              .post-details
-                h3 Blah Blah QUiz
-                .post-meta
-                  .meta-info
-                    i.fa.fa-calendar(aria-hidden='true')
-                    |  04 August 2017
-                p 20 MCQ Questions
-          .post-quiz
-            .post
-              .post-thumb
-                img.img-rounded(src='/resources/images/works/portfolio-6.jpg')
-              .post-details
-                h3 Blah Blah QUiz
-                .post-meta
-                  .meta-info
-                    i.fa.fa-calendar(aria-hidden='true')
-                    |  04 August 2017
-                p 20 MCQ Questions
-          .post-quiz
-            .post
-              .post-thumb
-                img.img-rounded(src='/resources/images/works/portfolio-6.jpg')
-              .post-details
-                h3 Blah Blah QUiz
-                .post-meta
-                  .meta-info
-                    i.fa.fa-calendar(aria-hidden='true')
-                    |  04 August 2017
-                p 20 MCQ Questions
-          nav.pagination-container
-            .pagination
-              a.pagination-newer(href='#') PREV
-              span.pagination-inner
-                a(href='#') 1
-                a.pagination-active(href='#') 2
-                a(href='#') 3
-                a(href='#') 4
-                a(href='#') 5
-                a(href='#') 6
-              a.pagination-older(href='#') NEXT
+    .container
+      .row
+        .col-md-8
+        .col-md-4
+          .container
+            form.search(action='')
+              .field
+                input#input-search.input-search(type='text', name='input-search', required='')
+                label(for='input-search') Search
+              // /field
+    .container
+      .row
+        #card_container.col-md-8
+          
         .col-md-4
           .sidebar
             h3 Top 3 Quiz
-            .sidebar-content
-              ul.discussion-list
-                li
-                  a.thumb(href='#')
-                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
-                  .details(style='border:1px solid red;')
-                    a(href='#') Blah Blah Quiz
-                    p
-                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                li
-                  a.thumb(href='#')
-                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
-                  .details
-                    a(href='#') Blah Blah Quiz
-                    p
-                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          .sidebar
-            h3 Recent Quizzes
-            .sidebar-content
-              ul.discussion-list
-                li
-                  a.thumb(href='#')
-                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
-                  .details(style='border:1px solid red;')
-                    a(href='#') Blah Blah Quiz
-                    p
-                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                li
-                  a.thumb(href='#')
-                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
-                  .details
-                    a(href='#') Blah Blah Quiz
-                    p
-                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                li
-                  a.thumb(href='#')
-                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
-                  .details
-                    a(href='#') Blah Blah Quiz
-                    p
-                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                li
-                  a.thumb(href='#')
-                    img.img-circle(src='/resources/images/works/portfolio-7.jpg', width='60', height='60')
-                  .details
-                    a(href='#') Blah Blah Quiz
-                    p
-                      | Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      | tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+            #sidebar-container.sidebar-content
+              
+          
     script(src='/resources/js/jquery-1.11.2.min.js')
     script(src='/resources/js/bootstrap.min.js')
+    script(type='text/javascript', src='../controller/quiz.js')
     script(src='/resources/js/jquery.easing.1.3.js')
     script(src='/resources/js/wow.min.js')
-    script(src='/resources/js/plugins.js')
     script(src='/resources/js/main.js')
     script(type='text/javascript', src='/resources/js/jquery.easyPaginate.js')
-    script(type='text/javascript', src='../controller/quiz-client.js')
-    script(type='text/javascript').
-      $('.pagination-inner a').on('click', function() {
-      $(this).siblings().removeClass('pagination-active');
-      $(this).addClass('pagination-active');
-      });
-      createNode();

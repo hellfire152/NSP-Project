@@ -28,6 +28,7 @@ module.exports = function(data) {
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
+    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer),
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, emailServer, xssDefense, cookieValidator),
     // 'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
@@ -280,7 +281,7 @@ module.exports = function(data) {
   app.post('/login',rateLimiters.login, validators["login-room"]);
   app.post('/student-register', rateLimiters.register, validators["reg-room"]);
   app.post('/teacher-register', rateLimiters.register, validators["reg-room-teach"]);
-  // app.post('/change-password-room-success', rateLimiters.changePassword, validators["change-password-room"]); //NOTE: Chloe say its not needed
+  app.post('/change-password-room-success', rateLimiters.changePassword, validators["change-password-room"]);
   app.post('/forget-password-room-success',rateLimiters.forgetPassword,validators["forget-password-room"]);
   app.post('/otp-check',rateLimiters.otpCheck, validators["otp-check"]);
   // app.post('/otp-register', rateLimiters.otpRegister,validators["otp-register"]);
