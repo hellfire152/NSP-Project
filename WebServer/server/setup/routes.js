@@ -23,12 +23,12 @@ module.exports = function(data) {
     // 'data-access' : require('../validators/validate-data-access.js')(cookieCipher, appConn, C),
     'join-room' : require('../validators/validate-join-room.js')(cookieCipher, appConn),
     'host-room' : require('../validators/validate-host-room.js')(cookieCipher, appConn, S),
-    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer),
     'add-quiz' : require('../validators/validate-add-quiz.js')(cookieCipher, appConn, C, cookieValidator),
     'login-room' : require('../validators/validate-login-room.js')(cookieCipher, appConn, C, xssDefense, emailServer, cookieValidator),
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
+    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer), 
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, emailServer, xssDefense, cookieValidator),
     // 'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
@@ -162,7 +162,8 @@ module.exports = function(data) {
   app.get('/play', rateLimiters.join, function(req, res) { //submitted a form for playing in a room
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
       res.sendErrorPage("Argument Error!");
-    } else if(gameSessionCheck(req, true)) {
+    } else if(gameSessionCheck(req, true) && !req.session.inRoom) {
+      req.session.inRoom = true;
       //check for login cookie
       if(req.session.validLogin) {
         let roomNo = req.query.room;
@@ -199,7 +200,8 @@ module.exports = function(data) {
     if(req.query.quizId.constructor === Array) {
       res.sendErrorPage('Argument error!');
     } else if(gameSessionCheck(req, false)) {
-      if(/*req.validLogin*/true) {
+      if(req.session.validLogin) {
+        req.session.inRoom = true;
         let quizId = req.query.quizId;
         appConn.send({
           'type' : C.REQ_TYPE.HOST_ROOM,
@@ -222,7 +224,7 @@ module.exports = function(data) {
         res.sendErrorPage('You are not logged in!');
       }
     } else {  //req.session.hosting is false
-      res.sendErrorPage('Invalid hosting session!');
+      res.sendErrorPage('Invalid playing session!');
     }
   });
 
@@ -281,13 +283,12 @@ module.exports = function(data) {
   app.post('/login',rateLimiters.login, validators["login-room"]);
   app.post('/student-register', rateLimiters.register, validators["reg-room"]);
   app.post('/teacher-register', rateLimiters.register, validators["reg-room-teach"]);
-  // app.post('/change-password-room-success', rateLimiters.changePassword, validators["change-password-room"]); //NOTE: Chloe say its not needed
+  app.post('/change-password-room-success', rateLimiters.changePassword, validators["change-password-room"]);
   app.post('/forget-password-room-success',rateLimiters.forgetPassword,validators["forget-password-room"]);
   app.post('/otp-check',rateLimiters.otpCheck, validators["otp-check"]);
   // app.post('/otp-register', rateLimiters.otpRegister,validators["otp-register"]);
   app.post('/otp-forget-password', validators["otp-forget-password"]);
   app.post('/change-forget-password', validators["change-forget-password"]);
-  app.post('/change-password-room-success', validators["change-password-room"]);
   app.post('/spamming-in-progress', validators["spam-bot"]);
   // app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
 }

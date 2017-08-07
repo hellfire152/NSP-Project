@@ -42,7 +42,7 @@ html
       });
     script.
       jQuery.validator.addMethod('checkphone', function(value){
-      if(/^[0-9]{8}$/.test(value)){
+      if(/^[9|8|6][0-9]{7}$/.test(value)){
       return true;
       } else{
       return false;
@@ -135,7 +135,7 @@ html
           input#cpassword.form-control(type='password', placeholder='Confirm-Password', name='cpassword',autocomplete='off')
           input#email.form-control(type='email', placeholder='Email Address', name='email',autocomplete='off')
           input#school.form-control(type='text', placeholder='school', name='school',autocomplete='off')
-          input#number.form-control(type='text', placeholder='Phone Number', name='number',autocomplete='off')
+          input#number.checkphone.form-control(type='text', placeholder='Phone Number', name='number',autocomplete='off')
           input.button(type='submit', name='register', value='Register')
       .cta
         a(href='/ForgetPassword') Forgot your password

@@ -17,6 +17,14 @@ html
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
     script.
+      jQuery.validator.addMethod('checkphone', function(value){
+      if(/^[9|8|6][0-9]{7}$/.test(value)){
+      return true;
+      } else{
+      return false;
+      };
+      }, 'Please enter a valid phone number');
+    script.
       $(function(){
       $("#login").validate({
       rules:{
@@ -41,14 +49,7 @@ html
       }
       });
       });
-    script.
-      jQuery.validator.addMethod('checkphone', function(value){
-      if(/^[0-9]{8}$/.test(value)){
-      return true;
-      } else{
-      return false;
-      };
-      }, 'Please enter a valid phone number');
+
     script.
       $(function(){
       $('#register-student').validate({
@@ -146,7 +147,7 @@ html
           input#email.form-control(type='email', placeholder='Email Address', name='email',autocomplete='off')
           input#DOB.form-control(type='date', placeholder='Date of Birth', name='DOB',autocomplete='off')
           input#school.form-control(type='text', placeholder='school', name='school',autocomplete='off')
-          input#number.form-control(type='text', placeholder='Phone Number', name='number',autocomplete='off')
+          input#number.checkphone.form-control(type='text', placeholder='Phone Number', name='number',autocomplete='off')
           input.button(type='submit', name='register', value='Register')
       .cta
         a(href='/ForgetPassword') Forgot your password
