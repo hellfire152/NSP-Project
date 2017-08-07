@@ -251,7 +251,7 @@ module.exports = function(data) {
         res.clearCookie("tempToken");
         res.clearCookie("user_info");
         console.log("CLEAREDDDDDDDDDDDDDDDDDDD");
-        res.redirect('/Home');
+        res.redirect('/');
       }
     })
   });
