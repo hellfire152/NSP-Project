@@ -35,6 +35,7 @@ module.exports = function(appConn, C) {
           });
         }
         else{
+          //encode search
           var url = '/search?search='+search;
           res.redirect(url)
         }

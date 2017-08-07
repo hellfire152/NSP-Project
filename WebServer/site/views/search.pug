@@ -126,7 +126,7 @@ html
       form(method='POST', action='/search')
         p
           | You searched for 
-          span#result  Hello 
+          span#result  #{query} 
         input(type='hidden', name='_csrf', value=`${csrfToken}`)
         input#bot(type='hidden', name='_bot')
         input(placeholder='Try searching for what you were looking for...', type='text', name='search', required='')
@@ -140,3 +140,5 @@ html
         .col-md-3
         script(src='/resources/js/jquery-1.11.2.min.js')  
         script(type='text/javascript', src='../controller/quiz.js')
+        script.
+          createNode();
