@@ -290,7 +290,7 @@ function storeResults(dbConn, results) {
       result : results
     }
   }, (response) => {
-    
+
   });
 }
 
