@@ -283,14 +283,15 @@ function handleClearGameCookie(players){
     return users;
 }
 
-function storeResults(dbConn, results) {
+function storeResults(dbConn, players) {
+  let results = playersObjectToArray(players);
   dbConn.send({
     data : {
       type : C.DB.UPDATE.STATS,
       result : results
     }
   }, (response) => {
-
+    console.log('Data stored');
   });
 }
 
