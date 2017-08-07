@@ -133,5 +133,5 @@ function findTopRating(){
 		// createNode();
 }
 // createNode();
-$(document).ready(findTopRating());
-createNode();
+// $(document).ready(findTopRating());
+// createNode();

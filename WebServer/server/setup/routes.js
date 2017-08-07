@@ -33,7 +33,7 @@ module.exports = function(data) {
     // 'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
     'change-forget-password' : require('../validators/validate-change-forget-password.js')(cookieCipher, appConn,C),
-    'search-find' : require('../validators/validate-search.js')(cookieCipher, appConn),
+    'search-find' : require('../validators/validate-search.js')(appConn, C),
     'spam-bot' : require('../validators/validate-spam.js')(appConn, C)
   };
 
@@ -118,7 +118,8 @@ module.exports = function(data) {
     }, (response) => {
       res.render('search', {
         'csrfToken' : req.csrfToken(),
-        'data': response.data
+        'data': response.data,
+        'query' : req.query.search
       });
     })
   });
