@@ -1,0 +1,67 @@
+doctype html
+html
+  head
+    title EXCEL PAGE
+    script(type='text/javascript', src='/setup/excelprint.js')
+  body
+    table table#tbl1.table2excel
+      tr
+        th Company
+        th Contact
+        th Country
+      tr
+        td Alfreds Futterkiste
+        td Maria Anders
+        td Germany
+      tr
+        td Centro comercial Moctezuma
+        td Francisco Chang
+        td Mexico
+      tr
+        td Ernst Handel
+        td Roland Mendel
+        td Austria
+      tr
+        td Island Trading
+        td Helen Bennett
+        td UK
+      tr
+        td Laughing Bacchus Winecellars
+        td Yoshi Tannamuri
+        td Canada
+      tr
+        td Magazzini Alimentari Riuniti
+        td Giovanni Rovelli
+        td Italy
+    
+    table table#tbl2.table2excel
+      tr
+        th Company
+        th Contact
+        th Country
+      tr
+        td Alfreds Futterkiste
+        td Maria Anders
+        td Germany
+      tr
+        td Centro comercial Moctezuma
+        td Francisco Chang
+        td Mexico
+      tr
+        td Ernst Handel
+        td Roland Mendel
+        td Austria
+      tr
+        td Island Trading
+        td Helen Bennett
+        td UK
+      tr
+        td Laughing Bacchus Winecellars
+        td Yoshi Tannamuri
+        td Canada
+      tr
+        td Magazzini Alimentari Riuniti
+        td Giovanni Rovelli
+        td Italy
+          
+    button(onclick="tablesToExcel(['tbl1','tbl2'], ['ProductDay1','ProductDay2'], 'TestBook.xls', 'Excel')") Export to Excel
