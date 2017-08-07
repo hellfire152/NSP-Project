@@ -95,11 +95,11 @@ html
                   h3.timer(style='padding-top:150px;') Welcome, 
                   p#user-name Bryan
                 .col-sm-6.col-xs-12
-                  form
+                  form#login(method='POST', action='/join-room')
                     input(type='hidden', name='_csrf', value=`${csrfToken}`)
                     input#bot(type='hidden', name='_bot')
                     input.form-control(name='pinNo', type='text', placeholder='Pin Number' style = "margin-top:120px")
-                    a.btn.btn-primary(href='#', style='margin-top:15px;') Enter Game
+                    input.button(type='submit', value='Enter Game')
                 .col-sm-3.col-xs-6
                   h3.timer(style='padding-top:150px;') 10 Posts
               // /count-wrap
@@ -112,7 +112,7 @@ html
         .col-md-8
         .col-md-4
           .container
-            form.search(method='POST', action='/search')
+            form#login(method='POST', action='/search')
               .field
                 input(type='hidden', name='_csrf', value=`${csrfToken}`)
                 input#bot(type='hidden', name='_bot')

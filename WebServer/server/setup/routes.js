@@ -112,7 +112,7 @@ module.exports = function(data) {
         'searchItem' : req.query.search
       }
     }, (response) => {
-      console.log(response);
+      res.render('search', {'data': response.data});
     })
   });
   //handling profile pages
@@ -243,7 +243,7 @@ module.exports = function(data) {
         res.clearCookie("tempToken");
         res.clearCookie("user_info");
         console.log("CLEAREDDDDDDDDDDDDDDDDDDD");
-        res.redirect('/');
+        res.redirect('/Home');
       }
     })
   });
@@ -291,7 +291,7 @@ module.exports = function(data) {
   app.post('/otp-forget-password', validators["otp-forget-password"]);
   app.post('/change-forget-password', validators["change-forget-password"]);
   app.post('/spamming-in-progress', validators["spam-bot"]);
-  app.post('/search', rateLimiters.join, validators["search-find"]);
+  app.post('/search', validators["search-find"]);
   // app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
 }
 function gameSessionCheck(req, isPlaying) {

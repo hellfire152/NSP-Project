@@ -86,6 +86,10 @@ html
     // Theme Responsive css
     link(rel='stylesheet', href='/resources/css/responsive.css')
     script(src='/resources/js/modernizr-2.8.3-respond-1.4.2.min.js')
+    script.
+      var data = !{JSON.stringify(data)};
+      var Totalquiz = data;
+      console.log(Totalquiz);
   body
     .main_menu_bg
       .container
@@ -105,18 +109,18 @@ html
               #bs-example-navbar-collapse-1.collapse.navbar-collapse
                 ul.nav.navbar-nav.navbar-right
                   li
-                    a(href='#slider') Home
+                    a(href='/user-home') Home
                   li
-                    a(href='#abouts') Profile
+                    a(href='/profile') Profile
                   li
-                    a(href='#features') Create
+                    a(href='/CreateQuiz') Create
                   li
-                    a.booking(href='#') Logout
+                    a.booking(href='/logout') Logout
               // /.navbar-collapse
             // /.container-fluid
     ol.breadcrumb
       li.breadcrumb-item
-        a(href='#') Home
+        a(href='/user-home') Home
       li.breadcrumb-item.active Search
     .error
       form(method='POST', action='/search')
@@ -132,18 +136,7 @@ html
       .row
         .col-md-3
         #card_container.col-md-6
-          .card-media
-            // media container
-            .card-media-object-container
-              .card-media-object
-                img(src='https://s9.postimg.org/y0sfm95gv/prince_f.jpg')
-            // body container
-            .card-media-body
-              .card-media-body-top
-                span.subtle Mon, APR 09, 7:00 PM
-              span.card-media-body-heading This Thing Called Life: A Celebration of Prince and His Legacy at MEZZANINE SF
-              .card-media-body-supporting-bottom.card-media-body-supporting-bottom-reveal
-                a.card-media-body-supporting-bottom-text.card-media-link.u-float-right(href='#/') VIEW TICKETS
+          
         .col-md-3
         script(src='/resources/js/jquery-1.11.2.min.js')  
         script(type='text/javascript', src='../controller/quiz.js')
