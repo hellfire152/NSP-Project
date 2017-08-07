@@ -283,15 +283,14 @@ function handleClearGameCookie(players){
     return users;
 }
 
-function storeResults(dbConn, players) {
-  let playersArr = playersObjectToArray(players);
+function storeResults(dbConn, results) {
   dbConn.send({
-    //'type' : C.STORE QUIZ
-    'players' : playersArr
+    data : {
+      type : C.DB.UPDATE.STATS,
+      result : results
+    }
   }, (response) => {
-    //log something if successful
-
-    //do nothing else
+    
   });
 }
 

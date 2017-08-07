@@ -340,6 +340,10 @@ var server = net.createServer(function(conn){
             await getLogQuiz(inputData);
             break;
           }
+          case C.DB.UPDATE.STATS : {
+            await updateCompletedQuiz(inputData);
+            break;
+          }
           default : {
             var response = {
               data : {
@@ -2105,9 +2109,39 @@ async function checkBannedIp(inputData){
 }
 
 async function updateCompletedQuiz(inputData){
-  // var data = inputData.data;
-  //
-  // var query = connection.query("", data.ip_address, function(error, result){
+  var data = inputData.data;
+  var finalQuery = ""
+  data.result.forEach(function(dataObj) {
+    finalQuery += "UPDATE completed_quiz\
+      JOIN user_account\
+      ON user_account.user_id = completed_quiz.user_id\
+      SET completed_quiz.no_of_quiz = completed_quiz.no_of_quiz + 1,\
+      completed_quiz.score = completed_quiz.score + "+connection.escape(dataObj.score)+",\
+      completed_quiz.correctAnswers = completed_quiz.correctAnswers + "+connection.escape(dataObj.correctAnswers)+",\
+      completed_quiz.wrongAnswers = completed_quiz.wrongAnswers + "+connection.escape(dataObj.wrongAnswers)+"\
+      WHERE user_account.username = "+connection.escape(dataObj.name)+";";
+  });
+
+  connection.query(finalQuery, function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+
+    var response = {
+      data : {
+        success : true,
+        message : "Quiz result updated!"
+      }
+    }
+    sendToServer(response, inputData);
+  })
 }
 
 async function retrieveCompletedQuiz(inputData){
