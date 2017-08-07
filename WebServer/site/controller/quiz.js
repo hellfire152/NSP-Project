@@ -5,7 +5,6 @@ function createNode(){
 	console.log("IN");
 
 	for(i=0;i<total;i++){
-		console.log("HELLOO");
 		var iDiv = document.createElement('div');
 		iDiv.className = "card-media";
 		document.getElementById('card_container').appendChild(iDiv);
@@ -18,8 +17,6 @@ function createNode(){
 		cardMediaObject.className = "card-media-object";
 		cardMediaObject.setAttribute('style', 'background-image:url("https://s9.postimg.org/y0sfm95gv/prince_f.jpg")');
 		cardMediaObjectContainer.appendChild(cardMediaObject);
-
-
 
 		var cardMediaBody = document.createElement('div');
 		cardMediaBody.className  = "card-media-body";
@@ -34,10 +31,15 @@ function createNode(){
 		date.innerHTML = Totalquiz[i].date_created;
 		cardMediaBodyTop.appendChild(date);
 
-		var title = document.createElement('span');
+		var title = document.createElement('h5');
 		title.className = "card-media-body-heading";
 		title.innerHTML = Totalquiz[i].quiz_title;
 		cardMediaBody.appendChild(title);
+
+		var description = document.createElement('span');
+		description.className = "card-media-body-heading";
+		description.innerHTML = Totalquiz[i].description;
+		cardMediaBody.appendChild(description);
 
 		var cardMediaBodySupportBot = document.createElement('div');
 		cardMediaBodySupportBot.className = "card-media-body-supporting-bottom card-media-body-supporting-bottom-reveal";
@@ -129,5 +131,5 @@ function findTopRating(){
     }
 		createNode();
 }
-
-$(document).ready(findTopRating());
+createNode();
+// $(document).ready(findTopRating());

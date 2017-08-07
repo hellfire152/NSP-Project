@@ -44,7 +44,7 @@ var login = new RateLimit({
   'delayAfter' : 50,
   'delayMs' : 1000*60,
   'message' : 'Too many login requests!',
-  'max' : 500, // testing purpose
+  'max' : 3, // testing purpose
   'handler' : (req, res) => {
     res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }
