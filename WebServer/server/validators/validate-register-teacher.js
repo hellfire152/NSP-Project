@@ -98,14 +98,24 @@ module.exports =function(cipher, appConn, C, emailServer){
 
 
                 }, (response) => {
-                  res.redirect('/teacher-login');
+                  if(!response.data.success) { //fail
+                    if(response.data.reason ==  C.ERR.DB_USERNAME_TAKEN){
+                      res.sendErrorPage('username or email used','/teacher-login');
+                    }
+                    else{
+                      res.sendErrorPage(response.data.message, '/teacher-login');
+                    }
+
+                  } else {
+                    res.redirect('/teacher-login');
+                  }
                 });
             }
             else{
 
               console.log("FAIL");
 
-              res.sendErrorPage('Fail reistration');
+              res.sendErrorPage('Fail reistration','/teacher-login');
             }
         }
 
@@ -116,7 +126,7 @@ module.exports =function(cipher, appConn, C, emailServer){
             console.log(schema.validate('password',{list:true}));
             console.log("FAIL PW");
 
-            res.sendErrorPage('Failed password requirements');
+            res.sendErrorPage('Failed password requirements','/teacher-login');
 
 
           }
@@ -125,7 +135,7 @@ module.exports =function(cipher, appConn, C, emailServer){
           req.session.errors=error;
           req.session.success=false;
           console.log("email not valid");
-          res.sendErrorPage('Email is blacklisted');
+          res.sendErrorPage('Email is blacklisted','/teacher-login');
         }
 
     }
@@ -153,7 +163,7 @@ module.exports =function(cipher, appConn, C, emailServer){
         }
         console.log("never fill in all");
 
-        res.sendErrorPage('Never fill in all the fields');
+        res.sendErrorPage('Never fill in all the fields','/teacher-login');
         return;
 
     }

@@ -116,7 +116,13 @@ module.exports =function(cipher, appConn,C, emailServer){
 
                 }, (response) => {
                   if(!response.data.success) { //fail
-                    res.sendErrorPage(response.data.message, '/student-login');
+                    if(response.data.reason ==  C.ERR.DB_USERNAME_TAKEN){
+                      res.sendErrorPage('username or email used','/student-login');
+                    }
+                    else{
+                      res.sendErrorPage(response.data.message, '/student-login');
+                    }
+
                   } else {
                     res.redirect('/student-login');
                   }
@@ -128,7 +134,7 @@ module.exports =function(cipher, appConn,C, emailServer){
 
               console.log("FAIL");
               errors=true;
-              res.sendErrorPage('Fail registration');
+              res.sendErrorPage('Fail registration', '/student-login');
             }
           }
           else{
@@ -137,7 +143,7 @@ module.exports =function(cipher, appConn,C, emailServer){
             req.session.success=false;
 
             console.log("password not match");
-            res.sendErrorPage('Password does not match')
+            res.sendErrorPage('Password does not match','/student-login');
             // res.redirect('/registerstud');
           }
         }
@@ -149,7 +155,7 @@ module.exports =function(cipher, appConn,C, emailServer){
             console.log(schema.validate('password',{list:true}));
             console.log("FAIL PW");
 
-            res.sendErrorPage('Failed password requirements!');
+            res.sendErrorPage('Failed password requirements!','/student-login');
 
 
           }
@@ -159,7 +165,7 @@ module.exports =function(cipher, appConn,C, emailServer){
           req.session.success=false;
 
           console.log("email not valid");
-          res.sendErrorPage('Email is blacklisted');
+          res.sendErrorPage('Email is blacklisted','/student-login');
           // async function timer(){
             // var timeout1 =  setTimeout(function () {
             //   console.log("hi");
@@ -211,7 +217,7 @@ module.exports =function(cipher, appConn,C, emailServer){
           console.log("Please enter your school");
         }
         console.log("never fill in all");
-        res.sendErrorPage('Please fill in all details');
+        res.sendErrorPage('Please fill in all details','/student-login');
 
         return;
 
