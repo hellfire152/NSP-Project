@@ -39,5 +39,5 @@
       }, {
         "username" : "qingxi3"
         }],
-  "AUTH_BYPASS" : false
+  "AUTH_BYPASS" : true
 }
