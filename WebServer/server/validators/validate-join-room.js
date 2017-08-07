@@ -8,7 +8,7 @@ const uuid = require('uuid');
 module.exports = function(cipher, appConn) {
   return function(req, res) {
     console.log("===Validate-Join-Room.js");
-    if(/*req.validLogin*/ true) {
+    if(req.session.validLogin) {
       req.checkBody('room', 'Room ID must be specified').notEmpty();
 
       req.sanitize('room').escape();
@@ -17,7 +17,8 @@ module.exports = function(cipher, appConn) {
       req.session.joining = true;
       res.redirect(`/play?room=${req.body.room}`);
     } else {
-      res.sendErrorPage('You are not logged in!');
+      req.session.attemptJoin = req.body.room;
+      res.redirect('/student-login');
     }
   }
 }

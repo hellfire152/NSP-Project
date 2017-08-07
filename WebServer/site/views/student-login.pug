@@ -17,6 +17,14 @@ html
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
     script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
     script.
+      jQuery.validator.addMethod('checkphone', function(value){
+      if(/^[9|8|6][0-9]{7}$/.test(value)){
+      return true;
+      } else{
+      return false;
+      };
+      }, 'Please enter a valid phone number');
+    script.
       $(function(){
       $("#login").validate({
       rules:{
@@ -41,14 +49,7 @@ html
       }
       });
       });
-    script.
-      jQuery.validator.addMethod('checkphone', function(value){
-      if(/^[0-9]{8}$/.test(value)){
-      return true;
-      } else{
-      return false;
-      };
-      }, 'Please enter a valid phone number');
+
     script.
       $(function(){
       $('#register-student').validate({
@@ -128,7 +129,7 @@ html
         .tooltip Click Me
       .form
         h2 Login to your account
-        form#login(onsubmit='/validate-login-room', method='POST', action='/user-home')
+        form#login(method='POST', action='/login')
           input(type='hidden', name='_csrf', value=`${csrfToken}`)
           input#bot(type='hidden', name='_bot')
           input#username.form-control(type='text', placeholder='Username', name='username', autocomplete='off')
@@ -136,7 +137,7 @@ html
           input.button(type='submit', name='login', value='Login')
       .form
         h2 Create an account
-        form#register-student(method='post', onsubmit='/validate-register-student' action='/student-login')
+        form#register-student(method='post' action='/student-register')
           input(type='hidden', name='_csrf', value=`${csrfToken}`)
           input#bot(type='hidden', name='_bot')
           input#name.form-control(type='text', placeholder='Name', name='name' autocomplete='off')
@@ -146,7 +147,7 @@ html
           input#email.form-control(type='email', placeholder='Email Address', name='email',autocomplete='off')
           input#DOB.form-control(type='date', placeholder='Date of Birth', name='DOB',autocomplete='off')
           input#school.form-control(type='text', placeholder='school', name='school',autocomplete='off')
-          input#number.form-control(type='text', placeholder='Phone Number', name='number',autocomplete='off')
+          input#number.checkphone.form-control(type='text', placeholder='Phone Number', name='number',autocomplete='off')
           input.button(type='submit', name='register', value='Register')
       .cta
         a(href='/ForgetPassword') Forgot your password

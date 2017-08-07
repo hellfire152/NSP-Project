@@ -96,6 +96,7 @@
     "ACCOUNT_LOGGED_IN":3
   },
   "DB" : {
+    "GET_ACCOUNT_DETAILS" : 1,
     "CREATE" : {
       "STUDENT_ACC" : 101,
       "TEACHER_ACC" : 102,
@@ -130,7 +131,8 @@
       "ORGANISATION" : 308,
       "STUDENT_CATEGORY" : 309,
       "CHANGE_PASSWORD" : 310,
-      "TEMP_TOKEN" : 311
+      "TEMP_TOKEN" : 311,
+      "STATS" : 312
     },
     "DELETE" : {
       "ACCOUNT" : 401,

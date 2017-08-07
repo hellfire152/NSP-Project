@@ -70,9 +70,9 @@ function initHost(players) {
   for(let player in players) {
     if(players.hasOwnProperty(player)) {
       let playerLi = createNode(
-        'li', `${player}: `, 'players-list', `player-${player}`);
+        'li', `${player}: `, 'players-list-name', `player-${player}`);
       let playerProgressSpan = createNode(
-        'span', '0', 'players-list', `player-${player}-progress`);
+        'span', '0', 'players-list-progress', `player-${player}-progress`);
       playerLi.appendChild(playerProgressSpan);
       playersUl.appendChild(playerLi);
     }

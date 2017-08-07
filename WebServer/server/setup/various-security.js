@@ -32,6 +32,10 @@ module.exports = function(data) {
 
   app.use(helmet()); //adds a bunch of security features
   app.use(invalidCsrfToken);
+  app.use(helmet.hpkp({
+    'maxAge' : 1000 * 60 * 5, //5 minutes
+    'sha256s' : S.HTTPS.SHA256S
+  }));
   //app.use(attachCsrfToken);
   return { //in case there's any function you need outside here
   }

@@ -219,6 +219,10 @@ var server = net.createServer(function(conn){
           //   validateAccount(inputData);
           //   break;
           // }
+          case C.DB.GET_ACCOUNT_DETAILS : {
+            await getAccountDetails(inputData);
+            break;
+          }
           case C.DB.CREATE.STUDENT_ACC :
           case C.DB.CREATE.TEACHER_ACC : {
             await createAccount(inputData);
@@ -336,12 +340,8 @@ var server = net.createServer(function(conn){
             await getLogQuiz(inputData);
             break;
           }
-          case C.DB.CREATE.BANNED_IP : {
-            await addBannedIp(inputData);
-            break;
-          }
-          case C.DB.SELECT.BANNED_IP : {
-            await checkBannedIp(inputData);
+          case C.DB.UPDATE.STATS : {
+            await updateCompletedQuiz(inputData);
             break;
           }
           default : {
@@ -491,6 +491,19 @@ async function userDetails(userId, details, type){
       }
       sendToServer(response, inputData);
     }
+    var query2 = connection.query("INSERT INTO completed_quiz (user_id, name) VALUES (?)", userId, function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      return;
+    })
   });
 }
 
@@ -646,6 +659,117 @@ async function retrieveFullAccount(inputData){
         LEFT OUTER JOIN teacher_details\
         ON user_account.user_id = teacher_details.user_id\
         WHERE teacher_details.user_id = " + connection.escape(data.user_id),
+      function(err, result){
+        if(err){
+          console.error('[Error in query]: ' + err);
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_SQL_QUERY,
+              message : err
+            }
+          }
+          sendToServer(response, inputData);
+        }
+
+        if(result.length === 1){
+          handleDb.handleDecryption(result)
+          .then(resultOut => {
+            objOutResult = {
+              data:{
+                data : resultOut,
+                success : true
+              }
+            }
+            sendToServer(objOutResult, inputData);
+          })
+          .catch(reason => {
+            console.log(reason);
+          });
+        }
+        else if(result.length === 0){
+          console.log("[No related data found]");
+          //TODO: Send error message to server
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_NO_SUCH_USER,
+              message : "No such user"
+            }
+          }
+          sendToServer(response, inputData);
+        }
+        else{
+          console.log("[Duplicate user_id, Entity integrity compromise]");
+          //TODO: Send error message to server
+          var response = {
+            data : {
+              success : false,
+              reason : C.ERR.DB_DUPLICATE_USER_ID,
+              message : "Duplicate user_id"
+            }
+          }
+          sendToServer(response, inputData);
+
+        }
+      });
+    }
+    else{
+      console.log("[Duplicate user_id, Entity integrity compromise]");
+      //TODO: Send error message to server
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_DUPLICATE_USER_ID,
+          message : "Duplicate user_id"
+        }
+      }
+      sendToServer(response, inputData);
+
+    }
+  });
+}
+
+async function getAccountDetails(inputData){
+  var data = inputData.data
+  var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, student_details.student_id, student_details.date_of_birth, student_details.school\
+    FROM user_account\
+    LEFT OUTER JOIN student_details\
+    ON user_account.user_id = student_details.user_id\
+    WHERE user_account.username = " + connection.escape(data.user_id),
+  function(err, result){
+    if(err){
+      console.error('[Error in query]: ' + err);
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : err
+        }
+      }
+      sendToServer(response, inputData);
+    }
+    if(result.length === 1){ // Student User
+      handleDb.handleDecryption(result)
+      .then(resultOut => {
+        objOutResult = {
+          data:{
+            data : resultOut,
+            success : true
+          }
+        }
+        sendToServer(objOutResult, inputData);
+      })
+      .catch(reason => {
+        console.log(reason);
+      });
+    }
+    else if(result.length === 0){ //Check Teacher user
+      var query = connection.query("SELECT user_account.user_id, user_account.name, user_account.username, user_account.email, teacher_details.teacher_id, teacher_details.organisation\
+        FROM user_account\
+        LEFT OUTER JOIN teacher_details\
+        ON user_account.user_id = teacher_details.user_id\
+        WHERE teacher_details.username = " + connection.escape(data.user_id),
       function(err, result){
         if(err){
           console.error('[Error in query]: ' + err);
@@ -1717,12 +1841,11 @@ async function searchQuiz(inputData){
 async function retrieveQuestions(inputData){
   var quizId = inputData.data.quizId;
   var quizInfo;
-  console.log("INSIDE RETRIEVE");
-  var query = connection.query("SELECT quiz.reward, user_account.username, quiz.date_created, quiz.visibility, quiz.description\
+  var query = connection.query("SELECT quiz.reward, user_account.name, quiz.date_created, quiz.visibility, quiz.description\
   FROM quiz\
   LEFT OUTER JOIN user_account\
     ON user_account.user_id = quiz.user_id\
-  WHERE quiz.quiz_id = ?", quizId, function(err, result){
+  WHERE quiz.quiz_id = " + connection.escape(quizId) + "", function(err, result){
     if(err){
       var response = {
         data : {
@@ -1733,26 +1856,23 @@ async function retrieveQuestions(inputData){
       }
       sendToServer(response, inputData);
     }
-    console.log(result);
-      quizInfo = result[0]; //A really lazy way, but it works
-      console.log(quizInfo);
 
+    handleDb.handleDecryption(result)
+    .then(resultOut => {
+      quizInfo = resultOut[0]; //A really lazy way, but it works
+    });
   });
 
   var query = connection.query("SELECT quiz_question.type, quiz_question.prompt, quiz_question.solution, quiz_question.time, quiz_question_choices.choices, quiz_question.reward, quiz_question.penalty\
   FROM quiz_question\
   LEFT OUTER JOIN quiz_question_choices\
     ON quiz_question.question_id = quiz_question_choices.question_id\
-  WHERE quiz_question.quiz_id = ?\
-  ORDER BY quiz_question.question_no", quizId,
+  WHERE quiz_question.quiz_id = " + connection.escape(quizId) + "\
+  ORDER BY quiz_question.question_no",
   async function(err, result, fields){
-    console.log("QUESTIOn");
-    console.log(result);
-    var query
 			if (!err) { //result = data recieve from database
         handleDb.handleDecryption(result)
         .then(outPlainResult => {
-          console.log(outPlainResult);
           handleDb.handleRecieveQuestion(outPlainResult)
           .then(outResult => {
             objOutResult = {
@@ -1761,7 +1881,7 @@ async function retrieveQuestions(inputData){
                   id : quizId,
                   question : outResult,
                   reward : quizInfo.reward,
-                  author : quizInfo.username,
+                  author : quizInfo.name,
                   creationDate : quizInfo.date_created,
                   'public' : quizInfo.visibility,
                   description : quizInfo.description
@@ -1984,6 +2104,46 @@ async function checkBannedIp(inputData){
       sendToServer(response, inputData);
     }
   })
+}
+
+async function updateCompletedQuiz(inputData){
+  var data = inputData.data;
+  var finalQuery = ""
+  data.result.forEach(function(dataObj) {
+    finalQuery += "UPDATE completed_quiz\
+      JOIN user_account\
+      ON user_account.user_id = completed_quiz.user_id\
+      SET completed_quiz.no_of_quiz = completed_quiz.no_of_quiz + 1,\
+      completed_quiz.score = completed_quiz.score + "+connection.escape(dataObj.score)+",\
+      completed_quiz.correctAnswers = completed_quiz.correctAnswers + "+connection.escape(dataObj.correctAnswers)+",\
+      completed_quiz.wrongAnswers = completed_quiz.wrongAnswers + "+connection.escape(dataObj.wrongAnswers)+"\
+      WHERE user_account.username = "+connection.escape(dataObj.name)+";";
+  });
+
+  connection.query(finalQuery, function(error, result){
+    if(error){
+      var response = {
+        data : {
+          success : false,
+          reason : C.ERR.DB_SQL_QUERY,
+          message : error
+        }
+      }
+      sendToServer(response, inputData);
+    }
+
+    var response = {
+      data : {
+        success : true,
+        message : "Quiz result updated!"
+      }
+    }
+    sendToServer(response, inputData);
+  })
+}
+
+async function retrieveCompletedQuiz(inputData){
+
 }
 
 console.log("Listening on port 7070");
