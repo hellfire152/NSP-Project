@@ -112,9 +112,9 @@ html
         .col-md-8
         .col-md-4
           .container
-            form.search(action='')
+            form.search(method='POST', action='/search')
               .field
-                input#input-search.input-search(type='text', name='input-search', required='')
+                input#input-search.input-search(type='text', name='search', required='')
                 label(for='input-search') Search
               // /field
     .container

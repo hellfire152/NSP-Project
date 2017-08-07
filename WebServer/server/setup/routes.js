@@ -102,6 +102,18 @@ module.exports = function(data) {
     });
   })
 
+  app.get('/search', function(req, res) { //search function
+    console.log(req.query.search);
+    appConn.send({
+      'type' : C.REQ_TYPE.DATABASE,
+      'data' : {
+        'type' : C.DB.SELECT.SEARCH_QUIZ,
+        'searchItem' : req.query.search
+      }
+    }, (response) => {
+      console.log(response);
+    })
+  });
   //handling profile pages
   app.get('/profile', (req, res) => {
     res.redirect('/profile/0');
@@ -125,16 +137,6 @@ module.exports = function(data) {
       }
     }, (response) => {
       console.log(response);
-      // let profileDetails =  {
-      //   // 'username' : response.username,
-      //   // 'email' : response.email,
-      //   // 'category' : response.category,
-      //   // 'completedQuizzes' : response.completedQuizzes,
-      //   // 'creationDate' : response.creationDate,
-      //   // 'aboutMe' : response.aboutMe,
-      //   // 'quizList' : response.quizList,
-      //   // 'achievementsList' : response.achievementsList
-      // };
       if(!response.data.success) {
         res.sendErrorPage('Error loading profile page!');
         return;
