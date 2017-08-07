@@ -1,8 +1,8 @@
-var data, C, allRooms, sendToServer, conn;
+var data, C, allRooms, sendToServer, conn, dbConn;
 var currentRoom, currentPlayer;
 var common = require('./common.js');
 module.exports = async function(input) {
-  ({data, C, allRooms, conn, sendToServer} = input);
+  ({data, C, allRooms, conn, sendToServer, dbConn} = input);
   currentRoom = allRooms[data.roomNo];
   currentPlayer = currentRoom.players[data.id];
 
@@ -108,6 +108,7 @@ module.exports = async function(input) {
               let ta = common.calculateTitles(currentRoom);
 
               deleteUnnecessary(currentPlayer);
+              common.storeResults(dbConn, currentRoom.players);
               return {  //if all players completed
                 'game': C.GAME_RES.GAME_END,
                 'titlesAndAchievenments' : ta,

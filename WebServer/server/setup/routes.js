@@ -91,6 +91,7 @@ module.exports = function(data) {
           }, (response4) => {
             //TODO: XSS of array of quiz data
             res.render('user-home', {
+              'csrfToken' : req.csrfToken(),
               data : {
                 userInfo : encodedData,
                 quizInfo : response4.data.data

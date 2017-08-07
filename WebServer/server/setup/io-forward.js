@@ -88,6 +88,7 @@ module.exports = function(data) {
       if(appConn.encBuffer.length > 0) {
         responses = await decryptResponse(appConn.encBuffer + input);
         appConn.encBuffer = "";
+        console.log("CLEAR BUFFER");
       } else {
         responses = await decryptResponse(input);
       }
@@ -121,6 +122,8 @@ module.exports = function(data) {
         }
       }
     } catch (e) {
+      console.log(e);
+      console.log("OVER BUFFER SIZE");
       appConn.encBuffer += input;
     }
   });

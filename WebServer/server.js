@@ -243,8 +243,8 @@ var attemptConnection = setInterval(() => {
       });
 
       //start listening
-      server.listen(8080);
-      console.log("Listening on port 8080...");
+      server.listen(443);
+      console.log("Listening on port 443...");
     }
   } catch(e) {
     console.log(e);

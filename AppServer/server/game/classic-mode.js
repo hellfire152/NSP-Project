@@ -6,7 +6,7 @@
 var common = require('./common.js');
 var C, sendToServer, conn;
 module.exports = async function(input) {
-  let {data, allRooms} = input;
+  let {data, allRooms, dbConn} = input;
   ({C, conn, sendToServer} = input);
   let currentRoom = allRooms[data.roomNo];
   let currentPlayer = currentRoom.players[data.id];
@@ -60,8 +60,8 @@ module.exports = async function(input) {
           if(currentRoom.questionCounter >= questions.length) {
             //TODO::CAULCULATE TITLES
             console.log("GAME " +data.roomNo +" END");
-            //send
-
+            //store for achievements
+            common.storeResults(dbConn, currentRoom.players);
             return sendGameEnd(currentRoom.players, data, allRooms);
           } else { //next question available
             return sendQuestion(currentRoom, questions[currentRoom.questionCounter], data);

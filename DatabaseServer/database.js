@@ -388,8 +388,6 @@ async function sendToServer(response, inputData, encryption) {
     console.log("AES ENCRYPTED");
     console.log(response);
     let stuff = await appConn.sendCipher.encrypt(JSON.stringify(response));
-    console.log(stuff);
-    console.log(`PASSWORD: ${appConn.sendCipher.password}`);
     appConn.write(""+stuff);
   }
 }
@@ -442,11 +440,11 @@ async function createAccount(inputData){
             .then(dataDetails => {
               switch(dataOut.type){
                 case C.DB.CREATE.STUDENT_ACC : {
-                  userDetails(userId, dataDetails, "student_details");
+                  userDetails(userId, dataDetails, "student_details", inputData);
                   break;
                 }
                 case C.DB.CREATE.TEACHER_ACC : {
-                  userDetails(userId, dataDetails, "teacher_details");
+                  userDetails(userId, dataDetails, "teacher_details", inputData);
                   break;
                 }
               }
@@ -486,7 +484,7 @@ async function createAccount(inputData){
 }
 
 //Apply additional details for teacher or student respecively
-async function userDetails(userId, details, type){
+async function userDetails(userId, details, type, inputData){
   details.user_id = userId;
 
   var query = connection.query("INSERT INTO " + type + " SET ?", details, function(error, result){
