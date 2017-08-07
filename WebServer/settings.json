@@ -29,14 +29,20 @@
     }
   },
 
+<<<<<<< HEAD
   "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam", "ForgetPassword", "otp-ForgetPassword", "ChangePassword" , "Home", "CreateQuiz", "change-password"],
+=======
+  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam", "ForgetPassword", "otp-ForgetPassword", "ChangePassword" , "Home", "CreateQuiz"],
+>>>>>>> a36c8232a007c694e42ae000c335c6b8426d9be4
   "REQUIRE_VALID_LOGIN" : ["createquiz", "host", "play", "report", "hostreport", "forgetpassword", "user-home"],
   "USE_TEST_ACCOUNT" : false,
   "TEST_ACCOUNTS" : [{
-      "username" : "hellfire152"
+      "username" : "qingxi1"
     }, {
-      "username" : "psidra"
-    }],
+      "username" : "qingxi2"
+    }, {
+      "username" : "qingxi3"
+      }],
   "NO_SIMULTANEOUS_HOST_JOIN" : false,
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",

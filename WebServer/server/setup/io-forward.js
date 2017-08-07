@@ -43,6 +43,8 @@ module.exports = function(data) {
         console.log('Invalid connection!');
         socket.disconnect();
       } else {
+        if(s.hosting) s.hosting = false;
+        if(s.joining) s.joining = false;
         let id = s.username;
         console.log("SOCKET IO CONNECTION INITIATED BY");
         console.log(id);
