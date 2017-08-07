@@ -91,7 +91,16 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
             }, (response) => {
               //If incorrect user input return to login page
               if(!(response.data.success)){
-                res.sendErrorPage('Invalid login details!');
+                if(response.data.reason ==  C.DB_NO_SUCH_USER){
+                  res.sendErrorPage('No such user','/student-login');
+                }
+                else if (response.data.reason ==  C.DB_PASSWORD_INCORRECT){
+                  res.sendErrorPage('Password incorrect','/student-login');
+                }
+                else{
+                  res.sendErrorPage(response.data.message, '/student-login');
+                }
+                // res.sendErrorPage('Invalid login details!');
               }
               else {
                 //Check for identical IP address in user cookie
@@ -193,7 +202,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
         }
         else{
           console.log("FAIL");
-          res.sendErrorPage('Fail registration');
+          res.sendErrorPage('Fail registration', '/student-login');
         }
       }
       else{
@@ -203,7 +212,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
           console.log(schema.validate('password',{list:true}));
           console.log("FAIL PW");
 
-          res.sendErrorPage('Failed password requirements');
+          res.sendErrorPage('Failed password requirements','/student-login');
         }
     }
     else{
@@ -218,7 +227,7 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
 
         console.log("never fill in all");
 
-        res.sendErrorPage('Never fill in all the fields');
+        res.sendErrorPage('Never fill in all the fields','/student-login');
         return;
     }
   }
