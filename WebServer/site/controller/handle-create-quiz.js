@@ -123,10 +123,8 @@ function defaultSetting(){
  $("#filled-in-box2").val(C.MCQ.B);
  $("#filled-in-box3").val(C.MCQ.C);
  $("#filled-in-box4").val(C.MCQ.D);
-<<<<<<< HEAD
  $("#mainReward").val(1000);
-=======
->>>>>>> a36c8232a007c694e42ae000c335c6b8426d9be4
+
  showChoiceFields();
  displayChoice();
 }
