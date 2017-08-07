@@ -21,11 +21,8 @@
     "SERVICE" : "gmail",
     "AUTH" : {
       "TYPE" : "OAuth2",
-      "USER" : "chloeangsl@gmail.com",
-      "CLIENT_ID" : "709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com",
-      "CLIENT_SECRET" : "aDT6KfKpSItfcGyHzsPQiOza",
-      "REFRESH_TOKEN" : "1/ZutkiQ9OKyp1JkTRAwUiAuvVuHJ4-OVjjyhTD_EmB2c",
-      "ACCESS_TOKEN" : "ya29.GlueBAEudez1kiR7Ozu2EcYe8Puet0Fq5GOmnjWWFsAKzeG59jATxKq8-UrxGBcZfYqCCp7com801PUtLH6QXpyjEawaVuONaH_jx5JnaqLlBqtkJKlq2oWEN9pF"
+      "USER" : "exquizit2017@gmail.com",
+      "PASS" : "2017Exquizit"
     }
   },
 
