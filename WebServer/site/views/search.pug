@@ -123,6 +123,8 @@ html
         p
           | You searched for 
           span#result  Hello 
+        input(type='hidden', name='_csrf', value=`${csrfToken}`)
+        input#bot(type='hidden', name='_bot')
         input(placeholder='Try searching for what you were looking for...', type='text', name='search', required='')
         button(onclick='')
           i.fa.fa-search

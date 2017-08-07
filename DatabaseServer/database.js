@@ -499,7 +499,7 @@ async function userDetails(userId, details, type, inputData){
       }
       sendToServer(response, inputData);
     }
-    var query2 = connection.query("INSERT INTO completed_quiz (user_id, name) VALUES (?)", userId, function(error, result){
+    var query2 = connection.query("INSERT INTO completed_quiz (user_id) VALUES (?)", userId, function(error, result){
       if(error){
         var response = {
           data : {
@@ -512,6 +512,8 @@ async function userDetails(userId, details, type, inputData){
       }
       return;
     })
+
+
   });
 }
 
@@ -777,7 +779,7 @@ async function getAccountDetails(inputData){
         FROM user_account\
         LEFT OUTER JOIN teacher_details\
         ON user_account.user_id = teacher_details.user_id\
-        WHERE teacher_details.username = " + connection.escape(data.user_id),
+        WHERE user_account.username = " + connection.escape(data.user_id),
       function(err, result){
         if(err){
           console.error('[Error in query]: ' + err);
@@ -1825,6 +1827,9 @@ async function retrieveQuiz(){
 //Search quizes in database
 async function searchQuiz(inputData){
   var data = inputData.data;
+  console.log("HERE IS THE DATA");
+  console.log(data);
+  console.log("END");
   await handleDb.handleSearchQuiz(data)
   .then(dataOut => {
     var searchQuery = ""

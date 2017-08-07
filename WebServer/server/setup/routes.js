@@ -33,6 +33,7 @@ module.exports = function(data) {
     // 'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
     'change-forget-password' : require('../validators/validate-change-forget-password.js')(cookieCipher, appConn,C),
+    'search-find' : require('../validators/validate-search.js')(cookieCipher, appConn),
     'spam-bot' : require('../validators/validate-spam.js')(appConn, C)
   };
 
@@ -293,6 +294,7 @@ module.exports = function(data) {
   app.post('/otp-forget-password', validators["otp-forget-password"]);
   app.post('/change-forget-password', validators["change-forget-password"]);
   app.post('/spamming-in-progress', validators["spam-bot"]);
+  app.post('/search', rateLimiters.join, validators["search-find"]);
   // app.post('/otp-forget-password', require('../validate-otp-forget-password.js')(cipher, appConn, C, xssDefense));
 }
 function gameSessionCheck(req, isPlaying) {
