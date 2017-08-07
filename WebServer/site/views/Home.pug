@@ -9,6 +9,8 @@ doctype html
 html.no-js(lang='')
   // <![endif]
   head
+    script.
+      var validLogin = !!(${validLogin})
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
     title Food and Restorent One page Template
@@ -94,8 +96,9 @@ html.no-js(lang='')
                       a(href='#') Contact
                     li
                       a(href='#') Join
-                    li
-                      a.booking(href='/student-login') Login
+                    if(validLogin == false)
+                      li
+                        a.booking(href='/student-login') Login
                 // /.navbar-collapse
               // /.container-fluid
     // End Header Section
@@ -109,13 +112,13 @@ html.no-js(lang='')
                   h1
                     span#first Game
                     span#second Pin
-                  form#login(method='POST', action='/verify-pin')
+                  form#login(method='POST', action='/join-room')
                     .row
                       .col-md-3
                       .col-md-6
                           input(type='hidden', name='_csrf', value=`${csrfToken}`)
                           input#bot(type='hidden', name='_bot')
-                          input.form-control(name='pinNo', type='text', placeholder='Pin Number')
+                          input.form-control(name='room', type='text', placeholder='Pin Number')
                       .col-md-3
                     .row
                       .col-md-3

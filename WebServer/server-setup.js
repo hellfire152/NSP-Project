@@ -52,7 +52,6 @@ module.exports = function(data) {
   //where the templates are located
   app.set('views', './site/views');
 
-  //Various middleware
   app.use(session);
   app.use(cookieParser(S.COOKIE_KEY));
   app.use(bodyParser.json());
@@ -100,7 +99,7 @@ module.exports = function(data) {
   app.use((req, res, next) => {
     if(S.REQUIRE_VALID_LOGIN.indexOf(req.path.substring(1)) >= 0
         && !req.session.validLogin) { //not logged in
-      req.session.attempedAccess = req.path;
+      req.session.attemptedAccess = req.path;
       res.redirect('/student-login');
     } else next();  //proceed if logged in
   })
@@ -148,9 +147,10 @@ module.exports = function(data) {
   });
 }
 
-function sendErrorPage(errormsg) {
+function sendErrorPage(errormsg, link) {
   this.render('error', {
-    'error': errormsg
+    'error': errormsg,
+    'link' : link
   });
   //stop anymore responses
   this.end();
