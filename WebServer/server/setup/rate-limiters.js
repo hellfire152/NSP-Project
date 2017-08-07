@@ -11,7 +11,7 @@ var join = new RateLimit({
   'delayAfter' : 200,
   'delayMs' : 100,
   'message' : 'Too many join requests!',
-  'max' : 10000,
+  'max' : 1000,
   'handler' : (req, res) => {
     res.sendErrorPage("We're experiencing unusually high amounts of traffic, please hold.\nWe apologize for the inconvenience.");
   }

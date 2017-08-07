@@ -35,7 +35,8 @@ var crypto = require('crypto');
 var cookieParser = require('cookie-parser');
 var uuid = require('uuid');
 var util = require('util');
-
+var signer = net.connect(1234);
+signer.setEncoding('utf8');
 var S = require(settings);
 S.APPSERVER.PASSWORD = appServerPassword;
 const C = require(S.CONSTANTS);
@@ -47,6 +48,32 @@ const KEYS = {
   'PUBLIC' : fs.readFileSync(S.KEYS.PUBLIC, "utf8"),
   'PRIVATE' : fs.readFileSync(S.KEYS.PRIVATE, "utf8")
 };
+
+async function sign(key) {
+  return new Promise((resolve, reject) => {
+    signer.once('data', (input) => {
+      console.log(input);
+      resolve(input);
+    });
+    signer.write(JSON.stringify({
+    'type':  0,
+    'key' : key
+    }));
+  });
+}
+
+async function verify(key, sig) {
+  return new Promise((resolve, reject) => {
+    signer.once('data', (input) => {
+      resolve(input);
+    });
+    signer.write(JSON.stringify({
+    'type':  1,
+    'key' : key,
+    'sig' : sig
+    }));
+  });
+}
 
 //connection with app server
 //keeps trying every 5 seconds until it connects
@@ -151,59 +178,66 @@ var attemptConnection = setInterval(() => {
     /****AUTHENTICATION******/
     appConn.encryption = 'none';
     if(!S.AUTH_BYPASS) {
-      appConn.send({'publicKey' : KEYS.PUBLIC}, (response) => {
-        clearInterval(attemptConnection);
+      sign(KEYS.PUBLIC).then((signed) => {
+        appConn.send({'publicKey' : KEYS.PUBLIC, 'sig' : signed}, (response) => {
+          console.log(`PUBLIC KEY RESPONSE: ${response}`);
+          clearInterval(attemptConnection);
 
-        //receiving public key of AppServer
-        console.log("PUBLIC KEY RECEIVED");
-        appConn.publicKey = response.publicKey;
-        appConn.encryption = 'rsa';
-        appConn.send({'received' : true}, (response) => {
-          //receive challengeString
-          console.log("RECEIVED CHALLENGE STRING");
-          appConn.sendCipher.iv = response.initialIv;
-          appConn.receiveCipher.iv = response.initialIv;
-          appConn.receiveCipher.encrypt(response.challengeString)
-            .then((challengeString) => {
-              appConn.encryption = 'aes'; //response will be encrypted using aes
-              appConn.send({
-                'encryptedChallenge' : challengeString
-              }, (response) => {
-                //receive diffie-hellman stuff
-                appConn.dh = crypto.createDiffieHellman(
-                  response.prime, 'base64', response.generator, 'base64');
-                appConn.dhKey = appConn.dh.generateKeys('base64');
-                appConn.secret = appConn.dh.computeSecret(response.key, 'base64', 'base64');
-                console.log("SECRET" +appConn.secret);
-                let s = appConn.sendCipher.hash(
-                  appConn.sendCipher.xorString(appConn.secret, challengeString));
-                let r =  appConn.sendCipher.hash(
-                  appConn.sendCipher.xorString(appConn.secret, S.APPSERVER.PASSWORD));
+          //receiving public key of AppServer
+          console.log("PUBLIC KEY RECEIVED");
+          verify(response.publicKey, response.sig).then((result) => {
+            if(result == 'true') {
+              appConn.publicKey = response.publicKey;
+              appConn.encryption = 'rsa';
+              appConn.send({'received' : true}, (response) => {
+                //receive challengeString
+                console.log("RECEIVED CHALLENGE STRING");
+                appConn.sendCipher.iv = response.initialIv;
+                appConn.receiveCipher.iv = response.initialIv;
+                appConn.receiveCipher.encrypt(response.challengeString)
+                .then((challengeString) => {
+                  appConn.encryption = 'aes'; //response will be encrypted using aes
+                  appConn.send({
+                    'encryptedChallenge' : challengeString
+                  }, (response) => {
+                    //receive diffie-hellman stuff
+                    appConn.dh = crypto.createDiffieHellman(
+                      response.prime, 'base64', response.generator, 'base64');
+                      appConn.dhKey = appConn.dh.generateKeys('base64');
+                      appConn.secret = appConn.dh.computeSecret(response.key, 'base64', 'base64');
+                      console.log("SECRET" +appConn.secret);
+                      let s = appConn.sendCipher.hash(
+                        appConn.sendCipher.xorString(appConn.secret, challengeString));
+                        let r =  appConn.sendCipher.hash(
+                          appConn.sendCipher.xorString(appConn.secret, S.APPSERVER.PASSWORD));
 
-                //cipher change
-                appConn.prependOnceListener('data', () => {
-                  appConn.sendCipher.password = s;
-                  appConn.receiveCipher.password = r;
-                });
+                          //cipher change
+                          appConn.prependOnceListener('data', () => {
+                            appConn.sendCipher.password = s;
+                            appConn.receiveCipher.password = r;
+                          });
 
-                //send key to AppServer
-                appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
-                  if(response.auth) {
-                    delete appConn.encryption; //no need this anymore
-                    delete appConn.secret; //or this
-                    delete appConn.dh //or that
-                    delete appConn.dhKey //EXTERRRRMINATE
+                          //send key to AppServer
+                          appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
+                            if(response.auth) {
+                              delete appConn.encryption; //no need this anymore
+                              delete appConn.secret; //or this
+                              delete appConn.dh //or that
+                              delete appConn.dhKey //EXTERRRRMINATE
 
-                    //remove all listeners,
-                    //server-setup will add them back in with socket.io support
-                    appConn.removeAllListeners('data');
-                    initServer();
+                              //remove all listeners,
+                              //server-setup will add them back in with socket.io support
+                              appConn.removeAllListeners('data');
+                              initServer();
+                            }
+                          }, 'aes');
+                        }, 'rsa');
+                      });
+                    }, 'rsa');
                   }
-                }, 'aes');
-              }, 'rsa');
-            });
-        }, 'rsa');
-      }, 'none');
+                });
+              }, 'none');
+      });
     } else {
       console.log("AUTHENTICATION BYPASSED");
       //remove all listeners, server-setup will add them back in with socket.io support
@@ -250,7 +284,7 @@ var attemptConnection = setInterval(() => {
     console.log(e);
     console.log("Retrying connection in 10 seconds...");
   }
-}, 3000);
+}, (S.AUTH_BYPASS)? 2000 : 15000);
 
 /*
   Takes in a string of any number of concatenated JSON strings,

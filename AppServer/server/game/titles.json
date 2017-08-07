@@ -6,7 +6,7 @@
   },
   "CONFUSED" : {
     "title" : "Confused?!?!",
-    "details" : "Awarded for many incorrect answers",
+    "details" : "Awarded for most incorrect answers",
     "icon" : "confused.jpg"
   },
   "SLEEPY" : {

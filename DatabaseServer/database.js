@@ -97,6 +97,32 @@ var server = net.createServer(function(conn){
     server.close();
     process.exit(0);
   });
+  var signer = net.connect(1234);
+  signer.setEncoding('utf8');
+  async function sign(key) {
+    return new Promise((resolve, reject) => {
+      signer.write(JSON.stringify({
+      'type':  0,
+      'key' : key
+      }));
+      signer.once('data', (input) => {
+        resolve(input);
+      });
+    });
+  }
+
+  async function verify(key, sig) {
+    return new Promise((resolve, reject) => {
+      signer.write(JSON.stringify({
+      'type':  1,
+      'key' : key,
+      'sig' : sig
+      }));
+      signer.once('data', (input) => {
+        resolve(input);
+      });
+    });
+  }
 
   conn.on('data', async function(input){
     let inputData, encryption;
@@ -126,13 +152,18 @@ var server = net.createServer(function(conn){
         case C.AUTH.REQUEST_CONNECTION : { //input has public key
           try {
             //send a json, with this server's public key and the challenge
-            conn.publicKey = inputData.publicKey;
-            conn.challengeString = uuid();
-            encryption = 'none';
-            response = {
-              'publicKey' : KEYS.PUBLIC
-            };
-            conn.status = C.AUTH.RECEIVED_PUBLIC_KEY;
+            verify(inputData.publicKey, inputData.sig).then((result) => {
+              console.log(`VERIFY RESULT: ${result}`);
+              if(result == 'true') {
+                conn.publicKey = inputData.publicKey;
+                conn.challengeString = uuid();
+                encryption = 'none';
+                sign(KEYS.PUBLIC).then((response) => {
+                  sendToServer({'publicKey' : KEYS.PUBLIC, 'sig' : response}, inputData, 'none');
+                  conn.status = C.AUTH.RECEIVED_PUBLIC_KEY;
+                });
+              } else conn.destroy();
+            });
           } catch (e){
             console.log(e);
             conn.destroy();
@@ -211,7 +242,9 @@ var server = net.createServer(function(conn){
           break;
         }
       }
-      sendToServer(response, inputData, encryption);
+      try {
+        sendToServer(response, inputData, encryption);
+      } catch (e) {};
     } else {  //ALEADY AUTHENTICATED
       try {
         switch(inputData.data.type) {
