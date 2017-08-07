@@ -1,4 +1,22 @@
-html
+doctype html
+html(lang='en')
   head
-    h1 #{error}
-  body
+    meta(charset='UTF-8')
+    title Error 404 - Page not found
+    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Lato:300,900')
+    link(rel='stylesheet', type='text/css', href='/resources/css/error.css')
+  body.page-404
+    .container
+      .message.animated.bounceIn
+        .display-table
+          .display-table-cell
+            svg.icon.icon-left.icon-x
+              use(xmlns:xlink='http://www.w3.org/1999/xlink', xlink:href='#icon-x')
+          .display-table-cell
+            h1 Error Encountered!
+            h2 #{error}
+            a(href=`${link}`) Go Back Home
+    svg.icons(viewbox='0 0 100 100', xmlns='http://www.w3.org/2000/svg')
+      symbol#icon-x(viewbox='0 0 512 512')
+        title x
+        path(d='M438.393 374.595L319.757 255.977l118.62-118.63-63.782-63.74-118.6 118.618-118.62-118.603-63.768 63.73 118.64 118.63L73.62 374.626l63.73 63.768 118.65-118.66 118.65 118.645z')

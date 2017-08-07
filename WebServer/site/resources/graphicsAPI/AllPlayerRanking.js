@@ -18,17 +18,10 @@ class AllPlayerRanking extends DisplayElement {
     this._playerRankings = [];
     this._positionData = positionData;
     this._resources = resources;
+    this._totalQuestions = '?';
     if(playerData) {
       this.data = playerData;
     }
-  }
-
-  fadeIn() {
-
-  }
-
-  slideUp() {
-
   }
 
   set data(playerData) {
@@ -46,12 +39,17 @@ class AllPlayerRanking extends DisplayElement {
           'width' : pd.width - pd.paddingX,
           'height': indivDisplayHeight,
           'paddingX' : pd.paddingX,
-          'paddingY' : pd.paddingY
+          'paddingY' : pd.paddingY,
+          'totalQuestions' : this._totalQuestions
         }, this._min);
       playerDisplay.y = i * (playerDisplay.height + pd.paddingY);
       playerDisplay.x = pd.paddingX;
       this._playerRankings.push(playerDisplay);
       this._container.addChild(playerDisplay.view);
     }
+  }
+
+  set totalQuestions(q) {
+    this._totalQuestions = q;
   }
 }

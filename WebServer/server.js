@@ -34,7 +34,9 @@ var net = require('net');
 var crypto = require('crypto');
 var cookieParser = require('cookie-parser');
 var uuid = require('uuid');
-
+var util = require('util');
+var signer = net.connect(1234);
+signer.setEncoding('utf8');
 var S = require(settings);
 S.APPSERVER.PASSWORD = appServerPassword;
 const C = require(S.CONSTANTS);
@@ -47,11 +49,40 @@ const KEYS = {
   'PRIVATE' : fs.readFileSync(S.KEYS.PRIVATE, "utf8")
 };
 
+async function sign(key) {
+  return new Promise((resolve, reject) => {
+    signer.once('data', (input) => {
+      console.log(input);
+      resolve(input);
+    });
+    signer.write(JSON.stringify({
+    'type':  0,
+    'key' : key
+    }));
+  });
+}
+
+async function verify(key, sig) {
+  return new Promise((resolve, reject) => {
+    signer.once('data', (input) => {
+      resolve(input);
+    });
+    signer.write(JSON.stringify({
+    'type':  1,
+    'key' : key,
+    'sig' : sig
+    }));
+  });
+}
+
 //connection with app server
 //keeps trying every 5 seconds until it connects
 var attemptConnection = setInterval(() => {
   try {
-    var appConn = net.connect(9090);
+    var appConn = net.connect({
+      'port' : S.APPSERVER.PORT,
+      'host' : S.APPSERVER.HOST
+    });
 
     //cipher classes for 2 way encryption and decryption
     appConn.sendCipher = new Cipher({
@@ -91,17 +122,22 @@ var attemptConnection = setInterval(() => {
       let reqNo = uuid();
       reqObj.reqNo = reqNo;
 
+      //check if reqObj is valid
+      if(reqObj === undefined || reqObj === null ||
+        !(reqObj === Object(reqObj))) {
+          throw new Error('Invalid request Object');
+        }
       //storing the callback for later calling
       pendingAppResponses[reqNo] = {};
       if(callback)
         if(callback && {}.toString.call(callback) == '[object Function]') //IF FUNCTION
           pendingAppResponses[reqNo].callback = callback;
         else
-          throw new Error('Callback is not a function!');
+          throw new Error('Callback is not a function');
 
       //sending the request object
       console.log("TO APPSERVER:");
-      console.log(reqObj);
+      console.log(util.inspect(reqObj, {showHidden: false, depth: null}));
       encryptAndSend(reqObj, encryption);
       return reqNo; //just in case
     };
@@ -114,11 +150,11 @@ var attemptConnection = setInterval(() => {
     async function decryptResponse(response) {
       if(appConn.encryption == 'none') {
         console.log("NO ENCRYPTION");
-        return JSON.parse(response);
+        return splitJsons(response);
       } else if(appConn.encryption == 'rsa')  {
-        return JSON.parse(appConn.receiveCipher.rsaDecrypt(response, KEYS.PRIVATE));
+        return splitJsons(appConn.receiveCipher.rsaDecrypt(response, KEYS.PRIVATE));
       } else {
-        return JSON.parse(await appConn.receiveCipher.decrypt(response));
+        return splitJsons(await appConn.receiveCipher.decrypt(response));
       }
     }
 
@@ -134,66 +170,74 @@ var attemptConnection = setInterval(() => {
 
     appConn.on("data", async (response) => {
       let data = await decryptResponse(response);
-      logResponse(data);
-      runCallback(data);
+      //the authentication stage should have no problems with simultaneous responses
+      logResponse(data[0]);
+      runCallback(data[0]);
     });
 
     /****AUTHENTICATION******/
     appConn.encryption = 'none';
     if(!S.AUTH_BYPASS) {
-      appConn.send({'publicKey' : KEYS.PUBLIC}, (response) => {
-        clearInterval(attemptConnection);
+      sign(KEYS.PUBLIC).then((signed) => {
+        appConn.send({'publicKey' : KEYS.PUBLIC, 'sig' : signed}, (response) => {
+          console.log(`PUBLIC KEY RESPONSE: ${response}`);
+          clearInterval(attemptConnection);
 
-        //receiving public key of AppServer
-        console.log("PUBLIC KEY RECEIVED");
-        appConn.publicKey = response.publicKey;
-        appConn.encryption = 'rsa';
-        appConn.send({'received' : true}, (response) => {
-          //receive challengeString
-          console.log("RECEIVED CHALLENGE STRING");
-          appConn.sendCipher.iv = response.initialIv;
-          appConn.receiveCipher.iv = response.initialIv;
-          appConn.receiveCipher.encrypt(response.challengeString)
-            .then((challengeString) => {
-              appConn.encryption = 'aes'; //response will be encrypted using aes
-              appConn.send({
-                'encryptedChallenge' : challengeString
-              }, (response) => {
-                //receive diffie-hellman stuff
-                appConn.dh = crypto.createDiffieHellman(
-                  response.prime, 'base64', response.generator, 'base64');
-                appConn.dhKey = appConn.dh.generateKeys('base64');
-                appConn.secret = appConn.dh.computeSecret(response.key, 'base64', 'base64');
-                console.log("SECRET" +appConn.secret);
-                let s = appConn.sendCipher.hash(
-                  appConn.sendCipher.xorString(appConn.secret, challengeString));
-                let r =  appConn.sendCipher.hash(
-                  appConn.sendCipher.xorString(appConn.secret, S.APPSERVER.PASSWORD));
+          //receiving public key of AppServer
+          console.log("PUBLIC KEY RECEIVED");
+          verify(response.publicKey, response.sig).then((result) => {
+            if(result == 'true') {
+              appConn.publicKey = response.publicKey;
+              appConn.encryption = 'rsa';
+              appConn.send({'received' : true}, (response) => {
+                //receive challengeString
+                console.log("RECEIVED CHALLENGE STRING");
+                appConn.sendCipher.iv = response.initialIv;
+                appConn.receiveCipher.iv = response.initialIv;
+                appConn.receiveCipher.encrypt(response.challengeString)
+                .then((challengeString) => {
+                  appConn.encryption = 'aes'; //response will be encrypted using aes
+                  appConn.send({
+                    'encryptedChallenge' : challengeString
+                  }, (response) => {
+                    //receive diffie-hellman stuff
+                    appConn.dh = crypto.createDiffieHellman(
+                      response.prime, 'base64', response.generator, 'base64');
+                      appConn.dhKey = appConn.dh.generateKeys('base64');
+                      appConn.secret = appConn.dh.computeSecret(response.key, 'base64', 'base64');
+                      console.log("SECRET" +appConn.secret);
+                      let s = appConn.sendCipher.hash(
+                        appConn.sendCipher.xorString(appConn.secret, challengeString));
+                        let r =  appConn.sendCipher.hash(
+                          appConn.sendCipher.xorString(appConn.secret, S.APPSERVER.PASSWORD));
 
-                //cipher change
-                appConn.prependOnceListener('data', () => {
-                  appConn.sendCipher.password = s;
-                  appConn.receiveCipher.password = r;
-                });
+                          //cipher change
+                          appConn.prependOnceListener('data', () => {
+                            appConn.sendCipher.password = s;
+                            appConn.receiveCipher.password = r;
+                          });
 
-                //send key to AppServer
-                appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
-                  if(response.auth) {
-                    delete appConn.encryption; //no need this anymore
-                    delete appConn.secret; //or this
-                    delete appConn.dh //or that
-                    delete appConn.dhKey //EXTERRRRMINATE
+                          //send key to AppServer
+                          appConn.send({'dhPublic' : appConn.dhKey}, (response) => {
+                            if(response.auth) {
+                              delete appConn.encryption; //no need this anymore
+                              delete appConn.secret; //or this
+                              delete appConn.dh //or that
+                              delete appConn.dhKey //EXTERRRRMINATE
 
-                    //remove all listeners,
-                    //server-setup will add them back in with socket.io support
-                    appConn.removeAllListeners('data');
-                    initServer();
+                              //remove all listeners,
+                              //server-setup will add them back in with socket.io support
+                              appConn.removeAllListeners('data');
+                              initServer();
+                            }
+                          }, 'aes');
+                        }, 'rsa');
+                      });
+                    }, 'rsa');
                   }
-                }, 'aes');
-              }, 'rsa');
-            });
-        }, 'rsa');
-      }, 'none');
+                });
+              }, 'none');
+      });
     } else {
       console.log("AUTHENTICATION BYPASSED");
       //remove all listeners, server-setup will add them back in with socket.io support
@@ -233,11 +277,33 @@ var attemptConnection = setInterval(() => {
       });
 
       //start listening
-      server.listen(8080);
-      console.log("Listening on port 8080...");
+      server.listen(443);
+      console.log("Listening on port 443...");
     }
   } catch(e) {
     console.log(e);
     console.log("Retrying connection in 10 seconds...");
   }
-}, 5000);
+}, (S.AUTH_BYPASS)? 2000 : 15000);
+
+/*
+  Takes in a string of any number of concatenated JSON strings,
+  and returns an array of parsed JSON objects
+*/
+function splitJsons(jsons) {
+  if(jsons[0] !== '{') throw new Error('Invalid response!');
+  let s = [];
+  let r = [];
+  for(let i = 0, j = 0; i < jsons.length; i++) {
+    if(jsons[i] === '{') s.push(1);
+    else if(jsons[i] === '}') {
+      let b = s.pop();
+      if(b === undefined) throw new Error('Invalid response, expected "{" !');
+      if(s.length === 0) {
+        r.push(JSON.parse(jsons.substr(j, i + 1)));
+        j = i + 1;
+      }
+    }
+  }
+  return r;
+}

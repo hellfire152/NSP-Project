@@ -22,5 +22,8 @@ call npm install mailchecker
 call npm install xoauth2
 call npm install speakeasy
 call npm install base32
+call npm install express-rate-limit
+call npm install helmet-csp
+call npm install csurf
 cls
 echo All required modules installed!

@@ -1,66 +1,58 @@
 const uuid = require('uuid');
 var passwordValidator = require('password-validator');
-module.exports = function(cipher, appConn, C) {
-  return function(req, res){
-    // req.checkBody('username','Please enter username').notEmpty();
-    //
-    // req.checkBody('email','Please enter email').notEmpty();
-    // req.checkBody('email','Invalid email address').isEmail();
-    //
-    // req.checkBody('password','Please enter password').notEmpty();
-    // req.checkBody('password','Invalid password').isLength({min:8});
-    // console.log("hi");
-    var username = req.body.username;
-    var email = req.body.email;
+module.exports = function(cipher, appConn, C,emailServer, cookieValidator) {
+    return function(req, res){
+      console.log(`CIPHER MODULE: ${cipher}`);
+      var username = req.body.username;
+      var email = req.body.email;
+      var randomNum = req.body.randomNum;
+      var randomNum = Math.floor((Math.random() * 999999) + 10000);
 
-    req.sanitize('username').escape();
-    req.sanitize('email').escape();
-    req.sanitize('username').trim();
-    req.sanitize('email').trim();
+      req.sanitize('username').escape();
+      req.sanitize('email').escape();
+      req.sanitize('username').trim();
+      req.sanitize('email').trim();
 
-    console.log(username);
-    if (username!=""  && email!=""){
-      var error = req.validationErrors();
-        if(!error){
-          appConn.send({
-            // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
-            'type':C.REQ_TYPE.DATABASE,
-            'data': {
-              type : C.DB.SELECT.USER_ACCOUNT,
-              account : {
-                username : req.body.username,
-                email : req.body.email
-              }
-            }
-            // 'username' :username,
-            // 'password':password
+      if (username!=""  && email!=""){
 
-          }, (response) => {
-            console.log(response.data);
-            console.log("Validating");
-            console.log(response.data.success);
-            if(response.data.success==true){
-              res.render('login',{
-                data: response.data.data
-              });
-            }
-            else {
-              console.log("FAIL");
-              res.redirect('/forget-password');
-            }
-          });
+        emailObj = {
+          username: req.body.username,
+          pin : randomNum,
+          email : req.body.email
         }
-        else {
-          console.log("FAIL");
-          res.redirect('/forget-password');
-        }
+
+        appConn.send({
+          'type' : C.REQ_TYPE.DATABASE,
+          'data' : {
+            type : C.DB.SELECT.RETRIEVE_USER_DETAILS,
+            username : username,
+            email : email
+          }
+        } ,(response) => {
+          console.log(response);
+          if(response.data.success){
+            var otp = {
+              pin : randomNum,
+              user_id : response.data.user_id,
+              count : 0
+            }
+
+            //TODO: Send the randomNum to client email
+            emailServer.forgetPasswordOtpEmail(emailObj);
+            req.session.otpSession = true; //Open the session
+
+            cipher.encryptJSON(cookieValidator.generateCheckCookie(otp))
+            .then((encryptedCookie) => {
+              res.cookie('otp', encryptedCookie, {"maxAge": 1000*60*5}); //5 min
+              res.redirect('/otp-ForgetPassword');
+            });
+          }
+          else{
+            req.session.otpSession = undefined; //Close the session
+            res.redirect('/ForgetPassword');
+          }
+        });
+
       }
-
-    else{
-        req.session.errors=error;
-        req.session.success=false;
-        res.redirect('/forget-password');
-        return;
     }
   }
-}

@@ -37,6 +37,7 @@ module.exports = async function(input) {
         -> Send SOCKET_DISCONNECT
     2. Remove the player from the associated room's playerList (if applicable)
 */
+
 async function socket_disconnect(data) {
   try {
     let host = allRooms[data.roomNo];

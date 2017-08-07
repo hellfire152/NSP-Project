@@ -30,31 +30,54 @@ function calculateScore(reward, startTime, answerTime, answerStreak) {
 
 function calculateTitles(currentRoom) {
   let players = currentRoom.players;
-  let questionsNo = currentRoom.quiz.questions.length;
+  let titles = []; //object that will be returned
 
   //calculating "Speedy!" and "sleepy..."
-  let fastestPlayer, fastestTime = Number.MAX_VALUE, slowestPlayer, slowestTime = 0;
+  let fastestPlayer, fastestTime = Number.MAX_VALUE, slowestPlayer, slowestTime = 0,
+  mostCorrectPlayer, mostCorrect = 0, mostWrongPlayer, mostWrong = 0;
   //get the fastest and the slowest
-  for(let player of players) {
-    if(player.title === undefined) {
-      if(player.answerTime) {
-        let ansTime = player.answerTime / questionsNo;
-        if(ansTime < fastestTime) {
-          fastestTime = ansTime;
-          fastestPlayer = player;
+  for(let player in players) {
+    if(players.hasOwnProperty(player)) {
+      if(players[player].title === undefined) {
+        if(players[player].answerTime) {
+          let ansTime = players[player].answerTime;
+          if(ansTime < fastestTime) {
+            fastestTime = ansTime;
+            fastestPlayer = player;
+          }
+          if(ansTime > slowestTime) {
+            slowestTime = ansTime;
+            slowestPlayer = player;
+          }
         }
-        if(ansTime > slowestTime) {
-          slowestTime = ansTime;
-          slowestPlayer = player;
+        if(players[player].correctAnswers) {
+          if(players[player].correctAnswers > mostCorrect) {
+            mostCorrectPlayer = player;
+          }
+          if(players[player].wrongAnswers > mostWrong) {
+            mostWrongPlayer = player;
+          }
         }
       }
     }
   }
-  fastestPlayer.title = T.SPEEDY;
-  slowestPlayer.title = T.SLEEPY;
+  //assigning fastest and slowest titles
+  let fastestTitle = T.SPEEDY;
+  fastestTitle.recipient = fastestPlayer;
+  let slowestTitle = T.SLEEPY;
+  slowestTitle.recipient = slowestPlayer;
+  let correctTitle = T.ACCURATE;
+  correctTitle.recipient = mostCorrectPlayer;
+  let wrongTitle = T.CONFUSED;
+  wrongTitle.recipient = mostWrongPlayer;
+
+  titles.push(fastestTitle);
+  titles.push(slowestTitle);
+  titles.push(correctTitle);
+  titles.push(wrongTitle);
 
   //TODO::CALCULATE MORE TITLES
-  return [];
+  return titles;
 }
 
 function removeSolution(question) {
@@ -100,17 +123,11 @@ function playersObjectToArray(players) {
   Returns a sorted array of players, and their results,
   sorted either by points or correct answers, decided by the second argument
 */
-function roundEndResults(players, sortByPoints) {
+function roundEndResults(players, sortBy) {
   let results = playersObjectToArray(players);
-  if(sortByPoints) {
-    results.sort((a, b) => {  //sort by points
-      return parseInt(a.score) - parseInt(b.score);
-    });
-  } else {
-    results.sort((a, b) => {  //sort by correct answers
-      return parseInt(a.correctAnswers) - parseInt(b.correctAnswers);
-    });
-  }
+  results.sort((a, b) => {  //sort by points
+    return parseInt(a[sortBy]) - parseInt(b[sortBy]);
+  });
   return results;
 }
 
@@ -120,7 +137,7 @@ function roundEndResults(players, sortByPoints) {
 function checkCorrectAnswer(question, answer) {
   if((question.type == 0 && answer & question.solution)  //MCQ correct
     || (question.type == 1 && //short answer correct (case insensitive)
-    data.answer.toUpperCase() == correctAnswer.toUpperCase())) {
+    answer.trim().toUpperCase() == question.solution.trim().toUpperCase())) {
       return true;
   } else {
     return false;
@@ -239,9 +256,9 @@ function __getRewardOrPenalty(quiz, question, reward) {
   }
   let field = reward ? 'reward' : 'penalty';
 
-  if(question[field] !== undefined) {  //question specific value
+  if(question[field] !== undefined && !(parseInt(question[field]) == 0)) {  //question specific value
     return question[field];
-  } else if(quiz[field] !== undefined) { //quiz-wide value
+  } else if(quiz[field] !== undefined && !(parseInt(quiz[field] == 0))) { //quiz-wide value
     return quiz[field];
   } else {  //default reward : penalty values
     return reward ? 100 : 0;
@@ -256,8 +273,31 @@ function getPenalty(currentRoom, question) {
   return __getRewardOrPenalty(currentRoom, question, false);
 }
 
+function handleClearGameCookie(players){
+    //get all player name
+    let users = [];
+    for(let playerName in players) {
+      users.push(playerName);
+    }
+
+    return users;
+}
+
+function storeResults(dbConn, players) {
+  let results = playersObjectToArray(players);
+  dbConn.send({
+    data : {
+      type : C.DB.UPDATE.STATS,
+      result : results
+    }
+  }, (response) => {
+    console.log('Data stored');
+  });
+}
+
 module.exports = {
   'calculateScore': calculateScore,
+  'calculateTitles' : calculateTitles,
   'setAllUnanswered': setAllUnanswered,
   'setAllAnswered': setAllAnswered,
   'roundEndResults': roundEndResults,
@@ -267,5 +307,7 @@ module.exports = {
   'playersObjectToArray': playersObjectToArray,
   'removeSolution' : removeSolution,
   'getResponseData' : getResponseData,
-  'handleScoring' : handleScoring
+  'handleScoring' : handleScoring,
+  'handleClearGameCookie' : handleClearGameCookie,
+  'storeResults' : storeResults
 };

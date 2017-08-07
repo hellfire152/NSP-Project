@@ -36,9 +36,11 @@ var uuid = require('uuid');
 var Cipher = require(S.CIPHER);
 var crypto = require('crypto');
 var fs = require('fs');
-
+var util = require('util');
 var allRooms = {};
 var pendingDatabaseResponses = {};
+var signer = net.connect(1234);
+signer.setEncoding('utf8');
 
 //getting the RSA keys
 const KEYS = {
@@ -72,7 +74,10 @@ function initServer() {
 
     // Handle data from client
     conn.on("data", async function(input) {
-      console.log(input);
+      if(S.LOG_RAW) {
+        console.log("RAW RESPONSE");
+        console.log(input);
+      }
       let data, encryption;
       if(!AUTH_BYPASS) { //Authentication bypass, set in settings
         if(conn.status != C.AUTH.AUTHENTICATED) {
@@ -93,7 +98,7 @@ function initServer() {
       let reqNo = data.reqNo;
       delete data.reqNo;  //hide reqNo from logs
       console.log("FROM WEBSERVER"); //Log all data received from the WebServer
-      console.log(data);
+      console.log(util.inspect(data, {showHidden: false, depth: null}));
       let response = {};
 
       if(conn.status != C.AUTH.AUTHENTICATED) { //not authenticated yet
@@ -102,13 +107,19 @@ function initServer() {
           case C.AUTH.REQUEST_CONNECTION : { //input has public key
             try {
               //send a json, with this server's public key and the challenge
-              conn.publicKey = data.publicKey;
-              conn.challengeString = uuid();
-              encryption = 'none';
-              response = {
-                'publicKey' : KEYS.PUBLIC
-              };
-              conn.status = C.AUTH.RECEIVED_PUBLIC_KEY;
+              response = new Promise((resolve, reject) => {
+                verify(data.publicKey, data.sig).then((result) => {
+                  if(result == 'true') {
+                    conn.publicKey = data.publicKey;
+                    conn.challengeString = uuid();
+                    encryption = 'none';
+                    sign(KEYS.PUBLIC).then((response) => {
+                      conn.status = C.AUTH.RECEIVED_PUBLIC_KEY;
+                      resolve({'publicKey' : KEYS.PUBLIC, 'sig' : response});
+                    });
+                  } else conn.destroy();
+                });
+              });
             } catch (e){
               console.log(e);
               conn.destroy();
@@ -173,14 +184,14 @@ function initServer() {
               let s = conn.sendCipher.hash(
                 conn.sendCipher.xorString(conn.secret, S.WEBSERVER.PASSWORD));
 
+              conn.sendCipher.password = s;
+              conn.receiveCipher.password = r;
+              conn.status = C.AUTH.AUTHENTICATED;
+
               response = {
                 'auth' : true
               };
               encryption = 'aes';
-
-              conn.sendCipher.password = s;
-              conn.receiveCipher.password = r;
-              conn.status = C.AUTH.AUTHENTICATED;
             } catch (e) {
               console.log(e);
             }
@@ -238,25 +249,17 @@ function initServer() {
       //logging and response
       if(response.then) { //if a promise is returned
         response.then((r) => {
-          console.log("AppServer Response: ");
-          console.log(response);
+          console.log("AppServer Response (PROMISE): ");
+          console.log(r);
           r.reqNo = reqNo;
-          sendToServer(conn, response);
+          sendToServer(conn, r);
         });
       } else {
         console.log("AppServer Response: ");
         console.log(response);
         response.reqNo = reqNo; // To web
         if(S.AUTH_BYPASS) encryption = 'none';
-
-        if(data.type === C.REQ_TYPE.DATABASE){
-          dbConn.send(response, (databaseResponse) =>{
-            var appConnnection = conn;
-            sendToServer(appConnnection, databaseResponse);
-          }, encryption);
-        } else{
-          sendToServer(conn, response, encryption);
-        }
+        sendToServer(conn, response, encryption);
       }
     });
   });
@@ -303,17 +306,17 @@ if(S.AUTH_BYPASS) {
 
 function logResponse(response) {
   console.log("DATABASE RESPONSE:");
-  console.log(response);
+  console.log(util.inspect(response, {showHidden: false, depth: null}));
 }
 
 async function decryptResponse(response) {
   if(dbConn.encryption == 'none') {
     console.log("NO ENCRYPTION");
-    return JSON.parse(response);
+    return splitJsons(response);
   } else if(dbConn.encryption == 'rsa')  {
-    return JSON.parse(dbConn.receiveCipher.rsaDecrypt(response, KEYS.PRIVATE));
+    return splitJsons(dbConn.receiveCipher.rsaDecrypt(response, KEYS.PRIVATE));
   } else {
-    return JSON.parse(await dbConn.receiveCipher.decrypt(response));
+    return splitJsons(await dbConn.receiveCipher.decrypt(response));
   }
 }
 
@@ -330,6 +333,7 @@ dbConn.send = (reqObj, callback, encryption) => {
   //generating a unique id to identify the request
   let reqNo = uuid();
   reqObj.reqNo = reqNo;
+  console.log(callback);
 
   //storing the callback for later calling
   pendingDatabaseResponses[reqNo] = {};
@@ -347,65 +351,113 @@ dbConn.send = (reqObj, callback, encryption) => {
 };
 
 //Recieve data from database and run callback
+dbConn.encBuffer = "";
 dbConn.on('data', async function(inputData) {
-  let data = await decryptResponse(inputData);
-  logResponse(data);
-  runCallback(data);
+  if(S.LOG_RAW) {
+    console.log(`DATABASE RAW: ${inputData}`);
+  }
+  try {
+    if(dbConn.encBuffer.length > 0) {
+      data = await decryptResponse(dbConn.encBuffer + inputData);
+      dbConn.encBuffer = "";
+    } else {
+      data = await decryptResponse(inputData);
+    }
+    console.log(data);
+    for(let d of data) {
+      logResponse(d);
+      runCallback(d);
+    }
+  } catch (e) {
+    dbConn.encBuffer += inputData;
+  }
 });
 
 /****AUTHENTICATION******/
 dbConn.encryption = 'none';
+async function sign(key) {
+  return new Promise((resolve, reject) => {
+    signer.once('data', (input) => {
+      console.log(input);
+      resolve(input);
+    });
+    signer.write(JSON.stringify({
+    'type':  0,
+    'key' : key
+    }));
+  });
+}
+
+async function verify(key, sig) {
+  return new Promise((resolve, reject) => {
+    signer.once('data', (input) => {
+      resolve(input);
+    });
+    signer.write(JSON.stringify({
+    'type':  1,
+    'key' : key,
+    'sig' : sig
+    }));
+  });
+}
+
 if(!S.AUTH_BYPASS) {
-  dbConn.send({'publicKey' : KEYS.PUBLIC}, (response) => {
-    //receiving public key of AppServer
-    console.log("PUBLIC KEY RECEIVED");
-    dbConn.publicKey = response.publicKey;
-    dbConn.encryption = 'rsa';
-    dbConn.send({'received' : true}, (response) => {
-      //receive challengeString
-      console.log("RECEIVED CHALLENGE STRING");
-      dbConn.sendCipher.iv = response.initialIv;
-      dbConn.receiveCipher.iv = response.initialIv;
-      dbConn.receiveCipher.encrypt(response.challengeString)
-        .then((challengeString) => {
-          dbConn.encryption = 'aes'; //response will be encrypted using aes
-          dbConn.send({
-            'encryptedChallenge' : challengeString
-          }, (response) => {
-            //receive diffie-hellman stuff
-            dbConn.dh = crypto.createDiffieHellman(
-              response.prime, 'base64', response.generator, 'base64');
-            dbConn.dhKey = dbConn.dh.generateKeys('base64');
-            dbConn.secret = dbConn.dh.computeSecret(response.key, 'base64', 'base64');
-            console.log("SECRET" +dbConn.secret);
-            let s = dbConn.sendCipher.hash(
-              dbConn.sendCipher.xorString(dbConn.secret, challengeString));
-            let r = dbConn.sendCipher.hash(
-              dbConn.sendCipher.xorString(dbConn.secret, S.DATABASE.PASSWORD));
+  sign(KEYS.PUBLIC).then((signed) => {
+    console.log(signed);
+    dbConn.send({'publicKey' : KEYS.PUBLIC, 'sig' : signed}, (response) => {
+      //receiving public key of AppServer
+      console.log("PUBLIC KEY RECEIVED");
+      verify(response.publicKey, response.sig).then((result) => {
+        if(result == 'true') {
+          dbConn.publicKey = response.publicKey;
+          dbConn.encryption = 'rsa';
+          dbConn.send({'received' : true}, (response) => {
+            //receive challengeString
+            console.log("RECEIVED CHALLENGE STRING");
+            dbConn.sendCipher.iv = response.initialIv;
+            dbConn.receiveCipher.iv = response.initialIv;
+            dbConn.receiveCipher.encrypt(response.challengeString)
+            .then((challengeString) => {
+              dbConn.encryption = 'aes'; //response will be encrypted using aes
+              dbConn.send({
+                'encryptedChallenge' : challengeString
+              }, (response) => {
+                //receive diffie-hellman stuff
+                dbConn.dh = crypto.createDiffieHellman(
+                  response.prime, 'base64', response.generator, 'base64');
+                  dbConn.dhKey = dbConn.dh.generateKeys('base64');
+                  dbConn.secret = dbConn.dh.computeSecret(response.key, 'base64', 'base64');
+                  console.log("SECRET" +dbConn.secret);
+                  let s = dbConn.sendCipher.hash(
+                    dbConn.sendCipher.xorString(dbConn.secret, challengeString));
+                    let r = dbConn.sendCipher.hash(
+                      dbConn.sendCipher.xorString(dbConn.secret, S.DATABASE.PASSWORD));
 
-            //cipher change
-            dbConn.prependOnceListener('data', () => {
-              dbConn.sendCipher.password = s;
-              dbConn.receiveCipher.password = r;
-            });
+                      //cipher change
+                      dbConn.prependOnceListener('data', () => {
+                        dbConn.sendCipher.password = s;
+                        dbConn.receiveCipher.password = r;
+                      });
 
-            //send key to AppServer
-            dbConn.send({'dhPublic' : dbConn.dhKey}, (response) => {
-              if(response.auth) {
-                delete dbConn.encryption; //no need this anymore
-                delete dbConn.secret; //or this
-                delete dbConn.dh //or that
-                delete dbConn.dhKey //EXTERRRRMINATE
+                      //send key to AppServer
+                      dbConn.send({'dhPublic' : dbConn.dhKey}, (response) => {
+                        if(response.auth) {
+                          delete dbConn.encryption; //no need this anymore
+                          delete dbConn.secret; //or this
+                          delete dbConn.dh //or that
+                          delete dbConn.dhKey //EXTERRRRMINATE
+                          console.log(r);
+                          initServer();
+                        }
+                      }, 'aes');
+                    }, 'rsa');
+                  });
+                }, 'rsa');
 
-                //remove all listeners, initServer will add them as needed
-                dbConn.removeAllListeners('data');
-                initServer();
               }
-            }, 'aes');
-          }, 'rsa');
-        });
-    }, 'rsa');
-  }, 'none');
+            });
+      }, 'none');
+  });
 } else {
   console.log("AUTHENTICATION BYPASSED");
   initServer();
@@ -423,12 +475,13 @@ function sendToServer(conn, json, encryption) {
   if(encryption == 'rsa') {
     console.log(`WRITING ${json}`);
     conn.write(conn.sendCipher.rsaEncrypt(JSON.stringify(json), conn.publicKey));
-  } else if (encryption == 'none' || S.AUTH_BYPASS) {
+  } else if (encryption == 'none' || S.AUTH_BYPASS || conn.status == C.AUTH.RECEIVED_PUBLIC_KEY) {
     console.log("NO ENCRYPTION");
     conn.write(JSON.stringify(json));
   } else {
     conn.sendCipher.encrypt(JSON.stringify(json))
       .then((data) => {
+        console.log(`RAW: ${data}`);
         conn.write(data);
       });
   }
@@ -436,5 +489,27 @@ function sendToServer(conn, json, encryption) {
 
 var handleIo = require('./server/app-handle-io.js');
 var handleReq = require('./server/app-handle-req.js');
-var handleGame = require('./server/app-handle-game.js')
+var handleGame = require('./server/app-handle-game.js');
 var handleSpecial = require('./server/app-handle-special.js');
+
+/*
+  Takes in a string of any number of concatenated JSON strings,
+  and returns an array of parsed JSON objects
+*/
+function splitJsons(jsons) {
+  if(jsons[0] !== '{') throw new Error('Invalid response!');
+  let s = [];
+  let r = [];
+  for(let i = 0, j = 0; i < jsons.length; i++) {
+    if(jsons[i] === '{') s.push(1);
+    else if(jsons[i] === '}') {
+      let b = s.pop();
+      if(b === undefined) throw new Error('Invalid response, expected "{" !');
+      if(s.length === 0) {
+        r.push(JSON.parse(jsons.substr(j, i + 1)));
+        j = i + 1;
+      }
+    }
+  }
+  return r;
+}

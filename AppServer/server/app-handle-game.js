@@ -1,6 +1,6 @@
 var C, allRooms, data, conn, sendToServer;
 module.exports = async function(input) {
-  ({C, allRooms, data, conn, sendToServer} = input);
+  ({C, allRooms, data, conn, sendToServer, dbConn} = input);
   let gamemode = allRooms[data.roomNo].gamemode;
   switch(gamemode) {
     case C.GAMEMODE.CLASSIC: {
@@ -9,7 +9,8 @@ module.exports = async function(input) {
         'C': C,
         'allRooms': allRooms,
         'conn': conn,
-        'sendToServer': sendToServer
+        'sendToServer': sendToServer,
+        'dbConn' : dbConn
       });
     }
     case C.GAMEMODE.RACE: {
@@ -18,7 +19,8 @@ module.exports = async function(input) {
         'C': C,
         'allRooms': allRooms,
         'conn': conn,
-        'sendToServer': sendToServer
+        'sendToServer': sendToServer,
+        'dbConn' : dbConn
       });
     }
     default: {

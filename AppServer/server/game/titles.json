@@ -2,21 +2,21 @@
   "SPEEDY" : {
     "title" : "Speedy!",
     "details" : "Awarded for fastest average response",
-    "icon" : "confident.png"
+    "icon" : "speed.png"
   },
   "CONFUSED" : {
     "title" : "Confused?!?!",
-    "details" : "Awarded for many incorrect answers",
-    "icon" : "confused.png"
+    "details" : "Awarded for most incorrect answers",
+    "icon" : "confused.jpg"
   },
   "SLEEPY" : {
     "title" : "sleeeeeepy....",
     "details" : "Awarded for the slowest responses",
-    "icon" : "sleepy.png"
+    "icon" : "slow.png"
   },
-  "CLIMBER" : {
-    "title" : "Climbing...",
-    "details" : "Awarded for climbing the most positions",
-    "icon" : "comeback.png"
+  "ACCURATE" : {
+    "title" : "Accurate!",
+    "details" : "Awarded for having the most correct",
+    "icon" : "accurate.png"
   }
 }

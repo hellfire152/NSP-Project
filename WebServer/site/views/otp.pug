@@ -1,28 +1,37 @@
+doctype html
 html
   head
-    title OTP
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
-    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
-    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
+    title
+    link(rel='stylesheet', type='text/css', href='/resources/css/materialize.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/otp.css')
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
     script.
-      var tim = 0;
-      console.log("start timer");
-      function reload () {
-      tim = setTimeout("location.reload(true);",180000);   // 1 minute
-      }
-      console.log("stop timer");
-      function canceltimer() {
-      window.clearTimeout(tim);  // cancel the timer on each mousemove/click
-      reload();  // and restart it
-      }
-
-      function validate() {
-      var inputCode = document.getElementById("input").value.toUpperCase();
-      }
-
-
-  body(onmousemove='canceltimer();', onclick='canceltimer();')
-      h1 OTP
-      form(action='/otp-check', method='POST')
-        input#otp(type='text' name='otp')
-        input(type='submit', value=' Verification ')
+      setTimeout(function(){
+        window.location.href='/student-login'
+      },300000);
+  body
+    .row
+      .col.s2
+      .col.s8
+        .card.green.accent-2
+          .card-content.darken-text
+            span.card-title IMPORTANT!
+            p
+              | Your account contains a lot of personal data. Please do not share your username, password and 2FA details with anyone. (Email-OTP)
+      .col.s2
+    form(method='POST', action='/otp-check')
+      input(type='hidden', name='_csrf', value=`${csrfToken}`)
+      .otp-tab
+        .row
+          .col.s12
+          #test2.col.s12
+            p Enter the 6 digit One-Time-Password (OTP) sent to your email address
+            .input-field.col.s3
+              input#otp.validate(placeholder='OTP', type='text', name="otp")
+              label(for='otp') OTP
+            button.btn.waves-effect.waves-light(type='submit')
+              | Submit
+              i.material-icons.right send
+    script(type='text/javascript', src='/resources/js/jquery.min.js')
+    script(type='text/javascript', src='/resources/js/bootstrap.min.js')
+    script(type='text/javascript', src='/resources/js/materialize.min.js')

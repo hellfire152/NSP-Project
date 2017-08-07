@@ -22,11 +22,17 @@ class ShortAnswerTextField extends DisplayElement{
     });
     this._text.anchor.set(0.5,0.5);
     this._text.x = this._container.width / 2;
-    this._text.y = this._container.height / 2;
-    this._container.addChild(this._text);
+    this._text.y = this._container.height * 2 / 3;
+
+    this._prompt = new PIXI.Text('Type your answer!');
+    this._prompt.anchor.set(0.5, 0.5);
+    this._prompt.x = this._container.width / 2;
+    this._prompt.y = this._container.height / 3;
+
+    this._container.addChild(this._prompt, this._text);
 
     //listen for typing
-    document.onkeydown = ((textField) => {
+    document.onkeypress = ((textField) => {
       return (e) => {
         if(textField.enabled) {
           if(e.which == 17 || e.which == 18); //ctrl or alt keys (do nothing)
@@ -36,12 +42,17 @@ class ShortAnswerTextField extends DisplayElement{
               'game': C.GAME.SUBMIT_ANSWER,
               'answer': textField.text
             });
-          } else if(e.which == 8)textField.backspace(); //backspace key
-          else {
+          } else {
             let char = String.fromCharCode(e.which);
-            if (e.shiftKey) char.toUpperCase(); //shift key pressed
             textField.append(char);
           }
+        }
+      }
+    })(this);
+    document.onkeydown = ((textField) => {
+      return (e) => {
+        if(textField.enabled) {
+          if(e.which == 8) textField.backspace();
         }
       }
     })(this);
@@ -62,10 +73,12 @@ class ShortAnswerTextField extends DisplayElement{
 
   enable() {
     this._enabled = true;
+    this._container.tint = (0xFFFFFF);
   }
 
   disable() {
     this._enabled = false;
+    this._container.tint = (0x3a3a3a);
   }
 
   reset() {

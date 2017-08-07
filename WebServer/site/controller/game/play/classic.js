@@ -8,6 +8,7 @@ const MCQ_LETTERS = {
   3: 'D'
 }
 var firstQuestion = true;
+var totalQuestions;
 console.log('PLAY: Loaded: classic gamemode handler!');
 function handleGame(response) {
   console.log('PLAY: Handling game response!');
@@ -15,6 +16,8 @@ function handleGame(response) {
     case C.GAME_RES.GET_READY: {
       document.body.innerHTML = ''; //clear the html body
       document.body.appendChild(app.renderer.view); //add the game view
+      totalQuestions = response.totalQuestions;
+      pixiScenes.ranking.allPlayerRanking.totalQuestions = totalQuestions;
       swapScene('getReady');
       break;
     }
@@ -50,7 +53,7 @@ function handleGame(response) {
     case C.GAME_RES.GAME_END: {
       gameEnd(response);
       //add rating
-      
+
       break;
     }
     //ADD MORE CASES HERE

@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 var passwordValidator =require('password-validator');
-module.exports =function(cipher, appConn,C){
+module.exports =function(cipher, appConn,C,emailServer){
   return function(req, res){
       console.log(`CIPHER MODULE: ${cipher}`);
     // req.checkBody('username','Please enter username').notEmpty();
@@ -14,6 +14,7 @@ module.exports =function(cipher, appConn,C){
     var oldPassword = req.body.oldPassword;
     var newPassword = req.body.newPassword;
     var confirmPassword = req.body.confirmPassword;
+    var user_info = req.cookies.user_info.data;
 
       req.sanitize('oldPassword').escape();
       req.sanitize('newPassword').escape();
@@ -63,7 +64,7 @@ module.exports =function(cipher, appConn,C){
                 'data':{
                     type : C.DB.UPDATE.PASSWORD,
                   verify : {
-                    user_id : userInfo.data[0].user_id,
+                    user_id :user_info.user_id,
                     password_hash : req.body.oldPassword
                   },
                   account : {
@@ -77,9 +78,7 @@ module.exports =function(cipher, appConn,C){
                 console.log("Validating");
                 console.log(response.data.success);
                 if(response.data.success==true){
-                  res.render('/change-password-room-success',{
-                    data: response.data.data
-                  });
+                  res.redirect('/user-home'); 
                 }
                 else{
                   console.log("Change password has failed.");

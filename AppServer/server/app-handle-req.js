@@ -5,6 +5,9 @@
   Author: Jin Kuan
 */
 var C, allRooms;
+
+const util = require('util');
+
 module.exports = async function(input) {
   data = input.data;
   C = input.C;
@@ -19,7 +22,7 @@ module.exports = async function(input) {
       break;
     }
     case C.REQ_TYPE.HOST_ROOM: {
-      return (await host_room(data));
+      return (await host_room(data, dbConn));
       break;
     }
 
@@ -42,10 +45,20 @@ module.exports = async function(input) {
       break;
     }
     case C.REQ_TYPE.DATABASE: {
-      return (await databaseAccess(data));
+      return (await databaseAccess(data, dbConn));
       break;
     }
-
+    case C.REQ_TYPE.ACCOUNT_DETAILS: {
+      return new Promise((resolve, reject) => {
+        dbConn.send({
+          'type' : null,//retrive account details
+          'username' : data.username
+        })
+          .then(response => {
+            resolve(response);
+          });
+      })
+    }
   }
 }
 
@@ -99,7 +112,6 @@ async function join_room(data) {
   Login account
 */
 async function account_login(data){
-  console.log("hi");
   response = {
     'type':C.RES_TYPE.ACCOUNT_LOGGED_IN,
     'username' :data.username,
@@ -162,7 +174,7 @@ async function account_create_teach(data){
   The only thing this does is check the cookie for a valid login,
   socket.io will take the rest, including generating a room number.
 */
-async function host_room(data) {
+async function host_room(data, dbConn) {
   response =  {};
   validLogin = true /*TODO::Proper login check*/
 
@@ -183,45 +195,73 @@ async function host_room(data) {
   let quiz;
   //load quiz
   if(data.quizId == 'TEST') {
-    quiz = require('../../test-quiz.json');
-    if(quiz.public == false && data.id !== quiz.author) {
-      return {
-        'err': C.ERR.INACCESSIBLE_PRIVATE_QUIZ,
-        'quizId': data.quizId
-      }
+    let quiz = require('../../test-quiz.json');
+    //add data to allRooms
+    allRooms[roomNo] = {
+      'host': data.id,
+      'players': {},
+      'quiz': quiz
     }
-  } //TODO::Get quiz from database
-  else {
     return {
-      'err': C.ERR.QUIZ_DOES_NOT_EXIST,
-      'id': data.id,
-      'quizId': data.quizId
+      'type': C.RES_TYPE.HOST_ROOM_RES,
+      'resNo': data.resNo,
+      'hostId': data.id,
+      'quizId' : quiz.id,
+      'roomNo' : roomNo
     }
   }
 
-  //add data to allRooms
-  allRooms[roomNo] = {
-    'host': data.id,
-    'players': {},
-    'quiz': quiz
-  }
-
-  //build response
-  response = {
-    'type': C.RES_TYPE.HOST_ROOM_RES,
-    'validLogin': true,//TODO::Proper login check
-    'resNo': data.resNo,
-    'hostId': data.id,
-    'quizId' : quiz.id,
-    'roomNo' : roomNo
-  };
-  return response;
+  return new Promise((resolve, reject) => {
+    databaseAccess({
+      'data' : {
+        'type' : C.DB.SELECT.QUESTION,
+        'quizId' : data.quizId
+      }
+    }, dbConn)
+      .then((result) => {
+        let quiz = result.data.data;
+        console.log(quiz);
+        if(quiz === undefined) {
+          resolve({
+            'err': C.ERR.QUIZ_DOES_NOT_EXIST,
+            'id': data.id,
+            'quizId': data.quizId
+          });
+        } else {
+          //add data to allRooms
+          allRooms[roomNo] = {
+            'host': data.id,
+            'players': {},
+            'quiz': quiz
+          }
+          if(quiz.public == false && data.id !== quiz.author) {
+            resolve({
+              'err': C.ERR.INACCESSIBLE_PRIVATE_QUIZ,
+              'quizId': data.quizId
+            });
+            return;
+          }
+          resolve({
+            'type': C.RES_TYPE.HOST_ROOM_RES,
+            'resNo': data.resNo,
+            'hostId': data.id,
+            'quizId' : quiz.id,
+            'roomNo' : roomNo
+          });
+        }
+      });
+  });
 }
 
-async function databaseAccess(inputData){
-  return {
-    data : inputData.data
-  }
+async function databaseAccess(inputData, dbConn){
+  return new Promise((resolve, reject) => {
+    dbConn.send(inputData, (response) => {
+      resolve(response)
+    });
+  });
+  // return {
+  //   data : inputData.data
+  // }
 }
 
 var handleSpecial = require('./app-handle-special.js');

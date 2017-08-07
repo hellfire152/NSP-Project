@@ -1,0 +1,78 @@
+#ranking, #titles-achievements{
+  margin : auto;
+  text-align: center;
+}
+
+#ranking-header, #title-header {
+  margin: auto;
+  font-size : x-large
+}
+
+.player-ranking {
+  display : block;
+  border-style : groove;
+  border-width : 0px 2px 3px 0px;
+  font-size : large;
+}
+
+.player-attr {
+  display:inline;
+  margin : 20%;
+}
+
+.player-rank {
+  display : inline;
+  margin : 10%;
+}
+
+.title-display {
+  display : inline-block;
+  margin : 20px;
+}
+
+.title-icon, .title-name {
+  float : none;
+}
+
+.title-recipient, .title-desciption {
+  font-size : large;
+}
+
+#next-button , #prev-button, #excel-button {
+  display :inline-block;
+  margin : auto;
+  z-index : 2;
+  height : 3em;
+  width : 30%;
+  background-color: #AC17B5;
+  border : 2px solid #AC17B5;
+  border-radius: 5px;
+
+  color : white;
+  font-size : x-large;
+  text-align: center;
+
+  transition-duration: 0.2s;
+}
+
+#excel-button {
+  background-color: #5ff73d;
+  border : 2px solid #5ff73d;
+}
+
+#next-button:hover, #prev-button:hover, #excel-button:hover {
+  color : black;
+  background-color : white;
+}
+
+#rating {
+
+}
+
+#end {
+  padding : 30px;
+}
+
+#excel-table {
+  display : none;
+}

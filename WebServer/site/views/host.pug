@@ -1,25 +1,15 @@
 html
   head
+    link(rel='stylesheet' type='text/css' href='/css/end.css')
+    link(rel='stylesheet' type='text/css' href='/css/host.css')
     script.
       var room = #{roomNo};
     script(src='/resources/pixi.js')
     script(src='/resources/constants.js')
     script(src='/socket.io/socket.io.js')
-    script(src='/controller/game/common.js')
-    script(src='/resources/graphicsAPI/DisplayElement.js')
-    script(src='/resources/graphicsAPI/BarGraphBar.js')
-    script(src='/resources/graphicsAPI/BarGraph.js')
-    script(src='/resources/graphicsAPI/PlayerRanking.js')
-    script(src='/resources/graphicsAPI/LoadingBar.js')
-    script(src='/resources/graphicsAPI/ProgressBar.js')
-    script(src='/resources/graphicsAPI/Button.js')
-    script(src='/resources/graphicsAPI/Car.js')
-    script(src='/resources/graphicsAPI/McqButtonHandler.js')
-    script(src='/resources/graphicsAPI/QuestionDisplay.js')
-    script(src='/resources/graphicsAPI/ShortAnswerTextField.js')
-    script(src='/resources/graphicsAPI/TopBar.js')
-    script(src='/resources/graphicsAPI/AllPlayerRanking.js')
+    script(src='/controller/game/host/common.js')
     script(src='/controller/host-logic.js')
+    script(src='/controller/excel-export.js')
     title exQuizit! - Play
   body
     #room
@@ -27,9 +17,5 @@ html
     #game
       button(onclick='gameRoom(0)') Classic
       button(onclick='gameRoom(1)') Race
-      button(onclick='gameRoom(2)') Battle
-      button(onclick='gameRoom(3)') Tug Of War
     ul(id='waiting-list')
     button(id='start' onclick='start()') Start!
-    #test
-      button(onclick='test_next_round()') (TEST) NEXT ROUND

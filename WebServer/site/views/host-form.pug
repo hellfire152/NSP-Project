@@ -1,0 +1,27 @@
+html
+  head
+    script(src='/resources/constants.js')
+    script(src='socket.io/socket.io.js')
+    script(src='/resources/pixi.js')
+  body
+    #form
+      h1 HOST ROOM
+      form(action='/host-room', method='POST')
+        input(type='hidden', name='_csrf', value=`${csrfToken}`)
+        |         User_Id:
+        br
+        input#id(type='text', name='id')
+        br
+        br
+        |         Password:
+        br
+        input#pass(type='text', name='pass')
+        br
+        br
+        |         Quiz_Id:
+        br
+        input#quizId(type='text', name='quizId')
+        br
+        br
+        input(type='submit', value='Submit')
+        br

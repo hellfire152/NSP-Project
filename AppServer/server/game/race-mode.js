@@ -1,8 +1,8 @@
-var data, C, allRooms, sendToServer, conn;
+var data, C, allRooms, sendToServer, conn, dbConn;
 var currentRoom, currentPlayer;
 var common = require('./common.js');
 module.exports = async function(input) {
-  ({data, C, allRooms, conn, sendToServer} = input);
+  ({data, C, allRooms, conn, sendToServer, dbConn} = input);
   currentRoom = allRooms[data.roomNo];
   currentPlayer = currentRoom.players[data.id];
 
@@ -13,6 +13,8 @@ module.exports = async function(input) {
       currentRoom.completedPlayers = [];
 
       //get the first question
+      if(currentRoom.quiz.questions === undefined)
+        currentRoom.quiz.questions = currentRoom.quiz.question;
       let question = currentRoom.quiz.questions[0];
 
       //add a questionCounter to each player
@@ -22,6 +24,7 @@ module.exports = async function(input) {
           players[player].score = 0;
           players[player].questionCounter = 0;
           players[player].answerable = true;
+          players[player].highestStreak = 0;
         }
       }
 
@@ -62,6 +65,7 @@ module.exports = async function(input) {
         let correct = common.checkCorrectAnswer(question, data.answer);
 
         if(correct) {
+          currentPlayer.correctAnswers++;
           //get time difference
           let timeDiff = (Date.now() - currentPlayer.timeStart) / 1000;
           if(currentPlayer.answerTime === undefined)
@@ -69,35 +73,52 @@ module.exports = async function(input) {
           currentPlayer.answerTime += timeDiff;
 
           currentPlayer.answerStreak++;
+          if(currentPlayer.answerStreak > currentPlayer.highestStreak)
+            currentPlayer.highestStreak = currentPlayer.answerStreak;
+
           //calculate score
           let reward = common.getReward(currentRoom,
             currentRoom.quiz.questions[currentPlayer.questionCounter]);
+
+          //add score
+          console.log(currentPlayer);
+          console.log(common.calculateScore(
+            reward, currentPlayer.timeStart, Date.now(), currentPlayer.answerStreak));
+          console.log(currentPlayer.score + common.calculateScore(
+                      reward, currentPlayer.timeStart, Date.now(), currentPlayer.answerStreak));
           currentPlayer.score += common.calculateScore(
-            reward, currentPlayer.time, Date.now(), currentPlayer.answerStreak);
+            reward, currentPlayer.timeStart, Date.now(), currentPlayer.answerStreak);
 
           currentPlayer.answerable = true;  //just in case
+          currentPlayer.questionCounter++;
 
           //finished the last question
           if(currentPlayer.questionCounter >= currentRoom.quiz.questions.length) {
             currentPlayer.completed = true;
             currentPlayer.answerable = false; //do not process answer submits anymore
             currentRoom.completedPlayers.push(data.id);
-            if(currentRoom.completedPlayers >= currentRoom.playerCount) {
+            if(currentRoom.completedPlayers.length >= currentRoom.playerCount) {
               //get time to finish for every player
               let speed = {};
               for(let player in currentRoom.players) {
                 if(currentRoom.players.hasOwnProperty(player)) {
-                  speed[player] = currentRoom.players[answerTime];
+                  speed[player] = currentRoom.players.answerTime;
                 }
               }
+              let ta = common.calculateTitles(currentRoom);
+
+              deleteUnnecessary(currentPlayer);
+              common.storeResults(dbConn, currentRoom.players);
               return {  //if all players completed
                 'game': C.GAME_RES.GAME_END,
-                'completedPlayers' : currentRoom.completedPlayers,
+                'titlesAndAchievenments' : ta,
+                'roundEndResults' : common.roundEndResults(currentRoom.players, 'answerTime'),
                 'speed' : speed,
                 'sendTo': C.SEND_TO.ROOM,
                 'roomNo': data.roomNo
               }
             } else {  //send player finish event
+              deleteUnnecessary(currentPlayer);
               sendToServer(conn, {
                 'game': C.GAME_RES.PLAYER_FINISH,
                 'completedPlayers' : currentRoom.completedPlayers,
@@ -133,10 +154,14 @@ module.exports = async function(input) {
             return sendNextQuestion(currentRoom, currentPlayer, data);
           }
         } else {  //wrong answer
-          currentPlayer.answerable = false;
-          currentPlayer.timer = setTimeout(() => {  //3 second penalty on wrong answer
-            currentPlayer.answerable = true;
-          }, 3000);
+          currentPlayer.wrongAnswers++;
+          currentPlayer.answerStreak = 0;
+          if(currentPlayer.answerable) {
+            currentPlayer.answerable = false;
+            currentPlayer.timer = setTimeout(() => {  //3 second penalty on wrong answer
+              currentPlayer.answerable = true;
+            }, 3000);
+          }
           return {
             'game': C.GAME_RES.WRONG_ANSWER,
             'sendTo': C.SEND_TO.USER,
@@ -162,7 +187,6 @@ module.exports = async function(input) {
   Version of sendQuestion for race mode
 */
 function sendNextQuestion(currentRoom, currentPlayer, data) {
-  currentPlayer.questionCounter++;
   currentPlayer.answerable = true;
 
   //set timer for time taken to a correct answer
@@ -178,4 +202,14 @@ function sendNextQuestion(currentRoom, currentPlayer, data) {
     'roomNo': data.roomNo,
     'targetId' : data.id
   }
+}
+
+function deleteUnnecessary(currentPlayer) {
+  delete currentPlayer.answerStreak;
+  delete currentPlayer.timeStart;
+  delete currentPlayer.answerable;
+  delete currentPlayer.questionCounter;
+  delete currentPlayer.completed;
+  currentPlayer.answerTime =
+    Math.round((currentPlayer.answerTime + 0.00001) * 100) / 100; //2 d.p.
 }

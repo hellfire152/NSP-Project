@@ -5,56 +5,71 @@
 */
 
 const uuid = require('uuid');
-module.exports = function(cipher, appConn, C) {
+module.exports = function(cipher, appConn, C, cookieValidator) {
   return function(req, res) {
 
-    // check name + description not empty, ' ' -> id
-    // req.checkBody('prompt', 'Prompt must be specified').notEmpty().isString;
-    // req.checkBody('shortAns', 'Solution must be specified').notEmpty().isString;
-    //
-    // req.sanitize('prompt').escape();
-    // req.sanitize('shortAns').escape();
-    // req.sanitize('prompt').trim();
-    // req.sanitize('shortAns').trim();
-    //
+    var botCheck = req.body._bot;
+    var userIP = req.connection.remoteAddress;
+    var userInfo = req.cookies.user_info;
 
-    console.log(req.body);
-    var dataObj = JSON.parse(req.body.quizSet);
+    console.log(userInfo);
 
-      console.log("Data: ");
-      dataObj.quiz.quiz_rating = 0; //Default
-      dataObj.quiz.reward = parseInt(dataObj.quiz.reward);
-      dataObj.quiz.user_id = req.cookies.user_info.user_id;
+    appConn.send({
+      // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+      'type':C.REQ_TYPE.DATABASE,
+      'data': {
+        type : C.DB.SELECT.BANNED_IP,
+        ip_address : userIP
+      }
+    }, (checkBannedResponse) => {
+      if(checkBannedResponse.data.success){ //IP banned
+        res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
+        res.end();
+      }
+      else{
+        if(botCheck !== ''){
+          console.log("BOT DETECTED");
+          appConn.send({
+            // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,
+            'type':C.REQ_TYPE.DATABASE,
+            'data': {
+              type : C.DB.CREATE.BANNED_IP,
+              ip_address : userIP
+            }
+          }, (response) => {
+            res.sendErrorPage("IP BLOCKED PLEASE CONTACT ADMIN");
+            res.end();
+          });
+        }
+        else{
 
-      // cipher.encryptJSON({
-      //
-      //   "type": req.body.type,
-      //   "prompt": req.body.prompt
-      // })
-      //   .catch(function (err) {
-      //     throw new Error('Error parsing JSON!');
-      //   })
-      //   .then(function(cookieData) {
-      //   res.cookie('login', cookieData, {"maxAge": 1000*60*60});
-      // var prompt = req.body.prompt;
-      // var type = req.body.type;
-      // var choices = req.body.choices;
-      // var solution = req.body.solution;
-      // var shortAns = req.body.shortAns;
-      // var time = req.body.time;
-      // var reward = req.body.reward;
-      // var penalty = req.body.penalty;
-        // res.redirect('/add-question?prompt=' +req.body.prompt);
-        appConn.send({
-          'type': C.REQ_TYPE.DATABASE,
-          'data': {
-            type : C.DB.CREATE.QUIZ,
-            quiz : dataObj.quiz,
-            question : dataObj.question,
-            choices : dataObj.choices
+          if(!cookieValidator.validateCookie(userInfo)){
+            console.log("Cookie Modification detected");
+            res.clearCookie("user_info");
+            res.sendErrorPage("Cookie modification detected");
           }
-        }, (response) => {
-          res.redirect('add-quiz');
-        });
+          else{
+            var dataObj = JSON.parse(req.body.quizData);
+            console.log("Data: ");
+            dataObj.quiz.quiz_rating = 0; //Default
+            dataObj.quiz.reward = parseInt(dataObj.quiz.reward);
+            dataObj.quiz.user_id = userInfo.data.user_id;
+
+
+              appConn.send({
+                'type': C.REQ_TYPE.DATABASE,
+                'data': {
+                  type : C.DB.CREATE.QUIZ,
+                  quiz : dataObj.quiz,
+                  question : dataObj.question,
+                  choices : dataObj.choices
+                }
+              }, (response) => {
+                res.redirect('/profile');
+              });
+          }
+        }
+      }
+    });
       }
     };

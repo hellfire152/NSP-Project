@@ -9,28 +9,35 @@
   },
   "HTTPS" : {
     "CERT" : "./cert/certificate.pem",
-    "KEY" : "./cert/private.key"
+    "KEY" : "./cert/private.key",
+    "SHA256S" : ["+OXrVA6beQUiKkYfHdugBFg2cCVGBaIbKXBcLslYdIw=", "YbZx8m30dSsyzboOTAqeopR7qEjiDtopBF5mhApSnN8=="]
   },
   "COOKIE" : {
-    "CIPHERED" : ["login", "otp", "deviceIP", "user_info"],
+    "CIPHERED" : ["login", "otp", "deviceIP", "user_info", "tempToken", "temp_user_id"],
     "KEY" : "cookieKey",
-    "IV" : "cookieIv",
-    "MAPPINGS" : {
-      "login" : "asnsdavioasnviosanvoirviwh"
-    }
+    "IV" : "cookieIv"
   },
   "EMAIL" : {
     "SERVICE" : "gmail",
     "AUTH" : {
       "TYPE" : "OAuth2",
-      "USER" : "chloeangsl@gmail.com",
-      "CLIENT_ID" : "709561982297-oa3u5nha1eue2aohv5966cdgp60evqb6.apps.googleusercontent.com",
-      "CLIENT_SECRET" : "aDT6KfKpSItfcGyHzsPQiOza",
-      "REFRESH_TOKEN" : "1/1GVyLb8PTdvJ7pOcoNGgFfyy57RlukHB6UJ_W22UTV4",
-      "ACCESS_TOKEN" : "ya29.GluLBIxQYjPTkuJBqVhtWukxOUB4HCKjfYIFNuNtNiEK0P_xFvttlL2Z61ezv4cvCGUYB-RP4nKkFuzXFtY_OfaHQYZi_Zl3RxaMpEhGCScsc7vYxk1kZSz-MFtV"
+      "USER" : "exquizit2017@gmail.com",
+      "PASS" : "2017Exquizit"
     }
   },
+
+  "INCLUDE_CSRF_TOKEN" : ["host-form", "join-room", "otp", "student-login","teacher-login","spam", "ForgetPassword", "otp-ForgetPassword", "ChangePassword" , "Home", "CreateQuiz", "change-password"],
+  "REQUIRE_VALID_LOGIN" : ["CreateQuiz", "host", "play", "report", "hostreport", "forgetpassword", "user-home", "change-password"],
+  "NO_SIMULTANEOUS_HOST_JOIN" : false,
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
-  "AUTH_BYPASS" : true
+  "USE_TEST_ACCOUNT" : false,
+  "TEST_ACCOUNTS" : [{
+    "username" : "qingxi1"
+    }, {
+      "username" : "qingxi2"
+      }, {
+        "username" : "qingxi3"
+        }],
+  "AUTH_BYPASS" : false
 }

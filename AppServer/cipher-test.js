@@ -10,12 +10,6 @@ let c = new Cipher({
   'iv' : 'abc'
 });
 
-c.encrypt('abc')
-  .then(cipher => {
-    console.log(cipher);
-    c.iv = 'bcd';
-    c.encrypt('bcd')
-      .then(cipher => {
-        console.log(cipher);
-      });
-  })
+let a = c.xorString("sdfsadfasdF", 'SDFASDFASDFSAD');
+console.log(a);
+console.log(c.hash(a));

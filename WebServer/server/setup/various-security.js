@@ -13,47 +13,30 @@ var app, helmet, C, S;
 
   Author: Qing Ning
 */
-//variable to store socket data
-var connections = {};
-
-function checkMultipleOnSameMachine(req, res, next) {
-  //get ip and port
-
-  //IF CONNECTION EXISTS
-    //block connection
-    //remove login cookie
-    //send error page
-  //ELSE (no other session exists)
-    //store into the object
-    //call --> next();
-    next();
-}
-
 /**PUT SOME COMMENTS**/
 function attachCsrfToken(req, res, next){
   res.locals.csrfTokenFunction = req.csrfToken;
+  // console.log(res.locals.csrfTokenFunction);
   next();
 }
 
 function invalidCsrfToken(err, req, res, next){
-
-  if (err.code !== 'EBADCSRFTOKEN') return next(err)
-
-  // handle CSRF token errors here
-  res.status(403)
-  res.send('session has expired or form tampered with ')
+  if (err.code === 'EBADCSRFTOKEN') {
+    res.sendErrorPage('Invalid CSRF token!');
+  }
+  next(err);
 }
 
 module.exports = function(data) {
   ({app, helmet, C, S} = data);
 
-  /***PUT YOUR APP.USE HERE***/
-  app.use(checkMultipleOnSameMachine);
-  // app.use(helmet.hpkp({
-  //   maxAge: 1000 * 60 * 5, //5 minutes, for testing
-  //   sha256s: [/*TODO::Generate public key*/]
-  // }));
-
+  app.use(helmet()); //adds a bunch of security features
+  app.use(invalidCsrfToken);
+  app.use(helmet.hpkp({
+    'maxAge' : 1000 * 60 * 5, //5 minutes
+    'sha256s' : S.HTTPS.SHA256S
+  }));
+  //app.use(attachCsrfToken);
   return { //in case there's any function you need outside here
   }
 }

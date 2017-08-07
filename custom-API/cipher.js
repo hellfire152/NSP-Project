@@ -62,14 +62,15 @@ class Cipher {
     var plainText = "";
     var cipherTextBlock = _splitCipherBlock(cipher);
     var subIv = _newIv(this._iv);
-    for(let cipherBlock of cipherTextBlock){
-      var cipherBlockWithIv = _decryptBlock(cipherBlock, this._algorithm, this._password);
-      var encodedBlockWithIv = _encode(cipherBlockWithIv, this._plainTextBlockSize);
-      var encodedBlock = _xor(encodedBlockWithIv[0], subIv);
-      var plainTextBlock = _decode(encodedBlock);
-      subIv = _newIv(cipherBlock);
-      plainText += plainTextBlock;
-    }
+    if(cipherTextBlock !== null)
+      for(let cipherBlock of cipherTextBlock){
+        var cipherBlockWithIv = _decryptBlock(cipherBlock, this._algorithm, this._password);
+        var encodedBlockWithIv = _encode(cipherBlockWithIv, this._plainTextBlockSize);
+        var encodedBlock = _xor(encodedBlockWithIv[0], subIv);
+        var plainTextBlock = _decode(encodedBlock);
+        subIv = _newIv(cipherBlock);
+        plainText += plainTextBlock;
+      }
     return plainText;
   }
 
@@ -118,7 +119,8 @@ class Cipher {
       for (let key in cipher) {
         if (cipher.hasOwnProperty(key)) {
           if(await _allow (key)){
-            if(cipher[key] !== null){
+            if(cipher[key] != null){
+              if(cipher[key] == null) console.log("ASF");
               cipher[key] = await this.decrypt(cipher[key]);
             }
           }
@@ -131,7 +133,7 @@ class Cipher {
   }
 
   //Hash value with SHA256
-  async hash(input) {
+  hash(input) {
     var hash =  crypto.createHash('SHA256').update(input).digest('base64');
     return hash;
   }
@@ -166,6 +168,10 @@ class Cipher {
 
   set password(p) {
     this._password = p;
+  }
+
+  get password() {
+    return this._password;
   }
 
   set iv(p) {
@@ -265,7 +271,7 @@ function _splitCipherBlock(cipher){
 
 //Data with the column name stated below will be encrypted
 var allowedValues = ["prompt", "solution", "choices", "password_hash", "dbPass",
-  "salt", "school", "organisation", "email", "about_me", "student_category", "username", "name", "contact"];
+  "salt", "school", "organisation", "email", "about_me", "student_category", "name", "contact"];
 function _allow(key){
   return (allowedValues.indexOf(key) >= 0)? true : false;
 }

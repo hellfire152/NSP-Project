@@ -1,0 +1,168 @@
+doctype html
+html
+  head
+    title
+    link(rel='stylesheet', type='text/css', href='/resources/css/LoginTest.css')
+    link(rel='stylesheet', href='/resources/css/font-awesome.min.css')
+    script.
+      var tim = 0;
+      function reload () {
+      tim = setTimeout("location.reload(true);",60000);   // 1 minute
+      }
+      function canceltimer() {
+      window.clearTimeout(tim);  // cancel the timer on each mousemove/click
+      reload();  // and restart it
+      }
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.js')
+    script(src='https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js')
+    script.
+      jQuery.validator.addMethod('checkphone', function(value){
+      if(/^[9|8|6][0-9]{7}$/.test(value)){
+      return true;
+      } else{
+      return false;
+      };
+      }, 'Please enter a valid phone number');
+    script.
+      $(function(){
+      $("#login").validate({
+      rules:{
+      username:{
+      required:true,
+      minlength:5
+      },
+      password:{
+      required:true,
+      minlength:8
+      }
+      },
+      messages:{
+      username:{
+      required: "Please enter username",
+      minlength:"Your username must consist atleast 5 characters"
+      },
+      password:{
+      required: "Please enter password",
+      minlength:"Your password must consist atleast 8 characters"
+      },
+      }
+      });
+      });
+
+    script.
+      $(function(){
+      $('#register-student').validate({
+      rules:{
+      name:{
+      required:true,
+      minlength:5
+      },
+      lusername:{
+      required:true,
+      minlength:5
+      },
+      lpassword:{
+      required:true,
+      minlength:8
+      },
+      cpassword:{
+      required:true,
+      minlength:8,
+      equalTo:"#lpassword"
+      },
+      number:{
+      checkphone:true
+      },
+      email:{
+      required:true,
+      email:true
+      },
+      DOB:{
+      required:true,
+      date:true
+      },
+      school:{
+      required:true,
+      minlength:3
+      }
+      },
+      messages:{
+      name:{
+      required: "Please enter name",
+      minlength:"Your name must consist atleast 5 characters"
+      },
+      lusername:{
+      required: "Please enter username",
+      minlength:"Your username must consist atleast 5 characters"
+      },
+      lpassword:{
+      required: "Please enter password",
+      minlength:"Your password must consist atleast 8 characters"
+      },
+      cpassword:{
+      required:"Please enter password",
+      minlength:"Your password must consist atleast 8 characters",
+      equalTo:"Passwords not match"
+      },
+      email:{
+      required:"Please enter email",
+      email:"Please enter a valid email"
+      },
+      DOB:{
+      required:"Please enter your birthdate",
+      date:"Please enter a valid date"
+      },
+      school:{
+      required:"Please enter your school",
+      minlength:"Please enter a valid school"
+      }
+      }
+      });
+      });
+  body(onmousemove='canceltimer();', onclick='canceltimer();')
+    .pen-title(style='margin-top:80px;')
+    // Form Module
+    .module.form-module
+      .toggle
+        i.fa.fa-times.fa-pencil
+        .tooltip Click Me
+      .form
+        h2 Login to your account
+        form#login(method='POST', action='/login')
+          input(type='hidden', name='_csrf', value=`${csrfToken}`)
+          input#bot(type='hidden', name='_bot')
+          input#username.form-control(type='text', placeholder='Username', name='username', autocomplete='off')
+          input#password.form-control(type='password', placeholder='Password', name='password', autocomplete='off')
+          input.button(type='submit', name='login', value='Login')
+      .form
+        h2 Create an account
+        form#register-student(method='post' action='/student-register')
+          input(type='hidden', name='_csrf', value=`${csrfToken}`)
+          input#bot(type='hidden', name='_bot')
+          input#name.form-control(type='text', placeholder='Name', name='name' autocomplete='off')
+          input#lusername.form-control(type='text', placeholder='Username', name='lusername',autocomplete='off')
+          input#lpassword.form-control(type='password', placeholder='Password', name='lpassword',autocomplete='off')
+          input#cpassword.form-control(type='password', placeholder='Confirm-Password', name='cpassword',autocomplete='off')
+          input#email.form-control(type='email', placeholder='Email Address', name='email',autocomplete='off')
+          input#DOB.form-control(type='date', placeholder='Date of Birth', name='DOB',autocomplete='off')
+          input#school.form-control(type='text', placeholder='school', name='school',autocomplete='off')
+          input#number.checkphone.form-control(type='text', placeholder='Phone Number', name='number',autocomplete='off')
+          input.button(type='submit', name='register', value='Register')
+      .cta
+        a(href='/ForgetPassword') Forgot your password
+        |  
+        a(href='/teacher-login')  Login as teacher 
+    script(type='text/javascript').
+      // Toggle Function
+      $('.toggle').click(function(){
+      // Switches the Icon
+      $(this).children('i').toggleClass('fa-pencil');
+      // Switches the forms
+      $('.form').animate({
+      height: "toggle",
+      'padding-top': 'toggle',
+      'padding-bottom': 'toggle',
+      opacity: "toggle"
+      }, "slow");
+      });

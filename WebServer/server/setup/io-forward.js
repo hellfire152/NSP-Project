@@ -25,6 +25,7 @@ module.exports = function(data) {
     socket.on('disconnect', () => {
       console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
       delete socketOfUser[socket.userId];
+      socket.handshake.session.hosting = socket.handshake.session.joining = false;
       appConn.send({
         'special': C.SPECIAL.SOCKET_DISCONNECT,
         'id': socket.userId,
@@ -35,15 +36,25 @@ module.exports = function(data) {
     /**CHECK MULTIPLE ON SAME MACHINE**/
 
     try {
-      let loginCookie = await getLoginCookieS(socket, cookieCipher, cookie);
-      console.log("SOCKET IO CONNECTION INITIATED BY");
-      console.log(loginCookie);
-      if(socketOfUser[loginCookie.id] !== undefined) { //if user with that id already exists
-        console.log('User with that ID already logged in!');
+      //let loginCookie = await getLoginCookieS(socket, cookieCipher, cookie);
+      let s = socket.handshake.session;
+      console.log(s);
+      if(!s.validLogin || !(s.hosting ^ s.joining)) { //not logged in or not hosting or joining
+        console.log('Invalid connection!');
         socket.disconnect();
+      } else {
+        if(s.hosting) s.hosting = false;
+        if(s.joining) s.joining = false;
+        let id = s.username;
+        console.log("SOCKET IO CONNECTION INITIATED BY");
+        console.log(id);
+        if(socketOfUser[id] !== undefined) { //if user with that id already exists
+          console.log('User with that ID already logged in!');
+          socket.disconnect();
+        }
+        socketOfUser[id] = socket;
+        socket.userId = id;
       }
-      socketOfUser[loginCookie.id] = socket;
-      socket.userId = loginCookie.id;
     } catch (err) {
       console.log(err);
       console.log("Invalid login cookie detected");
@@ -55,16 +66,11 @@ module.exports = function(data) {
     socket.on('send', async function(input){ //from user
       try {
         var data = JSON.parse(input);
-        console.log("User to WebServer: ");
+        console.log("User to WebServer (SOCKET): ");
         console.log(data);
-        if (data.sendLoginCookie) {  //Sends the cookie data as well.
-          let cookieData = await getLoginCookieS(socket, cookieCipher, cookie);
-          data.cookieData = cookieData;
-        }
 
-        data.id = socket.userId;  //add userId to the sent data
+        data.id = socket.userId;  //add userId to  the sent data
         data.roomNo = socket.roomNo; //add roomNo (if applicable)
-
         appConn.send(data, null);
       } catch (err) {
         console.log(err);
@@ -74,35 +80,53 @@ module.exports = function(data) {
     });
   });
 
+  appConn.encBuffer = "";
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
-    let response = await decryptResponse(input);
-    logResponse(response);
+    console.log("APP RAW");
+    console.log(input);
     try {
-      if(response.special !== undefined){ //handling special stuff
-        await handleSpecialResponse({
-          'pendingResponses' : pendingResponses,
-          'response' : response,
-          'io' : io,
-          'C' : C,
-          'socketObj' : io.sockets.sockets,
-          'socketOfUser' : socketOfUser
-        });
-      } else {  //others
-        if(response.sendTo !== undefined) {
-          await handleIoResponse({
-            'response' : response,
-            'io' : io,
-            'C' : C,
-            'socketObj' : io.sockets.sockets,
-            'socketOfUser' : socketOfUser
-          });
-        }
-        runCallback(response);
+      let responses;
+      if(appConn.encBuffer.length > 0) {
+        responses = await decryptResponse(appConn.encBuffer + input);
+        appConn.encBuffer = "";
+        console.log("CLEAR BUFFER");
+      } else {
+        responses = await decryptResponse(input);
       }
-    } catch (err) {
-      console.log(err);
-      console.log('Error Processing AppServer to WebServer input!');
+      for(let response of responses) {
+        logResponse(response);
+        try {
+          if(response.special !== undefined){ //handling special stuff
+            await handleSpecialResponse({
+              'pendingResponses' : pendingResponses,
+              'response' : response,
+              'io' : io,
+              'C' : C,
+              'socketObj' : io.sockets.sockets,
+              'socketOfUser' : socketOfUser
+            });
+          } else {  //others
+            if(response.sendTo !== undefined) {
+              await handleIoResponse({
+                'response' : response,
+                'io' : io,
+                'C' : C,
+                'socketObj' : io.sockets.sockets,
+                'socketOfUser' : socketOfUser
+              });
+            }
+            runCallback(response);
+          }
+        } catch (err) {
+          console.log(err);
+          console.log('Error Processing AppServer to WebServer input!');
+        }
+      }
+    } catch (e) {
+      console.log(e);
+      console.log("OVER BUFFER SIZE");
+      appConn.encBuffer += input;
     }
   });
 }
@@ -115,6 +139,13 @@ var handleSpecialResponse = require('./special-response.js');
 async function getLoginCookieS(socket, cookieCipher, cookie) {
   let cookieData = await cookieCipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).login));
   console.log("decryptedLoginCookie");
+  console.log(cookieData);
+  return cookieData;
+}
+// get game cookie (for socket.io)
+async function getGameCookieS(socket,cookieCipher,cookie) {
+  let cookieData = await cookieCipher.decryptJSON((cookie.parse(socket.handshake.headers.cookie).game));
+  console.log("decryptedGameCookie");
   console.log(cookieData);
   return cookieData;
 }

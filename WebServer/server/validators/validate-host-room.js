@@ -5,37 +5,27 @@
 */
 
 const uuid = require('uuid');
-module.exports = function(cookieCipher, appConn) {
+module.exports = function(cipher, appConn) {
   return function(req, res) {
     req.checkBody('id', 'Username must be specified').notEmpty();
-    req.checkBody('pass', 'Password must be specified').notEmpty();
     req.checkBody('quizId', 'Room ID must be specified').notEmpty();
 
     req.sanitize('id').escape();
-    req.sanitize('pass').escape();
     req.sanitize('quizId').escape();
     req.sanitize('id').trim();
-    req.sanitize('pass').trim();
     req.sanitize('quizId').trim();
 
     var errors = req.validationErrors();
 
     if(errors) {
-      //TODO::Handle errors
+      res.sendErrorPage('Invalid form input!');
     } else {
-      console.log("HOST FORM DATA: ");
-      console.log(req.body);
-      cookieCipher.encryptJSON({
-        "id": req.body.id,
-        "pass": req.body.pass
-      })
-        .catch(function (err) {
-          throw new Error('Error parsing JSON!');
-        })
-        .then(function(cookieData) {
-        res.cookie('login', cookieData, {"maxAge": 1000*60*60}); //one hour
-        res.redirect('/host?quizId=' +req.body.quizId);
-      });
+      req.session.hosting = true;
+      setTimeout(() => {
+        req.session.hosting = undefined;
+      }, 5000);
+      req.session.username = req.body.id;
+      res.redirect('/host?quizId=' + req.body.quizId);
     }
   }
 }

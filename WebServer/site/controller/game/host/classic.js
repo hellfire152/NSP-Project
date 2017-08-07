@@ -1,5 +1,7 @@
 /*
   handleGame function for the classic gamemode (HOST)
+
+  Author: Jin Kuan
 */
 const MCQ_NO_TO_LETTER = {
   8: 'A',
@@ -18,10 +20,10 @@ var currentQuestion;
 var firstQuestion = true;
 console.log('HOST: Loaded: classic gamemode handler!');
 function handleGame(response) {
-  if(firstQuestion) initHost();
   console.log('HOST: Handling game response!');
   switch(response.game) {
     case C.GAME_RES.GET_READY: {
+      initHost();
       document.getElementById('get-ready').style.display = true;
     }
     case C.GAME_RES.ANSWER_CHOSEN: {
@@ -40,7 +42,8 @@ function handleGame(response) {
     case C.GAME_RES.RESPONSE_DATA: {
       document.getElementById('current-question').style.display = 'block';
       //clear response list
-      document.getElementById('response-list').innerHTML = "";
+      if(currentQuestion.type == 0)
+        document.getElementById('response-list').innerHTML = "";
       //add the response data
       for(let i = 0; i < response.responseData.labels.length; i++) {
         let choiceLi =
@@ -74,19 +77,31 @@ function handleGame(response) {
       //show ranking
       let rankingList = document.getElementById('game-ranking');
       rankingList.innerHTML = "";
+      rankingList.appendChild(
+        createNode('h1', 'Current Rankings:', 'header', 'game-ranking-header'));
       for(let player of response.roundEndResults) {
         let playerLi = document.createElement('div');
-        let name = createNode('p', player.name, 'ranking-name', null);
-        let score = createNode('p', player.score, 'ranking-score', null);
+        let name = createNode('p', `Name:\t${player.name}`, 'ranking-name', null);
+        let score = createNode('p', `Score:\t${player.score}`, 'ranking-score', null);
         let answerStreak = createNode('p', player.answerStreak, 'ranking-streak', null);
-        appendMultiple(playerLi, name, score, answerStreak);
+        let answerStreakIcon = createNode('img', null, 'ranking-streak-icon', null);
+        answerStreakIcon.src = '/resources/images/game/answer-streak-icon.png';
+        appendMultiple(playerLi, name, answerStreakIcon, answerStreak, score);
         rankingList.appendChild(playerLi);
       }
       answersObj = {}; //clear answersObj for next round
       break;
     }
     case C.GAME_RES.NEXT_QUESTION: {
-      document.getElementById('get-ready').style.display = 'none';
+      if(firstQuestion) {
+        firstQuestion = false;
+        document.getElementById('get-ready').style.display = 'none';
+      } else {
+        let nextButton = document.getElementById('next-button');
+        nextButton.parentNode.removeChild(nextButton);
+      }
+
+      currentQuestion = response.question;
 
       //hide the other divs and show the question one
       let currentQuestionDiv = document.getElementById('current-question');
@@ -123,21 +138,21 @@ function handleGame(response) {
           choiceCounter++;
         }
 
-        //add to the display
-        currentQuestionDiv.appendChild(responsesOl);
       }
+      //add to the display
+      currentQuestionDiv.appendChild(responsesOl);
 
       document.body.appendChild(currentQuestionDiv);
       break;
     }
     case C.GAME_RES.GAME_END: {
+      //hide the other divs
+      let nextButton = document.getElementById('next-button');
+      nextButton.parentNode.removeChild(nextButton);
+      document.getElementById('game-ranking').style.display = 'none';
+
       //show end results
-
-      //top rankings
-
-      //titles and achievements
-
-      //rating
+      gameEnd(response);
       break;
     }
     default: {
@@ -154,11 +169,12 @@ function handleGame(response) {
 function initHost() {
   let currentQuestionDiv = document.createElement('div');
   currentQuestionDiv.id = 'current-question';
-  firstQuestion = false;
 
   //init ranking stuff
   let gameRankingDiv = document.createElement('div');
   gameRankingDiv.id = 'game-ranking';
+  let rankingText = createNode('h1', 'Rankings:', 'header', 'game-ranking-header');
+  gameRankingDiv.appendChild(rankingText);
 
   gameRankingDiv.style.display =
     currentQuestionDiv.style.display = 'none';

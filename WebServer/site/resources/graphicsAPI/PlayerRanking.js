@@ -25,7 +25,7 @@ class PlayerRanking extends DisplayElement {
       let name = new PIXI.Text(data.name);
       let score = new PIXI.Text(data.score);
       let rank = new PIXI.Text(data.rank);
-      let correctAnswers = new PIXI.Text(data.correctAnswers + '/' + data.totalQuestions);
+      let correctAnswers = new PIXI.Text(data.correctAnswers + '/' + positionData.totalQuestions);
       let answerStreakIcon = new PIXI.Sprite(resources['answer-streak-icon'].texture);
       answerStreakIcon.width = answerStreakIcon.height = 40;
       let answerStreakText = new PIXI.Text(data.answerStreak);

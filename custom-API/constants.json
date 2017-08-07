@@ -23,6 +23,7 @@
     "SOCKET_DISCONNECT" : 500,
     "HOST_DISCONNECT": 501,
 
+    "CLEAR_ALL_GAME_COOKIE" : 502,
     "NULL": 0
   },
   "SEND_TO": {
@@ -95,11 +96,14 @@
     "ACCOUNT_LOGGED_IN":3
   },
   "DB" : {
+    "GET_ACCOUNT_DETAILS" : 1,
     "CREATE" : {
       "STUDENT_ACC" : 101,
       "TEACHER_ACC" : 102,
       "QUIZ" : 103,
-      "IP_ADDRESS" : 104
+      "IP_ADDRESS" : 104,
+      "SPAM_AREA" : 105,
+      "BANNED_IP" : 106
     },
     "SELECT" : {
       "ALL_QUIZ" : 201,
@@ -108,7 +112,13 @@
       "USER_ACCOUNT" : 204,
       "RETRIEVE_USER_DETAILS" : 205,
       "FULL_USER_ACCOUNT" : 206,
-      "EMAIL" : 207
+      "EMAIL" : 207,
+      "CHECK_ACCOUNT" : 208,
+      "TEMP_TOKEN" : 209,
+      "NEW_DEVICE_ID" : 210,
+      "ACCOUNT_DETAILS" : 211,
+      "LOG_QUIZ" : 212,
+      "BANNED_IP" : 213
     },
     "UPDATE" : {
       "PASSWORD" : 301,
@@ -119,7 +129,10 @@
       "NAME" : 306,
       "SCHOOL" : 307,
       "ORGANISATION" : 308,
-      "STUDENT_CATEGORY" : 309
+      "STUDENT_CATEGORY" : 309,
+      "CHANGE_PASSWORD" : 310,
+      "TEMP_TOKEN" : 311,
+      "STATS" : 312
     },
     "DELETE" : {
       "ACCOUNT" : 401,
@@ -159,6 +172,7 @@
     "DB_TWO_OR_MORE_ACCOUNT_DELETED" : 2007,
     "DB_NO_QUIZ_AVAILAVLE" : 2008,
     "DB_QUESTION_ID_NOT_FOUND" : 2009,
-    "DB_UNKNOWN" : 2010
+    "DB_UNKNOWN" : 2010,
+    "DB_UPDATE_FAILED" : 2011
   }
 }

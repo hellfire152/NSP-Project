@@ -6,6 +6,7 @@
   Author: Jin Kuan
 */
 //required modules
+var testAccountCounter = 0;
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var helmet = require('helmet');
@@ -14,7 +15,7 @@ var cookie = require('cookie');
 var ios = require('socket.io-express-session');
 var xssDefense = require('./server/setup/xss-defense.js');
 var emailServer = require('./server/setup/email.js');
-
+var csrfProtection = require('csurf')({'cookie' : false});
 var socketOfUser = {};
 setTimeout(() => {  //clear after 2 seconds (so no bugs on instant connection)
   socketOfUser = {};
@@ -51,17 +52,17 @@ module.exports = function(data) {
   //where the templates are located
   app.set('views', './site/views');
 
-  //Various middleware
   app.use(session);
   app.use(cookieParser(S.COOKIE_KEY));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(expressValidator());
   app.use("/", express.static(__dirname));
-  //app.use(helmet()); //adds a bunch of security features
-  app.use(helmet.noSniff()); // content type should not be changed or followed
-  app.use(helmet.frameguard("deny")); // prevent clickjacking - prevent others from putting our sites in a frame - not working **
-  app.use(helmet.xssFilter()); // protects against reflected XSS
+  //make sendErrorPage available for every request
+  app.use((req, res, next) => {
+    res.sendErrorPage = sendErrorPage;
+    next();
+  });
 
   //decrypt cookies
   app.use(async (req, res, next) => {
@@ -78,6 +79,32 @@ module.exports = function(data) {
     }
     next();
   });
+  //for the test account
+  if(S.USE_TEST_ACCOUNT) {
+    app.use((req, res, next) => {
+      //use the next test account for each new session
+      if(req.session.validLogin === undefined) {
+        req.session.validLogin = true;
+        let acc = S.TEST_ACCOUNTS[testAccountCounter++];
+        for(let attr in acc) {
+          if(acc.hasOwnProperty(attr)) {
+            req.session[attr] = acc[attr];
+          }
+        }
+      }
+      next();
+    });
+  }
+  //block access to some pages if not logged in
+  app.use((req, res, next) => {
+    if(S.REQUIRE_VALID_LOGIN.indexOf(req.path.substring(1)) >= 0
+        && !req.session.validLogin) { //not logged in
+      req.session.attemptedAccess = req.path;
+      res.redirect('/student-login');
+    } else next();  //proceed if logged in
+  })
+  app.use(csrfProtection);
+
 
   //implementing our own security stuff
   var security = require('./server/setup/various-security.js')({
@@ -89,6 +116,7 @@ module.exports = function(data) {
 
   //setting routes
   require('./server/setup/routes.js')({
+    'S' : S,
     'C' : C,
     'app' : app,
     'dirname' : __dirname,
@@ -98,7 +126,8 @@ module.exports = function(data) {
     'pendingAppResponses' : pendingAppResponses,
     'cookieCipher' : cookieCipher,
     'xssDefense' : xssDefense,
-    'emailServer' : emailServer
+    'emailServer' : emailServer,
+    'csrfProtection' : csrfProtection
   });
 
   //setting up the communication between the WebServer and AppServer
@@ -116,4 +145,13 @@ module.exports = function(data) {
     'logResponse' : logResponse,
     'runCallback' : runCallback
   });
+}
+
+function sendErrorPage(errormsg, link) {
+  this.render('error', {
+    'error': errormsg,
+    'link' : link
+  });
+  //stop anymore responses
+  this.end();
 }
