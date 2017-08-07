@@ -20,7 +20,7 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     script.
       var profile = !{JSON.stringify(profile)}
-  body(onload= 'displayProfile(profile)')
+  body(onload='displayProfile(profile)')
     // Hidden Header
     .header-hidden.collapse
       .header-hidden-inner.container
@@ -28,8 +28,7 @@ html
           .col-md-3
           .col-md-3
           .col-md-6
-            h3
-              | Choose A Theme
+            h3 Choose A Theme
             .switcher
               .cols
                 br
@@ -83,18 +82,13 @@ html
                 p#email.medium-small.grey-text Test
               .col.s2.center-align
                 h4.card-title.grey-text.text-darken-4
-                  | #{profile.student_category}
                 p.medium-small.grey-text Category
               .col.s2.center-align
-                h4#numOfQuiz.card-title.grey-text.text-darken-4
-                  | 5
-                p.medium-small.grey-text
-                  | Completed Quizzes
+                h4#numOfQuiz.card-title.grey-text.text-darken-4 5
+                p.medium-small.grey-text Completed Quizzes
               .col.s2.center-align
-                h4.card-title.grey-text.text-darken-4
-                  | 30/6/2017
-                p.medium-small.grey-text
-                  | Account dated
+                h4.card-title.grey-text.text-darken-4 30/6/2017
+                p.medium-small.grey-text Account dated
               .col.s1.right-align
                 a.btn-floating.activator.waves-effect.waves-light.darken-2.right
                   i.material-icons person_outline
@@ -122,7 +116,9 @@ html
         .card.aboutMe.deep-purple
           .card-content.white-text
             span.card-title About Me!
-            p #{profile.about_me}
+            a(href='', data-modal='#modal2')
+              span
+                i.material-icons border_color
         ul#profile-page-about-details.collection.z-depth-1
           li.collection-item
             .row
@@ -136,7 +132,7 @@ html
                 i.material-icons cake
                 |  Birth date
               .col.s7.grey-text.text-darken-4.right-align
-                span#DOB #{profile.date_of_birth}
+                span#DOB
         .card.center-align
           .card-content.cyan.white-text
             p.card-stats-title
@@ -149,6 +145,27 @@ html
               span.purple-text.text-lighten-5 last month
           .card-action.cyan.darken-2
             #sales-compositebar
+        .info
+          .buttons
+            a.modal__trigger(href='', data-modal='#modal2') Modal 2
+        #modal2.modal.modal--align-top.modal__bg(role='dialog', aria-hidden='true')
+          .modal__dialog
+            .modal__content
+              h1 Big Modal
+              h3 This modal is pretty tall.
+              p
+                | Selfies normcore four dollar toast four loko listicle artisan. Hoodie Marfa authentic, wayfarers church-key tofu Banksy pop-up Kickstarter Brooklyn heirloom swag synth. Echo Park cray synth mixtape. Tofu gastropub squid readymade, trust fund Wes Anderson DIY PBR 8-bit try-hard +1 Shoreditch lo-fi tote bag.
+              p
+                img(src='http://unsplash.it/600/300', alt='')
+              p
+                | Mumblecore cred selfies fingerstache. Tousled skateboard plaid lo-fi shabby chic salvia, swag Odd Future Etsy art party Austin cronut. Crucifix whatever Pinterest food truck, pickled viral cray 90's DIY chambray keffiyeh biodiesel Vice blog. Cred meh yr tofu.
+              p
+                | Mumblecore cred selfies fingerstache. Tousled skateboard plaid lo-fi shabby chic salvia, swag Odd Future Etsy art party Austin cronut. Crucifix whatever Pinterest food truck, pickled viral cray 90's DIY chambray keffiyeh biodiesel Vice blog. Cred meh yr tofu.
+              // modal close button
+              a.modal__close.demo-close(href='')
+                svg(viewbox='0 0 24 24')
+                  path(d='M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z')
+                  path(d='M0 0h24v24h-24z', fill='none')
       #main-div.col.s12.m8
         ul.tabs.indigo.accent-2.text-white
           li.tab.col.s3
@@ -156,94 +173,245 @@ html
           li.tab.col.s3
             a(href='#test2') Hosted Quizzes
           li.tab.col.s3
-            a(href='#test4') Overall Stats
+            a(href='#test3') Achievement
       #test1.col.s12.m8
         table#testTable.entity
           tbody
             tr.data-table
+              td Type
+              td Quiz Name
+              td Date Of Quiz
+              td Total Rating
               td
-                | Type
-              td
-                | Quiz Name
-              td
-                | Date Of Quiz
-              td
-                | Total Rating
-              td
-            tr.records
-              td
-                span.gameType.live C
-              td
-                span.quiz-name Ministries of Singapore
-              td
-                span.quiz-date 1 day ago
-              td
-                span.total-players 1
-              td.btn-cell
-                a.edit-btn(href='#')
-                  i.fa.fa-pencil(aria-hidden='true')
-                a.download-btn(href='#')
-                  span
-                    i.fa.fa-download(aria-hidden='true')
-                a.trash-btn(href='#')
-                  i.fa.fa-trash-o(aria-hidden='true')
-                button.btn.waves-effect.waves-light.view-btn(type='submit', name='action')
-                  | View
       #test2.col.s12.m8
         table#tableToExcel.entity
           tbody
             tr.data-table
+              td Type
+              td Quiz Name
+              td Date Of Quiz
+              td Total Rating
               td
-                | Type
-              td
-                | Quiz Name
-              td
-                | Date Of Quiz
-              td
-                | Total Rating
-              td
-            tr.records
-              td
-                | C
-              td
-                span.quiz-name Ministries of Singapore
-              td
-                span.quiz-date 1 day ago
-              td
-                span.total-players 1
-              td.btn-cell
-                a.edit-btn(href='#')
-                  i.fa.fa-pencil(aria-hidden='true')
-                a.download-btn(href='#')
-                  span
-                    i.fa.fa-download(aria-hidden='true')
-                a.trash-btn(href='#')
-                  i.fa.fa-trash-o(aria-hidden='true')
-                button.btn.waves-effect.waves-light.view-btn(type='submit', name='action')
-                  | View
-      #test4.col.s12.m8
-        #canvas-holder(style='width:40%')
-          canvas#chart-area
-      // / tabs
+      #test3.col.s12.m8
+        .col.m4
+          .card.center-align
+            .card-content.white-text.bronze-card
+              p.card-stats-title
+                i.mdi-editor-attach-money
+              img(src='/resources/images/Achievement/BronzeAchievment.png', width='60px')
+              p.card-stats-compare Bronze Achievement
+            .card-action.darken-2(style='background-color: #252A32')
+              #sales-compositebar
+        .col.m4
+          .card.center-align
+            .card-content.white-text.blue-grey
+              img(src='/resources/images/Achievement/SilverAchievement.png', width='60px')
+              p.card-stats-compare Silver Achievement
+            .card-action.blue-grey.darken-2
+              #sales-compositebar
+        .col.m4
+          .card.center-align
+            .card-content.white-text(style='background-color: #69f0ae;')
+              img(src='/resources/images/Achievement/GoldAchievement.png', width='60px')
+              p.card-stats-compare Gold Achievement
+            .card-action.green.accent-3
+              #sales-compositebar
+        .col.m4
+          .card.center-align
+            .card-content.indigo.white-text
+              img(src='/resources/images/Achievement/BronzeMarksMan.png', width='60px')
+              p.card-stats-compare Bronze Marksman
+            .card-action.indigo.darken-2
+              #sales-compositebar
+        .col.m4
+          .card.center-align
+            .card-content.pink.white-text
+              img(src='/resources/images/Achievement/SilverMarksMan.png', width='60px')
+              p.card-stats-compare Silver Marksman
+            .card-action.pink.darken-2
+              #sales-compositebar
+        .col.m4
+          .card.center-align
+            .card-content.red.white-text
+              img(src='/resources/images/Achievement/GoldMarksMan.png', width='60px')
+              p.card-stats-compare Gold Marksman
+            .card-action.red.darken-2
+              #sales-compositebar
+        .col.m4
+          .card.center-align
+            .card-content.yellow.white-text
+              img(src='/resources/images/Achievement/BronzeRace.png', width='60px')
+              p.card-stats-compare Bronze race
+            .card-action.yellow.darken-2
+              #sales-compositebar
+        .col.m4
+          .card.center-align
+            .card-content.brown.white-text
+              img(src='/resources/images/Achievement/SilverRace.png', width='60px')
+              p.card-stats-compare Silver Race
+            .card-action.brown.darken-2
+              #sales-compositebar
+        .col.m4
+          .card.center-align
+            .card-content.teal.white-text
+              img(src='/resources/images/Achievement/GoldRace.png', width='60px')
+              p.card-stats-compare Gold Race
+            .card-action.teal.darken-2
+              #sales-compositebar
+    // / tabs
     .fixed-action-btn.vertical
-      a.btn-floating.btn-large.red
+      a.btn-floating.btn-large.red(href='', data-modal='#modal2')
         i.large.material-icons mode_edit
-      ul
-        li
-          a.btn-floating.red
-            i.material-icons insert_chart
-        li
-          a.btn-floating.yellow.darken-1
-            i.material-icons format_quote
-        li
-          a.btn-floating.green
-            i.material-icons publish
-        li
-          a.btn-floating.blue
-            i.material-icons attach_file
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
     script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js')
     script(type='text/javascript', src='../controller/client-profile.js')
     script(type='text/javascript', src='../controller/Chart.js')
     script(type='text/javascript').
+      var Modal = (function() {
+      var trigger = $qsa('.modal__trigger'); // what you click to activate the modal
+      var modals = $qsa('.modal'); // the entire modal (takes up entire window)
+      var modalsbg = $qsa('.modal__bg'); // the entire modal (takes up entire window)
+      var content = $qsa('.modal__content'); // the inner content of the modal
+      var closers = $qsa('.modal__close'); // an element used to close the modal
+      var w = window;
+      var isOpen = false;
+      var contentDelay = 400; // duration after you click the button and wait for the content to show
+      var len = trigger.length;
+      // make it easier for yourself by not having to type as much to select an element
+      function $qsa(el) {
+      return document.querySelectorAll(el);
+      }
+      var getId = function(event) {
+      event.preventDefault();
+      var self = this;
+      // get the value of the data-modal attribute from the button
+      var modalId = self.dataset.modal;
+      var len = modalId.length;
+      // remove the '#' from the string
+      var modalIdTrimmed = modalId.substring(1, len);
+      // select the modal we want to activate
+      var modal = document.getElementById(modalIdTrimmed);
+      // execute function that creates the temporary expanding div
+      makeDiv(self, modal);
+      };
+      var makeDiv = function(self, modal) {
+      var fakediv = document.getElementById('modal__temp');
+      /**
+      * if there isn't a 'fakediv', create one and append it to the button that was
+      * clicked. after that execute the function 'moveTrig' which handles the animations.
+      */
+      if (fakediv === null) {
+      var div = document.createElement('div');
+      div.id = 'modal__temp';
+      self.appendChild(div);
+      moveTrig(self, modal, div);
+      }
+      };
+      var moveTrig = function(trig, modal, div) {
+      var trigProps = trig.getBoundingClientRect();
+      var m = modal;
+      var mProps = m.querySelector('.modal__content').getBoundingClientRect();
+      var transX, transY, scaleX, scaleY;
+      var xc = w.innerWidth / 2;
+      var yc = w.innerHeight / 2;
+      // this class increases z-index value so the button goes overtop the other buttons
+      trig.classList.add('modal__trigger--active');
+      // these values are used for scale the temporary div to the same size as the modal
+      scaleX = mProps.width / trigProps.width;
+      scaleY = mProps.height / trigProps.height;
+      scaleX = scaleX.toFixed(3); // round to 3 decimal places
+      scaleY = scaleY.toFixed(3);
+      // these values are used to move the button to the center of the window
+      transX = Math.round(xc - trigProps.left - trigProps.width / 2);
+      transY = Math.round(yc - trigProps.top - trigProps.height / 2);
+      // if the modal is aligned to the top then move the button to the center-y of the modal instead of the window
+      if (m.classList.contains('modal--align-top')) {
+      transY = Math.round(mProps.height / 2 + mProps.top - trigProps.top - trigProps.height / 2);
+      }
+      // translate button to center of screen
+      trig.style.transform = 'translate(' + transX + 'px, ' + transY + 'px)';
+      trig.style.webkitTransform = 'translate(' + transX + 'px, ' + transY + 'px)';
+      // expand temporary div to the same size as the modal
+      div.style.transform = 'scale(' + scaleX + ',' + scaleY + ')';
+      div.style.webkitTransform = 'scale(' + scaleX + ',' + scaleY + ')';
+      window.setTimeout(function() {
+      window.requestAnimationFrame(function() {
+      open(m, div);
+      });
+      }, contentDelay);
+      };
+      var open = function(m, div) {
+      if (!isOpen) {
+      // select the content inside the modal
+      var content = m.querySelector('.modal__content');
+      // reveal the modal
+      m.classList.add('modal--active');
+      // reveal the modal content
+      content.classList.add('modal__content--active');
+      /**
+      * when the modal content is finished transitioning, fadeout the temporary
+      * expanding div so when the window resizes it isn't visible ( it doesn't
+      * move with the window).
+      */
+      content.addEventListener('transitionend', hideDiv, false);
+      isOpen = true;
+      }
+      function hideDiv() {
+      // fadeout div so that it can't be seen when the window is resized
+      div.style.opacity = '0';
+      content.removeEventListener('transitionend', hideDiv, false);
+      }
+      };
+      var close = function(event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      var target = event.target;
+      var div = document.getElementById('modal__temp');
+      /**
+      * make sure the modal__bg or modal__close was clicked, we don't want to be able to click
+      * inside the modal and have it close.
+      */
+      if (isOpen && target.classList.contains('modal__bg') || target.classList.contains('modal__close')) {
+      // make the hidden div visible again and remove the transforms so it scales back to its original size
+      div.style.opacity = '1';
+      div.removeAttribute('style');
+      /**
+      * iterate through the modals and modal contents and triggers to remove their active classes.
+      * remove the inline css from the trigger to move it back into its original position.
+      */
+      for (var i = 0; i < len; i++) {
+      modals[i].classList.remove('modal--active');
+      content[i].classList.remove('modal__content--active');
+      trigger[i].style.transform = 'none';
+      trigger[i].style.webkitTransform = 'none';
+      trigger[i].classList.remove('modal__trigger--active');
+      }
+      // when the temporary div is opacity:1 again, we want to remove it from the dom
+      div.addEventListener('transitionend', removeDiv, false);
+      isOpen = false;
+      }
+      function removeDiv() {
+      setTimeout(function() {
+      window.requestAnimationFrame(function() {
+      // remove the temp div from the dom with a slight delay so the animation looks good
+      div.remove();
+      });
+      }, contentDelay - 50);
+      }
+      };
+      var bindActions = function() {
+      for (var i = 0; i < len; i++) {
+      trigger[i].addEventListener('click', getId, false);
+      closers[i].addEventListener('click', close, false);
+      modalsbg[i].addEventListener('click', close, false);
+      }
+      };
+      var init = function() {
+      bindActions();
+      };
+      return {
+      init: init
+      };
+      }());
+      Modal.init();

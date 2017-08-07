@@ -28,7 +28,7 @@ module.exports = function(data) {
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
-    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer), 
+    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer),
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, emailServer, xssDefense, cookieValidator),
     // 'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
