@@ -83,6 +83,8 @@ module.exports = function(data) {
   appConn.encBuffer = "";
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
+    console.log("APP RAW");
+    console.log(input);
     try {
       let responses;
       if(appConn.encBuffer.length > 0) {

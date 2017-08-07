@@ -447,6 +447,7 @@ function sendToServer(conn, json, encryption) {
   } else {
     conn.sendCipher.encrypt(JSON.stringify(json))
       .then((data) => {
+        console.log(`RAW: ${data}`);
         conn.write(data);
       });
   }
