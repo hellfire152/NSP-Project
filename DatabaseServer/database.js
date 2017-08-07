@@ -491,6 +491,19 @@ async function userDetails(userId, details, type){
       }
       sendToServer(response, inputData);
     }
+    var query2 = connection.query("INSERT INTO completed_quiz (user_id, name) VALUES (?)", userId, function(error, result){
+      if(error){
+        var response = {
+          data : {
+            success : false,
+            reason : C.ERR.DB_SQL_QUERY,
+            message : error
+          }
+        }
+        sendToServer(response, inputData);
+      }
+      return;
+    })
   });
 }
 
@@ -1984,6 +1997,16 @@ async function checkBannedIp(inputData){
       sendToServer(response, inputData);
     }
   })
+}
+
+async function updateCompletedQuiz(inputData){
+  var data = inputData.data;
+
+  var query = connection.query("", data.ip_address, function(error, result){
+}
+
+async function retrieveCompletedQuiz(inputData){
+
 }
 
 console.log("Listening on port 7070");
