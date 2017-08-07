@@ -18,6 +18,14 @@ module.exports = async function(input) {
 
   if(response.validLogin || !response.validating) {
     console.log("IO RESPONSE HANDLER");
+    if(response.game == C.GAME_RES.GAME_END) {
+      for(let p of response.roundEndResults) {
+        try {
+          let s = socketOfUser[p].handshake.session;
+          s.joining = s.hosting = s.inRoom = undefined;
+        } catch (e) {continue;}
+      }
+    }
     if(!(response.roomEvent === undefined)) { //if AppServer wants any operations with rooms
       switch(response.roomEvent) {
         case C.ROOM_EVENT.JOIN : {

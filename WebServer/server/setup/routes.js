@@ -172,7 +172,6 @@ module.exports = function(data) {
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
       res.sendErrorPage("Argument Error!");
     } else if(gameSessionCheck(req, true) && !req.session.inRoom) {
-      req.session.inRoom = true;
       //check for login cookie
       if(req.session.validLogin) {
         let roomNo = req.query.room;
@@ -188,6 +187,7 @@ module.exports = function(data) {
               }
             }
           } else {
+            req.session.inRoom = true;
             res.render('play', {
               'roomNo' : response.roomNo,
               'gamemode' : response.gamemode,
@@ -210,7 +210,6 @@ module.exports = function(data) {
       res.sendErrorPage('Argument error!');
     } else if(gameSessionCheck(req, false)) {
       if(req.session.validLogin) {
-        req.session.inRoom = true;
         let quizId = req.query.quizId;
         appConn.send({
           'type' : C.REQ_TYPE.HOST_ROOM,
@@ -223,6 +222,7 @@ module.exports = function(data) {
               res.sendErrorPage(e);
             }
           } else {  //no error
+            req.session.inRoom = true;
             req.session.hosting = true;
             res.render('host', {
               'roomNo' : response.roomNo
