@@ -16,6 +16,6 @@
   "CONSTANTS" : "../custom-API/constants.json",
   "CIPHER" : "../custom-API/cipher.js",
   "DH_KEY_LENGTH" : 2048,
-  "LOG_RAW" : false,
-  "AUTH_BYPASS" : true
+  "LOG_RAW" : true,
+  "AUTH_BYPASS" : false
 }

@@ -78,37 +78,48 @@ module.exports = function(data) {
     });
   });
 
+  appConn.encBuffer = "";
   //from AppServer to WebServer
   appConn.on('data', async function(input) { //from app server
-    let responses = await decryptResponse(input);
-    for(let response of responses) {
-      logResponse(response);
-      try {
-        if(response.special !== undefined){ //handling special stuff
-          await handleSpecialResponse({
-            'pendingResponses' : pendingResponses,
-            'response' : response,
-            'io' : io,
-            'C' : C,
-            'socketObj' : io.sockets.sockets,
-            'socketOfUser' : socketOfUser
-          });
-        } else {  //others
-          if(response.sendTo !== undefined) {
-            await handleIoResponse({
+    try {
+      let responses;
+      if(appConn.encBuffer.length > 0) {
+        responses = await decryptResponse(appConn.encBuffer + input);
+        appConn.encBuffer = "";
+      } else {
+        responses = await decryptResponse(input);
+      }
+      for(let response of responses) {
+        logResponse(response);
+        try {
+          if(response.special !== undefined){ //handling special stuff
+            await handleSpecialResponse({
+              'pendingResponses' : pendingResponses,
               'response' : response,
               'io' : io,
               'C' : C,
               'socketObj' : io.sockets.sockets,
               'socketOfUser' : socketOfUser
             });
+          } else {  //others
+            if(response.sendTo !== undefined) {
+              await handleIoResponse({
+                'response' : response,
+                'io' : io,
+                'C' : C,
+                'socketObj' : io.sockets.sockets,
+                'socketOfUser' : socketOfUser
+              });
+            }
+            runCallback(response);
           }
-          runCallback(response);
+        } catch (err) {
+          console.log(err);
+          console.log('Error Processing AppServer to WebServer input!');
         }
-      } catch (err) {
-        console.log(err);
-        console.log('Error Processing AppServer to WebServer input!');
       }
+    } catch (e) {
+      appConn.encBuffer += input;
     }
   });
 }

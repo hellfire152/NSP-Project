@@ -351,11 +351,25 @@ dbConn.send = (reqObj, callback, encryption) => {
 };
 
 //Recieve data from database and run callback
+dbConn.encBuffer = "";
 dbConn.on('data', async function(inputData) {
-  let data = await decryptResponse(inputData);
-  for(let d of data) {
-    logResponse(d);
-    runCallback(d);
+  if(S.LOG_RAW) {
+    console.log(`DATABASE RAW: ${inputData}`);
+  }
+  try {
+    if(dbConn.encBuffer.length > 0) {
+      data = await decryptResponse(dbConn.encBuffer + inputData);
+      dbConn.encBuffer = "";
+    } else {
+      data = await decryptResponse(inputData);
+    }
+    console.log(data);
+    for(let d of data) {
+      logResponse(d);
+      runCallback(d);
+    }
+  } catch (e) {
+    dbConn.encBuffer += inputData;
   }
 });
 
@@ -402,9 +416,7 @@ if(!S.AUTH_BYPASS) {
                 delete dbConn.secret; //or this
                 delete dbConn.dh //or that
                 delete dbConn.dhKey //EXTERRRRMINATE
-
-                //remove all listeners, initServer will add them as needed
-                dbConn.removeAllListeners('data');
+                console.log(r);
                 initServer();
               }
             }, 'aes');

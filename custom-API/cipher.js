@@ -170,6 +170,10 @@ class Cipher {
     this._password = p;
   }
 
+  get password() {
+    return this._password;
+  }
+
   set iv(p) {
     this._iv = p;
   }

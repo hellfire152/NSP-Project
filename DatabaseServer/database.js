@@ -373,10 +373,12 @@ async function sendToServer(response, inputData, encryption) {
     console.log("NO ENCRYPTION");
     appConn.write(JSON.stringify(response));
   } else {
-    appConn.sendCipher.encrypt(JSON.stringify(response))
-      .then((data) => {
-        appConn.write(data);
-      });
+    console.log("AES ENCRYPTED");
+    console.log(response);
+    let stuff = await appConn.sendCipher.encrypt(JSON.stringify(response));
+    console.log(stuff);
+    console.log(`PASSWORD: ${appConn.sendCipher.password}`);
+    appConn.write(""+stuff);
   }
 }
 
