@@ -6,7 +6,7 @@ rem Decrypting the settings objects
 
 :start
 cd ./DatabaseServer
-start node ./database.js "password" " " "databaseKey" ./settings.json "settingsKey"
+start node ./database.js "password" " " "eH7nKNVoeedg7gGZ" ./settings.json "settingsKey"
 timeout 1
 cd ../AppServer
 start node ./server.js "password" "password2" ./settings.json "settingsKey"
