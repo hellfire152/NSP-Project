@@ -325,7 +325,9 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
                   }
                   else {
                     var randomNum = Math.floor((Math.random() * 999999) + 10000);
+                    console.log("=============================");
                     console.log("THIS IS THE PIN: " + randomNum);
+                    console.log("=============================");
 
                     appConn.send({
                       'type' : C.REQ_TYPE.DATABASE,
@@ -372,7 +374,6 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
           }
         }
         else{
-
             req.session.errors=error;
             req.session.success=false;
             console.log(schema.validate('password',{list:true}));
