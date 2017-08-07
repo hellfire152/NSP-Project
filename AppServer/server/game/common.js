@@ -284,7 +284,14 @@ function handleClearGameCookie(players){
 }
 
 function storeResults(dbConn, results) {
-
+  dbConn.send({
+    data : {
+      type : C.DB.UPDATE.STATS,
+      result : results
+    }
+  }, (response) => {
+    
+  });
 }
 
 module.exports = {
