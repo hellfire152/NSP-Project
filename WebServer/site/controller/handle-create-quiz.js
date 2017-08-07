@@ -124,7 +124,6 @@ function defaultSetting(){
  $("#filled-in-box3").val(C.MCQ.C);
  $("#filled-in-box4").val(C.MCQ.D);
  $("#mainReward").val(1000);
-
  showChoiceFields();
  displayChoice();
 }

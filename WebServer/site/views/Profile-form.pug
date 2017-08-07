@@ -1,0 +1,298 @@
+doctype html
+html
+  head
+    title
+    style(type='text/css').
+      /* Form Styles */
+      body {
+      background: #f8f8f8;
+      font-family: 'proxima-nova', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      }
+      .container {
+      width: 600px;
+      margin: 80px auto;
+      }
+      .container header {
+      text-align: center;
+      }
+      .container header h2 {
+      color: #333;
+      font-size: 22px;
+      font-weight: 300;
+      line-height: 24px;
+      margin: 0 0 15px;
+      padding: 0;
+      }
+      .container header p {
+      color: #666;
+      margin: 0 0 35px;
+      }
+      .container footer {
+      width: 100%;
+      padding: 15px 40px;
+      margin: 0 0 -40px -40px;
+      color: #666;
+      font-size: 12px;
+      text-align: center;
+      }
+      .container footer a {
+      color: #333;
+      text-decoration: none;
+      }
+      .container footer .fa {
+      color: #e74c3c;
+      }
+      /* Magic Starts here */
+      .form {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 5px;
+      }
+      .form:before,
+      .form:after {
+      content: '';
+      display: block;
+      clear: both;
+      }
+      .form .field {
+      width: 50%;
+      padding: 20px 20px 5px;
+      border-bottom: 1px solid #e5e5e5;
+      box-sizing: border-box;
+      float: left;
+      transition: 0.3s linear;
+      }
+      .form .field:nth-child(2n) {
+      border-left: 1px solid #e5e5e5;
+      }
+      .form .field label {
+      color: #a1a1a1;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      }
+      .form .field input {
+      outline: none;
+      background: none;
+      width: 100%;
+      border: 0;
+      padding: 5px 0;
+      color: #666;
+      font-family: 'proxima-nova';
+      font-size: 16px;
+      font-weight: 600;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: 0.3s linear;
+      }
+      .form .checkbox {
+      display: block;
+      clear: both;
+      text-align: center;
+      margin-bottom: 25px;
+      padding-top: 30px;
+      color: #a1a1a1;
+      font-family: 'proxima-nova';
+      font-size: 12px;
+      font-weight: 600;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      }
+      .form .checkbox a {
+      color: #009ddc;
+      text-decoration: none;
+      }
+      .form input[type="checkbox"] label {
+      background: #000;
+      height: 30px;
+      border: none;
+      }
+      #update {
+      cursor: pointer;
+      display: block;
+      background: #eb5635;
+      width: 180px;
+      margin: 0 auto;
+      margin-bottom: 40px;
+      padding: 16px 0;
+      border: none;
+      border-radius: 100px;
+      color: #fff;
+      font-family: 'proxima-nova';
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: 0.2s linear;
+      }
+      #update:hover {
+      background: #f07d63;
+      }
+      .wrapper {
+      display: flex;
+      min-height: 100%;
+      }
+      .sidebar {
+      position: absolute;
+      width: 220px;
+      }
+      .content {
+      flex: 1;
+      padding: 30px;
+      background: #eee;
+      box-shadow: 0 0 5px black;
+      transform: translate3d(0, 0, 0);
+      transition: transform .3s;
+      }
+      .content.isOpen {
+      transform: translate3d(220px, 0, 0);
+      }
+      .button {
+      cursor: pointer;
+      }
+      .button:before {
+      content: '\f0c9';
+      font: 42px fontawesome;
+      }
+      .btn-default {
+      color: #333;
+      background-color: #fff;
+      border-color: #ccc;
+      }
+      .btn {
+      display: inline-block;
+      padding: 6px 12px;
+      margin-bottom: 0;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.42857143;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      background-image: none;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      }
+      #page-content-wrapper {
+      width: 100%;
+      padding: 15px;
+      }
+      #page-content-wrapper {
+      padding: 20px;
+      }
+      .sidebar {
+      list-style-type:none;
+      background-color:#333;
+      width:230px;
+      height:100%;
+      top:0;
+      bottom:0;
+      left:0;
+      text-align:left;
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      transition:1s ease;
+      }
+      .sidebar a {
+      text-decoration:none;
+      color:white;
+      transition:1s ease;
+      }
+      .sidebar li {
+      text-indent: 20px;
+      line-height: 40px;
+      transition:0.5s ease;
+      }
+      .sidebar li:hover {
+      background-color:#777;
+      cursor:pointer;
+      text-indent: 30px;
+      }
+      .active{
+      background-color: #777;
+      text-indent: 60px;
+      }
+      .sidebar > .sidebar-brand {
+      height: 65px;
+      font-size: 18px;
+      line-height: 60px;
+      }
+      .header{
+      font-size: 24px;
+      font-weight: 300;
+      margin-bottom: 20px;
+      }
+      .content{
+      font-size: 17px;
+      line-height: 27px;
+      margin-bottom: 30px;
+      }
+  body
+    ul.sidebar
+      li.sidebar-brand
+        a(href='') Exquizit
+      li.active
+        a(href='Profile-form') Edit Profile
+      li
+        a(href='change-password') Change Password
+      li
+        a(href='Profile') Back
+      li
+        a(href='#') Logout
+    .container
+      header
+        h2 Edit Profile
+      // / START Form
+      .form
+        form
+          .field
+            label(for='username') Username
+            input#username(name='username', type='text')
+          .field
+            label(for='email') Email Address
+            input#email(name='email', type='email')
+          .field
+            label(for='school') School: 
+            input#school(name='school', type='text')
+          .field
+            label(for='Organisation') Organsation: 
+            input#organisation(name='organisation', type='text')
+          .field
+            label(for='aboutme') About Me: 
+            input#aboutme(name='aboutme', type='text')
+          .field
+            label(for='img-upload') Image: 
+            input#img-upload(type='file', name='img-upload')
+          .checkbox
+          input#update(type='submit', name='update', value='Update')
+      // / END Form
+    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js')
+    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.14/angular.min.js')
+    script(type='text/javascript').
+      $('input').bind('focus', function() {
+      $(this).parent('.field').css({ 'background-color' : '#f5f8f9'});
+      });
+      $('input').bind('blur', function() {
+      $(this).parent('.field').css({ 'background-color' : 'none'});
+      });
+      $(document).ready(function() {
+      $('.button').on('click', function() {
+      $('.content').toggleClass('isOpen');
+      });
+      });
+      $('.trigger').click(function(){
+      $('.modal').toggleClass('open');
+      return false;
+      });

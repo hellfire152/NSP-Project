@@ -1,7 +1,16 @@
 
+
+/*
+
+Author: Bootstrapthemes
+Author URI: http://bootstrapthemes.co
+
+*/
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
 html,
 body {
-
     font-size: 15px;
     color: #565656;
     width: 100%;
@@ -12,6 +21,9 @@ body {
     font-weight: 300;
 }
 
+/*==========================================
+PRE LOADER 
+==========================================*/
 
 .preloader {
     position: fixed;
@@ -136,7 +148,7 @@ h3 {
 }
 h4,
 h5 {
-
+    
     font-weight: 300;
     margin: 0;
     line-height: 2rem;
@@ -159,7 +171,7 @@ h2 {
     line-height: 3rem;
     margin-bottom: .9rem;
 	text-transform:uppercase;
-	color:#484E57;
+	color:#484E57;	
 }
 h3 {
     font-weight: 300;
@@ -599,15 +611,15 @@ a.navbar-brand.our_logo{
     padding-top: 0px;
     padding-bottom: 0px;
     position: fixed;
-    top: 0;
-	left: 0;
-	right: 0;
+    top: 0; 
+	left: 0; 
+	right: 0; 
 	z-index: 300;
     box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
     -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
     background-color: #000;
 	height:80px;
-
+	
 }
 
 .menu-scroll .header_top_menu{
@@ -620,7 +632,7 @@ a.navbar-brand.our_logo{
 .main_menu_bg{
 	background:rgba(0, 0, 0, .45);
 	height: 80px;
-
+	
 }
 .navbar-default {
     background-color: transparent;
@@ -643,7 +655,7 @@ a.navbar-brand.our_logo{
 
 .main_menu_bg .navbar {
    margin-bottom: 0px;
-
+	
 }
 
 .navbar-default .navbar-nav>li>a {
@@ -661,7 +673,7 @@ a.navbar-brand.our_logo{
 	background-size:cover;
 }
 .main_slider {
-
+	
 }
 .main_slider .main_slider_content h1{
 font-size: 6rem;
@@ -669,7 +681,7 @@ font-size: 6rem;
     color: #fff;
     line-height: 6rem;
     margin:0px 0px 60px 0px;
-}
+}	
 .main_slider_content{
 	padding:250px 0px 200px 0px;
 	width:70%;
@@ -704,7 +716,7 @@ font-size: 6rem;
 	color:#000000;
 }
 .single_abouts_text h3{
-	color:#000000;
+	color:#000000;	
 }
 
 
@@ -716,7 +728,7 @@ font-size: 6rem;
 	-o-background-size: cover;
 	background-size: cover;
 	width: 100%;
-	overflow: hidden;
+	overflow: hidden;	
 }
 .main_features_content_area{
 	padding:120px 0px;
@@ -1028,7 +1040,7 @@ font-size: 6rem;
     background: url('../images/counter-bg.jpg') no-repeat center center;
     background-attachment: fixed;
     background-size: cover;
-    color: #fff;
+    color: #fff;  
 }
 
 .tt-overlay-bg {
@@ -1216,7 +1228,7 @@ font-size: 6rem;
 .single_widget h3{
     font-size:1.875rem;
 
-	font-family: 'Pacifico', cursive;
+	font-family: 'Pacifico', cursive;	
 }
 .single_widget_info p{
 	margin-top:40px;
@@ -1313,3 +1325,4 @@ input[type=radio]:checked ~ .check::before{
 input[type=radio]:checked ~ label{
   color: #0DFF92;
 }
+

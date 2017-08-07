@@ -28,7 +28,7 @@ module.exports = function(data) {
     'reg-room' : require('../validators/validate-register-student.js')(cookieCipher, appConn, C, emailServer),
     'reg-room-teach' : require('../validators/validate-register-teacher.js')(cookieCipher, appConn, C, emailServer),
     'forget-password-room' : require('../validators/validate-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
-    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer), 
+    'change-password-room' : require('../validators/validate-change-password.js')(cookieCipher, appConn, C, emailServer),
     'otp-check' : require('../validators/validate-otp-check.js')(cookieCipher, appConn,C, emailServer, xssDefense, cookieValidator),
     // 'otp-register' : require('../validators/validate-otp-register.js')(cookieCipher, appConn, C),
     'otp-forget-password' : require('../validators/validate-otp-forget-password.js')(cookieCipher, appConn,C,emailServer, cookieValidator),
@@ -102,6 +102,18 @@ module.exports = function(data) {
     });
   })
 
+  app.get('/search', function(req, res) { //search function
+    console.log(req.query.search);
+    appConn.send({
+      'type' : C.REQ_TYPE.DATABASE,
+      'data' : {
+        'type' : C.DB.SELECT.SEARCH_QUIZ,
+        'searchItem' : req.query.search
+      }
+    }, (response) => {
+      console.log(response);
+    })
+  });
   //handling profile pages
   app.get('/profile', (req, res) => {
     res.redirect('/profile/0');
@@ -125,16 +137,6 @@ module.exports = function(data) {
       }
     }, (response) => {
       console.log(response);
-      // let profileDetails =  {
-      //   // 'username' : response.username,
-      //   // 'email' : response.email,
-      //   // 'category' : response.category,
-      //   // 'completedQuizzes' : response.completedQuizzes,
-      //   // 'creationDate' : response.creationDate,
-      //   // 'aboutMe' : response.aboutMe,
-      //   // 'quizList' : response.quizList,
-      //   // 'achievementsList' : response.achievementsList
-      // };
       if(!response.data.success) {
         res.sendErrorPage('Error loading profile page!');
         return;

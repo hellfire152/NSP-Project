@@ -1,0 +1,147 @@
+doctype html
+html
+  head
+    title
+    style(type='text/css').
+      body,
+      html {
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: rgba(255, 130, 45, 0.85);
+      font-family: 'Montserrat', sans-serif;
+      color: #fff
+      }
+      html {
+      background: url('https://static.pexels.com/photos/818/sea-sunny-beach-holiday.jpg');
+      background-size: cover;
+      background-position: bottom
+      }
+      .error {
+      text-align: center;
+      padding: 16px;
+      position: relative;
+      top:10%;
+      transform: translateY(-50%);
+      -webkit-transform: translateY(-50%)
+      }
+      h1 {
+      margin: -10px 0 -30px;
+      font-size: calc(17vw + 40px);
+      opacity: .8;
+      letter-spacing: -17px;
+      }
+      p {
+      opacity: .8;
+      font-size: 20px;
+      margin: 8px 0 38px 0;
+      font-weight: bold
+      color:#B8373C;
+      }
+      input,
+      button,
+      input:focus,
+      button:focus {
+      border: 1px solid #25BA53;
+      transition: all 0.3s;
+      outline: 0!important;
+      }
+      input {
+      width: 300px;
+      padding: 14px;
+      max-width: calc(100% - 80px);
+      border-radius: 6px 0 0 6px;
+      font-weight: 400;
+      border:0;
+      font-family: 'Montserrat', sans-serif;
+      }
+      button {
+      width: 40px;
+      padding: 14.5px 16px 14.5px 12.5px;
+      vertical-align: top;
+      border-radius: 0 6px 6px 0;
+      border:1px solid #25BA53;
+      color: grey;
+      background: #25BA53;
+      cursor: pointer;
+      transition: all 0.4s
+      }
+      button:hover {
+      color: white;
+      background: #00A157;
+      }
+      #result{
+      color:#B8373C;
+      }
+    link(rel='stylesheet', href='/resources/css/bootstrap.min.css')
+    link(href='https://fonts.googleapis.com/css?family=Pacifico', rel='stylesheet', type='text/css')
+    link(rel='stylesheet', href='/resources/css/font-awesome.min.css')
+    // For Plugins external css
+    link(rel='stylesheet', href='/resources/css/animate.css')
+    // Theme custom css
+    link(rel='stylesheet', href='/resources/css/style.css')
+    link(rel='stylesheet', type='text/css', href='/resources/css/user-home.css')
+    // Theme Responsive css
+    link(rel='stylesheet', href='/resources/css/responsive.css')
+    script(src='/resources/js/modernizr-2.8.3-respond-1.4.2.min.js')
+  body
+    .main_menu_bg
+      .container
+        .row
+          nav.navbar.navbar-default
+            .container-fluid
+              // Brand and toggle get grouped for better mobile display
+              .navbar-header
+                button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+                  span.sr-only Toggle navigation
+                  span.icon-bar
+                  span.icon-bar
+                  span.icon-bar
+                a.navbar-brand.our_logo(href='#')
+                  img(src='/resources/images/logo.png', alt='')
+              // Collect the nav links, forms, and other content for toggling
+              #bs-example-navbar-collapse-1.collapse.navbar-collapse
+                ul.nav.navbar-nav.navbar-right
+                  li
+                    a(href='#slider') Home
+                  li
+                    a(href='#abouts') Profile
+                  li
+                    a(href='#features') Create
+                  li
+                    a.booking(href='#') Logout
+              // /.navbar-collapse
+            // /.container-fluid
+    ol.breadcrumb
+      li.breadcrumb-item
+        a(href='#') Home
+      li.breadcrumb-item.active Search
+    .error
+      form(method='POST', action='/search')
+        p
+          | You searched for 
+          span#result  Hello 
+        input(placeholder='Try searching for what you were looking for...', type='text', name='search', required='')
+        button(onclick='')
+          i.fa.fa-search
+    .container
+      .row
+        .col-md-3
+        #card_container.col-md-6
+          .card-media
+            // media container
+            .card-media-object-container
+              .card-media-object
+                img(src='https://s9.postimg.org/y0sfm95gv/prince_f.jpg')
+            // body container
+            .card-media-body
+              .card-media-body-top
+                span.subtle Mon, APR 09, 7:00 PM
+              span.card-media-body-heading This Thing Called Life: A Celebration of Prince and His Legacy at MEZZANINE SF
+              .card-media-body-supporting-bottom.card-media-body-supporting-bottom-reveal
+                a.card-media-body-supporting-bottom-text.card-media-link.u-float-right(href='#/') VIEW TICKETS
+        .col-md-3
+        script(src='/resources/js/jquery-1.11.2.min.js')  
+        script(type='text/javascript', src='../controller/quiz.js')
