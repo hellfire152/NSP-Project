@@ -159,7 +159,8 @@ module.exports = function(data) {
   app.get('/play', rateLimiters.join, function(req, res) { //submitted a form for playing in a room
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
       res.sendErrorPage("Argument Error!");
-    } else if(gameSessionCheck(req, true)) {
+    } else if(gameSessionCheck(req, true) && !req.session.inRoom) {
+      req.session.inRoom = true;
       //check for login cookie
       if(req.session.validLogin) {
         let roomNo = req.query.room;
@@ -196,7 +197,8 @@ module.exports = function(data) {
     if(req.query.quizId.constructor === Array) {
       res.sendErrorPage('Argument error!');
     } else if(gameSessionCheck(req, false)) {
-      if(/*req.validLogin*/true) {
+      if(req.session.validLogin) {
+        req.session.inRoom = true;
         let quizId = req.query.quizId;
         appConn.send({
           'type' : C.REQ_TYPE.HOST_ROOM,
@@ -219,7 +221,7 @@ module.exports = function(data) {
         res.sendErrorPage('You are not logged in!');
       }
     } else {  //req.session.hosting is false
-      res.sendErrorPage('Invalid hosting session!');
+      res.sendErrorPage('Invalid playing session!');
     }
   });
 
