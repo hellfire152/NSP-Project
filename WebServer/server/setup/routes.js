@@ -187,7 +187,6 @@ module.exports = function(data) {
               }
             }
           } else {
-            req.session.inRoom = true;
             res.render('play', {
               'roomNo' : response.roomNo,
               'gamemode' : response.gamemode,
@@ -222,7 +221,6 @@ module.exports = function(data) {
               res.sendErrorPage(e);
             }
           } else {  //no error
-            req.session.inRoom = true;
             req.session.hosting = true;
             res.render('host', {
               'roomNo' : response.roomNo
@@ -263,6 +261,10 @@ module.exports = function(data) {
     else res.render('otp', {
       'csrfToken' : req.csrfToken()
     });
+  });
+
+  app.get('/error/:message', (req, res) => {
+    res.sendErrorPage(req.params.message, '/');
   });
 
   //handling all other requests (PUT THIS LAST)

@@ -54,7 +54,7 @@ module.exports = async function(input) {
       }
     }
     let sendTo = response.sendTo;
-    delete response.sendTo
+    delete response.sendTo;
     switch(sendTo) {
       case C.SEND_TO.ALL: {
         sendToAll(response);
