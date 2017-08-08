@@ -108,6 +108,8 @@ module.exports = function(data) {
 
   app.get('/search', function(req, res) { //search function
     console.log(req.query.search);
+    let encodedData = xssDefense.jsonEncodeObjArr(response.data);
+    let encodedQuery = xssDefense.entityEncoding(req.query.search);
     appConn.send({
       'type' : C.REQ_TYPE.DATABASE,
       'data' : {
@@ -118,8 +120,8 @@ module.exports = function(data) {
     }, (response) => {
       res.render('search', {
         'csrfToken' : req.csrfToken(),
-        'data': response.data,
-        'query' : req.query.search
+        'data': encodedData,
+        'query' : encodedQuery
       });
     })
   });
@@ -150,8 +152,9 @@ module.exports = function(data) {
         res.sendErrorPage('Error loading profile page!');
         return;
       }
+      let encodedProfileData = xssDefense.jsonEncode(response.data.data[0]);
       let profileDetails = {
-        'profile' : response.data.data[0]
+        'profile' : encodedProfileData
       };
 
       console.log(profileDetails);

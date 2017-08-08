@@ -371,23 +371,23 @@ function displayClientHostedQuiz(hostedQuiz){
         cell1.innerHTML = obj.quiz_title;
         records.appendChild(cell1);
 
-         var dateCreate = new Date(obj.date_created.substr(0,4),(obj.date_created.substr(5,2)-1), obj.date_created.substr(8,2));
+         //var dateCreate = new Date(obj.date_created.substr(0,4),(obj.date_created.substr(5,2)-1), obj.date_created.substr(8,2));
 
-
-        var duration_created = dateDiffInDays(today, dateCreate);
-        var days;
-        if(duration_created < 0){
-            days = -duration_created + " days ago";
-        }else if (duration_created ==0){
-            days = "Just now";
-        }else{
-            days = duration_created + " later";
-        }
-        console.log(days);
-
-        var cell2 = document.createElement('td');
-        cell2.innerHTML = days;
-        records.appendChild(cell2);
+        //
+        // var duration_created = dateDiffInDays(today, dateCreate);
+        // var days;
+        // if(duration_created < 0){
+        //     days = -duration_created + " days ago";
+        // }else if (duration_created ==0){
+        //     days = "Just now";
+        // }else{
+        //     days = duration_created + " later";
+        // }
+        // console.log(days);
+        //
+        // var cell2 = document.createElement('td');
+        // cell2.innerHTML = days;
+        // records.appendChild(cell2);
 
         var cell3 = document.createElement('td');
         cell3.innerHTML = obj.quiz_rating;
@@ -439,22 +439,22 @@ function displayHostedQuestion(){
     document.getElementsByClassName('live').innerHTML = hostedQuiz[index].quiz_type.substr(0,1);
     document.getElementById('quiz-name').innerHTML = hostedQuiz[index].quiz_title;
     document.getElementById('question_no').innerHTML = hosted_question345.length;
-    var date = new Date(hostedQuiz[index].date_created.substr(0,4), hostedQuiz[index].date_created.substr(5,2), hostedQuiz[index].date_created.substr(8,2));
-    var duration = dateDiffInDays(today,date);
+    //var date = new Date(hostedQuiz[index].date_created.substr(0,4), hostedQuiz[index].date_created.substr(5,2), hostedQuiz[index].date_created.substr(8,2));
+    //var duration = dateDiffInDays(today,date);
 
-
-    console.log(duration);
-    var printed;
-
-    if(duration < 0){
-        printed = "( " + -duration + " days ago )";
-        document.getElementById('days').innerHTML = printed;
-    }else if (duration == 0){
-        printed = "( Just now )";
-        document.getElementById('days').innerHTML = printed;
-    }
-    document.getElementById('date').innerHTML = date.toDateString();
-    console.log(printed);
+    // 
+    // console.log(duration);
+    // var printed;
+    //
+    // if(duration < 0){
+    //     printed = "( " + -duration + " days ago )";
+    //     document.getElementById('days').innerHTML = printed;
+    // }else if (duration == 0){
+    //     printed = "( Just now )";
+    //     document.getElementById('days').innerHTML = printed;
+    // }
+    // document.getElementById('date').innerHTML = date.toDateString();
+    // console.log(printed);
 
 
     for(var j =0;j<hosted_question345.length;j++){
