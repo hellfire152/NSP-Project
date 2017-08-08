@@ -5,15 +5,12 @@ rem Author: Jin Kuan
 rem Decrypting the settings objects
 
 :start
-cd ./SigningAuthority
-start node server.js
-timeout 1
-cd ../DatabaseServer
+cd ./DatabaseServer
 start node ./database.js "password" "eH7nKNVoeedg7gGZ" "databaseKey" ./settings.json "settingsKey"
-timeout 1
+timeout 3
 cd ../AppServer
 start node ./server.js "password" "password2" ./settings.json "settingsKey"
-timeout 1
+timeout 3
 cd ../WebServer
 start node ./server.js "password2" ./settings.json "settingsKey"
 

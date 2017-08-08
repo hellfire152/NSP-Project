@@ -10,15 +10,15 @@ module.exports = function(cipher, appConn, C, xssDefense, emailServer, cookieVal
     var userIP = req.connection.remoteAddress;
     var botCheck = req.body._bot;
     console.log(botCheck);
-
-    req.sanitize('username').escape();
-    req.sanitize('password').escape();
-    req.sanitize('userIp').escape();
-    req.sanitize('randomNum').escape();
-    req.sanitize('username').trim();
-    req.sanitize('password').trim();
-    req.sanitize('userIp').trim();
-    req.sanitize('randomNum').trim();
+    //
+    // req.sanitize('username').escape();
+    // req.sanitize('password').escape();
+    // req.sanitize('userIp').escape();
+    // req.sanitize('randomNum').escape();
+    // req.sanitize('username').trim();
+    // req.sanitize('password').trim();
+    // req.sanitize('userIp').trim();
+    // req.sanitize('randomNum').trim();
 
   appConn.send({
     // 'type':C.REQ_TYPE.ACCOUNT_LOGIN,

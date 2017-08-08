@@ -10,3 +10,13 @@ var sig = sign.sign(privateKey, 'base64');
 var verify = crypto.createVerify('RSA-SHA256');
 verify.write('abc');
 console.log(verify.verify(publicKey, sig, 'base64'));
+
+var net = require('net');
+var conn = net.connect({
+  'host': '192.168.0.192',
+  'port' : 1234
+});
+conn.write(JSON.stringify({
+  'type' : 0,
+  'key': 'sfSDFASDfad'
+}));

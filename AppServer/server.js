@@ -39,7 +39,10 @@ var fs = require('fs');
 var util = require('util');
 var allRooms = {};
 var pendingDatabaseResponses = {};
-var signer = net.connect(1234);
+var signer = net.connect({
+  'host': '192.168.0.192',
+  'port' : 1234
+});
 signer.setEncoding('utf8');
 
 //getting the RSA keys

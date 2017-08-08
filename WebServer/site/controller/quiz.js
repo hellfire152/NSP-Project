@@ -26,10 +26,10 @@ function createNode(){
 		cardMediaBodyTop.className = "card-media-body-top";
 		cardMediaBody.appendChild(cardMediaBodyTop);
 
-		var date = document.createElement('span');
-		date.className = "subtle";
-		date.innerHTML = Totalquiz[i].date_created;
-		cardMediaBodyTop.appendChild(date);
+		// var date = document.createElement('span');
+		// date.className = "subtle";
+		// date.innerHTML = Totalquiz[i].date_created;
+		// cardMediaBodyTop.appendChild(date);
 
 		var title = document.createElement('h5');
 		title.className = "card-media-body-heading";
@@ -100,11 +100,12 @@ function findTopRating(){
     	var thumbnail = document.createElement('img');
     	thumbnail.setAttribute('src', 'https://static.pexels.com/photos/46274/pexels-photo-46274.jpeg');
     	cardMediaObject.appendChild(thumbnail);
+			//
+    	// var date = document.createElement('span');
+    	// date.className = "card-media-object-tag";
 
-    	var date = document.createElement('span');
-    	date.className = "card-media-object-tag";
-    	date.className = "subtle";
-    	date.innerHTML = maxArr[v].date_created;
+    	// date.className = "subtle";
+			// date.innerHTML = maxArr[v].date_created;
 
     	var cardMediaBody = document.createElement('div');
     	cardMediaBody.className = "card-media-body";
