@@ -15,7 +15,7 @@ function createNode(){
 
 		var cardMediaObject = document.createElement('div');
 		cardMediaObject.className = "card-media-object";
-		cardMediaObject.setAttribute('style', 'background-image:url("https://s9.postimg.org/y0sfm95gv/prince_f.jpg")');
+		cardMediaObject.setAttribute('style', 'background-image:url("https://static.pexels.com/photos/46274/pexels-photo-46274.jpeg")');
 		cardMediaObjectContainer.appendChild(cardMediaObject);
 
 		var cardMediaBody = document.createElement('div');
@@ -98,7 +98,7 @@ function findTopRating(){
     	cardMediaContainer.appendChild(cardMediaObject);
 
     	var thumbnail = document.createElement('img');
-    	thumbnail.setAttribute('src', 'https://s9.postimg.org/y0sfm95gv/prince_f.jpg');
+    	thumbnail.setAttribute('src', 'https://static.pexels.com/photos/46274/pexels-photo-46274.jpeg');
     	cardMediaObject.appendChild(thumbnail);
 
     	var date = document.createElement('span');

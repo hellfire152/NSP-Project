@@ -25,7 +25,7 @@ module.exports = function(data) {
     socket.on('disconnect', () => {
       console.log("Socket with id " +socket.id + " " +", user " +socket.userId +" and room " +socket.roomNo +" has disconnected.");
       delete socketOfUser[socket.userId];
-      socket.handshake.session.hosting = socket.handshake.session.joining = false;
+      socket.handshake.session.hosting = socket.handshake.session.joining = socket.handshake.session.inRoom = false;
       appConn.send({
         'special': C.SPECIAL.SOCKET_DISCONNECT,
         'id': socket.userId,
@@ -41,16 +41,18 @@ module.exports = function(data) {
       console.log(s);
       if(!s.validLogin || !(s.hosting ^ s.joining)) { //not logged in or not hosting or joining
         console.log('Invalid connection!');
+        socket.emit('redirect', '/error/invalidGameSession');
         socket.disconnect();
       } else {
         if(s.hosting) s.hosting = false;
         if(s.joining) s.joining = false;
+        s.inRoom = true;
         let id = s.username;
         console.log("SOCKET IO CONNECTION INITIATED BY");
         console.log(id);
         if(socketOfUser[id] !== undefined) { //if user with that id already exists
           console.log('User with that ID already logged in!');
-          socket.disconnect();
+          socket.emit('redirect', '/error/invalidGameSession');
         }
         socketOfUser[id] = socket;
         socket.userId = id;

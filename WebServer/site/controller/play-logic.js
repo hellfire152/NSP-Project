@@ -53,7 +53,9 @@ socket.on('receive', function(data) {
 socket.on('err', function(err) {
   console.log(err);
 });
-
+socket.on('redirect', function(link) {
+  window.location.replace(link);
+});
 send({
   'event': C.EVENT.JOIN_ROOM,
   'room' : room

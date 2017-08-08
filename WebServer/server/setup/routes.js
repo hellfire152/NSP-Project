@@ -172,7 +172,6 @@ module.exports = function(data) {
     if(req.query.room.constructor === Array) { //if the room variable has been defined multiple times
       res.sendErrorPage("Argument Error!");
     } else if(gameSessionCheck(req, true) && !req.session.inRoom) {
-      req.session.inRoom = true;
       //check for login cookie
       if(req.session.validLogin) {
         let roomNo = req.query.room;
@@ -210,7 +209,6 @@ module.exports = function(data) {
       res.sendErrorPage('Argument error!');
     } else if(gameSessionCheck(req, false)) {
       if(req.session.validLogin) {
-        req.session.inRoom = true;
         let quizId = req.query.quizId;
         appConn.send({
           'type' : C.REQ_TYPE.HOST_ROOM,
@@ -251,7 +249,7 @@ module.exports = function(data) {
         res.clearCookie("tempToken");
         res.clearCookie("user_info");
         console.log("CLEAREDDDDDDDDDDDDDDDDDDD");
-        res.redirect('/Home');
+        res.redirect('/');
       }
     })
   });
@@ -263,6 +261,10 @@ module.exports = function(data) {
     else res.render('otp', {
       'csrfToken' : req.csrfToken()
     });
+  });
+
+  app.get('/error/:message', (req, res) => {
+    res.sendErrorPage(req.params.message, '/');
   });
 
   //handling all other requests (PUT THIS LAST)

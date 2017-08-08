@@ -13,9 +13,12 @@ module.exports = function(cipher, appConn) {
 
       req.sanitize('room').escape();
       req.sanitize('room').trim();
-
-      req.session.joining = true;
-      res.redirect(`/play?room=${req.body.room}`);
+      if(req.session.inRoom)
+        res.sendErrorPage('Invalid game session!', '/');
+      else {
+        req.session.joining = true;
+        res.redirect(`/play?room=${req.body.room}`);
+      }
     } else {
       req.session.attemptJoin = req.body.room;
       res.redirect('/student-login');
