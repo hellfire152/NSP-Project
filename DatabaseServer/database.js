@@ -97,10 +97,7 @@ var server = net.createServer(function(conn){
     server.close();
     process.exit(0);
   });
-  var signer = net.connect({
-    'host' : '192.168.0.192',
-    'port' : 1234
-  });
+  var signer = net.connect(1234);
   signer.setEncoding('utf8');
   async function sign(key) {
     return new Promise((resolve, reject) => {

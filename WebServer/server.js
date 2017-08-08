@@ -35,10 +35,7 @@ var crypto = require('crypto');
 var cookieParser = require('cookie-parser');
 var uuid = require('uuid');
 var util = require('util');
-var signer = net.connect({
-  'host': '192.168.0.192',
-  'port' : 1234
-});
+var signer = net.connect(1234);
 signer.setEncoding('utf8');
 var S = require(settings);
 S.APPSERVER.PASSWORD = appServerPassword;
