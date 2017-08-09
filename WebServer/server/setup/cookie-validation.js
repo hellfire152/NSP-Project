@@ -63,6 +63,7 @@ function ipAddressCheck(currentIp, checkIp){
     return false;
   }
 }
+console.log()
 
 module.exports = {
   'validateCookie' : validateCookie,

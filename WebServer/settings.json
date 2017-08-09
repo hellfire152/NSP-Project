@@ -8,7 +8,7 @@
     "PRIVATE" : "./keys/WebServer-private.key"
   },
   "HTTPS" : {
-    "CERT" : "./cert/certificate.pem",
+    "CERT" : "./cert/other-cert.pem",
     "KEY" : "./cert/private.key",
     "SHA256S" : ["+OXrVA6beQUiKkYfHdugBFg2cCVGBaIbKXBcLslYdIw=", "YbZx8m30dSsyzboOTAqeopR7qEjiDtopBF5mhApSnN8=="]
   },
@@ -39,5 +39,5 @@
       }, {
         "username" : "qingxi3"
         }],
-  "AUTH_BYPASS" : false
+  "AUTH_BYPASS" : true
 }
